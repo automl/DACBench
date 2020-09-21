@@ -13,7 +13,7 @@ from scipy.stats import truncnorm
 
 import AbstractEnv
 
-class SigmoidMultiActMultiValAction(AbstractEnv):
+class Sigmoid(AbstractEnv):
     """
     Sigmoid reward
     """

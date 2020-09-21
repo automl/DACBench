@@ -2,7 +2,7 @@ import gym
 from gym import Wrapper
 
 class ActionFrequencyWrapper(Wrapper):
-    def __init__(self, config):
+    def __init__(self, env, config):
         super(ActionFrequencyWrapper, self).__init__(env)
 
         #TODO: separate discrete and continuous state components
