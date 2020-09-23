@@ -24,7 +24,6 @@ class Sigmoid(AbstractEnv):
 
     def __init__(self,
                  config,
-                 #n_steps: int=10,
                  #n_actions: int=2,
                  #action_vals: tuple=(5, 10),
                  #seed: bool=0,

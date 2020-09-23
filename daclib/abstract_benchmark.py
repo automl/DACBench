@@ -25,3 +25,21 @@ class AbstractBenchmark():
 
     def set_seed(self, seed):
         self.config["seed"] = seed
+
+    def __getattr__(self, key):
+        if key in self.config:
+            return self.config["key"]
+        else:
+            raise AttributeError
+
+    def __setattr__(self, key, value):
+        self.config["key"] = value
+
+    def set_action_space(self, kind, args):
+        self.config["action_space"] = kind
+        self.config["action_space_args"] = args
+
+    def set_observation_space(self, kind, args, data_type):
+        self.config["observation_space"] = kind
+        self.config["observation_space_args"] = args
+        self.config["observation_space_type"] = data_type

@@ -19,15 +19,15 @@ LUBY_DEFAULTS = {
     "fuzzy": False
 }
 
-class LubyBenchmark(AbstractBenchmark):
+class SigmoidBenchmark(AbstractBenchmark):
     def __init__(self, config_path):
         super(LubyBenchmark, self).__init__(config_path)
         if not self.config:
-            self.config = LUBY_DEFAULTS
+            self.config = SIGMOID_DEFAULTS
 
         for key in LUBY_DEFAULTS:
             if not key in self.config:
-                self.config[key] = LUBY_DEFAULTS[key]
+                self.config[key] = SIGMOID_DEFAULTS[key]
 
     def get_benchmark_env(self):
         return LubyEnv(config)

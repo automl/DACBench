@@ -21,15 +21,7 @@ class LubyEnv(AbstractEnv):
     """
 
     def __init__(self,
-                 config
-                 #min_steps: int=2**3,
-                 #max_steps: int=2**6,
-                 #seed: int=0,
-                 #fuzzy: bool=False,
-                 #instance_mode: int=0,
-                 #instance_feats: str=None,
-                 #noise_sig: float=1.5
-                 ) -> None:
+                 config) -> None:
         super().__init__(config)
         self.rng = np.random.RandomState(seed)
         self._c_step = 0
@@ -46,10 +38,6 @@ class LubyEnv(AbstractEnv):
         self.__seq = np.log2([next(luby_gen(i)) for i in range(1, 2*max_steps + 2)])
         self._jenny_i = 1
         self._fuzz = config['fuzzy']
-        #self.observation_space = spaces.Box(
-        #    low=np.array([-1 for _ in range(self._hist_len + additional_feats)]),
-        #    high=np.array([2**max(self.__seq + 1) for _ in range(self._hist_len + additional_feats)]),
-        #    dtype=np.float32)
         self.logger = logging.getLogger(self.__str__())
 
         self._start_dist = None
