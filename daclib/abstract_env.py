@@ -7,12 +7,19 @@ class AbstractEnv(gym.Env):
         self.inst_id = 0
         self.instance = self.instance_set[self.inst_id]
 
-        self.n_steps = config['n_steps']
+        self.n_steps = config['cuttoff']
         self.c_step = 0
-        
-        #TODO: set rewards
-        #TODO: set obs_space
-        #TODO: set action space
+
+        self.reward_range = config["reward_range"]
+        self.observation_space = getattr(gym.spaces, config["observation_space"])(*config["observation_space_args"], dtype=config["observation_space_type"])
+        self.action_space = getattr(gym.spaces, config["action_space"])(*config["action_space_args"])
+
+    def step(self):
+        done = False
+        self.c_step += 1
+        if self.c_step >= self.n_steps:
+            done = True
+        return done
 
     def reset(self):
         self.inst_id = (self.inst_id + 1) % len(self.instance_set)

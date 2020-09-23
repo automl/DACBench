@@ -15,7 +15,7 @@ import AbstractEnv
 
 # Instance IDEA 1: shift luby seq -> feat is sum of skipped action values
 # Instance IDEA 2: "Wiggle" luby i.e. luby(t + N(0, 0.1)) -> feat is sampled value
-class LubyTime(AbstractEnv):
+class LubyEnv(AbstractEnv):
     """
     Luby "cyclic" benchmark
     """
@@ -25,25 +25,18 @@ class LubyTime(AbstractEnv):
                  #min_steps: int=2**3,
                  #max_steps: int=2**6,
                  #seed: int=0,
-                 #hist_len: int=5,
                  #fuzzy: bool=False,
                  #instance_mode: int=0,
                  #instance_feats: str=None,
                  #noise_sig: float=1.5
                  ) -> None:
         super().__init__(config)
-        #self.n_actions = n_actions
-
-        #NOTE: Action space, obs space and reward range should be set in super
-        #self.action_space = spaces.Discrete(n_actions)
-
         self.rng = np.random.RandomState(seed)
         self._c_step = 0
         self.logger = None
 
-        #self.reward_range = (-1, 0)
-        self._hist_len = hist_len
-        self._ms = config['max_steps']
+        self._hist_len = config["hist_length"]
+        self._ms = self.n_steps
         self._mi = config['min_steps']
         self._state = np.array([-1 for _ in range(self._hist_len + 1)])
         self._r = 0
@@ -76,15 +69,12 @@ class LubyTime(AbstractEnv):
             done (bool):  Specifies if environment is solved.
             info (None):
         """
-        self._c_step += 1
+        done = super().reset()
         prev_state = self._state.copy()
         if action == self._next_goal:
             self._r = 0  # we don't want to allow for exploiting large rewards by tending towards long sequences
         else:  # mean and var chosen s.t. ~1/4 of rewards are positive
             self._r = -1 if not self._fuzz else self.rng.normal(-1, self.noise_sig)
-            diff = abs(self._next_goal - action)
-            self.n_steps = min(self._ms, self.n_steps + diff)
-        done = self._c_step >= self.n_steps
 
         if self.__error < self.__lower:  # needed to avoid too long sequences of sticky actions
             self.__error += np.abs(self.__lower)
