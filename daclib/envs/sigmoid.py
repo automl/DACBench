@@ -23,36 +23,20 @@ class Sigmoid(AbstractEnv):
         return 1 / (1 + np.exp(-scaling * (x - inflection)))
 
     def __init__(self,
-                 config,
-                 #n_actions: int=2,
-                 #action_vals: tuple=(5, 10),
-                 #seed: bool=0,
-                 #noise: float=0.0,
-                 #instance_feats: str=None,
-                 #slope_multiplier: float=2
-                 ) -> None:
+                 config) -> None:
         super().__init__()
-        #self.n_actions = n_actions
         self.rng = np.random.RandomState(seed)
         self._c_step = 0
-        #assert self.n_actions == len(action_vals), (
-        #    f'action_vals should be of length {self.n_actions}.')
         self.shifts = [self.n_steps / 2 for _ in config['action_vals']]
         self.slopes = [-1 for _ in config['action_vals']]
-        #self.reward_range = (0, 1)
-        self.slope_multiplier = slope_multiplier
-        self.action_vals = action_vals
-        # budget spent, inst_feat_1, inst_feat_2
-        # self._state = [-1 for _ in range(3)]
-        # self.action_space = spaces.MultiDiscrete(action_vals)
-        #self.action_space = spaces.Discrete(int(np.prod(action_vals)))
+        self.reward_range = config["reward_range"]
+        self.slope_multiplier = config["slope_multiplier"]
+        self.action_vals = config["action_values"]
+        self.n_actions = len(self.action_vals)
         self.action_mapper = {}
         for idx, prod_idx in zip(range(np.prod(config['action_vals'])),
                                        itertools.product(*[np.arange(val) for val in action_vals])):
             self.action_mapper[idx] = prod_idx
-        self.observation_space = spaces.Box(
-            low=np.array([-np.inf for _ in range(1 + self.n_actions * 3)]),
-            high=np.array([np.inf for _ in range(1 + self.n_actions * 3)]))
         self.logger = logging.getLogger(self.__str__())
         self._prev_state = None
 

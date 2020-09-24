@@ -8,7 +8,7 @@ HISTORY_LENGTH = 5
 
 LUBY_DEFAULTS = {
     "action_space": "Discrete",
-    "action_space_args": int(np.log2(MAX_STEPS)),
+    "action_space_args": [int(np.log2(MAX_STEPS))],
     "observation_space": "Box",
     "observation_space_type": np.float32,
     "observation_space_args": [np.array([-1 for _ in range(self._hist_len + 1)]), np.array([2**max(LUBY_SEQUENCE + 1) for _ in range(HISTORY_LENGTH + 1)])],
