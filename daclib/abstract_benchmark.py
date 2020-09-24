@@ -4,7 +4,7 @@ class AbstractBenchmark():
     def __init__(self, config_path=None):
         if config_path:
             self.config_path = config_path
-            self.config = read_config_file(self.config_path)
+            self.config = self.read_config_file(self.config_path)
         else:
             self.config = None
 

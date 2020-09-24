@@ -1,4 +1,6 @@
-import AbstractBenchmark
+from daclib.abstract_benchmark import AbstractBenchmark
+from daclib.envs.luby import LubyEnv, luby_gen
+
 from gym import spaces
 import numpy as np
 
@@ -11,16 +13,17 @@ LUBY_DEFAULTS = {
     "action_space_args": [int(np.log2(MAX_STEPS))],
     "observation_space": "Box",
     "observation_space_type": np.float32,
-    "observation_space_args": [np.array([-1 for _ in range(self._hist_len + 1)]), np.array([2**max(LUBY_SEQUENCE + 1) for _ in range(HISTORY_LENGTH + 1)])],
+    "observation_space_args": [np.array([-1 for _ in range(HISTORY_LENGTH + 1)]), np.array([2**max(LUBY_SEQUENCE + 1) for _ in range(HISTORY_LENGTH + 1)])],
     "reward_range": (-1, 0),
     "cutoff" : MAX_STEPS,
-    "hist_lenght": HISTORY_LENGTH,
+    "hist_length": HISTORY_LENGTH,
     "min_steps": 2**3,
-    "fuzzy": False
+    "fuzzy": False,
+    "instance_set": "../instance_sets/luby_train.csv"
 }
 
 class LubyBenchmark(AbstractBenchmark):
-    def __init__(self, config_path):
+    def __init__(self, config_path=None):
         super(LubyBenchmark, self).__init__(config_path)
         if not self.config:
             self.config = LUBY_DEFAULTS
@@ -30,4 +33,4 @@ class LubyBenchmark(AbstractBenchmark):
                 self.config[key] = LUBY_DEFAULTS[key]
 
     def get_benchmark_env(self):
-        return LubyEnv(config)
+        return LubyEnv(self.config)

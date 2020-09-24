@@ -11,7 +11,7 @@ import numpy as np
 from gym import Env, spaces, wrappers
 from scipy.stats import truncnorm
 
-import AbstractEnv
+from daclib.abstract_env import AbstractEnv
 
 # Instance IDEA 1: shift luby seq -> feat is sum of skipped action values
 # Instance IDEA 2: "Wiggle" luby i.e. luby(t + N(0, 0.1)) -> feat is sampled value
@@ -23,7 +23,7 @@ class LubyEnv(AbstractEnv):
     def __init__(self,
                  config) -> None:
         super().__init__(config)
-        self.rng = np.random.RandomState(seed)
+        self.rng = np.random.RandomState(config["seed"])
         self._c_step = 0
         self.logger = None
 
@@ -35,7 +35,7 @@ class LubyEnv(AbstractEnv):
         self._genny = luby_gen(1)
         self._next_goal = next(self._genny)
         # Generate luby sequence up to 2*max_steps + 2 as mode 1 could potentially shift up to max_steps
-        self.__seq = np.log2([next(luby_gen(i)) for i in range(1, 2*max_steps + 2)])
+        self.__seq = np.log2([next(luby_gen(i)) for i in range(1, 2*config["cutoff"] + 2)])
         self._jenny_i = 1
         self._fuzz = config['fuzzy']
         self.logger = logging.getLogger(self.__str__())
@@ -57,7 +57,7 @@ class LubyEnv(AbstractEnv):
             done (bool):  Specifies if environment is solved.
             info (None):
         """
-        done = super().step_()
+        done = super(LubyEnv, self).step_()
         prev_state = self._state.copy()
         if action == self._next_goal:
             self._r = 0  # we don't want to allow for exploiting large rewards by tending towards long sequences
@@ -80,9 +80,9 @@ class LubyEnv(AbstractEnv):
         if self._c_step - 1 < self._hist_len:
             self._state[(self._c_step-1)] = action
         else:
-            self._state[:-self.__n_feats - 1] = self._state[1:-self.__n_feats]
-            self._state[-self.__n_feats - 1] = action
-        self._state[-self.__n_feats] = self._c_step - 1
+            self._state[:-2] = self._state[1:-1]
+            self._state[-2] = action
+        self._state[-1] = self._c_step - 1
         next_state = self._state if not done else prev_state
         self.logger.debug("i: (s, a, r, s') / %+5d: (%s, %d, %5.2f, %2s)     g: %3d  l: %3d", self._c_step-1,
                           str(prev_state),
@@ -95,7 +95,7 @@ class LubyEnv(AbstractEnv):
           Returns:
             next_state (int):  Next state observed from the environment.
         """
-        super.reset_()
+        super(LubyEnv, self).reset_()
         self._r = 0
         self.n_steps = self._mi
 
@@ -105,7 +105,7 @@ class LubyEnv(AbstractEnv):
         self._next_goal = self.__seq[luby_t - 1]
         self.logger.debug("i: (s, a, r, s') / %+5d: (%2d, %d, %5.2f, %2d)     g: %3d  l: %3d", -1, -1, -1, -1, -1,
                           int(self._next_goal), self.n_steps)
-        self._state = [-1 for _ in range(self._hist_len + self.__n_feats)]
+        self._state = [-1 for _ in range(self._hist_len + 1)]
         return np.array(self._state)
 
     def close(self) -> bool:

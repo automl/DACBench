@@ -11,9 +11,9 @@ import numpy as np
 from gym import Env, spaces, wrappers
 from scipy.stats import truncnorm
 
-import AbstractEnv
+from daclib.abstract_env import AbstractEnv
 
-class Sigmoid(AbstractEnv):
+class SigmoidEnv(AbstractEnv):
     """
     Sigmoid reward
     """
@@ -24,24 +24,24 @@ class Sigmoid(AbstractEnv):
 
     def __init__(self,
                  config) -> None:
-        super().__init__()
-        self.rng = np.random.RandomState(seed)
+        super(SigmoidEnv, self).__init__(config)
+        self.rng = np.random.RandomState(config["seed"])
         self._c_step = 0
-        self.shifts = [self.n_steps / 2 for _ in config['action_vals']]
-        self.slopes = [-1 for _ in config['action_vals']]
+        self.shifts = [self.n_steps / 2 for _ in config['action_values']]
+        self.slopes = [-1 for _ in config['action_values']]
         self.reward_range = config["reward_range"]
         self.slope_multiplier = config["slope_multiplier"]
         self.action_vals = config["action_values"]
         self.n_actions = len(self.action_vals)
         self.action_mapper = {}
-        for idx, prod_idx in zip(range(np.prod(config['action_vals'])),
-                                       itertools.product(*[np.arange(val) for val in action_vals])):
+        for idx, prod_idx in zip(range(np.prod(config['action_values'])),
+                                       itertools.product(*[np.arange(val) for val in config["action_values"]])):
             self.action_mapper[idx] = prod_idx
         self.logger = logging.getLogger(self.__str__())
         self._prev_state = None
 
     def step(self, action: int):
-        done = super().step_()
+        done = super(SigmoidEnv, self).step_()
         action = self.action_mapper[action]
         assert self.n_actions == len(action), (
             f'action should be of length {self.n_actions}.')
@@ -68,7 +68,7 @@ class Sigmoid(AbstractEnv):
         return np.array(next_state), r, self._c_step >= self.n_steps, {}
 
     def reset(self) -> List[int]:
-        super.reset_()
+        super(SigmoidEnv, self).reset_()
         remaining_budget = self.n_steps - self._c_step
         next_state = [remaining_budget]
         for shift, slope in zip(self.shifts, self.slopes):
