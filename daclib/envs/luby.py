@@ -57,7 +57,7 @@ class LubyEnv(AbstractEnv):
             done (bool):  Specifies if environment is solved.
             info (None):
         """
-        done = super().reset()
+        done = super().step_()
         prev_state = self._state.copy()
         if action == self._next_goal:
             self._r = 0  # we don't want to allow for exploiting large rewards by tending towards long sequences
@@ -95,7 +95,7 @@ class LubyEnv(AbstractEnv):
           Returns:
             next_state (int):  Next state observed from the environment.
         """
-        super.reset()
+        super.reset_()
         self._r = 0
         self.n_steps = self._mi
 

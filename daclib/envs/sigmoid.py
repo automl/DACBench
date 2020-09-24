@@ -57,6 +57,7 @@ class Sigmoid(AbstractEnv):
         self._prev_state = None
 
     def step(self, action: int):
+        done = super().step_()
         action = self.action_mapper[action]
         assert self.n_actions == len(action), (
             f'action should be of length {self.n_actions}.')
@@ -83,7 +84,7 @@ class Sigmoid(AbstractEnv):
         return np.array(next_state), r, self._c_step >= self.n_steps, {}
 
     def reset(self) -> List[int]:
-        super.reset()
+        super.reset_()
         remaining_budget = self.n_steps - self._c_step
         next_state = [remaining_budget]
         for shift, slope in zip(self.shifts, self.slopes):
