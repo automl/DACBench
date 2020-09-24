@@ -4,6 +4,8 @@ from daclib.envs.sigmoid import SigmoidEnv
 from gym import spaces
 import numpy as np
 
+#IDEA: make this more user friendly, e.g. by automatically computing action/obs space args
+#Explicitly adding them as scenarios would also be good
 ACTION_VALUES = (5, 10)
 
 SIGMOID_DEFAULTS = {
