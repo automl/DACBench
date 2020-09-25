@@ -1,12 +1,26 @@
 # DAClib
-A benchmark library for Dynamic Algorithm Configuration.
+DAClib is a benchmark library for Dynamic Algorithm Configuration.
+Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
-## Usage
-Benchmarks follow the OpenAI gym standard interface. To create an environment:
-```python
-from daclib.bechmarks import some_benchmark
-env_settings = some_benchmark.get_config(instance_set="the_instance_set_name")
-env = some_benchmark.get_env(env_settings)
-agent = an_agent
-agent.train(env)
+## Installation
+We recommend to install DAClib in a virtual environment.
+To install, run the following:
 ```
+git clone https://github.com/automl/DAClib.git
+cd DAClib
+pip install .
+```
+
+## Using DAClib
+Benchmarks follow the OpenAI gym standard interface. To create an environment simply:
+```python
+from daclib.bechmarks.sigmoid_benchmark import SigmoidBenchmark
+benchmark = SigmoidBenchmark()
+benchmark.config.seed = 42
+env = SigmoidBenchmark.get_env()
+```
+The environment configuration can be changed manually or loaded from file.
+Additionally, there are several wrappers with added functionality available.
+
+## Reproducing previous experiments
+TODO
