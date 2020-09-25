@@ -43,9 +43,7 @@ class SigmoidEnv(AbstractEnv):
         self.action_mapper = {}
         for idx, prod_idx in zip(
             range(np.prod(config["action_values"])),
-            itertools.product(
-                *[np.arange(val) for val in config["action_values"]]
-            ),
+            itertools.product(*[np.arange(val) for val in config["action_values"]]),
         ):
             self.action_mapper[idx] = prod_idx
         self.logger = logging.getLogger(self.__str__())
@@ -148,9 +146,9 @@ class SigmoidEnv(AbstractEnv):
             plt.show()
             plt.cla()
             steps = np.arange(self.n_steps)
-            self.data = self._sig(
-                steps, self.slopes[0], self.shifts[0]
-            ) * self._sig(steps, self.slopes[1], self.shifts[1]).reshape(-1, 1)
+            self.data = self._sig(steps, self.slopes[0], self.shifts[0]) * self._sig(
+                steps, self.slopes[1], self.shifts[1]
+            ).reshape(-1, 1)
 
             plt.imshow(
                 self.data,

@@ -16,11 +16,8 @@ class AbstractEnv(gym.Env):
         self.c_step = 0
 
         self.reward_range = config["reward_range"]
-        self.observation_space = getattr(
-            gym.spaces, config["observation_space"]
-        )(
-            *config["observation_space_args"],
-            dtype=config["observation_space_type"]
+        self.observation_space = getattr(gym.spaces, config["observation_space"])(
+            *config["observation_space_args"], dtype=config["observation_space_type"]
         )
         self.action_space = getattr(gym.spaces, config["action_space"])(
             *config["action_space_args"]

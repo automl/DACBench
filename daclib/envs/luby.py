@@ -75,9 +75,7 @@ class LubyEnv(AbstractEnv):
         if action == self._next_goal:
             self._r = 0  # we don't want to allow for exploiting large rewards by tending towards long sequences
         else:  # mean and var chosen s.t. ~1/4 of rewards are positive
-            self._r = (
-                -1 if not self._fuzz else self.rng.normal(-1, self.noise_sig)
-            )
+            self._r = -1 if not self._fuzz else self.rng.normal(-1, self.noise_sig)
 
         if (
             self.__error < self.__lower
@@ -92,9 +90,7 @@ class LubyEnv(AbstractEnv):
         # value and the sticky error. Additive sticky error leads to sometimes rounding to the next time_step and
         # thereby repeated actions. With check against lower/upper we reset the sequence to the correct timestep in
         # the t+1 timestep.
-        luby_t = max(
-            1, int(np.round(self._jenny_i + self._start_shift + self.__error))
-        )
+        luby_t = max(1, int(np.round(self._jenny_i + self._start_shift + self.__error)))
         self._next_goal = self.__seq[luby_t - 1]
         if self._c_step - 1 < self._hist_len:
             self._state[(self._c_step - 1)] = action
@@ -130,9 +126,7 @@ class LubyEnv(AbstractEnv):
 
         self.__error = 0 + self._sticky_shif
         self._jenny_i = 1
-        luby_t = max(
-            1, int(np.round(self._jenny_i + self._start_shift + self.__error))
-        )
+        luby_t = max(1, int(np.round(self._jenny_i + self._start_shift + self.__error)))
         self._next_goal = self.__seq[luby_t - 1]
         self.logger.debug(
             "i: (s, a, r, s') / %+5d: (%2d, %d, %5.2f, %2d)     g: %3d  l: %3d",

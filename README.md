@@ -22,5 +22,10 @@ env = SigmoidBenchmark.get_env()
 The environment configuration can be changed manually or loaded from file.
 Additionally, there are several wrappers with added functionality available.
 
+## Benchmarks
+Currently, DAClib includes the following Benchmarks:
+- Sigmoid: tracing sigmoid curves in different dimensions and resolutions
+- Luby: learning the Luby sequence
+
 ## Reproducing previous experiments
 TODO
