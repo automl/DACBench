@@ -3,6 +3,8 @@ from daclib.envs import LubyEnv, luby_gen
 
 from gym import spaces
 import numpy as np
+import os
+import csv
 
 MAX_STEPS = 2 ** 6
 LUBY_SEQUENCE = np.log2([next(luby_gen(i)) for i in range(1, 2 * MAX_STEPS + 2)])
@@ -23,7 +25,7 @@ LUBY_DEFAULTS = objdict(
         "hist_length": HISTORY_LENGTH,
         "min_steps": 2 ** 3,
         "fuzzy": False,
-        "instance_set": "../instance_sets/luby_train.csv",
+        "instance_set_path": "../instance_sets/luby_train.csv",
     }
 )
 
@@ -41,6 +43,9 @@ class LubyBenchmark(AbstractBenchmark):
         for key in LUBY_DEFAULTS:
             if not key in self.config:
                 self.config[key] = LUBY_DEFAULTS[key]
+
+        if not "instance_set" in self.config.keys():
+            self.read_instance_set()
 
     def get_benchmark_env(self):
         """
@@ -64,8 +69,13 @@ class LubyBenchmark(AbstractBenchmark):
         """
         self.config.cutoff = steps
         self.config.action_space_args = [int(np.log2(steps))]
-        luby_seq = np.log2([next(luby_gen(i)) for i in range(1, 2 * steps+ 2)])
-        self.config.observation_space_args= [np.array([-1 for _ in range(self.config.hist_length + 1)]), np.array([2 ** max(luby_seq + 1) for _ in range(self.config.hist_length+ 1)])]
+        luby_seq = np.log2([next(luby_gen(i)) for i in range(1, 2 * steps + 2)])
+        self.config.observation_space_args = [
+            np.array([-1 for _ in range(self.config.hist_length + 1)]),
+            np.array(
+                [2 ** max(luby_seq + 1) for _ in range(self.config.hist_length + 1)]
+            ),
+        ]
 
     def set_history_length(self, length):
         """
@@ -77,4 +87,15 @@ class LubyBenchmark(AbstractBenchmark):
             History length
         """
         self.config.hist_length = length
-        self.config.observation_space_args= [np.array([-1 for _ in range(length + 1)]), np.array([2 ** max(LUBY_SEQUENCE + 1) for _ in range(length+ 1)])]
+        self.config.observation_space_args = [
+            np.array([-1 for _ in range(length + 1)]),
+            np.array([2 ** max(LUBY_SEQUENCE + 1) for _ in range(length + 1)]),
+        ]
+
+    def read_instance_set(self):
+        path = os.path.dirname(os.path.abspath(__file__)) + "/" + self.config.instance_set_path
+        self.config["instance_set"] = {}
+        with open(path, 'r') as fh:
+            reader = csv.DictReader(fh)
+            for row in reader:
+                self.config["instance_set"][int(row['ID'])] = [float(shift) for shift in row['start'].split(",")] + [float(slope) for slope in row['sticky'].split(",")]

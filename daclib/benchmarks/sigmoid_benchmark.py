@@ -3,6 +3,8 @@ from daclib.envs import SigmoidEnv
 
 from gym import spaces
 import numpy as np
+import os
+import csv
 
 ACTION_VALUES = (5, 10)
 
@@ -21,7 +23,7 @@ SIGMOID_DEFAULTS = objdict(
         "action_values": ACTION_VALUES,
         "min_steps": 2 ** 3,
         "slope_multiplier": 2.0,
-        "instance_set": "../instance_sets/sigmoid_train.csv",
+        "instance_set_path": "../instance_sets/sigmoid_train.csv",
     }
 )
 
@@ -39,6 +41,9 @@ class SigmoidBenchmark(AbstractBenchmark):
         for key in SIGMOID_DEFAULTS:
             if not key in self.config:
                 self.config[key] = SIGMOID_DEFAULTS[key]
+
+        if not "instance_set" in self.config.keys():
+            self.read_instance_set()
 
     def get_benchmark_env(self):
         """
@@ -67,3 +72,11 @@ class SigmoidBenchmark(AbstractBenchmark):
             np.array([-np.inf for _ in range(1 + len(values) * 3)]),
             np.array([np.inf for _ in range(1 + len(values) * 3)]),
         ]
+
+    def read_instance_set(self):
+        path = os.path.dirname(os.path.abspath(__file__)) + "/" + self.config.instance_set_path
+        self.config["instance_set"] = {}
+        with open(path, 'r') as fh:
+            reader = csv.DictReader(fh)
+            for row in reader:
+                self.config.instance_set[int(row['ID'])] = [float(shift) for shift in row['shift'].split(",")] + [float(slope) for slope in row['slope'].split(",")]
