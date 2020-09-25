@@ -4,28 +4,42 @@ from daclib.envs.luby import LubyEnv, luby_gen
 from gym import spaces
 import numpy as np
 
-MAX_STEPS = 2**6
-LUBY_SEQUENCE = np.log2([next(luby_gen(i)) for i in range(1, 2*MAX_STEPS + 2)])
+MAX_STEPS = 2 ** 6
+LUBY_SEQUENCE = np.log2(
+    [next(luby_gen(i)) for i in range(1, 2 * MAX_STEPS + 2)]
+)
 HISTORY_LENGTH = 5
 
-LUBY_DEFAULTS = objdict({
-    "action_space": "Discrete",
-    "action_space_args": [int(np.log2(MAX_STEPS))],
-    "observation_space": "Box",
-    "observation_space_type": np.float32,
-    "observation_space_args": [np.array([-1 for _ in range(HISTORY_LENGTH + 1)]), np.array([2**max(LUBY_SEQUENCE + 1) for _ in range(HISTORY_LENGTH + 1)])],
-    "reward_range": (-1, 0),
-    "cutoff" : MAX_STEPS,
-    "hist_length": HISTORY_LENGTH,
-    "min_steps": 2**3,
-    "fuzzy": False,
-    "instance_set": "../instance_sets/luby_train.csv"
-})
+LUBY_DEFAULTS = objdict(
+    {
+        "action_space": "Discrete",
+        "action_space_args": [int(np.log2(MAX_STEPS))],
+        "observation_space": "Box",
+        "observation_space_type": np.float32,
+        "observation_space_args": [
+            np.array([-1 for _ in range(HISTORY_LENGTH + 1)]),
+            np.array(
+                [
+                    2 ** max(LUBY_SEQUENCE + 1)
+                    for _ in range(HISTORY_LENGTH + 1)
+                ]
+            ),
+        ],
+        "reward_range": (-1, 0),
+        "cutoff": MAX_STEPS,
+        "hist_length": HISTORY_LENGTH,
+        "min_steps": 2 ** 3,
+        "fuzzy": False,
+        "instance_set": "../instance_sets/luby_train.csv",
+    }
+)
+
 
 class LubyBenchmark(AbstractBenchmark):
     """
     Benchmark with default configuration & relevant functions for Sigmoid
     """
+
     def __init__(self, config_path=None):
         super(LubyBenchmark, self).__init__(config_path)
         if not self.config:

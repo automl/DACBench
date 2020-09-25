@@ -5,8 +5,8 @@ import numpy as np
 from gym import spaces
 from daclib.abstract_env import AbstractEnv
 
-class TestAbstractEnv(unittest.TestCase):
 
+class TestAbstractEnv(unittest.TestCase):
     def test_not_implemented_methods(self):
         env = self.make_env()
         with pytest.raises(NotImplementedError):
@@ -16,20 +16,25 @@ class TestAbstractEnv(unittest.TestCase):
             env.reset()
 
     def make_env(self):
-        config = {"action_space": "Discrete",
+        config = {
+            "action_space": "Discrete",
             "action_space_args": np.array([4]).astype(np.float32),
             "observation_space": "Box",
             "observation_space_type": np.float32,
-            "observation_space_args": [np.array([-1, -1, -1], dtype=np.float32), np.array([1, 1, 1], dtype=np.float32)],
+            "observation_space_args": [
+                np.array([-1, -1, -1], dtype=np.float32),
+                np.array([1, 1, 1], dtype=np.float32),
+            ],
             "reward_range": (-1, 0),
-            "cutoff" : 30,
-            "instance_set": [[1], [1]]}
+            "cutoff": 30,
+            "instance_set": [[1], [1]],
+        }
         env = AbstractEnv(config)
         return env
 
     def test_setup(self):
         env = self.make_env()
-        self.assertTrue(len(env.instance_set)>=1)
+        self.assertTrue(len(env.instance_set) >= 1)
         self.assertTrue(env.n_steps > 0)
         self.assertTrue(type(env.reward_range) is tuple)
         print(type(env.observation_space))
@@ -60,6 +65,13 @@ class TestAbstractEnv(unittest.TestCase):
         env.set_instance(100)
         self.assertTrue(100 == env.get_instance())
 
-        self.assertTrue(all([env.instance_set[k] == env.get_instance_set()[k] for k in range(len(env.instance_set))]))
+        self.assertTrue(
+            all(
+                [
+                    env.instance_set[k] == env.get_instance_set()[k]
+                    for k in range(len(env.instance_set))
+                ]
+            )
+        )
         env.set_instance_set(100)
         self.assertTrue(100 == env.get_instance_set())

@@ -4,8 +4,8 @@ import json
 import os
 from daclib.abstract_benchmark import AbstractBenchmark
 
-class TestAbstractBenchmark(unittest.TestCase):
 
+class TestAbstractBenchmark(unittest.TestCase):
     def test_not_implemented_method(self):
         bench = AbstractBenchmark()
         with pytest.raises(NotImplementedError):
@@ -19,19 +19,19 @@ class TestAbstractBenchmark(unittest.TestCase):
         bench = AbstractBenchmark()
 
         test_config = {"seed": 10}
-        with open("test_conf.json", 'w+') as fp:
+        with open("test_conf.json", "w+") as fp:
             json.dump(test_config, fp)
         self.assertTrue(bench.config.seed == 0)
         bench.read_config_file("test_conf.json")
         self.assertTrue(bench.config.seed == 10)
-        self.assertTrue(len(bench.config.keys())==1)
+        self.assertTrue(len(bench.config.keys()) == 1)
         os.remove("test_conf.json")
 
         bench.save_config("test_conf2.json")
-        with open("test_conf2.json", 'r') as fp:
+        with open("test_conf2.json", "r") as fp:
             recovered = json.load(fp)
         self.assertTrue(recovered["seed"] == 10)
-        self.assertTrue(len(recovered.keys())==1)
+        self.assertTrue(len(recovered.keys()) == 1)
         os.remove("test_conf2.json")
 
     def test_attributes(self):
