@@ -25,6 +25,7 @@ LUBY_DEFAULTS = objdict(
         "hist_length": HISTORY_LENGTH,
         "min_steps": 2 ** 3,
         "fuzzy": False,
+        "seed": 0,
         "instance_set_path": "../instance_sets/luby_train.csv",
     }
 )

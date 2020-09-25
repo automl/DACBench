@@ -23,6 +23,7 @@ SIGMOID_DEFAULTS = objdict(
         "action_values": ACTION_VALUES,
         "min_steps": 2 ** 3,
         "slope_multiplier": 2.0,
+        "seed": 0,
         "instance_set_path": "../instance_sets/sigmoid_train.csv",
     }
 )
