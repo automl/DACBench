@@ -1,7 +1,7 @@
 import ray
 from ray import tune
 import numpy as np
-from daclib.benchmarks.sigmoid_benchmark import SigmoidBenchmark
+from daclib.benchmarks import SigmoidBenchmark
 
 # Overwrite standard config, but adapt action space automatically
 def make_sigmoid(config):

@@ -1,5 +1,5 @@
 from daclib.abstract_benchmark import AbstractBenchmark, objdict
-from daclib.envs.luby import LubyEnv, luby_gen
+from daclib.envs import LubyEnv, luby_gen
 
 from gym import spaces
 import numpy as np
@@ -52,3 +52,29 @@ class LubyBenchmark(AbstractBenchmark):
             Luby environment
         """
         return LubyEnv(self.config)
+
+    def set_cutoff(self, steps):
+        """
+        Set cutoff and adapt dependencies
+
+        Parameters
+        -------
+        int
+            Maximum number of steps
+        """
+        self.config.cutoff = steps
+        self.config.action_space_args = [int(np.log2(steps))]
+        luby_seq = np.log2([next(luby_gen(i)) for i in range(1, 2 * steps+ 2)])
+        self.config.observation_space_args= [np.array([-1 for _ in range(self.config.hist_length + 1)]), np.array([2 ** max(luby_seq + 1) for _ in range(self.config.hist_length+ 1)])]
+
+    def set_history_length(self, length):
+        """
+        Set history length and adapt dependencies
+
+        Parameters
+        -------
+        int
+            History length
+        """
+        self.config.hist_length = length
+        self.config.observation_space_args= [np.array([-1 for _ in range(length + 1)]), np.array([2 ** max(LUBY_SEQUENCE + 1) for _ in range(length+ 1)])]

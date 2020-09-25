@@ -1,6 +1,6 @@
 import ray
 from ray import tune
-from daclib.benchmarks.luby_benchmark import LubyBenchmark
+from daclib.benchmarks import LubyBenchmark
 
 # Overwrite the default config and get env
 def make_luby(config):

@@ -1,5 +1,5 @@
 from daclib.abstract_benchmark import AbstractBenchmark, objdict
-from daclib.envs.sigmoid import SigmoidEnv
+from daclib.envs import SigmoidEnv
 
 from gym import spaces
 import numpy as np
