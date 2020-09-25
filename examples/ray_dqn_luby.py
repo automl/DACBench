@@ -2,6 +2,7 @@ import ray
 from ray import tune
 from daclib.benchmarks.luby_benchmark import LubyBenchmark
 
+# Overwrite the default config and get env
 def make_luby(config):
     bench = LubyBenchmark()
     for k in config.keys():
@@ -20,5 +21,4 @@ stop = {
 }
 
 results = tune.run("DQN", config=config, stop=stop)
-print(results)
 ray.shutdown()

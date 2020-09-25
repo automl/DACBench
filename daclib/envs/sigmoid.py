@@ -1,3 +1,10 @@
+"""
+Sigmoid environment from
+"Dynamic Algorithm Configuration:Foundation of a New Meta-Algorithmic Framework"
+by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
+Original environment authors: André Biedenkapp, H. Furkan Bozkurt
+"""
+
 import itertools
 import logging
 import os
@@ -15,7 +22,7 @@ from daclib.abstract_env import AbstractEnv
 
 class SigmoidEnv(AbstractEnv):
     """
-    Sigmoid reward
+    Environment for tracing sigmoid curves
     """
 
     def _sig(self, x, scaling, inflection):
@@ -41,6 +48,20 @@ class SigmoidEnv(AbstractEnv):
         self._prev_state = None
 
     def step(self, action: int):
+        """
+        Execute environment step
+
+        Parameters
+        ----------
+        action : int
+            action to execute
+
+        Returns
+        -------
+        np.array, float, bool, dict
+            state, reward, done, metainfo
+
+        """
         done = super(SigmoidEnv, self).step_()
         action = self.action_mapper[action]
         assert self.n_actions == len(action), (
@@ -68,6 +89,14 @@ class SigmoidEnv(AbstractEnv):
         return np.array(next_state), r, self._c_step >= self.n_steps, {}
 
     def reset(self) -> List[int]:
+        """
+        Resets env
+
+        Returns
+        -------
+        numpy.array
+            Environment state
+        """
         super(SigmoidEnv, self).reset_()
         remaining_budget = self.n_steps - self._c_step
         next_state = [remaining_budget]
@@ -80,9 +109,25 @@ class SigmoidEnv(AbstractEnv):
         return np.array(next_state)
 
     def close(self) -> bool:
+        """
+        Close Env
+
+        Returns
+        -------
+        bool
+            Closing confirmation
+        """
         return True
 
-    def render(self, mode: str, close: bool=True) -> None:
+    def render(self, mode: str) -> None:
+        """
+        Render env in human mode
+
+        Parameters
+        ----------
+        mode : str
+            Execution mode
+        """
         if mode == 'human' and self.n_actions == 2:
             plt.ion()
             plt.show()

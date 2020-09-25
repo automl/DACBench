@@ -1,3 +1,10 @@
+"""
+Luby environment from
+"Dynamic Algorithm Configuration:Foundation of a New Meta-Algorithmic Framework"
+by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
+Original environment authors: André Biedenkapp, H. Furkan Bozkurt
+"""
+
 import itertools
 import logging
 import os
@@ -17,9 +24,8 @@ from daclib.abstract_env import AbstractEnv
 # Instance IDEA 2: "Wiggle" luby i.e. luby(t + N(0, 0.1)) -> feat is sampled value
 class LubyEnv(AbstractEnv):
     """
-    Luby "cyclic" benchmark
+    Environment to learn Luby Sequence
     """
-
     def __init__(self,
                  config) -> None:
         super().__init__(config)
@@ -48,14 +54,19 @@ class LubyEnv(AbstractEnv):
         self.__error = 0
 
     def step(self, action: int):
-        """Function to interact with the environment.
-            Args:
-            action (int): one of [1, 2, 4, 8, 16, 32, 64, 128]/[0, 1, 2, 3, 4, 5, 6, 7]
-        Returns:
-            next_state (List[int]):  Next state observed from the environment.
-            reward (float):
-            done (bool):  Specifies if environment is solved.
-            info (None):
+        """
+        Execute environment step
+
+        Parameters
+        ----------
+        action : int
+            action to execute
+
+        Returns
+        -------
+        np.array, float, bool, dict
+            state, reward, done, metainfo
+
         """
         done = super(LubyEnv, self).step_()
         prev_state = self._state.copy()
@@ -92,8 +103,12 @@ class LubyEnv(AbstractEnv):
 
     def reset(self) -> List[int]:
         """
-          Returns:
-            next_state (int):  Next state observed from the environment.
+        Resets env
+
+        Returns
+        -------
+        numpy.array
+            Environment state
         """
         super(LubyEnv, self).reset_()
         self._r = 0
@@ -109,14 +124,32 @@ class LubyEnv(AbstractEnv):
         return np.array(self._state)
 
     def close(self) -> bool:
+        """
+        Close Env
+
+        Returns
+        -------
+        bool
+            Closing confirmation
+        """
         return True
 
-    def render(self, mode: str='human', close: bool=True) -> None:
+    #TODO: this should render!
+    def render(self, mode: str='human') -> None:
+        """
+        Render env in human mode
+
+        Parameters
+        ----------
+        mode : str
+            Execution mode
+        """
         if mode != 'human':
             raise NotImplementedError
         pass
 
 def luby_gen(i):
+    """ Generator for the Luby Sequence """
     for k in range(1, 33):
         if i == ((1 << k) - 1):
             yield 1 << (k-1)

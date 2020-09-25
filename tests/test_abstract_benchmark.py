@@ -13,8 +13,7 @@ class TestAbstractBenchmark(unittest.TestCase):
 
     def test_setup(self):
         bench = AbstractBenchmark()
-        self.assertTrue(bench.config.seed == 0)
-        self.assertTrue(len(bench.config.keys()) == 1)
+        self.assertTrue(bench.config == None)
 
     def test_config_file_management(self):
         bench = AbstractBenchmark()
@@ -37,12 +36,14 @@ class TestAbstractBenchmark(unittest.TestCase):
 
     def test_attributes(self):
         bench = AbstractBenchmark()
+        bench.config = {"seed": 0}
         self.assertTrue(bench.config.seed == bench.config["seed"])
         bench.config.seed = 42
         self.assertTrue(bench.config["seed"] == 42)
 
     def test_getters_and_setters(self):
         bench = AbstractBenchmark()
+        bench.config = {"seed": 0}
         config = bench.get_config()
         self.assertTrue(issubclass(type(config), dict))
 

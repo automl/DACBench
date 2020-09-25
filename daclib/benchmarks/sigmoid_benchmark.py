@@ -1,14 +1,12 @@
-from daclib.abstract_benchmark import AbstractBenchmark
+from daclib.abstract_benchmark import AbstractBenchmark, objdict
 from daclib.envs.sigmoid import SigmoidEnv
 
 from gym import spaces
 import numpy as np
 
-#IDEA: make this more user friendly, e.g. by automatically computing action/obs space args
-#Explicitly adding them as scenarios would also be good
 ACTION_VALUES = (5, 10)
 
-SIGMOID_DEFAULTS = {
+SIGMOID_DEFAULTS = objdict({
     "action_space": "Discrete",
     "action_space_args": [int(np.prod(ACTION_VALUES))],
     "observation_space": "Box",
@@ -20,9 +18,12 @@ SIGMOID_DEFAULTS = {
     "min_steps": 2**3,
     "slope_multiplier": 2.0,
     "instance_set": "../instance_sets/sigmoid_train.csv"
-}
+})
 
 class SigmoidBenchmark(AbstractBenchmark):
+    """
+    Benchmark with default configuration & relevant functions for Sigmoid
+    """
     def __init__(self, config_path=None):
         super(SigmoidBenchmark, self).__init__(config_path)
         if not self.config:
@@ -33,4 +34,26 @@ class SigmoidBenchmark(AbstractBenchmark):
                 self.config[key] = SIGMOID_DEFAULTS[key]
 
     def get_benchmark_env(self):
+            """
+            Return Sigmoid env with current configuration
+
+            Returns
+            -------
+            SigmoidEnv
+                Sigmoid environment
+
+            """
         return SigmoidEnv(self.config)
+
+    def set_action_values(self, values):
+            """
+            Adapt action values and update dependencies
+
+            Parameters
+            ----------
+            values: list
+                A list of possible actions per dimension
+            """
+        self.config.action_values = values
+        self.config.action_space_args = [int(np.prod(values))]
+        self.config.observation_space_args = [np.array([-np.inf for _ in range(1 + len(values) * 3)]), np.array([np.inf for _ in range(1 + len(values) * 3)])]

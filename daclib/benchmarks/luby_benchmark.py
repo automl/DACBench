@@ -1,4 +1,4 @@
-from daclib.abstract_benchmark import AbstractBenchmark
+from daclib.abstract_benchmark import AbstractBenchmark, objdict
 from daclib.envs.luby import LubyEnv, luby_gen
 
 from gym import spaces
@@ -8,7 +8,7 @@ MAX_STEPS = 2**6
 LUBY_SEQUENCE = np.log2([next(luby_gen(i)) for i in range(1, 2*MAX_STEPS + 2)])
 HISTORY_LENGTH = 5
 
-LUBY_DEFAULTS = {
+LUBY_DEFAULTS = objdict({
     "action_space": "Discrete",
     "action_space_args": [int(np.log2(MAX_STEPS))],
     "observation_space": "Box",
@@ -20,9 +20,12 @@ LUBY_DEFAULTS = {
     "min_steps": 2**3,
     "fuzzy": False,
     "instance_set": "../instance_sets/luby_train.csv"
-}
+})
 
 class LubyBenchmark(AbstractBenchmark):
+    """
+    Benchmark with default configuration & relevant functions for Sigmoid
+    """
     def __init__(self, config_path=None):
         super(LubyBenchmark, self).__init__(config_path)
         if not self.config:
@@ -33,4 +36,12 @@ class LubyBenchmark(AbstractBenchmark):
                 self.config[key] = LUBY_DEFAULTS[key]
 
     def get_benchmark_env(self):
+        """
+        Return Luby env with current configuration
+
+        Returns
+        -------
+        LubyEnv
+            Luby environment
+        """
         return LubyEnv(self.config)

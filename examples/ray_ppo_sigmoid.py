@@ -3,24 +3,26 @@ from ray import tune
 import numpy as np
 from daclib.benchmarks.sigmoid_benchmark import SigmoidBenchmark
 
+# Overwrite standard config, but adapt action space automatically
 def make_sigmoid(config):
     bench = SigmoidBenchmark()
     for k in config.keys():
-        bench.config[k] = config[k]
+        if k == "action_values":
+            bench.set_action_values(config[k])
+        else:
+            bench.config[k] = config[k]
     return bench.get_benchmark_env()
 
 ray.init()
 tune.register_env("sigmoid", make_sigmoid)
 
-#Play 5D scenario
-action_values = (3, 3, 3, 3, 3)
+#Play 5D scenario with irregular action count
+action_values = (3, 3, 8, 8, 8)
 config = {
     "env": "sigmoid",
     "env_config": {
         "seed": 0,
         "action_values": action_values,
-        "observation_space_args": [np.array([-np.inf for _ in range(1 + len(action_values) * 3)]), np.array([np.inf for _ in range(1 + len(action_values) * 3)])],
-        "action_space_args": [int(np.prod(action_values))]
     }}
 stop = {
     "training_iteration": 20
