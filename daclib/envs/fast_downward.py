@@ -1,3 +1,10 @@
+"""
+Planning environment from
+"Learning Heuristic Selection with Dynamic Algorithm Configuration"
+by David Speck, André Biedenkapp, Frank Hutter, Robert Mattmüller und Marius Lindauer.
+Original environment authors: David Speck, André Biedenkapp
+"""
+
 import socket
 import time
 import typing
