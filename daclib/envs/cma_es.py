@@ -1,3 +1,10 @@
+"""
+CMA-ES environment adapted from CMAWorld in
+"Learning Step-size Adaptation in CMA-ES"
+by G.Shala and A. Biedenkapp and N.Awad and S. Adriaensen and M.Lindauer and F. Hutter.
+Original author: Gresa Shala
+"""
+
 import numpy as np
 from collections import deque
 from cma.evolution_strategy import CMAEvolutionStrategy, CMAOptions
@@ -25,8 +32,21 @@ class CMAESEnv(AbstractEnv):
         self.func_values = []
         self.lock = threading.Lock()
 
-    # action is of shape (dU,)
     def step(self, action):
+        """
+        Execute environment step
+
+        Parameters
+        ----------
+        action : list
+            action to execute
+
+        Returns
+        -------
+        np.array, float, bool, dict
+            state, reward, done, metainfo
+
+        """
         done = super(CMAESEnv, self).step_()
         self.historys.append([self.f_difference, self.velocity])
         done = done or self.es.stop()
@@ -47,9 +67,17 @@ class CMAESEnv(AbstractEnv):
         self.cur_loc = self.es.best.x
         self.cur_sigma = self.es.sigma
         self.cur_obj_val = self.es.best.f
-        return self.get_state(), , done, {}
+        return np.array(self.get_state().values()), self.fbest, done, {}
 
     def reset(self):
+        """
+        Reset environment
+
+        Returns
+        -------
+        np.array
+            state
+        """
         super(CMAESEnv, self).reset_()
         self.history.clear()
         self.past_obj_vals.clear()
@@ -72,9 +100,19 @@ class CMAESEnv(AbstractEnv):
         self.velocity = np.abs(np.amin(self.func_values) - self.cur_obj_val)/float(self.cur_obj_val)
         self.es.mean_old = self.es.mean
         self.history.append([self.f_difference, self.velocity])
+        return np.array(self.get_state().values())
 
-
+    # TODO: this should not depend on GPS
     def get_state(self):
+        """
+        Gather state description
+
+        Returns
+        -------
+        dict
+            state
+
+        """
         past_obj_val_deltas = []
         for i in range(1,len(self.past_obj_vals)):
             past_obj_val_deltas.append((self.past_obj_vals[i] - self.past_obj_vals[i-1]+1e-3) / float(self.past_obj_vals[i-1]))
