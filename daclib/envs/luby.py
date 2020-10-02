@@ -18,7 +18,7 @@ import numpy as np
 from gym import Env, spaces, wrappers
 from scipy.stats import truncnorm
 
-from daclib.abstract_env import AbstractEnv
+from daclib import AbstractEnv
 
 # Instance IDEA 1: shift luby seq -> feat is sum of skipped action values
 # Instance IDEA 2: "Wiggle" luby i.e. luby(t + N(0, 0.1)) -> feat is sampled value

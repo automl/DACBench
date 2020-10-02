@@ -16,7 +16,7 @@ from typing import Union
 import subprocess
 
 import numpy as np
-from daclib.abstract_env import AbstractEnv
+from daclib import AbstractEnv
 
 
 class StateType(Enum):

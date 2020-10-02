@@ -2,3 +2,5 @@ gym
 numpy
 scipy
 ray
+cma
+gps

@@ -18,7 +18,7 @@ import numpy as np
 from gym import Env, spaces, wrappers
 from scipy.stats import truncnorm
 
-from daclib.abstract_env import AbstractEnv
+from daclib import AbstractEnv
 
 
 class SigmoidEnv(AbstractEnv):
