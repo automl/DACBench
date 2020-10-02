@@ -16,10 +16,6 @@ from typing import Union
 import subprocess
 
 import numpy as np
-from gym import Env
-from gym.spaces import Discrete, Box
-from gym.utils import seeding
-
 from daclib.abstract_env import AbstractEnv
 
 
@@ -135,7 +131,10 @@ class FastDownwardEnv(AbstractEnv):
         Based on comment from SO see [1]
         [1] https://stackoverflow.com/a/17668009
 
-        :param msg: The message as byte
+        Parameters
+        ----------
+        msg : bytes
+            The message as byte
         """
         # Prefix each message with a 4-byte length (network byte order)
         msg = str.encode("{:>04d}".format(len(msg))) + msg
@@ -145,6 +144,11 @@ class FastDownwardEnv(AbstractEnv):
         """
         Recieve a whole message. The message has to be prepended with its total size
         Based on comment from SO see [1]
+
+        Returns
+        ----------
+        bytes
+            The message as byte
         """
         # Read message length and unpack it into an integer
         raw_msglen = self.recvall(4)
@@ -159,7 +163,15 @@ class FastDownwardEnv(AbstractEnv):
         Given we know the size we want to recieve, we can recieve that amount of bytes.
         Based on comment from SO see [1]
 
-        :param n: Number of bytes to expect in the data
+        Parameters
+        ---------
+        n: int
+            Number of bytes to expect in the data
+
+        Returns
+        ----------
+        bytes
+            The message as byte
         """
         # Helper function to recv n bytes or return None if EOF is hit
         data = b""
@@ -173,7 +185,11 @@ class FastDownwardEnv(AbstractEnv):
     def _process_data(self):
         """
         Split received json into state reward and done
-        :return:
+
+        Returns
+        ----------
+        np.array, float, bool
+            state, reward, done
         """
         msg = self.recv_msg().decode()
         # print("----------------------------")
@@ -218,9 +234,17 @@ class FastDownwardEnv(AbstractEnv):
 
     def step(self, action: typing.Union[int, typing.List[int]]):
         """
-        Play RL-Action
-        :param action:
-        :return:
+        Environment step
+
+        Parameters
+        ---------
+        action: typing.Union[int, List[int]]
+            Parameter(s) to apply
+
+        Returns
+        ----------
+        np.array, float, bool, dict
+            state, reward, done, info
         """
         self.done = super(FastDownwardEnv, self).step_()
         if not np.issubdtype(
@@ -249,8 +273,12 @@ class FastDownwardEnv(AbstractEnv):
 
     def reset(self):
         """
-        Initialize FD
-        :return:
+        Reset environment
+
+        Returns
+        ----------
+        np.array
+            State after reset
         """
         super(FastDownwardEnv, self).reset_()
         if self.fd:
@@ -326,10 +354,7 @@ class FastDownwardEnv(AbstractEnv):
             self.socket = None
 
     def close(self):
-        """
-        Needs to "kill" the environment
-        :return:
-        """
+        """Needs to "kill" the environment"""
         self.kill_connection()
 
     def render(self, mode: str = "human") -> None:
@@ -339,29 +364,3 @@ class FastDownwardEnv(AbstractEnv):
         :return: None
         """
         pass
-
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
-
-
-if __name__ == "__main__":
-    """
-    Only for debugging purposes
-    """
-    HOST = ""  # The server's hostname or IP address
-    PORT = 54321  # The port used by the server
-
-    env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2)
-    env.reset()
-    try:
-        for i in range(100):
-            done = False
-            while not done:
-                s, r, done, _ = env.step(np.random.randint(0, 2))
-            print(i)
-            if i < 99:
-                env.reset()
-    finally:
-        print("Closing Env")
-        env.close()

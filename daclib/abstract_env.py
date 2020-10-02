@@ -1,5 +1,5 @@
 import gym
-
+from gym.utils import seeding
 
 class AbstractEnv(gym.Env):
     """
@@ -11,6 +11,8 @@ class AbstractEnv(gym.Env):
         self.instance_set = config["instance_set"]
         self.inst_id = 0
         self.instance = self.instance_set[self.inst_id]
+
+        self.np_random = None
 
         self.n_steps = config["cutoff"]
         self.c_step = 0
@@ -120,3 +122,15 @@ class AbstractEnv(gym.Env):
             New instance
         """
         self.instance = instance
+
+    def seed(self, seed=None):
+        """
+        Set rng seed
+
+        Parameters
+        ----------
+        seed:
+            seed for rng
+        """
+        self.np_random, seed = seeding.np_random(seed)
+        return [seed]
