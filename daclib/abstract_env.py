@@ -33,7 +33,6 @@ class AbstractEnv(gym.Env):
         -------
         bool
             End of episode
-
         """
         done = False
         self.c_step += 1

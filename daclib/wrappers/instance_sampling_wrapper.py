@@ -18,13 +18,34 @@ class InstanceSamplingWrapper(Wrapper):
             return
 
     def reset(self):
+        """
+        Reset environment and use sampled instance for training
+
+        Returns
+        -------
+        np.array
+            state
+        """
         instance = self.sampling_function()
         env.set_instance_set(instance)
         env.set_inst_id(0)
         return self.env.reset()
 
-    # TODO: check if this actually works
+    # TODO: heck if this works
     def fit_dist_from_file(self, path):
+        """
+        Approximate instance distribution in given instance file
+
+        Parameters
+        ----------
+        path : str
+            path to instance file
+
+        Returns
+        ---------
+        method
+            sampling method for new instances
+        """
         instances = read_instances(path)
         dists = []
         for i in len(instances[0]):
