@@ -110,7 +110,7 @@ class SigmoidEnv(AbstractEnv):
         """
         super(SigmoidEnv, self).reset_()
         self.shifts = self.instance[:self.n_actions]
-        self.slopes = self.instance[self.n_actions:]
+        self.slopes = self.instance [self.n_actions:]
         remaining_budget = self.n_steps - self._c_step
         next_state = [remaining_budget]
         for shift, slope in zip(self.shifts, self.slopes):
