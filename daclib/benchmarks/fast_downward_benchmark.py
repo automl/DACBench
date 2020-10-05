@@ -14,7 +14,10 @@ FD_DEFAULTS = objdict(
         "action_space_args": [NUM_HEURISTICS],
         "observation_space": "Box",
         "observation_space_type": np.float32,
-        "observation_space_args": [np.array([-np.inf for _ in range(5*NUM_HEURISTICS)]), np.array([np.inf for _ in range(5*NUM_HEURISTICS)])],
+        "observation_space_args": [
+            np.array([-np.inf for _ in range(5 * NUM_HEURISTICS)]),
+            np.array([np.inf for _ in range(5 * NUM_HEURISTICS)]),
+        ],
         "reward_range": (-np.inf, 0),
         "cutoff": 1e6,
         "use_general_state_info": True,
@@ -24,12 +27,13 @@ FD_DEFAULTS = objdict(
         "fd_seed": 0,
         "num_steps": None,
         "state_type": 2,
-        "config_dir": '.',
+        "config_dir": ".",
         "port_file_id": None,
         "seed": 0,
         "max_rand_steps": 0,
         "instance_set_path": "../instance_sets/fast_downward/train",
-        "fd_path": os.path.dirname(os.path.abspath(__file__)) + "/../envs/fast-downward/fast-downward.py"
+        "fd_path": os.path.dirname(os.path.abspath(__file__))
+        + "/../envs/fast-downward/fast-downward.py",
     }
 )
 
@@ -68,13 +72,17 @@ class FastDownwardBenchmark(AbstractBenchmark):
         """
         directory = self.config.instance_set_path
         instances = []
-        path = os.path.dirname(os.path.abspath(__file__)) + "/" + self.config.instance_set_path
+        path = (
+            os.path.dirname(os.path.abspath(__file__))
+            + "/"
+            + self.config.instance_set_path
+        )
         for root, dirs, files in os.walk(path):
             for file in files:
                 if (
                     file.endswith(".pddl") or file.endswith(".sas")
                 ) and not file.startswith("domain"):
-                    instances.append(os.path.join(root,file))
+                    instances.append(os.path.join(root, file))
         self.config["instance_set"] = instances
 
         if instances[0].endswith(".pddl"):

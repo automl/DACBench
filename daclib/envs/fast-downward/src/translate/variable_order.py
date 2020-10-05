@@ -8,6 +8,7 @@ import sccs
 
 DEBUG = False
 
+
 class CausalGraph(object):
     """Weighted causal graph used for defining a variable order.
 
@@ -71,7 +72,7 @@ class CausalGraph(object):
 
     def get_strongly_connected_components(self):
         unweighted_graph = [[] for _ in range(self.num_variables)]
-        assert(len(self.weighted_graph) <= self.num_variables)
+        assert len(self.weighted_graph) <= self.num_variables
         for source, target_weights in self.weighted_graph.items():
             unweighted_graph[source] = sorted(target_weights.keys())
         return sccs.get_sccs_adjacency_list(unweighted_graph)
@@ -152,13 +153,15 @@ class MaxDAG(object):
             min_key = weights[0]
             min_elem = None
             entries = weight_to_nodes[min_key]
-            while (entries and
-                (min_elem is None or min_elem in done or
-                min_key > incoming_weights[min_elem])):
+            while entries and (
+                min_elem is None
+                or min_elem in done
+                or min_key > incoming_weights[min_elem]
+            ):
                 min_elem = entries.popleft()
             if not entries:
                 del weight_to_nodes[min_key]
-                heapq.heappop(weights) # remove min_key from heap
+                heapq.heappop(weights)  # remove min_key from heap
             if min_elem is None or min_elem in done:
                 # since we use lazy deletion from the heap weights,
                 # there can be weights with a "done" entry in
@@ -184,6 +187,7 @@ class MaxDAG(object):
 
 class VariableOrder(object):
     """Apply a given variable order to a SAS task."""
+
     def __init__(self, ordering):
         """Ordering is a list of variable numbers in the desired order.
 
@@ -219,20 +223,22 @@ class VariableOrder(object):
         init.values = [init.values[var] for var in self.ordering]
 
     def _apply_to_goal(self, goal):
-        goal.pairs = sorted((self.new_var[var], val)
-                            for var, val in goal.pairs
-                            if var in self.new_var)
+        goal.pairs = sorted(
+            (self.new_var[var], val) for var, val in goal.pairs if var in self.new_var
+        )
 
     def _apply_to_mutexes(self, mutexes):
         new_mutexes = []
         for group in mutexes:
-            facts = [(self.new_var[var], val) for var, val in group.facts
-                     if var in self.new_var]
+            facts = [
+                (self.new_var[var], val)
+                for var, val in group.facts
+                if var in self.new_var
+            ]
             if facts and len(set(var for var, _ in facts)) > 1:
                 group.facts = facts
                 new_mutexes.append(group)
-        print("%s of %s mutex groups necessary." % (len(new_mutexes),
-                                                    len(mutexes)))
+        print("%s of %s mutex groups necessary." % (len(new_mutexes), len(mutexes)))
         mutexes[:] = new_mutexes
 
     def _apply_to_operators(self, operators):
@@ -241,19 +247,21 @@ class VariableOrder(object):
             pre_post = []
             for eff_var, pre, post, cond in op.pre_post:
                 if eff_var in self.new_var:
-                    new_cond = list((self.new_var[var], val)
-                                    for var, val in cond
-                                    if var in self.new_var)
-                    pre_post.append(
-                        (self.new_var[eff_var], pre, post, new_cond))
+                    new_cond = list(
+                        (self.new_var[var], val)
+                        for var, val in cond
+                        if var in self.new_var
+                    )
+                    pre_post.append((self.new_var[eff_var], pre, post, new_cond))
             if pre_post:
                 op.pre_post = pre_post
-                op.prevail = [(self.new_var[var], val)
-                              for var, val in op.prevail
-                              if var in self.new_var]
+                op.prevail = [
+                    (self.new_var[var], val)
+                    for var, val in op.prevail
+                    if var in self.new_var
+                ]
                 new_ops.append(op)
-        print("%s of %s operators necessary." % (len(new_ops),
-                                                 len(operators)))
+        print("%s of %s operators necessary." % (len(new_ops), len(operators)))
         operators[:] = new_ops
 
     def _apply_to_axioms(self, axioms):
@@ -261,18 +269,20 @@ class VariableOrder(object):
         for ax in axioms:
             eff_var, eff_val = ax.effect
             if eff_var in self.new_var:
-                ax.condition = [(self.new_var[var], val)
-                                for var, val in ax.condition
-                                if var in self.new_var]
+                ax.condition = [
+                    (self.new_var[var], val)
+                    for var, val in ax.condition
+                    if var in self.new_var
+                ]
                 ax.effect = (self.new_var[eff_var], eff_val)
                 new_axioms.append(ax)
-        print("%s of %s axiom rules necessary." % (len(new_axioms),
-                                                   len(axioms)))
+        print("%s of %s axiom rules necessary." % (len(new_axioms), len(axioms)))
         axioms[:] = new_axioms
 
 
-def find_and_apply_variable_order(sas_task, reorder_vars=True,
-                                  filter_unimportant_vars=True):
+def find_and_apply_variable_order(
+    sas_task, reorder_vars=True, filter_unimportant_vars=True
+):
     if reorder_vars or filter_unimportant_vars:
         cg = CausalGraph(sas_task)
         if reorder_vars:
@@ -281,7 +291,6 @@ def find_and_apply_variable_order(sas_task, reorder_vars=True,
             order = list(range(len(sas_task.variables.ranges)))
         if filter_unimportant_vars:
             necessary = cg.calculate_important_vars(sas_task.goal)
-            print("%s of %s variables necessary." % (len(necessary),
-                                                     len(order)))
+            print("%s of %s variables necessary." % (len(necessary), len(order)))
             order = [var for var in order if necessary[var]]
         VariableOrder(order).apply_to_task(sas_task)

@@ -11,6 +11,7 @@ import options
 import pddl
 import timers
 
+
 class BalanceChecker(object):
     def __init__(self, task, reachable_action_params):
         self.predicates_to_add_actions = defaultdict(set)
@@ -22,17 +23,21 @@ class BalanceChecker(object):
             heavy_act = action
             for eff in action.effects:
                 too_heavy_effects.append(eff)
-                if eff.parameters: # universal effect
+                if eff.parameters:  # universal effect
                     create_heavy_act = True
                     too_heavy_effects.append(eff.copy())
                 if not eff.literal.negated:
                     predicate = eff.literal.predicate
                     self.predicates_to_add_actions[predicate].add(action)
             if create_heavy_act:
-                heavy_act = pddl.Action(action.name, action.parameters,
-                                        action.num_external_parameters,
-                                        action.precondition, too_heavy_effects,
-                                        action.cost)
+                heavy_act = pddl.Action(
+                    action.name,
+                    action.parameters,
+                    action.num_external_parameters,
+                    action.precondition,
+                    too_heavy_effects,
+                    action.cost,
+                )
             # heavy_act: duplicated universal effects and assigned unique names
             # to all quantified variables (implicitly in constructor)
             self.action_to_heavy_action[action] = heavy_act
@@ -64,10 +69,16 @@ class BalanceChecker(object):
                 precond_parts.append(new_cond)
             precond = pddl.Conjunction(precond_parts).simplified()
             return pddl.Action(
-                action.name, action.parameters, action.num_external_parameters,
-                precond, action.effects, action.cost)
+                action.name,
+                action.parameters,
+                action.num_external_parameters,
+                precond,
+                action.effects,
+                action.cost,
+            )
         else:
             return action
+
 
 def get_fluents(task):
     fluent_names = set()
@@ -76,6 +87,7 @@ def get_fluents(task):
             fluent_names.add(eff.literal.predicate)
     return [pred for pred in task.predicates if pred.name in fluent_names]
 
+
 def get_initial_invariants(task):
     for predicate in get_fluents(task):
         all_args = list(range(len(predicate.arguments)))
@@ -83,6 +95,7 @@ def get_initial_invariants(task):
             order = [i for i in all_args if i != omitted_arg]
             part = invariants.InvariantPart(predicate.name, order, omitted_arg)
             yield invariants.Invariant((part,))
+
 
 def find_invariants(task, reachable_action_params):
     limit = options.invariant_generation_max_candidates
@@ -106,6 +119,7 @@ def find_invariants(task, reachable_action_params):
         if candidate.check_balance(balance_checker, enqueue_func):
             yield candidate
 
+
 def useful_groups(invariants, initial_facts):
     predicate_to_invariants = defaultdict(list)
     for invariant in invariants:
@@ -127,12 +141,14 @@ def useful_groups(invariants, initial_facts):
     for (invariant, parameters) in useful_groups:
         yield [part.instantiate(parameters) for part in sorted(invariant.parts)]
 
+
 def get_groups(task, reachable_action_params=None):
     with timers.timing("Finding invariants", block=True):
         invariants = sorted(find_invariants(task, reachable_action_params))
     with timers.timing("Checking invariant weight"):
         result = list(useful_groups(invariants, task.init))
     return result
+
 
 if __name__ == "__main__":
     import normalize

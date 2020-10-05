@@ -43,10 +43,13 @@ def find_domain_filename(task_filename):
             return domain_filename
 
     returncodes.exit_with_driver_input_error(
-        "Error: Could not find domain file using automatic naming rules.")
+        "Error: Could not find domain file using automatic naming rules."
+    )
+
 
 # Shell-escaping code taken from Python's shlex.quote (missing in Python < 3.3).
-_find_unsafe = re.compile(r'[^\w@%+=:,./-]').search
+_find_unsafe = re.compile(r"[^\w@%+=:,./-]").search
+
 
 def shell_escape(s):
     """Return a shell-escaped version of the string *s*."""

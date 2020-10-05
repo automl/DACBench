@@ -50,31 +50,69 @@ that exceed their time or memory limit are aborted, and the next
 configuration is run."""
 
 EXAMPLE_PORTFOLIO = os.path.relpath(
-    aliases.PORTFOLIOS["seq-opt-fdss-1"], start=util.REPO_ROOT_DIR)
+    aliases.PORTFOLIOS["seq-opt-fdss-1"], start=util.REPO_ROOT_DIR
+)
 
 EXAMPLES = [
-    ("Translate and find a plan with A* + LM-Cut:",
-     ["./fast-downward.py", "misc/tests/benchmarks/gripper/prob01.pddl",
-      "--search", '"astar(lmcut())"']),
-    ("Translate and run no search:",
-     ["./fast-downward.py", "--translate",
-      "misc/tests/benchmarks/gripper/prob01.pddl"]),
-    ("Run predefined configuration (LAMA-2011) on translated task:",
-     ["./fast-downward.py", "--alias", "seq-sat-lama-2011", "output.sas"]),
-    ("Run a portfolio on a translated task:",
-     ["./fast-downward.py", "--portfolio", EXAMPLE_PORTFOLIO,
-      "--search-time-limit", "30m", "output.sas"]),
-    ("Run the search component in debug mode (with assertions enabled) "
-     "and validate the resulting plan:",
-     ["./fast-downward.py", "--debug", "output.sas", "--search", '"astar(ipdb())"']),
-    ("Pass options to translator and search components:",
-     ["./fast-downward.py", "misc/tests/benchmarks/gripper/prob01.pddl",
-      "--translate-options", "--full-encoding",
-      "--search-options", "--search", '"astar(lmcut())"']),
-    ("Find a plan and validate it:",
-     ["./fast-downward.py", "--validate",
-      "misc/tests/benchmarks/gripper/prob01.pddl",
-      "--search", '"astar(cegar())"']),
+    (
+        "Translate and find a plan with A* + LM-Cut:",
+        [
+            "./fast-downward.py",
+            "misc/tests/benchmarks/gripper/prob01.pddl",
+            "--search",
+            '"astar(lmcut())"',
+        ],
+    ),
+    (
+        "Translate and run no search:",
+        [
+            "./fast-downward.py",
+            "--translate",
+            "misc/tests/benchmarks/gripper/prob01.pddl",
+        ],
+    ),
+    (
+        "Run predefined configuration (LAMA-2011) on translated task:",
+        ["./fast-downward.py", "--alias", "seq-sat-lama-2011", "output.sas"],
+    ),
+    (
+        "Run a portfolio on a translated task:",
+        [
+            "./fast-downward.py",
+            "--portfolio",
+            EXAMPLE_PORTFOLIO,
+            "--search-time-limit",
+            "30m",
+            "output.sas",
+        ],
+    ),
+    (
+        "Run the search component in debug mode (with assertions enabled) "
+        "and validate the resulting plan:",
+        ["./fast-downward.py", "--debug", "output.sas", "--search", '"astar(ipdb())"'],
+    ),
+    (
+        "Pass options to translator and search components:",
+        [
+            "./fast-downward.py",
+            "misc/tests/benchmarks/gripper/prob01.pddl",
+            "--translate-options",
+            "--full-encoding",
+            "--search-options",
+            "--search",
+            '"astar(lmcut())"',
+        ],
+    ),
+    (
+        "Find a plan and validate it:",
+        [
+            "./fast-downward.py",
+            "--validate",
+            "misc/tests/benchmarks/gripper/prob01.pddl",
+            "--search",
+            '"astar(cegar())"',
+        ],
+    ),
 ]
 
 EPILOG = """component options:
@@ -86,7 +124,9 @@ EPILOG = """component options:
 Examples:
 
 %s
-""" % "\n\n".join("%s\n%s" % (desc, " ".join(cmd)) for desc, cmd in EXAMPLES)
+""" % "\n\n".join(
+    "%s\n%s" % (desc, " ".join(cmd)) for desc, cmd in EXAMPLES
+)
 
 COMPONENTS_PLUS_OVERALL = ["translate", "search", "validate", "overall"]
 DEFAULT_SAS_FILE = "output.sas"
@@ -96,15 +136,20 @@ DEFAULT_SAS_FILE = "output.sas"
 Function to emulate the behavior of ArgumentParser.error, but with our
 custom exit codes instead of 2.
 """
+
+
 def print_usage_and_exit_with_driver_input_error(parser, msg):
     parser.print_usage()
-    returncodes.exit_with_driver_input_error("{}: error: {}".format(os.path.basename(sys.argv[0]), msg))
+    returncodes.exit_with_driver_input_error(
+        "{}: error: {}".format(os.path.basename(sys.argv[0]), msg)
+    )
 
 
 class RawHelpFormatter(argparse.HelpFormatter):
     """Preserve newlines and spacing."""
+
     def _fill_text(self, text, width, indent):
-        return ''.join([indent + line for line in text.splitlines(True)])
+        return "".join([indent + line for line in text.splitlines(True)])
 
     def _format_args(self, action, default_metavar):
         """Show explicit help for remaining args instead of "..."."""
@@ -174,14 +219,17 @@ def _split_planner_args(parser, args):
 
 def _check_mutex_args(parser, args, required=False):
     for pos, (name1, is_specified1) in enumerate(args):
-        for name2, is_specified2 in args[pos + 1:]:
+        for name2, is_specified2 in args[pos + 1 :]:
             if is_specified1 and is_specified2:
                 print_usage_and_exit_with_driver_input_error(
-                    parser, "cannot combine %s with %s" % (name1, name2))
+                    parser, "cannot combine %s with %s" % (name1, name2)
+                )
     if required and not any(is_specified for _, is_specified in args):
         print_usage_and_exit_with_driver_input_error(
-            parser, "exactly one of {%s} has to be specified" %
-            ", ".join(name for name, _ in args))
+            parser,
+            "exactly one of {%s} has to be specified"
+            % ", ".join(name for name, _ in args),
+        )
 
 
 def _looks_like_search_input(filename):
@@ -244,22 +292,24 @@ def _set_components_and_inputs(parser, args):
         if "--help" in args.translate_options or "-h" in args.translate_options:
             args.translate_inputs = []
         elif num_files == 1:
-            task_file, = args.filenames
+            (task_file,) = args.filenames
             domain_file = util.find_domain_filename(task_file)
             args.translate_inputs = [domain_file, task_file]
         elif num_files == 2:
             args.translate_inputs = args.filenames
         else:
             print_usage_and_exit_with_driver_input_error(
-                parser, "translator needs one or two input files")
+                parser, "translator needs one or two input files"
+            )
     elif first == "search":
         if "--help" in args.search_options:
             args.search_input = None
         elif num_files == 1:
-            args.search_input, = args.filenames
+            (args.search_input,) = args.filenames
         else:
             print_usage_and_exit_with_driver_input_error(
-                parser, "search needs exactly one input file")
+                parser, "search needs exactly one input file"
+            )
     else:
         assert False, first
 
@@ -267,8 +317,10 @@ def _set_components_and_inputs(parser, args):
 def _set_translator_output_options(parser, args):
     if any("--sas-file" in opt for opt in args.translate_options):
         print_usage_and_exit_with_driver_input_error(
-            parser, "Cannot pass the \"--sas-file\" option to translate.py from the "
-                    "fast-downward.py script. Pass it directly to fast-downward.py instead.")
+            parser,
+            'Cannot pass the "--sas-file" option to translate.py from the '
+            "fast-downward.py script. Pass it directly to fast-downward.py instead.",
+        )
 
     args.search_input = args.sas_file
     args.translate_options += ["--sas-file", args.search_input]
@@ -277,7 +329,9 @@ def _set_translator_output_options(parser, args):
 def _get_time_limit_in_seconds(limit, parser):
     match = re.match(r"^(\d+)(s|m|h)?$", limit, flags=re.I)
     if not match:
-        print_usage_and_exit_with_driver_input_error(parser, "malformed time limit parameter: {}".format(limit))
+        print_usage_and_exit_with_driver_input_error(
+            parser, "malformed time limit parameter: {}".format(limit)
+        )
     time = int(match.group(1))
     suffix = match.group(2)
     if suffix is not None:
@@ -292,7 +346,9 @@ def _get_time_limit_in_seconds(limit, parser):
 def _get_memory_limit_in_bytes(limit, parser):
     match = re.match(r"^(\d+)(k|m|g)?$", limit, flags=re.I)
     if not match:
-        print_usage_and_exit_with_driver_input_error(parser, "malformed memory limit parameter: {}".format(limit))
+        print_usage_and_exit_with_driver_input_error(
+            parser, "malformed memory limit parameter: {}".format(limit)
+        )
     memory = int(match.group(1))
     suffix = match.group(2)
     if suffix is not None:
@@ -328,98 +384,129 @@ def _convert_limits_to_ints(parser, args):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description=DESCRIPTION, epilog=EPILOG,
+        description=DESCRIPTION,
+        epilog=EPILOG,
         formatter_class=RawHelpFormatter,
-        add_help=False)
+        add_help=False,
+    )
 
     help_options = parser.add_argument_group(
-        title=("driver options that show information and exit "
-               "(don't run planner)"))
+        title=("driver options that show information and exit " "(don't run planner)")
+    )
     # We manually add the help option because we want to control
     # how it is grouped in the output.
     help_options.add_argument(
-        "-h", "--help",
-        action="help", default=argparse.SUPPRESS,
-        help="show this help message and exit")
+        "-h",
+        "--help",
+        action="help",
+        default=argparse.SUPPRESS,
+        help="show this help message and exit",
+    )
     help_options.add_argument(
-        "--show-aliases", action="store_true",
-        help="show the known aliases (see --alias) and exit")
+        "--show-aliases",
+        action="store_true",
+        help="show the known aliases (see --alias) and exit",
+    )
 
     components = parser.add_argument_group(
-        title=("driver options selecting the planner components to be run\n"
-               "(may select several; default: auto-select based on input file(s))"))
+        title=(
+            "driver options selecting the planner components to be run\n"
+            "(may select several; default: auto-select based on input file(s))"
+        )
+    )
     components.add_argument(
-        "--run-all", action="store_true",
-        help="run all components of the planner")
+        "--run-all", action="store_true", help="run all components of the planner"
+    )
     components.add_argument(
-        "--translate", action="store_true",
-        help="run translator component")
+        "--translate", action="store_true", help="run translator component"
+    )
     components.add_argument(
-        "--search", action="store_true",
-        help="run search component")
+        "--search", action="store_true", help="run search component"
+    )
 
     limits = parser.add_argument_group(
-        title="time and memory limits", description=LIMITS_HELP)
+        title="time and memory limits", description=LIMITS_HELP
+    )
     for component in COMPONENTS_PLUS_OVERALL:
         limits.add_argument("--{}-time-limit".format(component))
         limits.add_argument("--{}-memory-limit".format(component))
 
-    driver_other = parser.add_argument_group(
-        title="other driver options")
+    driver_other = parser.add_argument_group(title="other driver options")
     driver_other.add_argument(
-        "--alias",
-        help="run a config with an alias (e.g. seq-sat-lama-2011)")
+        "--alias", help="run a config with an alias (e.g. seq-sat-lama-2011)"
+    )
     driver_other.add_argument(
         "--build",
         help="BUILD can be a predefined build name like release "
-            "(default) and debug, a custom build name, or the path to "
-            "a directory holding the planner binaries. The driver "
-            "first looks for the planner binaries under 'BUILD'. If "
-            "this path does not exist, it tries the directory "
-            "'<repo>/builds/BUILD/bin', where the build script creates "
-            "them by default.")
+        "(default) and debug, a custom build name, or the path to "
+        "a directory holding the planner binaries. The driver "
+        "first looks for the planner binaries under 'BUILD'. If "
+        "this path does not exist, it tries the directory "
+        "'<repo>/builds/BUILD/bin', where the build script creates "
+        "them by default.",
+    )
     driver_other.add_argument(
-        "--debug", action="store_true",
-        help="alias for --build=debug --validate")
+        "--debug", action="store_true", help="alias for --build=debug --validate"
+    )
     driver_other.add_argument(
-        "--validate", action="store_true",
-        help='validate plans (implied by --debug); needs "validate" (VAL) on PATH')
+        "--validate",
+        action="store_true",
+        help='validate plans (implied by --debug); needs "validate" (VAL) on PATH',
+    )
     driver_other.add_argument(
-        "--log-level", choices=["debug", "info", "warning"],
+        "--log-level",
+        choices=["debug", "info", "warning"],
         default="info",
-        help="set log level (most verbose: debug; least verbose: warning; default: %(default)s)")
+        help="set log level (most verbose: debug; least verbose: warning; default: %(default)s)",
+    )
 
     driver_other.add_argument(
-        "--plan-file", metavar="FILE", default="sas_plan",
-        help="write plan(s) to FILE (default: %(default)s; anytime configurations append .1, .2, ...)")
+        "--plan-file",
+        metavar="FILE",
+        default="sas_plan",
+        help="write plan(s) to FILE (default: %(default)s; anytime configurations append .1, .2, ...)",
+    )
 
     driver_other.add_argument(
-        "--sas-file", metavar="FILE",
+        "--sas-file",
+        metavar="FILE",
         help="intermediate file for storing the translator output "
-            "(implies --keep-sas-file, default: {})".format(DEFAULT_SAS_FILE))
+        "(implies --keep-sas-file, default: {})".format(DEFAULT_SAS_FILE),
+    )
     driver_other.add_argument(
-        "--keep-sas-file", action="store_true",
+        "--keep-sas-file",
+        action="store_true",
         help="keep translator output file (implied by --sas-file, default: "
-            "delete file if translator and search component are active)")
+        "delete file if translator and search component are active)",
+    )
 
     driver_other.add_argument(
-        "--portfolio", metavar="FILE",
-        help="run a portfolio specified in FILE")
+        "--portfolio", metavar="FILE", help="run a portfolio specified in FILE"
+    )
     driver_other.add_argument(
-        "--portfolio-bound", metavar="VALUE", default=None, type=int,
-        help="exclusive bound on plan costs (only supported for satisficing portfolios)")
+        "--portfolio-bound",
+        metavar="VALUE",
+        default=None,
+        type=int,
+        help="exclusive bound on plan costs (only supported for satisficing portfolios)",
+    )
     driver_other.add_argument(
-        "--portfolio-single-plan", action="store_true",
-        help="abort satisficing portfolio after finding the first plan")
+        "--portfolio-single-plan",
+        action="store_true",
+        help="abort satisficing portfolio after finding the first plan",
+    )
 
     driver_other.add_argument(
-        "--cleanup", action="store_true",
-        help="clean up temporary files (translator output and plan files) and exit")
-
+        "--cleanup",
+        action="store_true",
+        help="clean up temporary files (translator output and plan files) and exit",
+    )
 
     parser.add_argument(
-        "planner_args", nargs=argparse.REMAINDER,
-        help="file names and options passed on to planner components")
+        "planner_args",
+        nargs=argparse.REMAINDER,
+        help="file names and options passed on to planner components",
+    )
 
     # Using argparse.REMAINDER relies on the fact that the first
     # argument that doesn't belong to the driver doesn't look like an
@@ -437,8 +524,10 @@ def parse_args():
 
     if args.build and args.debug:
         print_usage_and_exit_with_driver_input_error(
-            parser, "The option --debug is an alias for --build=debug "
-                     "--validate. Do no specify both --debug and --build.")
+            parser,
+            "The option --debug is an alias for --build=debug "
+            "--validate. Do no specify both --debug and --build.",
+        )
     if not args.build:
         if args.debug:
             args.build = "debug"
@@ -447,10 +536,14 @@ def parse_args():
 
     _split_planner_args(parser, args)
 
-    _check_mutex_args(parser, [
+    _check_mutex_args(
+        parser,
+        [
             ("--alias", args.alias is not None),
             ("--portfolio", args.portfolio is not None),
-            ("options for search component", bool(args.search_options))])
+            ("options for search component", bool(args.search_options)),
+        ],
+    )
 
     _set_translator_output_options(parser, args)
 
@@ -461,17 +554,21 @@ def parse_args():
             aliases.set_options_for_alias(args.alias, args)
         except KeyError:
             print_usage_and_exit_with_driver_input_error(
-                parser, "unknown alias: %r" % args.alias)
+                parser, "unknown alias: %r" % args.alias
+            )
 
     if args.portfolio_bound is not None and not args.portfolio:
         print_usage_and_exit_with_driver_input_error(
-            parser, "--portfolio-bound may only be used for portfolios.")
+            parser, "--portfolio-bound may only be used for portfolios."
+        )
     if args.portfolio_bound is not None and args.portfolio_bound < 0:
         print_usage_and_exit_with_driver_input_error(
-            parser, "--portfolio-bound must not be negative.")
+            parser, "--portfolio-bound must not be negative."
+        )
     if args.portfolio_single_plan and not args.portfolio:
         print_usage_and_exit_with_driver_input_error(
-            parser, "--portfolio-single_plan may only be used for portfolios.")
+            parser, "--portfolio-single_plan may only be used for portfolios."
+        )
 
     if not args.show_aliases and not args.cleanup:
         _set_components_and_inputs(parser, args)

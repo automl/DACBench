@@ -20,7 +20,8 @@ class Timer(object):
     def __str__(self):
         return "[%.3fs CPU, %.3fs wall-clock]" % (
             self._clock() - self.start_clock,
-            time.time() - self.start_time)
+            time.time() - self.start_time,
+        )
 
 
 @contextlib.contextmanager
@@ -29,7 +30,7 @@ def timing(text, block=False):
     if block:
         print("%s..." % text)
     else:
-        print("%s..." % text, end=' ')
+        print("%s..." % text, end=" ")
     sys.stdout.flush()
     yield
     if block:

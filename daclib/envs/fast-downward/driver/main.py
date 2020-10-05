@@ -13,9 +13,11 @@ from . import run_components
 
 def main():
     args = arguments.parse_args()
-    logging.basicConfig(level=getattr(logging, args.log_level.upper()),
-                        format="%(levelname)-8s %(message)s",
-                        stream=sys.stdout)
+    logging.basicConfig(
+        level=getattr(logging, args.log_level.upper()),
+        format="%(levelname)-8s %(message)s",
+        stream=sys.stdout,
+    )
     logging.debug("processed args: %s" % args)
 
     if args.show_aliases:

@@ -106,8 +106,7 @@ def build_dtgs(task):
 
     init_vals = task.init.values
     sizes = task.variables.ranges
-    dtgs = [DomainTransitionGraph(init, size)
-            for (init, size) in zip(init_vals, sizes)]
+    dtgs = [DomainTransitionGraph(init, size) for (init, size) in zip(init_vals, sizes)]
 
     def add_arc(var_no, pre_spec, post):
         """Add a DTG arc for var_no induced by transition pre_spec -> post.
@@ -161,39 +160,44 @@ def build_dtgs(task):
 always_false = object()
 always_true = object()
 
+
 class Impossible(Exception):
     pass
+
 
 class TriviallySolvable(Exception):
     pass
 
+
 class DoesNothing(Exception):
     pass
 
+
 class VarValueRenaming(object):
     def __init__(self):
-        self.new_var_nos = []   # indexed by old var_no
-        self.new_values = []    # indexed by old var_no and old value
-        self.new_sizes = []     # indexed by new var_no
+        self.new_var_nos = []  # indexed by old var_no
+        self.new_values = []  # indexed by old var_no and old value
+        self.new_sizes = []  # indexed by new var_no
         self.new_var_count = 0
         self.num_removed_values = 0
 
     def dump(self):
         old_var_count = len(self.new_var_nos)
-        print("variable count: %d => %d" % (
-            old_var_count, self.new_var_count))
+        print("variable count: %d => %d" % (old_var_count, self.new_var_count))
         print("number of removed values: %d" % self.num_removed_values)
         print("variable conversions:")
         for old_var_no, (new_var_no, new_values) in enumerate(
-                zip(self.new_var_nos, self.new_values)):
+            zip(self.new_var_nos, self.new_values)
+        ):
             old_size = len(new_values)
             if new_var_no is None:
-                print("variable %d [size %d] => removed" % (
-                    old_var_no, old_size))
+                print("variable %d [size %d] => removed" % (old_var_no, old_size))
             else:
                 new_size = self.new_sizes[new_var_no]
-                print("variable %d [size %d] => %d [size %d]" % (
-                    old_var_no, old_size, new_var_no, new_size))
+                print(
+                    "variable %d [size %d] => %d [size %d]"
+                    % (old_var_no, old_size, new_var_no, new_size)
+                )
             for old_value, new_value in enumerate(new_values):
                 if new_value is always_false:
                     new_value = "always false"
@@ -270,8 +274,7 @@ class VarValueRenaming(object):
             new_facts = []
             for var, val in mutex.facts:
                 new_var_no, new_value = self.translate_pair((var, val))
-                if (new_value is not always_true and
-                    new_value is not always_false):
+                if new_value is not always_true and new_value is not always_false:
                     new_facts.append((new_var_no, new_value))
             if len(new_facts) >= 2:
                 mutex.facts = new_facts
@@ -380,10 +383,11 @@ class VarValueRenaming(object):
         new_prevail = sorted(
             (var, value)
             for (var, value) in conditions_dict.items()
-            if var in new_prevail_vars)
+            if var in new_prevail_vars
+        )
         return sas_tasks.SASOperator(
-            name=op.name, prevail=new_prevail, pre_post=new_pre_post,
-            cost=op.cost)
+            name=op.name, prevail=new_prevail, pre_post=new_pre_post, cost=op.cost
+        )
 
     def apply_to_axiom(self, axiom):
         # The following line may generate an Impossible exception,
@@ -433,7 +437,8 @@ class VarValueRenaming(object):
             _, new_pre = self.translate_pair((var_no, pre))
         assert new_pre is not always_false, (
             "This function should only be called for operators "
-            "whose applicability conditions are deemed possible.")
+            "whose applicability conditions are deemed possible."
+        )
 
         if new_post == new_pre:
             return None
@@ -446,8 +451,7 @@ class VarValueRenaming(object):
             return None
 
         for cond_var, cond_value in new_cond:
-            if (cond_var in conditions_dict and
-                conditions_dict[cond_var] != cond_value):
+            if cond_var in conditions_dict and conditions_dict[cond_var] != cond_value:
                 # This effect condition is not compatible with
                 # the applicability conditions.
                 return None
@@ -455,11 +459,13 @@ class VarValueRenaming(object):
         assert new_post is not always_false, (
             "if we survived so far, this effect can trigger "
             "(as far as our analysis can determine this), "
-            "and then new_post cannot be always_false")
+            "and then new_post cannot be always_false"
+        )
 
         assert new_pre is not always_true, (
             "if this pre_post changes the value and can fire, "
-            "new_pre cannot be always_true")
+            "new_pre cannot be always_true"
+        )
 
         return new_var_no, new_pre, new_post, new_cond
 
@@ -480,6 +486,7 @@ class VarValueRenaming(object):
                 assert new_var_no is not None
                 new_pairs.append((new_var_no, new_value))
         pairs[:] = new_pairs
+
 
 def build_renaming(dtgs):
     renaming = VarValueRenaming()

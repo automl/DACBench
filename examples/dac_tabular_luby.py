@@ -18,7 +18,9 @@ from functools import partial
 from daclib.benchmarks import LubyBenchmark
 
 
-EpisodeStats = namedtuple("Stats", ["episode_lengths", "episode_rewards", "expected_rewards"])
+EpisodeStats = namedtuple(
+    "Stats", ["episode_lengths", "episode_rewards", "expected_rewards"]
+)
 
 
 class QTable(dict):
@@ -73,16 +75,20 @@ def make_epsilon_greedy_policy(Q: QTable, epsilon: float, nA: int) -> callable:
 
     def policy_fn(observation):
         policy = np.ones(nA) * epsilon / nA
-        best_action = np.random.choice(np.argwhere(  # random choice for tie-breaking only
-            Q[observation] == np.amax(Q[observation])
-        ).flatten())
-        policy[best_action] += (1 - epsilon)
+        best_action = np.random.choice(
+            np.argwhere(  # random choice for tie-breaking only
+                Q[observation] == np.amax(Q[observation])
+            ).flatten()
+        )
+        policy[best_action] += 1 - epsilon
         return policy
 
     return policy_fn
 
 
-def get_decay_schedule(start_val: float, decay_start: int, num_episodes: int, type_: str):
+def get_decay_schedule(
+    start_val: float, decay_start: int, num_episodes: int, type_: str
+):
     """
     Create epsilon decay schedule
     :param start_val: Start decay from this value (i.e. 1)
@@ -91,14 +97,26 @@ def get_decay_schedule(start_val: float, decay_start: int, num_episodes: int, ty
     :param type_: Which strategy to use. Implemented choices: 'const', 'log', 'linear'
     :return:
     """
-    if type_ == 'const':
+    if type_ == "const":
         return np.array([start_val for _ in range(num_episodes)])
-    elif type_ == 'log':
-        return np.hstack([[start_val for _ in range(decay_start)],
-                          np.logspace(np.log10(start_val), np.log10(0.000001), (num_episodes - decay_start))])
-    elif type_ == 'linear':
-        return np.hstack([[start_val for _ in range(decay_start)],
-                          np.linspace(start_val, 0, (num_episodes - decay_start))])
+    elif type_ == "log":
+        return np.hstack(
+            [
+                [start_val for _ in range(decay_start)],
+                np.logspace(
+                    np.log10(start_val),
+                    np.log10(0.000001),
+                    (num_episodes - decay_start),
+                ),
+            ]
+        )
+    elif type_ == "linear":
+        return np.hstack(
+            [
+                [start_val for _ in range(decay_start)],
+                np.linspace(start_val, 0, (num_episodes - decay_start)),
+            ]
+        )
     else:
         raise NotImplementedError
 
@@ -115,9 +133,12 @@ def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
         expected_reward = np.max(Q[evaluation_state])
         greedy = make_epsilon_greedy_policy(Q, 0, this_environment.action_space.n)
         while True:  # roll out episode
-            evaluation_action = np.random.choice(list(range(this_environment.action_space.n)),
-                                                 p=greedy(evaluation_state))
-            s_, evaluation_reward, evaluation_done, _ = this_environment.step(evaluation_action)
+            evaluation_action = np.random.choice(
+                list(range(this_environment.action_space.n)), p=greedy(evaluation_state)
+            )
+            s_, evaluation_reward, evaluation_done, _ = this_environment.step(
+                evaluation_action
+            )
             cummulative_reward += evaluation_reward
             episode_length += 1
             if evaluation_done:
@@ -127,7 +148,9 @@ def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
     return np.mean(cumuls), expected_reward, episode_length  # Q, cumulative reward
 
 
-def update(Q: QTable, environment, policy: callable, alpha: float, discount_factor: float):
+def update(
+    Q: QTable, environment, policy: callable, alpha: float, discount_factor: float
+):
     """
     Q update
     :param Q: state-action value look-up table
@@ -141,28 +164,47 @@ def update(Q: QTable, environment, policy: callable, alpha: float, discount_fact
     episode_length, cummulative_reward = 0, 0
     expected_reward = np.max(Q[policy_state])
     while True:  # roll out episode
-        policy_action = np.random.choice(list(range(environment.action_space.n)), p=policy(policy_state))
+        policy_action = np.random.choice(
+            list(range(environment.action_space.n)), p=policy(policy_state)
+        )
         s_, policy_reward, policy_done, _ = environment.step(policy_action)
         cummulative_reward += policy_reward
         episode_length += 1
         Q[[policy_state, policy_action]] = Q[[policy_state, policy_action]] + alpha * (
-                (policy_reward + discount_factor * Q[[s_, np.argmax(Q[s_])]]) - Q[[policy_state, policy_action]])
+            (policy_reward + discount_factor * Q[[s_, np.argmax(Q[s_])]])
+            - Q[[policy_state, policy_action]]
+        )
         if policy_done:
             break
         policy_state = s_
-    return Q, cummulative_reward, expected_reward, episode_length  # Q, cumulative reward
+    return (
+        Q,
+        cummulative_reward,
+        expected_reward,
+        episode_length,
+    )  # Q, cumulative reward
 
 
-def q_learning(environment, num_episodes: int, discount_factor: float = 1.0, alpha: float = 0.5,
-               epsilon: float = 0.1, verbose: bool = False, track_test_stats: bool = False, float_state=False,
-               epsilon_decay: str = 'const', decay_starts: int = 0, number_of_evaluations: int = 1,
-               test_environment = None):
+def q_learning(
+    environment,
+    num_episodes: int,
+    discount_factor: float = 1.0,
+    alpha: float = 0.5,
+    epsilon: float = 0.1,
+    verbose: bool = False,
+    track_test_stats: bool = False,
+    float_state=False,
+    epsilon_decay: str = "const",
+    decay_starts: int = 0,
+    number_of_evaluations: int = 1,
+    test_environment=None,
+):
     """
     Q-Learning algorithm
     """
-    assert 0 <= discount_factor <= 1, 'Lambda should be in [0, 1]'
-    assert 0 <= epsilon <= 1, 'epsilon has to be in [0, 1]'
-    assert alpha > 0, 'Learning rate has to be positive'
+    assert 0 <= discount_factor <= 1, "Lambda should be in [0, 1]"
+    assert 0 <= epsilon <= 1, "epsilon has to be in [0, 1]"
+    assert alpha > 0, "Learning rate has to be positive"
     # The action-value function.
     # Nested dict that maps state -> (action -> action-value).
     Q = QTable(env.action_space.n, float_state)
@@ -171,15 +213,19 @@ def q_learning(environment, num_episodes: int, discount_factor: float = 1.0, alp
         test_stats = EpisodeStats(
             episode_lengths=np.zeros(num_episodes),
             episode_rewards=np.zeros(num_episodes),
-            expected_rewards=np.zeros(num_episodes))
+            expected_rewards=np.zeros(num_episodes),
+        )
 
     # Keeps track of episode lengths and rewards
     train_stats = EpisodeStats(
         episode_lengths=np.zeros(num_episodes),
         episode_rewards=np.zeros(num_episodes),
-        expected_rewards=np.zeros(num_episodes))
+        expected_rewards=np.zeros(num_episodes),
+    )
 
-    epsilon_schedule = get_decay_schedule(epsilon, decay_starts, num_episodes, epsilon_decay)
+    epsilon_schedule = get_decay_schedule(
+        epsilon, decay_starts, num_episodes, epsilon_decay
+    )
     for i_episode in range(num_episodes):
 
         epsilon = epsilon_schedule[i_episode]
@@ -190,18 +236,24 @@ def q_learning(environment, num_episodes: int, discount_factor: float = 1.0, alp
             if verbose:
                 print("\rEpisode {:>5d}/{}.".format(i_episode + 1, num_episodes))
             else:
-                print("\rEpisode {:>5d}/{}.".format(i_episode + 1, num_episodes), end='')
+                print(
+                    "\rEpisode {:>5d}/{}.".format(i_episode + 1, num_episodes), end=""
+                )
                 sys.stdout.flush()
         Q, rs, exp_rew, ep_len = update(Q, environment, policy, alpha, discount_factor)
-        if track_test_stats:  # Keep track of test performance, s.t. they don't influence the training Q
+        if (
+            track_test_stats
+        ):  # Keep track of test performance, s.t. they don't influence the training Q
             if test_environment:
                 test_reward, test_expected_reward, test_episode_length = greedy_eval_Q(
-                    Q, test_environment, nevaluations=number_of_evaluations)
+                    Q, test_environment, nevaluations=number_of_evaluations
+                )
                 test_stats.episode_rewards[i_episode] = test_reward
                 test_stats.expected_rewards[i_episode] = test_expected_reward
                 test_stats.episode_lengths[i_episode] = test_episode_length
         train_reward, train_expected_reward, train_episode_length = greedy_eval_Q(
-            Q, environment, nevaluations=number_of_evaluations)
+            Q, environment, nevaluations=number_of_evaluations
+        )
         train_stats.episode_rewards[i_episode] = train_reward
         train_stats.expected_rewards[i_episode] = train_expected_reward
         train_stats.episode_lengths[i_episode] = train_episode_length
@@ -216,70 +268,99 @@ def zeroOne(stringput):
     Helper to keep input arguments in [0, 1]
     """
     val = float(stringput)
-    if val < 0 or val > 1.:
+    if val < 0 or val > 1.0:
         raise argparse.ArgumentTypeError("%r is not in [0, 1]", stringput)
     return val
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser('Tabular Q-learning example')
-    parser.add_argument('-n', '--n-eps', dest='neps',
-                        default=100,
-                        help='Number of episodes to roll out.',
-                        type=int)
-    parser.add_argument('--epsilon_decay',
-                        choices=['linear', 'log', 'const'],
-                        default='const',
-                        help='How to decay epsilon from the given starting point to 0 or constant')
-    parser.add_argument('--decay_starts',
-                        type=int,
-                        default=0,
-                        help='How long to keep epsilon constant before decaying. '
-                             'Only active if epsilon_decay log or linear')
-    parser.add_argument('-r', '--repetitions',
-                        default=1,
-                        help='Number of repeated learning runs.',
-                        type=int)
-    parser.add_argument('-d', '--discount-factor', dest='df',
-                        default=.99,
-                        help='Discount factor',
-                        type=zeroOne)
-    parser.add_argument('-l', '--learning-rate', dest='lr',
-                        default=.125,
-                        help='Learning rate',
-                        type=float)
-    parser.add_argument('-e', '--epsilon',
-                        default=0.1,
-                        help='Epsilon for the epsilon-greedy method to follow',
-                        type=zeroOne)
-    parser.add_argument('-v', '--verbose',
-                        action='store_true',
-                        help='Use debug output')
-    parser.add_argument('-o', '--out-dir', dest='out_dir',
-                        default='.',
-                        help='Dir to store result files in')
-    parser.add_argument('--instance_feature_file', dest='inst_feats',
-                        default="../instance_sets/luby_train.csv",
-                        help='Instance feature file to use for sigmoid environment',
-                        type=os.path.abspath)
-    parser.add_argument('-s', '--seed',
-                        default=0,
-                        type=int)
-    parser.add_argument('--cutoff',
-                        default=None,
-                        type=int,
-                        help='Env max steps')
-    parser.add_argument('--min_steps',
-                        default=None,
-                        type=int,
-                        help='Env min steps. Only active for the lubyt* environments')
-    parser.add_argument('--test_insts',
-                        default=None,
-                        help='Test instances to use with q-learning for evaluation purposes',
-                        type=os.path.abspath)
-    parser.add_argument('--reward_variance',
-                        default=1.5,
-                        type=float,
-                        help='Variance of noisy reward signal for lubyt*')
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser("Tabular Q-learning example")
+    parser.add_argument(
+        "-n",
+        "--n-eps",
+        dest="neps",
+        default=100,
+        help="Number of episodes to roll out.",
+        type=int,
+    )
+    parser.add_argument(
+        "--epsilon_decay",
+        choices=["linear", "log", "const"],
+        default="const",
+        help="How to decay epsilon from the given starting point to 0 or constant",
+    )
+    parser.add_argument(
+        "--decay_starts",
+        type=int,
+        default=0,
+        help="How long to keep epsilon constant before decaying. "
+        "Only active if epsilon_decay log or linear",
+    )
+    parser.add_argument(
+        "-r",
+        "--repetitions",
+        default=1,
+        help="Number of repeated learning runs.",
+        type=int,
+    )
+    parser.add_argument(
+        "-d",
+        "--discount-factor",
+        dest="df",
+        default=0.99,
+        help="Discount factor",
+        type=zeroOne,
+    )
+    parser.add_argument(
+        "-l",
+        "--learning-rate",
+        dest="lr",
+        default=0.125,
+        help="Learning rate",
+        type=float,
+    )
+    parser.add_argument(
+        "-e",
+        "--epsilon",
+        default=0.1,
+        help="Epsilon for the epsilon-greedy method to follow",
+        type=zeroOne,
+    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="Use debug output")
+    parser.add_argument(
+        "-o",
+        "--out-dir",
+        dest="out_dir",
+        default=".",
+        help="Dir to store result files in",
+    )
+    parser.add_argument(
+        "--instance_feature_file",
+        dest="inst_feats",
+        default="../instance_sets/luby_train.csv",
+        help="Instance feature file to use for sigmoid environment",
+        type=os.path.abspath,
+    )
+    parser.add_argument("-s", "--seed", default=0, type=int)
+    parser.add_argument("--cutoff", default=None, type=int, help="Env max steps")
+    parser.add_argument(
+        "--min_steps",
+        default=None,
+        type=int,
+        help="Env min steps. Only active for the lubyt* environments",
+    )
+    parser.add_argument(
+        "--test_insts",
+        default=None,
+        help="Test instances to use with q-learning for evaluation purposes",
+        type=os.path.abspath,
+    )
+    parser.add_argument(
+        "--reward_variance",
+        default=1.5,
+        type=float,
+        help="Variance of noisy reward signal for lubyt*",
+    )
 
     args = parser.parse_args()
     benchmark = LubyBenchmark()
@@ -302,17 +383,17 @@ if __name__ == '__main__':
 
     ds = datetime.date.strftime(datetime.datetime.now(), "%Y_%m_%d_%H_%M_%S_%f")
     random_agent = False
-    if args.epsilon == 1. and args.epsilon_decay == 'const':
-        folder = 'random_' + ds
+    if args.epsilon == 1.0 and args.epsilon_decay == "const":
+        folder = "random_" + ds
         random_agent = True
     else:
-        folder = 'tabular_' + ds
+        folder = "tabular_" + ds
     folder = os.path.join(os.path.realpath(args.out_dir), folder)
     if not os.path.exists(folder):
         os.mkdir(folder)
         os.chdir(folder)
     for r in range(args.repetitions):
-        logging.info('Round %d', r)
+        logging.info("Round %d", r)
         benchmark.config.seed = args.seed
         benchmark.config.instance_set_path = args.inst_feats
         env = benchmark.get_benchmark_env()
@@ -326,31 +407,42 @@ if __name__ == '__main__':
 
         eval_for = 100
         float_state = False
-        q_func, test_train_stats = q_learning(env, args.neps, discount_factor=args.df,
-                                              alpha=args.lr, epsilon=args.epsilon,
-                                              verbose=args.verbose, track_test_stats=True if test_env else False,
-                                              float_state=float_state,
-                                              epsilon_decay=args.epsilon_decay,
-                                              decay_starts=args.decay_starts,
-                                              number_of_evaluations=eval_for,
-                                              test_environment=test_env)
-        fn = '%04d_%s-greedy-results-luby-%d_eps-%d_reps-seed_%d.pkl' % (r, str(args.epsilon), args.neps,
-                                                                       args.repetitions, args.seed)
-        with open(fn.replace('results', 'q_func'), 'wb') as fh:
+        q_func, test_train_stats = q_learning(
+            env,
+            args.neps,
+            discount_factor=args.df,
+            alpha=args.lr,
+            epsilon=args.epsilon,
+            verbose=args.verbose,
+            track_test_stats=True if test_env else False,
+            float_state=float_state,
+            epsilon_decay=args.epsilon_decay,
+            decay_starts=args.decay_starts,
+            number_of_evaluations=eval_for,
+            test_environment=test_env,
+        )
+        fn = "%04d_%s-greedy-results-luby-%d_eps-%d_reps-seed_%d.pkl" % (
+            r,
+            str(args.epsilon),
+            args.neps,
+            args.repetitions,
+            args.seed,
+        )
+        with open(fn.replace("results", "q_func"), "wb") as fh:
             pickle.dump(dict(q_func), fh)
-        with open(fn.replace('results', 'stats'), 'wb') as fh:
+        with open(fn.replace("results", "stats"), "wb") as fh:
             pickle.dump(test_train_stats[1].episode_rewards, fh)
-        with open(fn.replace('results', 'lens'), 'wb') as fh:
+        with open(fn.replace("results", "lens"), "wb") as fh:
             pickle.dump(test_train_stats[1].episode_lengths, fh)
         if args.test_insts:
-            with open(fn.replace('results', 'test_stats'), 'wb') as fh:
+            with open(fn.replace("results", "test_stats"), "wb") as fh:
                 pickle.dump(test_train_stats[0].episode_rewards, fh)
-            with open(fn.replace('results', 'test_lens'), 'wb') as fh:
+            with open(fn.replace("results", "test_lens"), "wb") as fh:
                 pickle.dump(test_train_stats[0].episode_lengths, fh)
         if r == args.repetitions - 1:
-            logging.info('Example Q-function:')
+            logging.info("Example Q-function:")
             for i in range(10):
-                print('#' * 120)
+                print("#" * 120)
                 s = env.reset()
                 done = False
                 while not done:

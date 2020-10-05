@@ -17,8 +17,12 @@ SCRIPTS = [
     "translate.py",
 ]
 
+
 def test_scripts():
     for script in SCRIPTS:
         script = os.path.join(TRANSLATE_DIR, script)
         folder, filename = os.path.split(script)
-        assert subprocess.check_call(["python", filename, DOMAIN, PROBLEM], cwd=folder) == 0
+        assert (
+            subprocess.check_call(["python", filename, DOMAIN, PROBLEM], cwd=folder)
+            == 0
+        )

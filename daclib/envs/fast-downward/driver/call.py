@@ -38,6 +38,7 @@ def _get_preexec_function(time_limit, memory_limit):
             def fail(exception, exitcode):
                 returncodes.print_stderr("{} failed: {}".format(description, exception))
                 os._exit(exitcode)
+
             try:
                 function()
             except NotImplementedError as err:
@@ -48,7 +49,9 @@ def _get_preexec_function(time_limit, memory_limit):
                 fail(err, returncodes.DRIVER_INPUT_ERROR)
 
         _try_or_exit(lambda: limits.set_time_limit(time_limit), "Setting time limit")
-        _try_or_exit(lambda: limits.set_memory_limit(memory_limit), "Setting memory limit")
+        _try_or_exit(
+            lambda: limits.set_memory_limit(memory_limit), "Setting memory limit"
+        )
 
     if time_limit is None and memory_limit is None:
         return None

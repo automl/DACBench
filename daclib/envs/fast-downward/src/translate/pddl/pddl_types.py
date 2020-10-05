@@ -66,5 +66,6 @@ class TypedObject(object):
     def get_atom(self):
         # TODO: Resolve cyclic import differently.
         from . import conditions
+
         predicate_name = _get_type_predicate_name(self.type_name)
         return conditions.Atom(predicate_name, [self.name])

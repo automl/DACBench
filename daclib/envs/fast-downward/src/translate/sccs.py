@@ -34,6 +34,7 @@ def get_sccs_adjacency_list(adjacency_list):
     the partition is given in a topologically sort order."""
     return StronglyConnectedComponentComputation(adjacency_list).get_result()
 
+
 def get_sccs_adjacency_dict(adjacency_dict):
     """Compute SCCs for a graph represented as an adjacency dict.
 
@@ -70,7 +71,7 @@ def get_sccs_adjacency_dict(adjacency_dict):
 class StronglyConnectedComponentComputation(object):
     def __init__(self, unweighted_graph):
         self.graph = unweighted_graph
-        self.BEGIN, self.CONTINUE, self.RETURN = 0, 1, 2 # "recursion" handling
+        self.BEGIN, self.CONTINUE, self.RETURN = 0, 1, 2  # "recursion" handling
 
     def get_result(self):
         self.indices = dict()
@@ -116,10 +117,8 @@ class StronglyConnectedComponentComputation(object):
                         iter_stack.append((w, None, None, self.BEGIN))
                     else:
                         if w in self.stack_indices:
-                            self.lowlinks[v] = min(self.lowlinks[v],
-                                                   self.indices[w])
-                        iter_stack.append(
-                            (v, None, succ_index + 1, self.CONTINUE))
+                            self.lowlinks[v] = min(self.lowlinks[v], self.indices[w])
+                        iter_stack.append((v, None, succ_index + 1, self.CONTINUE))
             elif state == self.RETURN:
                 self.lowlinks[v] = min(self.lowlinks[v], self.lowlinks[w])
                 iter_stack.append((v, None, succ_index + 1, self.CONTINUE))

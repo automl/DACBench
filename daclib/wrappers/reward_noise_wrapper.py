@@ -14,7 +14,7 @@ class RewardNoiseWrapper(Wrapper):
         elif config["noise_dist"] == "exponential":
             self.noise_function = self.add_exponential()
 
-        #self.noise_timing = config["noise_timing"]
+        # self.noise_timing = config["noise_timing"]
 
     def step(self, action):
         state, reward, done, info = self.env.step(action)

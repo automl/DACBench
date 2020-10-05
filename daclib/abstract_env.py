@@ -1,6 +1,7 @@
 import gym
 from gym.utils import seeding
 
+
 class AbstractEnv(gym.Env):
     """
     Abstract template for environments

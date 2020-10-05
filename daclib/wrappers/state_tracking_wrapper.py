@@ -69,7 +69,7 @@ class StateTrackingWrapper(Wrapper):
         else:
             self.overall
 
-    #TODO: figure out rendering
+    # TODO: figure out rendering
     def render(self):
         if self.state_type == spaces.Box:
             pass

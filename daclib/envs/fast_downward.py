@@ -31,10 +31,7 @@ class StateType(Enum):
 
 
 class FastDownwardEnv(AbstractEnv):
-    def __init__(
-        self,
-        config
-    ):
+    def __init__(self, config):
         """
         Initialize environment
         """

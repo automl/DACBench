@@ -26,7 +26,7 @@ if os.name == "posix":
     except NotImplementedError:
         pass
     else:
-        DEFAULT_MAKE_PARAMETERS.append('-j{}'.format(num_cpus))
+        DEFAULT_MAKE_PARAMETERS.append("-j{}".format(num_cpus))
     CMAKE_GENERATOR = "Unix Makefiles"
 elif os.name == "nt":
     MAKE = "nmake"
@@ -51,7 +51,8 @@ def print_usage():
     generator_name = CMAKE_GENERATOR.lower()
     default_config_name = DEFAULT_CONFIG_NAME
     debug_config_name = DEBUG_CONFIG_NAME
-    print("""Usage: {script_name} [BUILD [BUILD ...]] [--all] [--debug] [MAKE_OPTIONS]
+    print(
+        """Usage: {script_name} [BUILD [BUILD ...]] [--all] [--debug] [MAKE_OPTIONS]
 
 Build one or more predefined build configurations of Fast Downward. Each build
 uses {cmake_name} to generate {generator_name} and then uses {make_name} to compile the
@@ -77,11 +78,15 @@ Example usage:
   ./{script_name} --debug             # build {debug_config_name}
   ./{script_name} release debug       # build release and debug configs
   ./{script_name} --all VERBOSE=true  # build all build configs with detailed logs
-""".format(**locals()))
+""".format(
+            **locals()
+        )
+    )
 
 
 def get_project_root_path():
     import __main__
+
     return os.path.dirname(__main__.__file__)
 
 
@@ -96,18 +101,22 @@ def get_src_path():
 def get_build_path(config_name):
     return os.path.join(get_builds_path(), config_name)
 
+
 def try_run(cmd, cwd):
     print('Executing command "{}" in directory "{}".'.format(" ".join(cmd), cwd))
     try:
         subprocess.check_call(cmd, cwd=cwd)
     except OSError as exc:
         if exc.errno == errno.ENOENT:
-            print("Could not find '%s' on your PATH. For installation instructions, "
-                  "see http://www.fast-downward.org/ObtainingAndRunningFastDownward." %
-                  cmd[0])
+            print(
+                "Could not find '%s' on your PATH. For installation instructions, "
+                "see http://www.fast-downward.org/ObtainingAndRunningFastDownward."
+                % cmd[0]
+            )
             sys.exit(1)
         else:
             raise
+
 
 def build(config_name, cmake_parameters, make_parameters):
     print("Building configuration {config_name}.".format(**locals()))
@@ -121,8 +130,10 @@ def build(config_name, cmake_parameters, make_parameters):
         else:
             raise
 
-    try_run([CMAKE, "-G", CMAKE_GENERATOR] + cmake_parameters + [rel_src_path],
-            cwd=build_path)
+    try_run(
+        [CMAKE, "-G", CMAKE_GENERATOR] + cmake_parameters + [rel_src_path],
+        cwd=build_path,
+    )
     try_run([MAKE] + make_parameters, cwd=build_path)
 
     print("Built configuration {config_name} successfully.".format(**locals()))

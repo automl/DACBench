@@ -14,7 +14,10 @@ import concurrent.futures
 from daclib import AbstractEnv
 
 # IDEA: if we ask cma instead of ask_eval, we could make this parallel
-def _norm(x): return np.sqrt(np.sum(np.square(x)))
+def _norm(x):
+    return np.sqrt(np.sum(np.square(x)))
+
+
 class CMAESEnv(AbstractEnv):
     def __init__(self, config):
         super(CMAESEnv, self).__init__(config)
@@ -27,7 +30,7 @@ class CMAESEnv(AbstractEnv):
         self.past_sigma = deque(maxlen=history_len)
         self.solutions = None
         self.func_values = []
-        self.chi_N = dim**0.5 * (1 - 1. / (4.*dim) + 1. / (21.*dim**2))
+        self.chi_N = dim ** 0.5 * (1 - 1.0 / (4.0 * dim) + 1.0 / (21.0 * dim ** 2))
         self.lock = threading.Lock()
         self.popsize = config["popsize"]
         if state_method in config.keys():
@@ -60,8 +63,14 @@ class CMAESEnv(AbstractEnv):
             self.es.sigma = max(sigma, 0.05)
             self.solutions, self.func_values = self.es.ask_and_eval(self.fcn)
 
-        self.f_difference = np.nan_to_num(np.abs(np.amax(self.func_values) - self.cur_obj_val)/float(self.cur_obj_val))
-        self.velocity = np.nan_to_num(np.abs(np.amin(self.func_values) - self.cur_obj_val)/float(self.cur_obj_val))
+        self.f_difference = np.nan_to_num(
+            np.abs(np.amax(self.func_values) - self.cur_obj_val)
+            / float(self.cur_obj_val)
+        )
+        self.velocity = np.nan_to_num(
+            np.abs(np.amin(self.func_values) - self.cur_obj_val)
+            / float(self.cur_obj_val)
+        )
         self.fbest = min(self.es.best.f, np.amin(self.func_values))
 
         self.past_obj_vals.append(self.cur_obj_val)
@@ -95,11 +104,19 @@ class CMAESEnv(AbstractEnv):
 
         self.func_values = []
         self.f_vals = deque(maxlen=self.popsize)
-        self.es = CMAEvolutionStrategy(self.cur_loc, self.init_sigma, {'popsize': self.popsize, 'bounds': self.bounds})
+        self.es = CMAEvolutionStrategy(
+            self.cur_loc,
+            self.init_sigma,
+            {"popsize": self.popsize, "bounds": self.bounds},
+        )
         self.solutions, self.func_values = self.es.ask_and_eval(self.fcn)
         self.fbest = self.func_values[np.argmin(self.func_values)]
-        self.f_difference = np.abs(np.amax(self.func_values) - self.cur_obj_val)/float(self.cur_obj_val)
-        self.velocity = np.abs(np.amin(self.func_values) - self.cur_obj_val)/float(self.cur_obj_val)
+        self.f_difference = np.abs(
+            np.amax(self.func_values) - self.cur_obj_val
+        ) / float(self.cur_obj_val)
+        self.velocity = np.abs(np.amin(self.func_values) - self.cur_obj_val) / float(
+            self.cur_obj_val
+        )
         self.es.mean_old = self.es.mean
         self.history.append([self.f_difference, self.velocity])
         return np.array(self.get_state().values())
@@ -115,10 +132,16 @@ class CMAESEnv(AbstractEnv):
 
         """
         past_obj_val_deltas = []
-        for i in range(1,len(self.past_obj_vals)):
-            past_obj_val_deltas.append((self.past_obj_vals[i] - self.past_obj_vals[i-1]+1e-3) / float(self.past_obj_vals[i-1]))
+        for i in range(1, len(self.past_obj_vals)):
+            past_obj_val_deltas.append(
+                (self.past_obj_vals[i] - self.past_obj_vals[i - 1] + 1e-3)
+                / float(self.past_obj_vals[i - 1])
+            )
         if len(self.past_obj_vals) > 0:
-            past_obj_val_deltas.append((self.cur_obj_val - self.past_obj_vals[-1]+1e-3)/ float(self.past_obj_vals[-1]))
+            past_obj_val_deltas.append(
+                (self.cur_obj_val - self.past_obj_vals[-1] + 1e-3)
+                / float(self.past_obj_vals[-1])
+            )
         past_obj_val_deltas = np.array(past_obj_val_deltas).reshape(-1)
 
         history_deltas = []
@@ -129,18 +152,34 @@ class CMAESEnv(AbstractEnv):
         for i in range(len(self.past_sigma)):
             past_sigma_deltas.append(self.past_sigma[i])
         past_sigma_deltas = np.array(past_sigma_deltas).reshape(-1)
-        past_obj_val_deltas = np.hstack((np.zeros((self.history_len-past_obj_val_deltas.shape[0],)), past_obj_val_deltas))
-        history_deltas = np.hstack((np.zeros((self.history_len*2-history_deltas.shape[0],)), history_deltas))
-        past_sigma_deltas = np.hstack((np.zeros((self.history_len-past_sigma_deltas.shape[0],)), past_sigma_deltas))
+        past_obj_val_deltas = np.hstack(
+            (
+                np.zeros((self.history_len - past_obj_val_deltas.shape[0],)),
+                past_obj_val_deltas,
+            )
+        )
+        history_deltas = np.hstack(
+            (
+                np.zeros((self.history_len * 2 - history_deltas.shape[0],)),
+                history_deltas,
+            )
+        )
+        past_sigma_deltas = np.hstack(
+            (
+                np.zeros((self.history_len - past_sigma_deltas.shape[0],)),
+                past_sigma_deltas,
+            )
+        )
 
         cur_loc = np.array(self.cur_loc)
         cur_ps = np.array(self.cur_ps)
         cur_sigma = np.array(self.cur_sigma)
 
-        state = {"past_deltas": past_obj_val_deltas,
-                 "current_ps": cur_ps,
-                 "current_sigma": cur_sigma,
-                 "history_deltas": history_deltas,
-                 "past_sigma": past_sigma_deltas
-                }
+        state = {
+            "past_deltas": past_obj_val_deltas,
+            "current_ps": cur_ps,
+            "current_sigma": cur_sigma,
+            "history_deltas": history_deltas,
+            "past_sigma": past_sigma_deltas,
+        }
         return state
