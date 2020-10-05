@@ -121,6 +121,8 @@ class LubyEnv(AbstractEnv):
             Environment state
         """
         super(LubyEnv, self).reset_()
+        self.__start_shift = self.instance[0]
+        self.__sticky_shif = self.instance[1]
         self._r = 0
         self.n_steps = self._mi
 

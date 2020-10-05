@@ -113,23 +113,8 @@ class LubyBenchmark(AbstractBenchmark):
         """Get Benchmark from DAC paper"""
         self.config = LUBY_DEFAULTS
         self.config.min_steps = L
+        self.config.instance_set = [[0, 0]]
         env = LubyEnv(self.config)
-
-        def sample_luby():
-            shifts = self.rng.normal(
-                self.config.cutoff / 2,
-                self.config.cutoff / 4,
-                self.config.action_space_args[0],
-            )
-            slopes = (
-                self.rng.choice([-1, 1], self.config.action_space_args[0])
-                * self.rng.uniform(size=self.config.action_space_args[0])
-                * self.config.slope_multiplier
-            )
-            return np.concatenate((shifts, slopes))
-
-        sampling_env = InstanceSamplingWrapper(env, {"sampling_function": sample_luby})
-
         def fuzz():
             return np.random.RandomState(self.config.seed).normal(-1, fuzziness)
 
