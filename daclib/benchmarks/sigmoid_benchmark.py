@@ -1,5 +1,6 @@
 from daclib.abstract_benchmark import AbstractBenchmark, objdict
 from daclib.envs import SigmoidEnv
+from daclib.wrappers import InstanceSamplingWrapper
 
 from gym import spaces
 import numpy as np
@@ -21,7 +22,6 @@ SIGMOID_DEFAULTS = objdict(
         "reward_range": (0, 1),
         "cutoff": 10,
         "action_values": ACTION_VALUES,
-        "min_steps": 2 ** 3,
         "slope_multiplier": 2.0,
         "seed": 0,
         "instance_set_path": "../instance_sets/sigmoid_train.csv",
@@ -75,9 +75,29 @@ class SigmoidBenchmark(AbstractBenchmark):
         ]
 
     def read_instance_set(self):
+        """Read instance set from file"""
         path = os.path.dirname(os.path.abspath(__file__)) + "/" + self.config.instance_set_path
         self.config["instance_set"] = {}
         with open(path, 'r') as fh:
             reader = csv.DictReader(fh)
             for row in reader:
                 self.config.instance_set[int(row['ID'])] = [float(shift) for shift in row['shift'].split(",")] + [float(slope) for slope in row['slope'].split(",")]
+
+    def get_complete_benchmark(self, dimension=None):
+        """Get Benchmark from DAC paper"""
+        self.config = SIGMOID_DEFAULTS
+        if dimension == 1:
+            self.set_action_values((3))
+        if dimension == 2:
+            self.set_action_values((3, 3))
+        if dimension == 3:
+            self.set_action_values((3, 3, 3))
+        if dimension == 5:
+            self.set_action_values((3, 3, 3, 3, 3))
+        env = SigmoidEnv(self.config)
+        def sample_sigmoid():
+            shifts = self.rng.normal(self.config.cutoff/2, self.config.cutoff/4, self.config.action_space_args[0])
+            slopes = self.rng.choice([-1, 1], self.config.action_space_args[0]) * self.rng.uniform(size=self.config.action_space_args[0]) * self.config.slope_multiplier
+            return np.concatenate((shifts, slopes))
+        sampling_env = InstanceSamplingWrapper(env, {"sampling_function": sample_sigmoid})
+        return sampling_env

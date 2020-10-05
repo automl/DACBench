@@ -1,5 +1,6 @@
 from daclib.abstract_benchmark import AbstractBenchmark, objdict
 from daclib.envs import LubyEnv, luby_gen
+from daclib.wrappers import InstanceSamplingWrapper, RewardNoiseWrapper
 
 from gym import spaces
 import numpy as np
@@ -94,9 +95,25 @@ class LubyBenchmark(AbstractBenchmark):
         ]
 
     def read_instance_set(self):
+        """Read instance set from file"""
         path = os.path.dirname(os.path.abspath(__file__)) + "/" + self.config.instance_set_path
         self.config["instance_set"] = {}
         with open(path, 'r') as fh:
             reader = csv.DictReader(fh)
             for row in reader:
                 self.config["instance_set"][int(row['ID'])] = [float(shift) for shift in row['start'].split(",")] + [float(slope) for slope in row['sticky'].split(",")]
+
+    def get_complete_benchmark(self, L=8, fuzziness=1.5):
+        """Get Benchmark from DAC paper"""
+        self.config = LUBY_DEFAULTS
+        self.config.min_steps = L
+        env = LubyEnv(self.config)
+        def sample_luby():
+            shifts = self.rng.normal(self.config.cutoff/2, self.config.cutoff/4, self.config.action_space_args[0])
+            slopes = self.rng.choice([-1, 1], self.config.action_space_args[0]) * self.rng.uniform(size=self.config.action_space_args[0]) * self.config.slope_multiplier
+            return np.concatenate((shifts, slopes))
+        sampling_env = InstanceSamplingWrapper(env, {"sampling_function": sample_luby})
+        def fuzz():
+            return np.random.RandomState(self.config.seed).normal(-1, fuzziness)
+        fuzzy_env = RewardNoiseWrapper(sampling_env, {"noise_function": fuzz})
+        return fuzzy_env
