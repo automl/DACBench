@@ -8,7 +8,6 @@ Original author: Gresa Shala
 import numpy as np
 from collections import deque
 from cma.evolution_strategy import CMAEvolutionStrategy, CMAOptions
-from gps.proto.gps_pb2 import CUR_LOC, PAST_OBJ_VAL_DELTAS, CUR_PS, CUR_SIGMA, history_DELTAS, PAST_SIGMA
 import threading
 import concurrent.futures
 
@@ -17,10 +16,8 @@ from daclib import AbstractEnv
 # IDEA: if we ask cma instead of ask_eval, we could make this parallel
 def _norm(x): return np.sqrt(np.sum(np.square(x)))
 class CMAESEnv(AbstractEnv):
-    def __init__(self, config):#dim, init_loc, init_sigma, init_popsize, history_len, fcn=None, hpolib=False, benchmark=None):
+    def __init__(self, config):
         super(CMAESEnv, self).__init__(config)
-        #self.hpolib = hpolib
-        #self.benchmark = benchmark
         self.b = None
         self.bounds = [None, None]
         self.fbest = None
@@ -30,7 +27,13 @@ class CMAESEnv(AbstractEnv):
         self.past_sigma = deque(maxlen=history_len)
         self.solutions = None
         self.func_values = []
+        self.chi_N = dim**0.5 * (1 - 1. / (4.*dim) + 1. / (21.*dim**2))
         self.lock = threading.Lock()
+        self.popsize = config["popsize"]
+        if state_method in config.keys():
+            self.get_state = config["state_method"]
+        else:
+            self.get_state = self.get_default_state
 
     def step(self, action):
         """
@@ -67,7 +70,7 @@ class CMAESEnv(AbstractEnv):
         self.cur_loc = self.es.best.x
         self.cur_sigma = self.es.sigma
         self.cur_obj_val = self.es.best.f
-        return np.array(self.get_state().values()), self.fbest, done, {}
+        return self.get_state(), self.fbest, done, {}
 
     def reset(self):
         """
@@ -84,16 +87,15 @@ class CMAESEnv(AbstractEnv):
         self.past_sigma.clear()
         self.cur_loc = self.instance[0]
         self.cur_sigma = self.instance[1]
-        self.init_popsize = self.instance[2]
-        self.dim = self.instance[3]
-        if len(self.instance) > 4:
-            self.fcn = self.instance[4]
+        self.dim = self.instance[2]
+        if len(self.instance) > 3:
+            self.fcn = self.instance[3]
         else:
             self.fcn = None
 
         self.func_values = []
-        self.f_vals = deque(maxlen=self.init_popsize)
-        self.es = CMAEvolutionStrategy(self.cur_loc, self.init_sigma, {'popsize': self.init_popsize, 'bounds': self.bounds})
+        self.f_vals = deque(maxlen=self.popsize)
+        self.es = CMAEvolutionStrategy(self.cur_loc, self.init_sigma, {'popsize': self.popsize, 'bounds': self.bounds})
         self.solutions, self.func_values = self.es.ask_and_eval(self.fcn)
         self.fbest = self.func_values[np.argmin(self.func_values)]
         self.f_difference = np.abs(np.amax(self.func_values) - self.cur_obj_val)/float(self.cur_obj_val)
@@ -102,8 +104,7 @@ class CMAESEnv(AbstractEnv):
         self.history.append([self.f_difference, self.velocity])
         return np.array(self.get_state().values())
 
-    # TODO: this should not depend on GPS
-    def get_state(self):
+    def get_default_state(self):
         """
         Gather state description
 
@@ -132,15 +133,14 @@ class CMAESEnv(AbstractEnv):
         history_deltas = np.hstack((np.zeros((self.history_len*2-history_deltas.shape[0],)), history_deltas))
         past_sigma_deltas = np.hstack((np.zeros((self.history_len-past_sigma_deltas.shape[0],)), past_sigma_deltas))
 
-        cur_loc = self.cur_loc
-        cur_ps = self.cur_ps
-        cur_sigma = self.cur_sigma
+        cur_loc = np.array(self.cur_loc)
+        cur_ps = np.array(self.cur_ps)
+        cur_sigma = np.array(self.cur_sigma)
 
-        state = {CUR_LOC: cur_loc,
-                 PAST_OBJ_VAL_DELTAS: past_obj_val_deltas,
-                 CUR_PS: cur_ps,
-                 CUR_SIGMA: cur_sigma,
-                 history_DELTAS: history_deltas,
-                 PAST_SIGMA: past_sigma_deltas
+        state = {"past_deltas": past_obj_val_deltas,
+                 "current_ps": cur_ps,
+                 "current_sigma": cur_sigma,
+                 "history_deltas": history_deltas,
+                 "past_sigma": past_sigma_deltas
                 }
         return state
