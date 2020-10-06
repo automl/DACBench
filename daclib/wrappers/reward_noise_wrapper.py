@@ -6,7 +6,6 @@ class RewardNoiseWrapper(Wrapper):
     def __init__(self, env, config):
         super(RewardNoiseWrapper, self).__init__(env)
 
-        # TODO: get dimension and other info on reward
         if "noise_function" in config.keys():
             self.noise_function = config["noise_function"]
         elif config["noise_dist"] == "gaussian":
