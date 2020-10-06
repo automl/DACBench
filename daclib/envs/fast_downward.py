@@ -268,6 +268,28 @@ class FastDownwardEnv(AbstractEnv):
             self.kill_connection()
         return s, r, d or self.done, info
 
+    def porttry(self, s):
+        """
+        Scan for open ports. After:
+        https://stackoverflow.com/questions/26174743/making-a-fast-port-scanner
+
+        Parameters
+        ----------
+        Socket
+            socket for which to probe
+
+        Returns
+        ----------
+        bool
+            Port free or not
+        """
+        s.settimeout(0.5)
+        try:
+            s.connect((self.host, self.port))
+            return True
+        except:
+            return None
+
     def reset(self):
         """
         Reset environment
@@ -278,6 +300,27 @@ class FastDownwardEnv(AbstractEnv):
             State after reset
         """
         super(FastDownwardEnv, self).reset_()
+        self._prev_state = None
+        self.__start_time = time.time()
+        if not self.done:  # This means we interrupt FD before a plan was found
+            # Inform FD about imminent shutdown of the connection
+            self.send_msg(str.encode("END"))
+        self.done = False
+        if self.conn:
+            self.conn.shutdown(2)
+            self.conn.close()
+            self.conn = None
+        if not self.socket:
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            count = 0
+            while not porttry(socket):
+                self.port += 1
+                count += 1
+                if count >= 100:
+                    raise TimeoutError
+            self.socket.bind((self.host, self.port))
+
         if self.fd:
             self.fd.terminate()
         if self.instance.endswith(".pddl"):
@@ -301,21 +344,6 @@ class FastDownwardEnv(AbstractEnv):
                     f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})",
                 ]
             )
-        self._prev_state = None
-        self.__start_time = time.time()
-        if not self.done:  # This means we interrupt FD before a plan was found
-            # Inform FD about imminent shutdown of the connection
-            self.send_msg(str.encode("END"))
-        self.done = False
-        if self.conn:
-            self.conn.shutdown(2)
-            self.conn.close()
-            self.conn = None
-        if not self.socket:
-            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.socket.bind((self.host, self.port))
-
         # write down port such that FD can potentially read where to connect to
         if self._port_file_id:
             fp = joinpath(self._config_dir, "port_{:d}.txt".format(self._port_file_id))
