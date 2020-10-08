@@ -1,6 +1,6 @@
 from daclib.abstract_benchmark import AbstractBenchmark, objdict
 from daclib.envs import CMAESEnv
-from gps.agent.lto.fcn import FcnFamiliy
+from daclib.benchmarks.cma_fcn import FcnFamiliy
 
 from gym import spaces
 import numpy as np
