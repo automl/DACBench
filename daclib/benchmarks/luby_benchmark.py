@@ -115,6 +115,7 @@ class LubyBenchmark(AbstractBenchmark):
         self.config.min_steps = L
         self.config.instance_set = [[0, 0]]
         env = LubyEnv(self.config)
+
         def fuzz():
             return np.random.RandomState(self.config.seed).normal(-1, fuzziness)
 

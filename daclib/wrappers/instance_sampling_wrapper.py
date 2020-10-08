@@ -2,10 +2,6 @@ import gym
 from gym import Wrapper
 from scipy.stats import norm
 
-# TODO: implement this somewhere
-import read_instances
-
-
 class InstanceSamplingWrapper(Wrapper):
     def __init__(self, env, config):
         super(InstanceSamplingWrapper, self).__init__(env)

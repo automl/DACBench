@@ -69,11 +69,20 @@ class EpisodeTimeWrapper(Wrapper):
         plt.xlabel("Episode")
         plt.ylabel("Time (s)")
 
-        plt.plot(np.arange(len(self.overall)), self.overall, label="Episode time", color="b")
+        plt.plot(
+            np.arange(len(self.overall)), self.overall, label="Episode time", color="b"
+        )
         if self.tracking_interval:
-            plt.plot(np.arange(len(self.interval_list)), [np.mean(interval) for interval in self.interval_list], label="Interval time", color="r")
+            plt.plot(
+                np.arange(len(self.interval_list)),
+                [np.mean(interval) for interval in self.interval_list],
+                label="Interval time",
+                color="r",
+            )
 
         canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
-        img = np.fromstring(canvas.to_string_rgb(), dtype='uint8').reshape(height, width, 3)
+        img = np.fromstring(canvas.to_string_rgb(), dtype="uint8").reshape(
+            height, width, 3
+        )
         return img

@@ -79,16 +79,18 @@ class StateTrackingWrapper(Wrapper):
             RBG data of state tracking
 
         """
+
         def plot_single(index=None, title=None):
             plt.title("State over time")
             plt.xlabel("Episode")
             plt.ylabel("State")
-            if title:
             if index:
                 ys = [state[index] for state in self.overall]
             else:
                 ys = self.overall
-            p = plt.plot(np.arange(len(self.overall)), ys, label="Episode state", color="b")
+            p = plt.plot(
+                np.arange(len(self.overall)), ys, label="Episode state", color="b"
+            )
             p2 = None
             if self.tracking_interval:
                 if index:
@@ -97,14 +99,19 @@ class StateTrackingWrapper(Wrapper):
                         y_ints.append([state[index] for state in interval])
                 else:
                     y_ints = self.interval_list
-                p2 = plt.plot(np.arange(len(self.interval_list)), [np.mean(interval) for interval in y_ints], label="Interval state", color="r")
+                p2 = plt.plot(
+                    np.arange(len(self.interval_list)),
+                    [np.mean(interval) for interval in y_ints],
+                    label="Interval state",
+                    color="r",
+                )
 
             return p, p2
 
         if self.state_type == spaces.Box:
             state_length = len(self.env.observation_space.high)
-            #TODO: adjust max
-            figure = plt.figure(figsize=(12, min(3*state_length, 20)))
+            # TODO: adjust max
+            figure = plt.figure(figsize=(12, min(3 * state_length, 20)))
             canvas = FigureCanvas(figure)
             for i in range(state_length):
                 p, p2 = plot_single(i)
@@ -116,8 +123,8 @@ class StateTrackingWrapper(Wrapper):
             canvas.draw()
         elif self.state_type == spaces.MultiDiscrete:
             state_length = len(self.env.observation_space.nvec)
-            #TODO: adjust max
-            figure = plt.figure(figsize=(12, min(3*state_length, 20)))
+            # TODO: adjust max
+            figure = plt.figure(figsize=(12, min(3 * state_length, 20)))
             canvas = FigureCanvas(figure)
             for i in range(state_length):
                 p, p2 = plot_single(i)
@@ -128,12 +135,14 @@ class StateTrackingWrapper(Wrapper):
             raise NotImplementedError
         elif self.state_type == spaces.MultiBinary:
             state_length = len(self.env.observation_space.n)
-            #TODO: adjust max
-            figure = plt.figure(figsize=(12, min(3*state_length, 20)))
+            # TODO: adjust max
+            figure = plt.figure(figsize=(12, min(3 * state_length, 20)))
             canvas = FigureCanvas(figure)
             for i in range(state_length):
                 p, p2 = plot_single(i)
                 canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
-        img = np.fromstring(canvas.to_string_rgb(), dtype='uint8').reshape(height, width, 3)
+        img = np.fromstring(canvas.to_string_rgb(), dtype="uint8").reshape(
+            height, width, 3
+        )
         return img
