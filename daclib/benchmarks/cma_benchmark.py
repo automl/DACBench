@@ -2,6 +2,7 @@ from daclib.abstract_benchmark import AbstractBenchmark, objdict
 
 from daclib.envs import CMAESEnv
 from daclib.benchmarks.cma_fcn import FcnFamily
+from cma import bbobbenchmarks as bn
 
 from gym import spaces
 import numpy as np
@@ -75,13 +76,7 @@ class CMAESBenchmark(AbstractBenchmark):
         with open(path, "r") as fh:
             reader = csv.DictReader(fh)
             for row in reader:
-                instance = (
-                    [float(loc) for loc in row["loc"].split(",")]
-                    + [float(sigma) for sigma in row["sigma"].split(",")]
-                    + [float(popsize) for popsize in row["popsize"].split(",")]
-                    + [int(dim) for dim in row["dim"].split(",")]
-                )
-                if "func" in row.keys():
-                    func_args = [float(arg) for arg in row["args"].split(",")]
-                    instance.append(getattr(FcnFamiliy, row["func"])(*func_args))
+                function = bn.instantiate(row["fcn_index"])[0]
+                init_locs = [row[f"loc{i}"] for i in range(row["dim"])]
+                instance = [function, row["dim"], row["init_sigma"], init_locs]
                 self.config["instance_set"][int(row["ID"])] = instance
