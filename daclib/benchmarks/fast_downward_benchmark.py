@@ -10,7 +10,7 @@ NUM_HEURISTICS = 2
 FD_DEFAULTS = objdict(
     {
         "num_heuristics": NUM_HEURISTICS,
-        "action_space": "Discrete",
+        "action_space_class": "Discrete",
         "action_space_args": [NUM_HEURISTICS],
         "observation_space": "Box",
         "observation_space_type": np.float32,

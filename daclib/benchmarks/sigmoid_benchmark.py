@@ -11,7 +11,7 @@ ACTION_VALUES = (5, 10)
 
 SIGMOID_DEFAULTS = objdict(
     {
-        "action_space": "Discrete",
+        "action_space_class": "Discrete",
         "action_space_args": [int(np.prod(ACTION_VALUES))],
         "observation_space": "Box",
         "observation_space_type": np.float32,

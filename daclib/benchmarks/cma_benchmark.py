@@ -8,14 +8,14 @@ import numpy as np
 import os
 import csv
 
-HISTORY_LENGTH = 5
-MAX_DIM = 10
+HISTORY_LENGTH = 40
+INPUT_DIM = 10
 
 # TODO: fix this
 CMAES_DEFAULTS = objdict(
     {
-        "action_space": "Box",
-        "action_space_args": [-np.inf*np.ones(MAX_DIM), np.inf*np.ones(MAX_DIM)],
+        "action_space_class": "Box",
+        "action_space_args": [-np.inf*np.ones(INPUT_DIM), np.inf*np.ones(INPUT_DIM)],
         "observation_space": "Dict",
         "observation_space_type": None,
         "observation_space_args": {

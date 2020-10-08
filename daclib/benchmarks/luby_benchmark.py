@@ -13,7 +13,7 @@ HISTORY_LENGTH = 5
 
 LUBY_DEFAULTS = objdict(
     {
-        "action_space": "Discrete",
+        "action_space_class": "Discrete",
         "action_space_args": [int(np.log2(MAX_STEPS))],
         "observation_space": "Box",
         "observation_space_type": np.float32,

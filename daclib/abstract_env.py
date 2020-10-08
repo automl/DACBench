@@ -19,12 +19,20 @@ class AbstractEnv(gym.Env):
         self.c_step = 0
 
         self.reward_range = config["reward_range"]
-        self.observation_space = getattr(gym.spaces, config["observation_space"])(
-            *config["observation_space_args"], dtype=config["observation_space_type"]
-        )
-        self.action_space = getattr(gym.spaces, config["action_space"])(
-            *config["action_space_args"]
-        )
+
+        if "observation_space" in config.keys():
+            self.observation_space = config["observation_space"]
+        else:
+            self.observation_space = getattr(gym.spaces, config["observation_space_class"])(
+                *config["observation_space_args"], dtype=config["observation_space_type"]
+                )
+
+        if "action_space" in config.keys():
+            self.action_space = config["action_space"]
+        else:
+            self.action_space = getattr(gym.spaces, config["action_space_class"])(
+                *config["action_space_args"]
+            )
 
     def step_(self):
         """
