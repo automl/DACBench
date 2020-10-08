@@ -46,9 +46,6 @@ class LubyBenchmark(AbstractBenchmark):
             if not key in self.config:
                 self.config[key] = LUBY_DEFAULTS[key]
 
-        if not "instance_set" in self.config.keys():
-            self.read_instance_set()
-
     def get_benchmark_env(self):
         """
         Return Luby env with current configuration
@@ -58,6 +55,8 @@ class LubyBenchmark(AbstractBenchmark):
         LubyEnv
             Luby environment
         """
+        if not "instance_set" in self.config.keys():
+            self.read_instance_set()
         return LubyEnv(self.config)
 
     def set_cutoff(self, steps):

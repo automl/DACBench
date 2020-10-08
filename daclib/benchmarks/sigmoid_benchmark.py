@@ -56,6 +56,9 @@ class SigmoidBenchmark(AbstractBenchmark):
             Sigmoid environment
 
         """
+        if not "instance_set" in self.config.keys():
+            self.read_instance_set()
+
         return SigmoidEnv(self.config)
 
     def set_action_values(self, values):

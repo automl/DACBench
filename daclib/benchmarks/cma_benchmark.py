@@ -1,6 +1,7 @@
 from daclib.abstract_benchmark import AbstractBenchmark, objdict
+
 from daclib.envs import CMAESEnv
-from daclib.benchmarks.cma_fcn import FcnFamiliy
+from daclib.benchmarks.cma_fcn import FcnFamily
 
 from gym import spaces
 import numpy as np
@@ -8,22 +9,23 @@ import os
 import csv
 
 HISTORY_LENGTH = 5
+MAX_DIM = 10
 
 # TODO: fix this
 CMAES_DEFAULTS = objdict(
     {
-        "action_space": "Discrete",
-        "action_space_args": [int(np.log2(MAX_STEPS))],
+        "action_space": "Box",
+        "action_space_args": [-np.inf*np.ones(MAX_DIM), np.inf*np.ones(MAX_DIM)],
         "observation_space": "Dict",
         "observation_space_type": None,
         "observation_space_args": {
-            "past_deltas": spaces.Box(low=-np.inf, high=np.inf, shape=(HISTORY_LENGTH)),
+            "past_deltas": spaces.Box(low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape),
             "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
             "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
             "history_deltas": spaces.Box(
-                low=-np.inf, high=np.inf, shape=(HISTORY_LENGTH * 2)
+                low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH * 2).shape
             ),
-            "past_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(HISTORY_LENGTH)),
+            "past_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape),
         },
         "reward_range": (-np.inf, np.inf),
         "cutoff": 1e6,
@@ -41,16 +43,13 @@ class CMAESBenchmark(AbstractBenchmark):
     """
 
     def __init__(self, config_path=None):
-        super(CMAESEnvBenchmark, self).__init__(config_path)
+        super(CMAESBenchmark, self).__init__(config_path)
         if not self.config:
             self.config = CMAES_DEFAULTS
 
         for key in CMAES_DEFAULTS:
             if not key in self.config:
                 self.config[key] = CMAES_DEFAULTS[key]
-
-        if not "instance_set" in self.config.keys():
-            self.read_instance_set()
 
     def get_benchmark_env(self):
         """
@@ -61,6 +60,8 @@ class CMAESBenchmark(AbstractBenchmark):
         LubyEnv
             Luby environment
         """
+        if not "instance_set" in self.config.keys():
+            self.read_instance_set()
         return CMAESEnv(self.config)
 
     # TODO: test this
