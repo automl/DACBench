@@ -24,16 +24,18 @@ class CMAESEnv(AbstractEnv):
         self.b = None
         self.bounds = [None, None]
         self.fbest = None
-        self.history_len = config.history_len
-        self.historys = deque(maxlen=history_len)
-        self.past_obj_vals = deque(maxlen=history_len)
-        self.past_sigma = deque(maxlen=history_len)
+        self.history_len = config.hist_length
+        self.history = deque(maxlen=self.history_len)
+        self.past_obj_vals = deque(maxlen=self.history_len)
+        self.past_sigma = deque(maxlen=self.history_len)
         self.solutions = None
         self.func_values = []
-        self.chi_N = dim ** 0.5 * (1 - 1.0 / (4.0 * dim) + 1.0 / (21.0 * dim ** 2))
+        self.cur_obj_val = 0
+        #self.chi_N = dim ** 0.5 * (1 - 1.0 / (4.0 * dim) + 1.0 / (21.0 * dim ** 2))
         self.lock = threading.Lock()
         self.popsize = config["popsize"]
-        if state_method in config.keys():
+        self.cur_ps = self.popsize
+        if "state_method" in config.keys():
             self.get_state = config["state_method"]
         else:
             self.get_state = self.get_default_state
@@ -54,13 +56,13 @@ class CMAESEnv(AbstractEnv):
 
         """
         done = super(CMAESEnv, self).step_()
-        self.historys.append([self.f_difference, self.velocity])
+        self.history.append([self.f_difference, self.velocity])
         done = done or self.es.stop()
         if not done:
             """Moves forward in time one step"""
             sigma = action
             self.es.tell(self.solutions, self.func_values)
-            self.es.sigma = max(sigma, 0.05)
+            self.es.sigma = np.maximum(sigma, 0.05)
             self.solutions, self.func_values = self.es.ask_and_eval(self.fcn)
 
         self.f_difference = np.nan_to_num(
@@ -75,7 +77,7 @@ class CMAESEnv(AbstractEnv):
 
         self.past_obj_vals.append(self.cur_obj_val)
         self.past_sigma.append(self.cur_sigma)
-        self.cur_ps = _norm(self.es.adapt_sigma.ps) / self.chi_N - 1
+        self.cur_ps = _norm(self.es.adapt_sigma.ps)
         self.cur_loc = self.es.best.x
         self.cur_sigma = self.es.sigma
         self.cur_obj_val = self.es.best.f
@@ -94,13 +96,11 @@ class CMAESEnv(AbstractEnv):
         self.history.clear()
         self.past_obj_vals.clear()
         self.past_sigma.clear()
-        self.cur_loc = self.instance[0]
-        self.cur_sigma = self.instance[1]
-        self.dim = self.instance[2]
-        if len(self.instance) > 3:
-            self.fcn = self.instance[3]
-        else:
-            self.fcn = None
+        self.cur_loc = self.instance[3]
+        self.init_sigma = self.instance[2]
+        self.cur_sigma = self.init_sigma
+        self.dim = self.instance[1]
+        self.fcn = self.instance[0]
 
         self.func_values = []
         self.f_vals = deque(maxlen=self.popsize)

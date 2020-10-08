@@ -31,7 +31,7 @@ CMAES_DEFAULTS = objdict(
         "reward_range": (-np.inf, np.inf),
         "cutoff": 1e6,
         "hist_length": HISTORY_LENGTH,
-        "popsize": 1,
+        "popsize": 10,
         "seed": 0,
         "instance_set_path": "../instance_sets/cma_train.csv",
     }
@@ -76,7 +76,7 @@ class CMAESBenchmark(AbstractBenchmark):
         with open(path, "r") as fh:
             reader = csv.DictReader(fh)
             for row in reader:
-                function = bn.instantiate(row["fcn_index"])[0]
-                init_locs = [row[f"loc{i}"] for i in range(row["dim"])]
+                function = bn.instantiate(int(row["fcn_index"]))[0]
+                init_locs = [row[f"init_loc{i}"] for i in range(int(row["dim"]))]
                 instance = [function, row["dim"], row["init_sigma"], init_locs]
                 self.config["instance_set"][int(row["ID"])] = instance
