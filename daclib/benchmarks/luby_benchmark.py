@@ -26,7 +26,7 @@ LUBY_DEFAULTS = objdict(
         "min_steps": 2 ** 3,
         "fuzzy": False,
         "seed": 0,
-        "instance_set_path": "../instance_sets/luby_train.csv",
+        "instance_path": "../instance_sets/luby_train.csv",
     }
 )
 
@@ -54,7 +54,7 @@ class LubyBenchmark(AbstractBenchmark):
         LubyEnv
             Luby environment
         """
-        if "instance_set" not in self.config.keys():
+        if "instance_set" not in self.config.keys() or self.config.instance_set == [[0, 0]]:
             self.read_instance_set()
         return LubyEnv(self.config)
 
@@ -70,6 +70,7 @@ class LubyBenchmark(AbstractBenchmark):
         self.config.cutoff = steps
         self.config.action_space_args = [int(np.log2(steps))]
         luby_seq = np.log2([next(luby_gen(i)) for i in range(1, 2 * steps + 2)])
+        LUBY_SEQUENCE = luby_seq
         self.config.observation_space_args = [
             np.array([-1 for _ in range(self.config.hist_length + 1)]),
             np.array(
@@ -97,7 +98,7 @@ class LubyBenchmark(AbstractBenchmark):
         path = (
             os.path.dirname(os.path.abspath(__file__))
             + "/"
-            + self.config.instance_set_path
+            + self.config.instance_path
         )
         self.config["instance_set"] = {}
         with open(path, "r") as fh:
@@ -106,6 +107,7 @@ class LubyBenchmark(AbstractBenchmark):
                 self.config["instance_set"][int(row["ID"])] = [
                     float(shift) for shift in row["start"].split(",")
                 ] + [float(slope) for slope in row["sticky"].split(",")]
+        self.config["instance_set"] = list(self.config["instance_set"].values())
 
     def get_complete_benchmark(self, L=8, fuzziness=1.5):
         """Get Benchmark from DAC paper"""

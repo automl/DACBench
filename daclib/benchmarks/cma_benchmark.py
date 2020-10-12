@@ -72,7 +72,6 @@ class CMAESBenchmark(AbstractBenchmark):
             self.read_instance_set()
         return CMAESEnv(self.config)
 
-    # TODO: test this
     def read_instance_set(self):
         path = (
             os.path.dirname(os.path.abspath(__file__))
@@ -84,8 +83,8 @@ class CMAESBenchmark(AbstractBenchmark):
             reader = csv.DictReader(fh)
             for row in reader:
                 function = bn.instantiate(int(row["fcn_index"]))[0]
-                init_locs = [row[f"init_loc{i}"] for i in range(int(row["dim"]))]
-                instance = [function, row["dim"], row["init_sigma"], init_locs]
+                init_locs = [float(row[f"init_loc{i}"]) for i in range(int(row["dim"]))]
+                instance = [function, int(row["dim"]), float(row["init_sigma"]), init_locs]
                 self.config["instance_set"][int(row["ID"])] = instance
 
     def get_complete_benchmark(self):
