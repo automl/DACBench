@@ -1,14 +1,14 @@
-import gym
 from gym import Wrapper
 from scipy.stats import norm
 
+
 class InstanceSamplingWrapper(Wrapper):
-    def __init__(self, env, config):
+    def __init__(self, env, sampling_function=None, instances=None):
         super(InstanceSamplingWrapper, self).__init__(env)
-        if config["sampling_function"]:
-            self.sampling_function = config["sampling_function"]
-        elif config["path"]:
-            self.sampling_function = fit_dist_from_file(path)
+        if sampling_function:
+            self.sampling_function = sampling_function
+        elif instances:
+            self.sampling_function = self.fit_dist(instances)
         else:
             print("No distribution to sample from given")
             return
@@ -23,26 +23,25 @@ class InstanceSamplingWrapper(Wrapper):
             state
         """
         instance = self.sampling_function()
-        env.set_instance_set(instance)
-        env.set_inst_id(0)
+        self.env.set_instance_set(instance)
+        self.env.set_inst_id(0)
         return self.env.reset()
 
-    # TODO: heck if this works
-    def fit_dist_from_file(self, path):
+    # TODO: check if this works
+    def fit_dist(self, instances):
         """
-        Approximate instance distribution in given instance file
+        Approximate instance distribution in given instance set
 
         Parameters
         ----------
-        path : str
-            path to instance file
+        instances : List
+            instance set
 
         Returns
         ---------
         method
             sampling method for new instances
         """
-        instances = read_instances(path)
         dists = []
         for i in len(instances[0]):
             component = [inst[i] for inst in instances]

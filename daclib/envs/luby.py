@@ -5,20 +5,12 @@ by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
 Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 """
 
-import itertools
 import logging
-import os
-import sys
-from typing import List, Tuple
-
-import gym
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
+from typing import List
 import numpy as np
-from gym import Env, spaces, wrappers
-from scipy.stats import truncnorm
 
 from daclib import AbstractEnv
+
 
 # Instance IDEA 1: shift luby seq -> feat is sum of skipped action values
 # Instance IDEA 2: "Wiggle" luby i.e. luby(t + N(0, 0.1)) -> feat is sampled value

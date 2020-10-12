@@ -1,8 +1,7 @@
 from daclib.abstract_benchmark import AbstractBenchmark, objdict
 from daclib.envs import LubyEnv, luby_gen
-from daclib.wrappers import InstanceSamplingWrapper, RewardNoiseWrapper
+from daclib.wrappers import RewardNoiseWrapper
 
-from gym import spaces
 import numpy as np
 import os
 import csv
@@ -43,7 +42,7 @@ class LubyBenchmark(AbstractBenchmark):
             self.config = LUBY_DEFAULTS
 
         for key in LUBY_DEFAULTS:
-            if not key in self.config:
+            if key not in self.config:
                 self.config[key] = LUBY_DEFAULTS[key]
 
     def get_benchmark_env(self):
@@ -55,7 +54,7 @@ class LubyBenchmark(AbstractBenchmark):
         LubyEnv
             Luby environment
         """
-        if not "instance_set" in self.config.keys():
+        if "instance_set" not in self.config.keys():
             self.read_instance_set()
         return LubyEnv(self.config)
 
@@ -118,5 +117,5 @@ class LubyBenchmark(AbstractBenchmark):
         def fuzz():
             return np.random.RandomState(self.config.seed).normal(-1, fuzziness)
 
-        fuzzy_env = RewardNoiseWrapper(sampling_env, {"noise_function": fuzz})
+        fuzzy_env = RewardNoiseWrapper(env, {"noise_function": fuzz})
         return fuzzy_env

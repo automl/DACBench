@@ -94,6 +94,7 @@ class AbstractBenchmark:
         self.config["observation_space_type"] = data_type
 
 
+# TODO: source!
 class objdict(dict):
     """
     Modified dict to make config changes more flexible

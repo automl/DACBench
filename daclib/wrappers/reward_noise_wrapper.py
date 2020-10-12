@@ -1,16 +1,15 @@
-import gym
 from gym import Wrapper
 
 
 class RewardNoiseWrapper(Wrapper):
-    def __init__(self, env, config):
+    def __init__(self, env, noise_function=None, noise_dist="gaussian"):
         super(RewardNoiseWrapper, self).__init__(env)
 
-        if "noise_function" in config.keys():
-            self.noise_function = config["noise_function"]
-        elif config["noise_dist"] == "gaussian":
+        if noise_function:
+            self.noise_function = noise_function
+        elif noise_dist == "gaussian":
             self.noise_function = self.add_gaussian()
-        elif config["noise_dist"] == "exponential":
+        elif noise_dist == "exponential":
             self.noise_function = self.add_exponential()
 
         # self.noise_timing = config["noise_timing"]

@@ -1,6 +1,7 @@
-import gym
 from gym import Wrapper
+import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.backend_bases import FigureCanvas
 import time
 
 
@@ -10,10 +11,10 @@ class EpisodeTimeWrapper(Wrapper):
     Includes interval mode that return times in lists of len(interval) instead of one long list.
     """
 
-    def __init__(self, env, config):
+    def __init__(self, env, tracking_interval=None):
         super(EpisodeTimeWrapper, self).__init__(env)
 
-        self.tracking_interval = config["tracking_interval"]
+        self.tracking_interval = tracking_interval
         self.overall = []
         if self.tracking_interval:
             self.interval_list = []

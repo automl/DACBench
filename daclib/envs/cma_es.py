@@ -7,17 +7,17 @@ Original author: Gresa Shala
 
 import numpy as np
 from collections import deque
-from cma.evolution_strategy import CMAEvolutionStrategy, CMAOptions
+from cma.evolution_strategy import CMAEvolutionStrategy
 import threading
-import concurrent.futures
 
 from daclib import AbstractEnv
 
-# IDEA: if we ask cma instead of ask_eval, we could make this parallel
+
 def _norm(x):
     return np.sqrt(np.sum(np.square(x)))
 
 
+# IDEA: if we ask cma instead of ask_eval, we could make this parallel
 class CMAESEnv(AbstractEnv):
     def __init__(self, config):
         super(CMAESEnv, self).__init__(config)
@@ -31,7 +31,7 @@ class CMAESEnv(AbstractEnv):
         self.solutions = None
         self.func_values = []
         self.cur_obj_val = 0
-        #self.chi_N = dim ** 0.5 * (1 - 1.0 / (4.0 * dim) + 1.0 / (21.0 * dim ** 2))
+        # self.chi_N = dim ** 0.5 * (1 - 1.0 / (4.0 * dim) + 1.0 / (21.0 * dim ** 2))
         self.lock = threading.Lock()
         self.popsize = config["popsize"]
         self.cur_ps = self.popsize
@@ -176,10 +176,11 @@ class CMAESEnv(AbstractEnv):
         cur_sigma = np.array(self.cur_sigma)
 
         state = {
+            "current_loc": cur_loc,
             "past_deltas": past_obj_val_deltas,
             "current_ps": cur_ps,
             "current_sigma": cur_sigma,
             "history_deltas": history_deltas,
-            "past_sigma": past_sigma_deltas,
+            "past_sigma_deltas": past_sigma_deltas,
         }
         return state

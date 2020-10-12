@@ -1,0 +1,76 @@
+[project]
+name = "DAClib"
+version = "0.0.1"
+description = "A benchmark library for DAC"
+authors = [
+    "Theresa Eimer <eimer@tnt.uni-hannover.de>"
+]
+license = "Apache 2.0"
+readme = "README.md"
+python = "^3.6"
+homepage = "https://github.com/automl/DAClib"
+repository = "https://github.com/automl/DAClib"
+documentation = "https://github.com/automl/DAClib"
+
+keywords = ["DAC", "Dynamic Algorithm Configuration", "HPO"]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Natural Language :: English",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development",
+]
+
+# Requirements
+[requires]
+gym="0.15.7"
+numpy="1.19.0"
+scipy="1.4.1"
+ray="0.9.0.dev0"
+chainerrl="0.7.0"
+cma="2.7.0"
+pytest="6.0.2"
+
+[dev-dependencies]
+black = { version = "^18.3-alpha.0", python = "^3.6" }
+
+[build-system]
+requires = [
+    "setuptools >= 35.0.2",
+    "setuptools_scm >= 2.0.0, <3"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]
+
+[tool.black]
+line-length = 88
+target_version = ['py36']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+)
+'''

@@ -1,7 +1,6 @@
 from daclib.abstract_benchmark import AbstractBenchmark, objdict
 from daclib.envs import FastDownwardEnv
 
-from gym import spaces
 import numpy as np
 import os
 
@@ -49,10 +48,10 @@ class FastDownwardBenchmark(AbstractBenchmark):
             self.config = FD_DEFAULTS
 
         for key in FD_DEFAULTS:
-            if not key in self.config:
+            if key not in self.config:
                 self.config[key] = FD_DEFAULTS[key]
 
-        if not "instance_set" in self.config.keys():
+        if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
     def get_benchmark_env(self):
@@ -70,7 +69,6 @@ class FastDownwardBenchmark(AbstractBenchmark):
         """
         Read paths of instances from config into list
         """
-        directory = self.config.instance_set_path
         instances = []
         path = (
             os.path.dirname(os.path.abspath(__file__))
@@ -87,3 +85,8 @@ class FastDownwardBenchmark(AbstractBenchmark):
 
         if instances[0].endswith(".pddl"):
             self.config.domain_file = self.config.instance_set_path + "/domain.pddl"
+
+    def get_complete_benchmark(self):
+        self.config = FD_DEFAULTS
+        self.read_instance_set()
+        return FastDownwardEnv(self.config)

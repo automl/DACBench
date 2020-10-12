@@ -17,9 +17,9 @@ class TestAbstractEnv(unittest.TestCase):
 
     def make_env(self):
         config = {
-            "action_space": "Discrete",
+            "action_space_class": "Discrete",
             "action_space_args": np.array([4]).astype(np.float32),
-            "observation_space": "Box",
+            "observation_space_class": "Box",
             "observation_space_type": np.float32,
             "observation_space_args": [
                 np.array([-1, -1, -1], dtype=np.float32),
@@ -37,7 +37,7 @@ class TestAbstractEnv(unittest.TestCase):
         self.assertTrue(len(env.instance_set) >= 1)
         self.assertTrue(env.n_steps > 0)
         self.assertTrue(type(env.reward_range) is tuple)
-        print(type(env.observation_space))
+        print(env.observation_space)
         self.assertTrue(issubclass(type(env.observation_space), spaces.Space))
         self.assertTrue(issubclass(type(env.action_space), spaces.Space))
 

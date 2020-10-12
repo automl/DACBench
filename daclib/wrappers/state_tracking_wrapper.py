@@ -1,14 +1,16 @@
-import gym
 from gym import spaces
 from gym import Wrapper
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backend_bases import FigureCanvas
 
 
 class StateTrackingWrapper(Wrapper):
     """ Wrapper to track state changed over time """
 
-    def __init__(self, env, config):
+    def __init__(self, env, tracking_interval=None):
         super(StateTrackingWrapper, self).__init__(env)
-        tracking_interval = config["tracking_interval"]
+        tracking_interval = tracking_interval
         self.overall = []
         if self.tracking_interval:
             self.interval_list = []
@@ -25,7 +27,7 @@ class StateTrackingWrapper(Wrapper):
         np.array
             state
         """
-        state = env.reset()
+        state = self.env.reset()
         self.overall.append(state)
         return state
 
@@ -43,7 +45,7 @@ class StateTrackingWrapper(Wrapper):
         np.array, float, bool, dict
             state, reward, done, metainfo
         """
-        state, reward, done, info = env.step(action)
+        state, reward, done, info = self.env.step(action)
         self.overall.append(state)
         if self.tracking_interval:
             if len(self.current_interval) < self.tracking_interval:

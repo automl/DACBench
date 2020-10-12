@@ -2,7 +2,6 @@ from daclib.abstract_benchmark import AbstractBenchmark, objdict
 from daclib.envs import SigmoidEnv
 from daclib.wrappers import InstanceSamplingWrapper
 
-from gym import spaces
 import numpy as np
 import os
 import csv
@@ -40,10 +39,10 @@ class SigmoidBenchmark(AbstractBenchmark):
             self.config = SIGMOID_DEFAULTS
 
         for key in SIGMOID_DEFAULTS:
-            if not key in self.config:
+            if key not in self.config:
                 self.config[key] = SIGMOID_DEFAULTS[key]
 
-        if not "instance_set" in self.config.keys():
+        if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
     def get_benchmark_env(self):
@@ -56,7 +55,7 @@ class SigmoidBenchmark(AbstractBenchmark):
             Sigmoid environment
 
         """
-        if not "instance_set" in self.config.keys():
+        if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
         return SigmoidEnv(self.config)
@@ -118,7 +117,5 @@ class SigmoidBenchmark(AbstractBenchmark):
             )
             return np.concatenate((shifts, slopes))
 
-        sampling_env = InstanceSamplingWrapper(
-            env, {"sampling_function": sample_sigmoid}
-        )
+        sampling_env = InstanceSamplingWrapper(env, sampling_function=sample_sigmoid)
         return sampling_env

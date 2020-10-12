@@ -2,7 +2,7 @@ import pytest
 import unittest
 import json
 import os
-from daclib.abstract_benchmark import AbstractBenchmark
+from daclib.abstract_benchmark import AbstractBenchmark, objdict
 
 
 class TestAbstractBenchmark(unittest.TestCase):
@@ -13,12 +13,13 @@ class TestAbstractBenchmark(unittest.TestCase):
 
     def test_setup(self):
         bench = AbstractBenchmark()
-        self.assertTrue(bench.config == None)
+        self.assertTrue(bench.config is None)
 
     def test_config_file_management(self):
         bench = AbstractBenchmark()
 
-        test_config = {"seed": 10}
+        bench.config = objdict({"seed": 0})
+        test_config = objdict({"seed": 10})
         with open("test_conf.json", "w+") as fp:
             json.dump(test_config, fp)
         self.assertTrue(bench.config.seed == 0)
@@ -36,14 +37,14 @@ class TestAbstractBenchmark(unittest.TestCase):
 
     def test_attributes(self):
         bench = AbstractBenchmark()
-        bench.config = {"seed": 0}
+        bench.config = objdict({"seed": 0})
         self.assertTrue(bench.config.seed == bench.config["seed"])
         bench.config.seed = 42
         self.assertTrue(bench.config["seed"] == 42)
 
     def test_getters_and_setters(self):
         bench = AbstractBenchmark()
-        bench.config = {"seed": 0}
+        bench.config = objdict({"seed": 0})
         config = bench.get_config()
         self.assertTrue(issubclass(type(config), dict))
 

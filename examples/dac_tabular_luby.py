@@ -9,12 +9,10 @@ import argparse
 import logging
 import sys
 from collections import defaultdict, namedtuple
-import glob
 import numpy as np
 import datetime
 import pickle
 import os
-from functools import partial
 from daclib.benchmarks import LubyBenchmark
 
 
@@ -28,7 +26,8 @@ class QTable(dict):
         """
         Look up table for state-action values.
         :param n_actions: action space size
-        :param float_to_int: flag to determine if state values need to be rounded to the closest integer
+        :param float_to_int:
+            flag to determine if state values need to be rounded to the closest integer
         """
         super().__init__(**kwargs)
         self.n_actions = n_actions
@@ -124,7 +123,10 @@ def get_decay_schedule(
 def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
     """
     Evaluate Q function greediely with epsilon=0
-    :returns average cumulative reward, the expected reward after resetting the environment, episode length
+    :returns
+        average cumulative reward,
+        the expected reward after resetting the environment,
+        episode length
     """
     cumuls = []
     for _ in range(nevaluations):

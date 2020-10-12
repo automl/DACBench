@@ -12,7 +12,6 @@ from copy import deepcopy
 from enum import Enum
 from os import remove
 from os.path import join as joinpath
-from typing import Union
 import subprocess
 
 import numpy as np
@@ -44,10 +43,10 @@ class FastDownwardEnv(AbstractEnv):
             "Open List Entries",
             "Varianz",
         ]
-        self._general_state_features = [  #'evaluated_states', 'evaluations', 'expanded_states',
+        self._general_state_features = [  # 'evaluated_states', 'evaluations', 'expanded_states',
             # 'generated_ops',
-            #'generated_states', 'num_variables',
-            #'registered_states', 'reopened_states',
+            # 'generated_states', 'num_variables',
+            # 'registered_states', 'reopened_states',
             # "cg_num_eff_to_eff", "cg_num_eff_to_pre", "cg_num_pre_to_eff"
         ]
 
@@ -94,19 +93,19 @@ class FastDownwardEnv(AbstractEnv):
             )
         elif self.__state_type == StateType.NORMAL:
             self._transformation_func = (
-                lambda x, y, z, skip: FDEnvSelHeur._save_div(x, z) if not skip else x
+                lambda x, y, z, skip: FastDownwardEnv._save_div(x, z) if not skip else x
             )
         elif self.__state_type == StateType.NORMDIFF:
             self._transformation_func = (
-                lambda x, y, z, skip: FDEnvSelHeur._save_div(x, z)
-                - FDEnvSelHeur._save_div(y, z)
+                lambda x, y, z, skip: FastDownwardEnv._save_div(x, z)
+                - FastDownwardEnv._save_div(y, z)
                 if not skip
                 else x
             )
         elif self.__state_type == StateType.NORMABSDIFF:
             self._transformation_func = (
                 lambda x, y, z, skip: abs(
-                    FDEnvSelHeur._save_div(x, z) - FDEnvSelHeur._save_div(y, z)
+                    FastDownwardEnv._save_div(x, z) - FastDownwardEnv._save_div(y, z)
                 )
                 if not skip
                 else x
@@ -287,8 +286,8 @@ class FastDownwardEnv(AbstractEnv):
         try:
             s.connect((self.host, self.port))
             return True
-        except:
-            return None
+        except Exception:
+            return False
 
     def reset(self):
         """
@@ -314,7 +313,7 @@ class FastDownwardEnv(AbstractEnv):
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             count = 0
-            while not porttry(socket):
+            while not self.porttry(socket):
                 self.port += 1
                 count += 1
                 if count >= 100:

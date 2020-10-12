@@ -7,16 +7,11 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 
 import itertools
 import logging
-import os
-import sys
-from typing import List, Tuple
+from typing import List
 
-import gym
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
-from gym import Env, spaces, wrappers
-from scipy.stats import truncnorm
 
 from daclib import AbstractEnv
 
@@ -97,7 +92,7 @@ class SigmoidEnv(AbstractEnv):
         )
         self._c_step += 1
         self._prev_state = next_state
-        return np.array(next_state), r, self._c_step >= self.n_steps, {}
+        return np.array(next_state), r, done, {}
 
     def reset(self) -> List[int]:
         """
