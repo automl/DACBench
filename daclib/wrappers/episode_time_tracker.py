@@ -1,7 +1,7 @@
 from gym import Wrapper
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.backend_bases import FigureCanvas
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import time
 
 
