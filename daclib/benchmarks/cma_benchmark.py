@@ -73,6 +73,9 @@ class CMAESBenchmark(AbstractBenchmark):
         return CMAESEnv(self.config)
 
     def read_instance_set(self):
+        """
+        Read path of instances from config into list
+        """
         path = (
             os.path.dirname(os.path.abspath(__file__))
             + "/"
@@ -88,6 +91,7 @@ class CMAESBenchmark(AbstractBenchmark):
                 self.config["instance_set"][int(row["ID"])] = instance
 
     def get_complete_benchmark(self):
+        """Get benchmark from the LTO paper"""
         self.config = CMAES_DEFAULTS
         self.read_instance_set()
         return CMAESEnv(self.config)

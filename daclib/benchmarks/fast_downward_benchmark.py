@@ -1,5 +1,6 @@
 from daclib.abstract_benchmark import AbstractBenchmark, objdict
 from daclib.envs import FastDownwardEnv
+import chainerrl
 
 import numpy as np
 import os
@@ -90,4 +91,6 @@ class FastDownwardBenchmark(AbstractBenchmark):
         """Get benchmark from the paper"""
         self.config = FD_DEFAULTS
         self.read_instance_set()
-        return FastDownwardEnv(self.config)
+        env = FastDownwardEnv(self.config)
+        scaled_env = chainerrl.wrappers.ScaleReward(env, 1)
+        return scaled_env
