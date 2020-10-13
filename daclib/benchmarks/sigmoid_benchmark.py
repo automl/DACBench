@@ -90,8 +90,9 @@ class SigmoidBenchmark(AbstractBenchmark):
                         try:
                             f.append(float(row[i]))
                         except Exception:
-                            f.append(row[i])
-                self.config.instance_set.append(f)
+                            continue
+                if not len(f) == 0:
+                    self.config.instance_set.append(f)
 
     def get_complete_benchmark(self, dimension=None, seed=0):
         """Get Benchmark from DAC paper"""
