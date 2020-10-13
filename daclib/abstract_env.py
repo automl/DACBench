@@ -23,9 +23,17 @@ class AbstractEnv(gym.Env):
         if "observation_space" in config.keys():
             self.observation_space = config["observation_space"]
         else:
-            self.observation_space = getattr(
-                gym.spaces, config["observation_space_class"]
-            )(*config["observation_space_args"], dtype=config["observation_space_type"])
+            if not config["observation_space_class"] == "Dict":
+                self.observation_space = getattr(
+                    gym.spaces, config["observation_space_class"]
+                )(
+                    *config["observation_space_args"],
+                    dtype=config["observation_space_type"],
+                )
+            else:
+                self.observation_space = getattr(
+                    gym.spaces, config["observation_space_class"]
+                )(*config["observation_space_args"])
 
         if "action_space" in config.keys():
             self.action_space = config["action_space"]

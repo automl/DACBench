@@ -12,7 +12,7 @@ SIGMOID_DEFAULTS = objdict(
     {
         "action_space_class": "Discrete",
         "action_space_args": [int(np.prod(ACTION_VALUES))],
-        "observation_space": "Box",
+        "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [
             np.array([-np.inf for _ in range(1 + len(ACTION_VALUES) * 3)]),
@@ -41,9 +41,6 @@ class SigmoidBenchmark(AbstractBenchmark):
         for key in SIGMOID_DEFAULTS:
             if key not in self.config:
                 self.config[key] = SIGMOID_DEFAULTS[key]
-
-        if "instance_set" not in self.config.keys():
-            self.read_instance_set()
 
     def get_benchmark_env(self):
         """
@@ -83,15 +80,20 @@ class SigmoidBenchmark(AbstractBenchmark):
             + "/"
             + self.config.instance_set_path
         )
-        self.config["instance_set"] = {}
-        with open(path, "r") as fh:
-            reader = csv.DictReader(fh)
+        self.config["instance_set"] = []
+        with open(path, "r") as f:
+            reader = csv.reader(f)
             for row in reader:
-                self.config.instance_set[int(row["ID"])] = [
-                    float(shift) for shift in row["shift"].split(",")
-                ] + [float(slope) for slope in row["slope"].split(",")]
+                f = []
+                for i in range(len(row)):
+                    if i != 0:
+                        try:
+                            f.append(float(row[i]))
+                        except Exception:
+                            f.append(row[i])
+                self.config.instance_set.append(f)
 
-    def get_complete_benchmark(self, dimension=None):
+    def get_complete_benchmark(self, dimension=None, seed=0):
         """Get Benchmark from DAC paper"""
         self.config = SIGMOID_DEFAULTS
         if dimension == 1:
@@ -102,17 +104,20 @@ class SigmoidBenchmark(AbstractBenchmark):
             self.set_action_values((3, 3, 3))
         if dimension == 5:
             self.set_action_values((3, 3, 3, 3, 3))
+        self.config.seed = seed
+        self.config.instance_set = [0]
         env = SigmoidEnv(self.config)
 
         def sample_sigmoid():
-            shifts = self.rng.normal(
+            rng = np.random.RandomState(seed)
+            shifts = rng.normal(
                 self.config.cutoff / 2,
                 self.config.cutoff / 4,
                 self.config.action_space_args[0],
             )
             slopes = (
-                self.rng.choice([-1, 1], self.config.action_space_args[0])
-                * self.rng.uniform(size=self.config.action_space_args[0])
+                rng.choice([-1, 1], self.config.action_space_args[0])
+                * rng.uniform(size=self.config.action_space_args[0])
                 * self.config.slope_multiplier
             )
             return np.concatenate((shifts, slopes))

@@ -23,7 +23,7 @@ class InstanceSamplingWrapper(Wrapper):
             state
         """
         instance = self.sampling_function()
-        self.env.set_instance_set(instance)
+        self.env.set_instance_set([instance])
         self.env.set_inst_id(0)
         return self.env.reset()
 

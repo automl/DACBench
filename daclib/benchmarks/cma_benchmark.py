@@ -19,22 +19,26 @@ CMAES_DEFAULTS = objdict(
             -np.inf * np.ones(INPUT_DIM),
             np.inf * np.ones(INPUT_DIM),
         ],
-        "observation_space": "Dict",
+        "observation_space_class": "Dict",
         "observation_space_type": None,
-        "observation_space_args": {
-            "current_loc": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
-            "past_deltas": spaces.Box(
-                low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape
-            ),
-            "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
-            "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
-            "history_deltas": spaces.Box(
-                low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH * 2).shape
-            ),
-            "past_sigma_deltas": spaces.Box(
-                low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape
-            ),
-        },
+        "observation_space_args": [
+            {
+                "current_loc": spaces.Box(
+                    low=-np.inf, high=np.inf, shape=np.arange(INPUT_DIM).shape
+                ),
+                "past_deltas": spaces.Box(
+                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape
+                ),
+                "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+                "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+                "history_deltas": spaces.Box(
+                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH * 2).shape
+                ),
+                "past_sigma_deltas": spaces.Box(
+                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape
+                ),
+            }
+        ],
         "reward_range": (-np.inf, np.inf),
         "cutoff": 1e6,
         "hist_length": HISTORY_LENGTH,
@@ -70,6 +74,7 @@ class CMAESBenchmark(AbstractBenchmark):
         """
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
+
         return CMAESEnv(self.config)
 
     def read_instance_set(self):
@@ -87,11 +92,17 @@ class CMAESBenchmark(AbstractBenchmark):
             for row in reader:
                 function = bn.instantiate(int(row["fcn_index"]))[0]
                 init_locs = [float(row[f"init_loc{i}"]) for i in range(int(row["dim"]))]
-                instance = [function, int(row["dim"]), float(row["init_sigma"]), init_locs]
+                instance = [
+                    function,
+                    int(row["dim"]),
+                    float(row["init_sigma"]),
+                    init_locs,
+                ]
                 self.config["instance_set"][int(row["ID"])] = instance
 
-    def get_complete_benchmark(self):
+    def get_complete_benchmark(self, seed=0):
         """Get benchmark from the LTO paper"""
         self.config = CMAES_DEFAULTS
+        self.config.seed = seed
         self.read_instance_set()
         return CMAESEnv(self.config)

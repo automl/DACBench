@@ -30,7 +30,7 @@ class CMAESEnv(AbstractEnv):
         self.past_sigma = deque(maxlen=self.history_len)
         self.solutions = None
         self.func_values = []
-        self.cur_obj_val = 0
+        self.cur_obj_val = -1
         # self.chi_N = dim ** 0.5 * (1 - 1.0 / (4.0 * dim) + 1.0 / (21.0 * dim ** 2))
         self.lock = threading.Lock()
         self.popsize = config["popsize"]
@@ -81,7 +81,7 @@ class CMAESEnv(AbstractEnv):
         self.cur_loc = self.es.best.x
         self.cur_sigma = self.es.sigma
         self.cur_obj_val = self.es.best.f
-        return self.get_state(), self.fbest, done, {}
+        return self.get_state(), -self.fbest, done, {}
 
     def reset(self):
         """
@@ -119,7 +119,7 @@ class CMAESEnv(AbstractEnv):
         )
         self.es.mean_old = self.es.mean
         self.history.append([self.f_difference, self.velocity])
-        return np.array(self.get_state().values())
+        return self.get_state()
 
     def get_default_state(self):
         """
@@ -172,8 +172,8 @@ class CMAESEnv(AbstractEnv):
         )
 
         cur_loc = np.array(self.cur_loc)
-        cur_ps = np.array(self.cur_ps)
-        cur_sigma = np.array(self.cur_sigma)
+        cur_ps = np.array([self.cur_ps])
+        cur_sigma = np.array([self.cur_sigma])
 
         state = {
             "current_loc": cur_loc,

@@ -18,12 +18,16 @@ ray.init()
 tune.register_env("sigmoid", make_sigmoid)
 
 # Play 5D scenario with irregular action count
-action_values = (3, 3, 8, 8, 8)
-config = {
+action_values = (3, 3, 3, 3, 3)
+sigmoid_config = {
     "env": "sigmoid",
-    "env_config": {"seed": 0, "action_values": action_values,},
+    "env_config": {
+        "seed": 0,
+        "action_values": action_values,
+        "instance_set_path": "../instance_sets/sigmoid_5D3M_train.csv",
+    },
 }
-stop = {"training_iteration": 20}
+stop = {"training_iteration": 50}
 
-results = tune.run("PPO", config=config, stop=stop)
+results = tune.run("PPO", config=sigmoid_config, stop=stop)
 ray.shutdown()

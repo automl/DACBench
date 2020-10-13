@@ -341,7 +341,7 @@ if __name__ == "__main__":
         dest="inst_feats",
         default="../instance_sets/luby_train.csv",
         help="Instance feature file to use for sigmoid environment",
-        type=os.path.abspath,
+        type=str,
     )
     parser.add_argument("-s", "--seed", default=0, type=int)
     parser.add_argument("--cutoff", default=None, type=int, help="Env max steps")
@@ -355,7 +355,7 @@ if __name__ == "__main__":
         "--test_insts",
         default=None,
         help="Test instances to use with q-learning for evaluation purposes",
-        type=os.path.abspath,
+        type=str,
     )
     parser.add_argument(
         "--reward_variance",

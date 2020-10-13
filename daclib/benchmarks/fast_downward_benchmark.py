@@ -12,7 +12,7 @@ FD_DEFAULTS = objdict(
         "num_heuristics": NUM_HEURISTICS,
         "action_space_class": "Discrete",
         "action_space_args": [NUM_HEURISTICS],
-        "observation_space": "Box",
+        "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [
             np.array([-np.inf for _ in range(5 * NUM_HEURISTICS)]),
@@ -52,9 +52,6 @@ class FastDownwardBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = FD_DEFAULTS[key]
 
-        if "instance_set" not in self.config.keys():
-            self.read_instance_set()
-
     def get_benchmark_env(self):
         """
         Return Luby env with current configuration
@@ -64,6 +61,9 @@ class FastDownwardBenchmark(AbstractBenchmark):
         LubyEnv
             Luby environment
         """
+        if "instance_set" not in self.config.keys():
+            self.read_instance_set()
+
         return FastDownwardEnv(self.config)
 
     def read_instance_set(self):
@@ -87,10 +87,13 @@ class FastDownwardBenchmark(AbstractBenchmark):
         if instances[0].endswith(".pddl"):
             self.config.domain_file = self.config.instance_set_path + "/domain.pddl"
 
-    def get_complete_benchmark(self):
+    def get_complete_benchmark(self, seed=0, train=True):
         """Get benchmark from the paper"""
         self.config = FD_DEFAULTS
         self.read_instance_set()
+        self.config.seed = seed
         env = FastDownwardEnv(self.config)
-        scaled_env = chainerrl.wrappers.ScaleReward(env, 1)
-        return scaled_env
+        if train:
+            return chainerrl.wrappers.ScaleReward(env, 1)
+        else:
+            return env

@@ -6,9 +6,7 @@ from daclib.benchmarks import FastDownwardBenchmark
 # Overwrite the default config and get env
 def make_fast_downward(config):
     bench = FastDownwardBenchmark()
-    for k in config.keys():
-        bench.config[k] = config[k]
-    return bench.get_benchmark_env()
+    return bench.get_complete_benchmark(config["seed"])
 
 
 ray.init()

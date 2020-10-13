@@ -282,9 +282,8 @@ class FastDownwardEnv(AbstractEnv):
         bool
             Port free or not
         """
-        s.settimeout(0.5)
         try:
-            s.connect((self.host, self.port))
+            s.bind((self.host, self.port))
             return True
         except Exception:
             return False
@@ -312,13 +311,14 @@ class FastDownwardEnv(AbstractEnv):
         if not self.socket:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.socket.settimeout(0.5)
             count = 0
-            while not self.porttry(socket):
+            while not self.porttry(self.socket):
                 self.port += 1
                 count += 1
                 if count >= 100:
+                    print(self.port)
                     raise TimeoutError
-            self.socket.bind((self.host, self.port))
 
         if self.fd:
             self.fd.terminate()

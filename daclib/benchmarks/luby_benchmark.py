@@ -14,7 +14,7 @@ LUBY_DEFAULTS = objdict(
     {
         "action_space_class": "Discrete",
         "action_space_args": [int(np.log2(MAX_STEPS))],
-        "observation_space": "Box",
+        "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [
             np.array([-1 for _ in range(HISTORY_LENGTH + 1)]),
@@ -26,7 +26,7 @@ LUBY_DEFAULTS = objdict(
         "min_steps": 2 ** 3,
         "fuzzy": False,
         "seed": 0,
-        "instance_path": "../instance_sets/luby_train.csv",
+        "instance_set_path": "../instance_sets/luby_train.csv",
     }
 )
 
@@ -54,8 +54,11 @@ class LubyBenchmark(AbstractBenchmark):
         LubyEnv
             Luby environment
         """
-        if "instance_set" not in self.config.keys() or self.config.instance_set == [[0, 0]]:
+        if "instance_set" not in self.config.keys() or self.config.instance_set == [
+            [0, 0]
+        ]:
             self.read_instance_set()
+
         return LubyEnv(self.config)
 
     def set_cutoff(self, steps):
@@ -69,12 +72,14 @@ class LubyBenchmark(AbstractBenchmark):
         """
         self.config.cutoff = steps
         self.config.action_space_args = [int(np.log2(steps))]
-        luby_seq = np.log2([next(luby_gen(i)) for i in range(1, 2 * steps + 2)])
-        LUBY_SEQUENCE = luby_seq
+        LUBY_SEQUENCE = np.log2([next(luby_gen(i)) for i in range(1, 2 * steps + 2)])
         self.config.observation_space_args = [
             np.array([-1 for _ in range(self.config.hist_length + 1)]),
             np.array(
-                [2 ** max(luby_seq + 1) for _ in range(self.config.hist_length + 1)]
+                [
+                    2 ** max(LUBY_SEQUENCE + 1)
+                    for _ in range(self.config.hist_length + 1)
+                ]
             ),
         ]
 
@@ -98,7 +103,7 @@ class LubyBenchmark(AbstractBenchmark):
         path = (
             os.path.dirname(os.path.abspath(__file__))
             + "/"
-            + self.config.instance_path
+            + self.config.instance_set_path
         )
         self.config["instance_set"] = {}
         with open(path, "r") as fh:
@@ -109,15 +114,16 @@ class LubyBenchmark(AbstractBenchmark):
                 ] + [float(slope) for slope in row["sticky"].split(",")]
         self.config["instance_set"] = list(self.config["instance_set"].values())
 
-    def get_complete_benchmark(self, L=8, fuzziness=1.5):
+    def get_complete_benchmark(self, L=8, fuzziness=1.5, seed=0):
         """Get Benchmark from DAC paper"""
         self.config = LUBY_DEFAULTS
         self.config.min_steps = L
+        self.config.seed = seed
         self.config.instance_set = [[0, 0]]
         env = LubyEnv(self.config)
 
         def fuzz():
             return np.random.RandomState(self.config.seed).normal(-1, fuzziness)
 
-        fuzzy_env = RewardNoiseWrapper(env, {"noise_function": fuzz})
+        fuzzy_env = RewardNoiseWrapper(env, noise_function=fuzz)
         return fuzzy_env
