@@ -28,7 +28,7 @@ def flatten(li):
 
 # We use the configuration from the "Learning to Optimize Step-size Adaption in CMA-ES" Paper by Shala et al.
 bench = CMAESBenchmark()
-env = bench.get_complete_benchmark()
+env = bench.get_benchmark()
 
 obs_space = env.observation_space
 space_array = [obs_space[k].low for k in list(obs_space.spaces.keys())]

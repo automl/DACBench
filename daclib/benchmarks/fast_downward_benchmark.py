@@ -87,7 +87,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
         if instances[0].endswith(".pddl"):
             self.config.domain_file = self.config.instance_set_path + "/domain.pddl"
 
-    def get_complete_benchmark(self, seed=0, train=True):
+    def get_benchmark(self, seed=0, train=True):
         """Get benchmark from the paper"""
         self.config = FD_DEFAULTS
         self.read_instance_set()

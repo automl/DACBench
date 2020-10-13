@@ -30,5 +30,5 @@ class TestFDBenchmark(unittest.TestCase):
 
     def test_benchmark_env(self):
         bench = FastDownwardBenchmark()
-        env = bench.get_complete_benchmark()
+        env = bench.get_benchmark()
         self.assertTrue(issubclass(type(env), chainerrl.wrappers.ScaleReward))

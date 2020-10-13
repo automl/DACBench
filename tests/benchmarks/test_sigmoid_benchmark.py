@@ -30,7 +30,7 @@ class TestSigmoidBenchmark(unittest.TestCase):
 
     def test_benchmark_env(self):
         bench = SigmoidBenchmark()
-        env = bench.get_complete_benchmark()
+        env = bench.get_benchmark()
         self.assertTrue(issubclass(type(env), InstanceSamplingWrapper))
 
     def test_action_value_setting(self):

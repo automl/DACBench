@@ -20,7 +20,7 @@ Benchmarks follow the OpenAI gym standard interface. To create an environment si
 from daclib.bechmarks.sigmoid_benchmark import SigmoidBenchmark
 benchmark = SigmoidBenchmark()
 benchmark.config.seed = 42
-env = SigmoidBenchmark.get_benchmark_env()
+env = benchmark.get_benchmark_env()
 ```
 The environment configuration can be changed manually or loaded from file.
 Additionally, there are several wrappers with added functionality available.
@@ -35,11 +35,10 @@ To reproduce the experiments from the paper a benchmark originated from, you can
 ```python
 from daclib.bechmarks.sigmoid_benchmark import SigmoidBenchmark
 benchmark = SigmoidBenchmark()
-env = SigmoidBenchmark.get_benchmark(seed)
+env = benchmark.get_benchmark(seed)
 ```
 As some papers use different benchmark configurations, there are sometimes more options than just setting the seed.
 These are:
 - Sigmoid: dimension (problem dimension, in the paper either 1, 2, 3 or 5)
 - Luby: L (minimum number of steps, in the paper either 8, 16 or 32) and fuzziness (in the paper 0.1, 0.8, 1.5, 2.0 and 2.5)
-- Fast Downward:
-- CMA:
+- Fast Downward: rewards are scaled in train mode (default), deactivate for testing

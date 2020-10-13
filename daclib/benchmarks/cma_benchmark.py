@@ -100,7 +100,7 @@ class CMAESBenchmark(AbstractBenchmark):
                 ]
                 self.config["instance_set"][int(row["ID"])] = instance
 
-    def get_complete_benchmark(self, seed=0):
+    def get_benchmark(self, seed=0):
         """Get benchmark from the LTO paper"""
         self.config = CMAES_DEFAULTS
         self.config.seed = seed

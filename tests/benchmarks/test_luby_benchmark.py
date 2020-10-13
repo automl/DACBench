@@ -29,7 +29,7 @@ class TestLubyBenchmark(unittest.TestCase):
 
     def test_benchmark_env(self):
         bench = LubyBenchmark()
-        env = bench.get_complete_benchmark()
+        env = bench.get_benchmark()
         self.assertTrue(issubclass(type(env), RewardNoiseWrapper))
 
     def test_cutoff_setting(self):

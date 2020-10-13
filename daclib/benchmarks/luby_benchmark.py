@@ -114,7 +114,7 @@ class LubyBenchmark(AbstractBenchmark):
                 ] + [float(slope) for slope in row["sticky"].split(",")]
         self.config["instance_set"] = list(self.config["instance_set"].values())
 
-    def get_complete_benchmark(self, L=8, fuzziness=1.5, seed=0):
+    def get_benchmark(self, L=8, fuzziness=1.5, seed=0):
         """Get Benchmark from DAC paper"""
         self.config = LUBY_DEFAULTS
         self.config.min_steps = L

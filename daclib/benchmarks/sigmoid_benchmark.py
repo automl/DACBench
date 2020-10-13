@@ -94,7 +94,7 @@ class SigmoidBenchmark(AbstractBenchmark):
                 if not len(f) == 0:
                     self.config.instance_set.append(f)
 
-    def get_complete_benchmark(self, dimension=None, seed=0):
+    def get_benchmark(self, dimension=None, seed=0):
         """Get Benchmark from DAC paper"""
         self.config = SIGMOID_DEFAULTS
         if dimension == 1:
