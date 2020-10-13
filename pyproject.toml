@@ -55,6 +55,7 @@ filterwarnings = [
 ]
 testpaths = ["tests"]
 
+
 [tool.black]
 line-length = 88
 target_version = ['py36']
