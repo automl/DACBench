@@ -1,29 +1,15 @@
-import setuptools
+from os.path import dirname, abspath, join
+from setuptools import setup, find_packages
+import toml
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+with open("pyproject.toml", "r") as f:
+   requirements = toml.loads(f.read())
 
-setuptools.setup(
+prod = requirements['install_requires']
+dev = requirements['dev-dependencies']
+
+setup(
     name="DAClib",
-    version="0.0.1",
-    author="Theresa Eimer",
-    author_email="eimer@tnt.uni-hannover.de",
-    description="Dynamic Algorithm Control benchmark library",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/automl/DAClib",
-    packages=setuptools.find_packages(),
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "Natural Language :: English",
-        "Environment :: Console",
-        "Intended Audience :: Developers",
-        "Intended Audience :: Education",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: Apache Software License",
-        "Operating System :: POSIX :: Linux",
-        "Topic :: Scientific/Engineering :: Artificial Intelligence",
-        "Topic :: Scientific/Engineering",
-        "Topic :: Software Development",
-    ],
+    install_requires=[x for x in prod],
+    extras_require={'dev': [x for x in dev]},
 )
