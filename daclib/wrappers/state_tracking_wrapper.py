@@ -10,13 +10,25 @@ class StateTrackingWrapper(Wrapper):
 
     def __init__(self, env, tracking_interval=None):
         super(StateTrackingWrapper, self).__init__(env)
-        tracking_interval = tracking_interval
+        self.tracking_interval = tracking_interval
         self.overall = []
         if self.tracking_interval:
             self.interval_list = []
             self.current_interval = []
         self.episode = None
         self.state_type = type(env.observation_space)
+
+    def __setattr__(self, name, value):
+        if name in ["tracking_interval", "overall", "interval_list", "current_interval", "state_type", "env", "episode"]:
+            object.__setattr__(self, name, value)
+        else:
+            setattr(self.env, name, value)
+
+    def __getattr__(self, name):
+        if name in ["tracking_interval", "overall", "interval_list", "current_interval", "state_type", "env", "episode"]:
+            return object.__getattribute__(self, name)
+        else:
+            return getattr(self.env, name)
 
     def reset(self):
         """
@@ -29,6 +41,12 @@ class StateTrackingWrapper(Wrapper):
         """
         state = self.env.reset()
         self.overall.append(state)
+        if self.tracking_interval:
+            if len(self.current_interval) < self.tracking_interval:
+                self.current_interval.append(state)
+            else:
+                self.interval_list.append(self.current_interval)
+                self.current_interval = [state]
         return state
 
     def step(self, action):
@@ -66,7 +84,8 @@ class StateTrackingWrapper(Wrapper):
 
         """
         if self.tracking_interval:
-            return self.overall, self.interval_list
+            complete_intervals = self.interval_list + [self.current_interval]
+            return self.overall, complete_intervals
         else:
             return self.overall
 

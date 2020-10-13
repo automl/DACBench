@@ -8,12 +8,23 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 class ActionFrequencyWrapper(Wrapper):
     def __init__(self, env, tracking_interval=None):
         super(ActionFrequencyWrapper, self).__init__(env)
-        tracking_interval = tracking_interval
+        self.tracking_interval = tracking_interval
         self.overall = []
         if self.tracking_interval:
             self.interval_list = []
             self.current_interval = []
-        self.state_type = type(env.observation_space)
+
+    def __setattr__(self, name, value):
+        if name in ["tracking_interval", "overall", "interval_list", "current_interval", "env"]:
+            object.__setattr__(self, name, value)
+        else:
+            setattr(self.env, name, value)
+
+    def __getattr__(self, name):
+        if name in ["tracking_interval", "overall", "interval_list", "current_interval", "env"]:
+            return object.__getattribute__(self, name)
+        else:
+            return getattr(self.env, name)
 
     def step(self, action):
         """
@@ -39,7 +50,7 @@ class ActionFrequencyWrapper(Wrapper):
                 self.current_interval = [action]
         return state, reward, done, info
 
-    def get_states(self):
+    def get_actions(self):
         """
         Get state progression
 
@@ -50,7 +61,8 @@ class ActionFrequencyWrapper(Wrapper):
 
         """
         if self.tracking_interval:
-            return self.overall, self.interval_list
+            complete_intervals = self.interval_list + [self.current_interval]
+            return self.overall, complete_intervals
         else:
             return self.overall
 

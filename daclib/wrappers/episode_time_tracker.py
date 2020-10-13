@@ -13,12 +13,23 @@ class EpisodeTimeWrapper(Wrapper):
 
     def __init__(self, env, tracking_interval=None):
         super(EpisodeTimeWrapper, self).__init__(env)
-
         self.tracking_interval = tracking_interval
         self.overall = []
         if self.tracking_interval:
             self.interval_list = []
             self.current_interval = []
+
+    def __setattr__(self, name, value):
+        if name in ["tracking_interval", "overall", "interval_list", "current_interval", "env"]:
+            object.__setattr__(self, name, value)
+        else:
+            setattr(self.env, name, value)
+
+    def __getattr__(self, name):
+        if name in ["tracking_interval", "overall", "interval_list", "current_interval", "env"]:
+            return object.__getattribute__(self, name)
+        else:
+            return getattr(self.env, name)
 
     def step(self, action):
         """
@@ -47,7 +58,7 @@ class EpisodeTimeWrapper(Wrapper):
                 self.current_interval = [duration]
         return state, reward, done, info
 
-    def return_times(self):
+    def get_times(self):
         """
         Get times
 
@@ -58,7 +69,8 @@ class EpisodeTimeWrapper(Wrapper):
 
         """
         if self.tracking_interval:
-            np.array(self.overall), np.array(self.interval_list)
+            complete_intervals = self.interval_list + [self.current_interval]
+            return self.overall, complete_intervals
         else:
             return np.array(self.overall)
 
