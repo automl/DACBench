@@ -53,7 +53,7 @@ filterwarnings = [
     "ignore::UserWarning",
     "ignore::DeprecationWarning",
 ]
-norecursedirs = subpath/*
+testpaths = ["tests"]
 
 [tool.black]
 line-length = 88
