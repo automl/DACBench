@@ -11,7 +11,12 @@ def make_fast_downward(config):
 
 ray.init()
 tune.register_env("fd", make_fast_downward)
-config = {"env": "fd", "env_config": {"seed": 0,}}
+config = {
+    "env": "fd",
+    "env_config": {
+        "seed": 0,
+    },
+}
 stop = {"training_iteration": 100}
 
 results = tune.run("DQN", config=config, stop=stop)

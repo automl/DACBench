@@ -57,10 +57,10 @@ def get_literals(condition):
 
 def ensure_conjunction_sat(system, *parts):
     """Modifies the constraint system such that it is only solvable if the
-       conjunction of all parts is satisfiable.
+    conjunction of all parts is satisfiable.
 
-       Each part must be an iterator, generator, or an iterable over
-       literals."""
+    Each part must be an iterator, generator, or an iterable over
+    literals."""
     pos = defaultdict(set)
     neg = defaultdict(set)
     for literal in itertools.chain(*parts):
@@ -89,7 +89,7 @@ def ensure_conjunction_sat(system, *parts):
 
 def ensure_cover(system, literal, invariant, inv_vars):
     """Modifies the constraint system such that it is only solvable if the
-       invariant covers the literal"""
+    invariant covers the literal"""
     a = invariant.get_covering_assignments(inv_vars, literal)
     assert len(a) == 1
     # if invariants could contain several parts of one predicate, this would
@@ -99,8 +99,8 @@ def ensure_cover(system, literal, invariant, inv_vars):
 
 def ensure_inequality(system, literal1, literal2):
     """Modifies the constraint system such that it is only solvable if the
-       literal instantiations are not equal (ignoring whether one is negated and
-       the other is not)"""
+    literal instantiations are not equal (ignoring whether one is negated and
+    the other is not)"""
     if literal1.predicate == literal2.predicate and literal1.args:
         parts = list(zip(literal1.args, literal2.args))
         system.add_negative_clause(constraints.NegativeClause(parts))
@@ -305,8 +305,8 @@ class Invariant:
 
     def minimal_covering_renamings(self, action, add_effect, inv_vars):
         """computes the minimal renamings of the action parameters such
-           that the add effect is covered by the action.
-           Each renaming is an constraint system"""
+        that the add effect is covered by the action.
+        Each renaming is an constraint system"""
 
         # add_effect must be covered
         assigs = self.get_covering_assignments(inv_vars, add_effect.literal)
@@ -355,7 +355,7 @@ class Invariant:
 
     def refine_candidate(self, add_effect, action, enqueue_func):
         """refines the candidate for an add effect that is unbalanced in the
-           action and adds the refined one to the queue"""
+        action and adds the refined one to the queue"""
         part = self.predicate_to_part[add_effect.literal.predicate]
         for del_eff in [eff for eff in action.effects if eff.literal.negated]:
             if del_eff.literal.predicate not in self.predicate_to_part:
@@ -366,7 +366,7 @@ class Invariant:
         self, del_effect, add_effect, inv_vars, lhs_by_pred, unbalanced_renamings
     ):
         """returns the renamings from unbalanced renamings for which
-           the del_effect does not balance the add_effect."""
+        the del_effect does not balance the add_effect."""
 
         system = constraints.ConstraintSystem()
         ensure_cover(system, del_effect.literal, self, inv_vars)
@@ -418,8 +418,8 @@ class Invariant:
 
     def imply_del_effect(self, del_effect, lhs_by_pred):
         """returns a constraint system that is solvable if lhs implies
-           the del effect (only if lhs is satisfiable). If a solvable
-           lhs never implies the del effect, return None."""
+        the del effect (only if lhs is satisfiable). If a solvable
+        lhs never implies the del effect, return None."""
         # del_effect.cond and del_effect.atom must be implied by lhs
         implies_system = constraints.ConstraintSystem()
         for literal in itertools.chain(

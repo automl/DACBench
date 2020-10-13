@@ -158,7 +158,7 @@ def parse_effects(alist, result, type_dict, predicate_dict):
 
 def add_effect(tmp_effect, result):
     """tmp_effect has the following structure:
-       [ConjunctiveEffect] [UniversalEffect] [ConditionalEffect] SimpleEffect."""
+    [ConjunctiveEffect] [UniversalEffect] [ConditionalEffect] SimpleEffect."""
 
     if isinstance(tmp_effect, pddl.ConjunctiveEffect):
         for effect in tmp_effect.effects:

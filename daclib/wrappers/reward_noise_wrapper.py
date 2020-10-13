@@ -15,13 +15,25 @@ class RewardNoiseWrapper(Wrapper):
         # self.noise_timing = config["noise_timing"]
 
     def __setattr__(self, name, value):
-        if name in ["tracking_interval", "overall", "interval_list", "current_interval", "env"]:
+        if name in [
+            "tracking_interval",
+            "overall",
+            "interval_list",
+            "current_interval",
+            "env",
+        ]:
             object.__setattr__(self, name, value)
         else:
             setattr(self.env, name, value)
 
     def __getattr__(self, name):
-        if name in ["tracking_interval", "overall", "interval_list", "current_interval", "env"]:
+        if name in [
+            "tracking_interval",
+            "overall",
+            "interval_list",
+            "current_interval",
+            "env",
+        ]:
             return object.__getattribute__(self, name)
         else:
             return getattr(self.env, name)

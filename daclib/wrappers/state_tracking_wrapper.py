@@ -19,13 +19,29 @@ class StateTrackingWrapper(Wrapper):
         self.state_type = type(env.observation_space)
 
     def __setattr__(self, name, value):
-        if name in ["tracking_interval", "overall", "interval_list", "current_interval", "state_type", "env", "episode"]:
+        if name in [
+            "tracking_interval",
+            "overall",
+            "interval_list",
+            "current_interval",
+            "state_type",
+            "env",
+            "episode",
+        ]:
             object.__setattr__(self, name, value)
         else:
             setattr(self.env, name, value)
 
     def __getattr__(self, name):
-        if name in ["tracking_interval", "overall", "interval_list", "current_interval", "state_type", "env", "episode"]:
+        if name in [
+            "tracking_interval",
+            "overall",
+            "interval_list",
+            "current_interval",
+            "state_type",
+            "env",
+            "episode",
+        ]:
             return object.__getattribute__(self, name)
         else:
             return getattr(self.env, name)
