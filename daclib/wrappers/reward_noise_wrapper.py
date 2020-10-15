@@ -19,15 +19,19 @@ class RewardNoiseWrapper(Wrapper):
         if name in [
             "noise_function",
             "env",
+            "add_noise",
+            "step"
         ]:
             object.__setattr__(self, name, value)
         else:
             setattr(self.env, name, value)
 
-    def __getattr__(self, name):
+    def __getattribute__(self, name):
         if name in [
             "noise_function",
             "env",
+            "add_noise",
+            "step"
         ]:
             return object.__getattribute__(self, name)
         else:

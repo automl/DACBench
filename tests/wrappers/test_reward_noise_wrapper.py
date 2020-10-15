@@ -49,3 +49,18 @@ class TestRewardNoiseWrapper(unittest.TestCase):
         wrapped.reset()
         _, reward, _, _ = wrapped.step(1)
         self.assertTrue(reward == raw_reward)
+
+    def test_getters_and_setters(self):
+        bench = LubyBenchmark()
+        env = bench.get_benchmark_env()
+        wrapped = RewardNoiseWrapper(env)
+
+        self.assertTrue(wrapped.noise_function==getattr(wrapped, "noise_function"))
+        self.assertTrue(wrapped.env==getattr(wrapped, "env"))
+
+        print(wrapped.action_space)
+        print(wrapped.env.action_space)
+        print(getattr(wrapped.env, "action_space"))
+        self.assertTrue(wrapped.action_space==getattr(wrapped.env, "action_space"))
+        self.assertTrue(wrapped.observation_space==getattr(wrapped.env, "observation_space"))
+        self.assertTrue(wrapped.reward_range==getattr(wrapped.env, "reward_range"))

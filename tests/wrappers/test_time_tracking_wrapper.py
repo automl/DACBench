@@ -34,6 +34,7 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         self.assertTrue(reward < 0)
         self.assertFalse(done)
 
+        print(wrapped.overall)
         self.assertTrue(len(wrapped.overall) == 1)
         self.assertTrue(len(wrapped.current_interval) == 1)
         self.assertTrue(len(wrapped.interval_list) == 0)
@@ -63,8 +64,12 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         self.assertTrue(len(intervals[1]) == 2)
         self.assertTrue(len(intervals[2]) == 1)
 
-    # TODO
     def test_rendering(self):
         bench = LubyBenchmark()
         env = bench.get_benchmark_env()
         wrapped = EpisodeTimeWrapper(env, 10)
+        wrapped.reset()
+        for _ in range(10):
+            wrapped.step(1)
+        img = wrapped.render_time_tracking()
+        self.assertTrue(img.shape[-1]==3)

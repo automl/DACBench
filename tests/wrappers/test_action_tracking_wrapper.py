@@ -1,7 +1,8 @@
 import unittest
-
+import pytest
+import gym
 import numpy as np
-from daclib.benchmarks import LubyBenchmark
+from daclib.benchmarks import LubyBenchmark, FastDownwardBenchmark, CMAESBenchmark
 from daclib.wrappers import ActionFrequencyWrapper
 
 
@@ -65,8 +66,91 @@ class TestActionTrackingWrapper(unittest.TestCase):
         self.assertTrue(len(intervals[2]) == 1)
         self.assertTrue(intervals[2] == [4])
 
-    # TODO
     def test_rendering(self):
-        bench = LubyBenchmark()
+        bench = FastDownwardBenchmark()
         env = bench.get_benchmark_env()
-        wrapped = ActionFrequencyWrapper(env, 10)
+        wrapped = ActionFrequencyWrapper(env, 2)
+        wrapped.reset()
+        for _ in range(10):
+            wrapped.step(1)
+        img = wrapped.render_action_tracking()
+        self.assertTrue(img.shape[-1]==3)
+
+        bench = CMAESBenchmark()
+        env = bench.get_benchmark_env()
+        wrapped = ActionFrequencyWrapper(env, 2)
+        wrapped.reset()
+        wrapped.step(np.ones(10))
+        img = wrapped.render_action_tracking()
+        self.assertTrue(img.shape[-1]==3)
+
+        class dict_action_env():
+            def __init__(self):
+                self.action_space = gym.spaces.Dict({"one": gym.spaces.Discrete(2), "two": gym.spaces.Box(low=np.array([-1, 1]), high=np.array([1, 5]))})
+                self.observation_space = gym.spaces.Discrete(2)
+                self.reward_range = (1, 2)
+                self.metadata = {}
+            def reset(self):
+                return 1
+
+            def step(self, action):
+                return 1, 1, 1, 1
+        env = dict_action_env()
+        wrapped = ActionFrequencyWrapper(env)
+        wrapped.reset()
+        with pytest.raises(NotImplementedError):
+            wrapped.render_action_tracking()
+
+        class tuple_action_env():
+            def __init__(self):
+                self.action_space = gym.spaces.Tuple((gym.spaces.Discrete(2), gym.spaces.Box(low=np.array([-1, 1]), high=np.array([1, 5]))))
+                self.observation_space = gym.spaces.Discrete(2)
+                self.reward_range = (1, 2)
+                self.metadata = {}
+            def reset(self):
+                return 1
+
+            def step(self, action):
+                return 1, 1, 1, 1
+        env = tuple_action_env()
+        wrapped = ActionFrequencyWrapper(env)
+        wrapped.reset()
+        with pytest.raises(NotImplementedError):
+            wrapped.render_action_tracking()
+
+        class multi_discrete_action_env():
+            def __init__(self):
+                self.action_space = gym.spaces.MultiDiscrete([2, 3])
+                self.observation_space = gym.spaces.Discrete(2)
+                self.reward_range = (1, 2)
+                self.metadata = {}
+            def reset(self):
+                return 1
+
+            def step(self, action):
+                return 1, 1, 1, 1
+        env = multi_discrete_action_env()
+        wrapped = ActionFrequencyWrapper(env, 5)
+        wrapped.reset()
+        for _ in range(10):
+            wrapped.step([1, 2])
+        img = wrapped.render_action_tracking()
+        self.assertTrue(img.shape[-1]==3)
+
+        class multi_binary_action_env():
+            def __init__(self):
+                self.action_space = gym.spaces.MultiBinary(2)
+                self.observation_space = gym.spaces.Discrete(2)
+                self.reward_range = (1, 2)
+                self.metadata = {}
+            def reset(self):
+                return 1
+
+            def step(self, action):
+                return 1, 1, 1, 1
+        env = multi_binary_action_env()
+        wrapped = ActionFrequencyWrapper(env)
+        wrapped.reset()
+        wrapped.step([1, 0])
+        img = wrapped.render_action_tracking()
+        self.assertTrue(img.shape[-1]==3)

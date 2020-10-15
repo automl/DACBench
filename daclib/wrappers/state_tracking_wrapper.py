@@ -27,12 +27,16 @@ class StateTrackingWrapper(Wrapper):
             "state_type",
             "env",
             "episode",
+            "get_states",
+            "step",
+            "reset",
+            "render_state_tracking"
         ]:
             object.__setattr__(self, name, value)
         else:
             setattr(self.env, name, value)
 
-    def __getattr__(self, name):
+    def __getattribute__(self, name):
         if name in [
             "tracking_interval",
             "overall",
@@ -41,6 +45,10 @@ class StateTrackingWrapper(Wrapper):
             "state_type",
             "env",
             "episode",
+            "get_states",
+            "step",
+            "reset",
+            "render_state_tracking"
         ]:
             return object.__getattribute__(self, name)
         else:
@@ -171,7 +179,7 @@ class StateTrackingWrapper(Wrapper):
         elif self.state_type == spaces.Tuple:
             raise NotImplementedError
         elif self.state_type == spaces.MultiBinary:
-            state_length = len(self.env.observation_space.n)
+            state_length = self.env.observation_space.n
             # TODO: adjust max
             figure = plt.figure(figsize=(12, min(3 * state_length, 20)))
             canvas = FigureCanvas(figure)
@@ -179,7 +187,7 @@ class StateTrackingWrapper(Wrapper):
                 p, p2 = plot_single(i)
                 canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
-        img = np.fromstring(canvas.to_string_rgb(), dtype="uint8").reshape(
-            height, width, 3
+        img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
+            int(height), int(width), 3
         )
         return img

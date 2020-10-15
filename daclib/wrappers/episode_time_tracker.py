@@ -26,18 +26,24 @@ class EpisodeTimeWrapper(Wrapper):
             "interval_list",
             "current_interval",
             "env",
+            "get_times",
+            "step",
+            "render_time_tracking"
         ]:
             object.__setattr__(self, name, value)
         else:
             setattr(self.env, name, value)
 
-    def __getattr__(self, name):
+    def __getattribute__(self, name):
         if name in [
             "tracking_interval",
             "overall",
             "interval_list",
             "current_interval",
             "env",
+            "get_times",
+            "step",
+            "render_time_tracking"
         ]:
             return object.__getattribute__(self, name)
         else:
@@ -107,7 +113,7 @@ class EpisodeTimeWrapper(Wrapper):
 
         canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
-        img = np.fromstring(canvas.to_string_rgb(), dtype="uint8").reshape(
-            height, width, 3
+        img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
+            int(height), int(width), 3
         )
         return img
