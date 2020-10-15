@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import time
 
+plt.rcParams["axes.grid"] = False
+
 
 class EpisodeTimeWrapper(Wrapper):
     """
@@ -14,7 +16,12 @@ class EpisodeTimeWrapper(Wrapper):
     def __init__(self, env, tracking_interval=None):
         super(EpisodeTimeWrapper, self).__init__(env)
         self.tracking_interval = tracking_interval
+        self.all_steps = []
+        if self.tracking_interval:
+            self.step_intervals = []
+            self.current_step_interval = []
         self.overall = []
+        self.episode = []
         if self.tracking_interval:
             self.interval_list = []
             self.current_interval = []
@@ -28,7 +35,13 @@ class EpisodeTimeWrapper(Wrapper):
             "env",
             "get_times",
             "step",
-            "render_time_tracking"
+            "render_step_time",
+            "render_episode_time",
+            "reset",
+            "episode",
+            "all_steps",
+            "current_step_interval",
+            "step_intervals",
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -43,7 +56,13 @@ class EpisodeTimeWrapper(Wrapper):
             "env",
             "get_times",
             "step",
-            "render_time_tracking"
+            "render_step_time",
+            "render_episode_time",
+            "reset",
+            "episode",
+            "all_steps",
+            "current_step_interval",
+            "step_intervals",
         ]:
             return object.__getattribute__(self, name)
         else:
@@ -67,13 +86,23 @@ class EpisodeTimeWrapper(Wrapper):
         state, reward, done, info = self.env.step(action)
         stop = time.time()
         duration = stop - start
-        self.overall.append(duration)
+        self.episode.append(duration)
+        self.all_steps.append(duration)
         if self.tracking_interval:
-            if len(self.current_interval) < self.tracking_interval:
-                self.current_interval.append(duration)
+            if len(self.current_step_interval) < self.tracking_interval:
+                self.current_step_interval.append(duration)
             else:
-                self.interval_list.append(self.current_interval)
-                self.current_interval = [duration]
+                self.step_intervals.append(self.current_step_interval)
+                self.current_step_interval = [duration]
+        if done:
+            self.overall.append(self.episode)
+            if self.tracking_interval:
+                if len(self.current_interval) < self.tracking_interval:
+                    self.current_interval.append(self.episode)
+                else:
+                    self.interval_list.append(self.current_interval)
+                    self.current_interval = []
+            self.episode = []
         return state, reward, done, info
 
     def get_times(self):
@@ -88,12 +117,51 @@ class EpisodeTimeWrapper(Wrapper):
         """
         if self.tracking_interval:
             complete_intervals = self.interval_list + [self.current_interval]
-            return self.overall, complete_intervals
+            complete_step_intervals = self.step_intervals + [self.current_step_interval]
+            return (
+                self.overall,
+                self.all_steps,
+                complete_intervals,
+                complete_step_intervals,
+            )
         else:
-            return np.array(self.overall)
+            return np.array(self.overall), np.array(self.all_steps)
 
-    def render_time_tracking(self):
-        """Render times"""
+    def render_step_time(self):
+        """Render step times"""
+        figure = plt.figure(figsize=(12, 6))
+        canvas = FigureCanvas(figure)
+        plt.title("Time per Step")
+        plt.xlabel("Step")
+        plt.ylabel("Time (s)")
+
+        plt.plot(
+            np.arange(len(self.all_steps)),
+            self.all_steps,
+            label="Step time",
+            color="b",
+        )
+        if self.tracking_interval:
+            interval_means = [np.mean(interval) for interval in self.step_intervals] + [
+                np.mean(self.current_step_interval)
+            ]
+            plt.plot(
+                np.arange(len(self.step_intervals) + 2) * self.tracking_interval,
+                [interval_means[0]] + interval_means,
+                label="Mean interval time",
+                color="r",
+            )
+        plt.legend(loc="upper right")
+        canvas.draw()
+        width, height = figure.get_size_inches() * figure.get_dpi()
+        img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
+            int(height), int(width), 3
+        )
+        plt.close(figure)
+        return img
+
+    def render_episode_time(self):
+        """Render episode times"""
         figure = plt.figure(figsize=(12, 6))
         canvas = FigureCanvas(figure)
         plt.title("Time per Episode")
@@ -101,19 +169,32 @@ class EpisodeTimeWrapper(Wrapper):
         plt.ylabel("Time (s)")
 
         plt.plot(
-            np.arange(len(self.overall)), self.overall, label="Episode time", color="b"
+            np.arange(len(self.overall)),
+            [sum(episode) for episode in self.overall],
+            label="Episode time",
+            color="b",
         )
         if self.tracking_interval:
+            interval_sums = []
+            for interval in self.interval_list:
+                ep_times = []
+                for episode in interval:
+                    ep_times.append(sum(episode))
+                interval_sums.append(np.mean(ep_times))
+            interval_sums += [
+                np.mean([sum(episode) for episode in self.current_interval])
+            ]
             plt.plot(
-                np.arange(len(self.interval_list)),
-                [np.mean(interval) for interval in self.interval_list],
-                label="Interval time",
+                np.arange(len(self.interval_list) + 2) * self.tracking_interval,
+                [interval_sums[0]] + interval_sums,
+                label="Mean interval time",
                 color="r",
             )
-
+        plt.legend(loc="upper right")
         canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
         img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
             int(height), int(width), 3
         )
+        plt.close(figure)
         return img

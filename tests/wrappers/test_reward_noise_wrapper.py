@@ -55,12 +55,14 @@ class TestRewardNoiseWrapper(unittest.TestCase):
         env = bench.get_benchmark_env()
         wrapped = RewardNoiseWrapper(env)
 
-        self.assertTrue(wrapped.noise_function==getattr(wrapped, "noise_function"))
-        self.assertTrue(wrapped.env==getattr(wrapped, "env"))
+        self.assertTrue(wrapped.noise_function == getattr(wrapped, "noise_function"))
+        self.assertTrue(wrapped.env == getattr(wrapped, "env"))
 
         print(wrapped.action_space)
         print(wrapped.env.action_space)
         print(getattr(wrapped.env, "action_space"))
-        self.assertTrue(wrapped.action_space==getattr(wrapped.env, "action_space"))
-        self.assertTrue(wrapped.observation_space==getattr(wrapped.env, "observation_space"))
-        self.assertTrue(wrapped.reward_range==getattr(wrapped.env, "reward_range"))
+        self.assertTrue(wrapped.action_space == getattr(wrapped.env, "action_space"))
+        self.assertTrue(
+            wrapped.observation_space == getattr(wrapped.env, "observation_space")
+        )
+        self.assertTrue(wrapped.reward_range == getattr(wrapped.env, "reward_range"))

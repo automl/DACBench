@@ -30,7 +30,7 @@ class StateTrackingWrapper(Wrapper):
             "get_states",
             "step",
             "reset",
-            "render_state_tracking"
+            "render_state_tracking",
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -48,7 +48,7 @@ class StateTrackingWrapper(Wrapper):
             "get_states",
             "step",
             "reset",
-            "render_state_tracking"
+            "render_state_tracking",
         ]:
             return object.__getattribute__(self, name)
         else:

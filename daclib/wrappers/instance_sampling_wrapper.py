@@ -14,23 +14,13 @@ class InstanceSamplingWrapper(Wrapper):
             raise Exception("No distribution to sample from given")
 
     def __setattr__(self, name, value):
-        if name in [
-            "sampling_function",
-            "env",
-            "fit_dist",
-            "reset"
-        ]:
+        if name in ["sampling_function", "env", "fit_dist", "reset"]:
             object.__setattr__(self, name, value)
         else:
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
-        if name in [
-            "sampling_function",
-            "env",
-            "fit_dist",
-            "reset"
-        ]:
+        if name in ["sampling_function", "env", "fit_dist", "reset"]:
             return object.__getattribute__(self, name)
         else:
             return getattr(self.env, name)

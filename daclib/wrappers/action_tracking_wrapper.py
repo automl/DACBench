@@ -24,7 +24,7 @@ class ActionFrequencyWrapper(Wrapper):
             "env",
             "get_actions",
             "step",
-            "render_action_tracking"
+            "render_action_tracking",
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -39,7 +39,7 @@ class ActionFrequencyWrapper(Wrapper):
             "env",
             "get_actions",
             "step",
-            "render_action_tracking"
+            "render_action_tracking",
         ]:
             return object.__getattribute__(self, name)
         else:

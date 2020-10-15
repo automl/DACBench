@@ -34,10 +34,15 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         self.assertTrue(reward < 0)
         self.assertFalse(done)
 
-        print(wrapped.overall)
-        self.assertTrue(len(wrapped.overall) == 1)
-        self.assertTrue(len(wrapped.current_interval) == 1)
-        self.assertTrue(len(wrapped.interval_list) == 0)
+        self.assertTrue(len(wrapped.all_steps) == 1)
+        self.assertTrue(len(wrapped.current_step_interval) == 1)
+        self.assertTrue(len(wrapped.step_intervals) == 0)
+
+        for _ in range(20):
+            wrapped.step(1)
+
+        self.assertTrue(len(wrapped.overall) > 2)
+        self.assertTrue(len(wrapped.interval_list) == 1)
 
     def test_get_times(self):
         bench = LubyBenchmark()
@@ -51,25 +56,26 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         for i in range(5):
             wrapped2.step(i)
 
-        overall_only = wrapped.get_times()
-        overall, intervals = wrapped2.get_times()
+        overall_only, steps_only = wrapped.get_times()
+        overall, steps, intervals, step_intervals = wrapped2.get_times()
         self.assertTrue(
             np.array_equal(
                 np.round(overall, decimals=2), np.round(overall_only, decimals=2)
             )
         )
-
-        self.assertTrue(len(intervals) == 3)
-        self.assertTrue(len(intervals[0]) == 2)
-        self.assertTrue(len(intervals[1]) == 2)
-        self.assertTrue(len(intervals[2]) == 1)
+        self.assertTrue(len(step_intervals) == 3)
+        self.assertTrue(len(step_intervals[0]) == 2)
+        self.assertTrue(len(step_intervals[1]) == 2)
+        self.assertTrue(len(step_intervals[2]) == 1)
 
     def test_rendering(self):
         bench = LubyBenchmark()
         env = bench.get_benchmark_env()
         wrapped = EpisodeTimeWrapper(env, 10)
         wrapped.reset()
-        for _ in range(10):
+        for _ in range(30):
             wrapped.step(1)
-        img = wrapped.render_time_tracking()
-        self.assertTrue(img.shape[-1]==3)
+        img = wrapped.render_step_time()
+        self.assertTrue(img.shape[-1] == 3)
+        img = wrapped.render_episode_time()
+        self.assertTrue(img.shape[-1] == 3)

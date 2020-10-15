@@ -65,9 +65,9 @@ class TestAbstractBenchmark(unittest.TestCase):
 
         self.assertTrue(d["dummy"] == d.dummy)
         with pytest.raises(KeyError):
-            dd = d["error"]
+            d["error"]
         with pytest.raises(AttributeError):
-            dd = d.error
+            d.error
 
         d["error"] = 12
         self.assertTrue(d.error == 12)

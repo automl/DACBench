@@ -16,23 +16,13 @@ class RewardNoiseWrapper(Wrapper):
             raise Exception("No distribution to sample noise from given")
 
     def __setattr__(self, name, value):
-        if name in [
-            "noise_function",
-            "env",
-            "add_noise",
-            "step"
-        ]:
+        if name in ["noise_function", "env", "add_noise", "step"]:
             object.__setattr__(self, name, value)
         else:
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
-        if name in [
-            "noise_function",
-            "env",
-            "add_noise",
-            "step"
-        ]:
+        if name in ["noise_function", "env", "add_noise", "step"]:
             return object.__getattribute__(self, name)
         else:
             return getattr(self.env, name)

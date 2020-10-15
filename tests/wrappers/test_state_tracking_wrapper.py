@@ -78,10 +78,17 @@ class TestStateTrackingWrapper(unittest.TestCase):
             wrapped.render_state_tracking()
 
         bench = CMAESBenchmark()
+
         def dummy():
             return [1, [2, 3]]
+
         bench.config.state_method = dummy
-        bench.config.observation_space = gym.spaces.Tuple((gym.spaces.Discrete(2), gym.spaces.Box(low=np.array([-1, 1]), high=np.array([5, 5]))))
+        bench.config.observation_space = gym.spaces.Tuple(
+            (
+                gym.spaces.Discrete(2),
+                gym.spaces.Box(low=np.array([-1, 1]), high=np.array([5, 5])),
+            )
+        )
         env = bench.get_benchmark_env()
         wrapped = StateTrackingWrapper(env)
         wrapped.reset()
@@ -95,58 +102,64 @@ class TestStateTrackingWrapper(unittest.TestCase):
         wrapped.step(1)
         wrapped.step(1)
         img = wrapped.render_state_tracking()
-        self.assertTrue(img.shape[-1]==3)
+        self.assertTrue(img.shape[-1] == 3)
 
-        class discrete_obs_env():
+        class discrete_obs_env:
             def __init__(self):
                 self.observation_space = gym.spaces.Discrete(2)
                 self.action_space = gym.spaces.Discrete(2)
                 self.reward_range = (1, 2)
                 self.metadata = {}
+
             def reset(self):
                 return 1
 
             def step(self, action):
                 return 1, 1, 1, 1
+
         env = discrete_obs_env()
         wrapped = StateTrackingWrapper(env)
         wrapped.reset()
         wrapped.step(1)
         img = wrapped.render_state_tracking()
-        self.assertTrue(img.shape[-1]==3)
+        self.assertTrue(img.shape[-1] == 3)
 
-        class multi_discrete_obs_env():
+        class multi_discrete_obs_env:
             def __init__(self):
                 self.observation_space = gym.spaces.MultiDiscrete([2, 3])
                 self.action_space = gym.spaces.Discrete(2)
                 self.reward_range = (1, 2)
                 self.metadata = {}
+
             def reset(self):
                 return [1, 2]
 
             def step(self, action):
                 return [1, 2], 1, 1, 1
+
         env = multi_discrete_obs_env()
         wrapped = StateTrackingWrapper(env)
         wrapped.reset()
         wrapped.step(1)
         img = wrapped.render_state_tracking()
-        self.assertTrue(img.shape[-1]==3)
+        self.assertTrue(img.shape[-1] == 3)
 
-        class multi_binary_obs_env():
+        class multi_binary_obs_env:
             def __init__(self):
                 self.observation_space = gym.spaces.MultiBinary(2)
                 self.action_space = gym.spaces.Discrete(2)
                 self.reward_range = (1, 2)
                 self.metadata = {}
+
             def reset(self):
                 return [1, 1]
 
             def step(self, action):
                 return [1, 1], 1, 1, 1
+
         env = multi_binary_obs_env()
         wrapped = StateTrackingWrapper(env)
         wrapped.reset()
         wrapped.step(1)
         img = wrapped.render_state_tracking()
-        self.assertTrue(img.shape[-1]==3)
+        self.assertTrue(img.shape[-1] == 3)
