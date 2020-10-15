@@ -40,7 +40,13 @@ class TestAbstractEnv(unittest.TestCase):
         self.assertTrue(issubclass(type(env.observation_space), spaces.Space))
         self.assertTrue(issubclass(type(env.action_space), spaces.Space))
 
-        config = {"action_space": spaces.Discrete(2), "observation_space": spaces.Discrete(2), "reward_range": (-1, 0), "cutoff": 30, "instance_set": [[1], [1]],}
+        config = {
+            "action_space": spaces.Discrete(2),
+            "observation_space": spaces.Discrete(2),
+            "reward_range": (-1, 0),
+            "cutoff": 30,
+            "instance_set": [[1], [1]],
+        }
         env = AbstractEnv(config)
         self.assertTrue(len(env.instance_set) >= 1)
         self.assertTrue(env.n_steps > 0)
@@ -88,4 +94,4 @@ class TestAbstractEnv(unittest.TestCase):
         seeds = []
         for _ in range(10):
             seeds.append(env.seed()[0])
-        self.assertFalse(len(set(seeds))<8)
+        self.assertFalse(len(set(seeds)) < 8)
