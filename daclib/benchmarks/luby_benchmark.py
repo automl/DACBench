@@ -38,7 +38,7 @@ class LubyBenchmark(AbstractBenchmark):
     def __init__(self, config_path=None):
         super(LubyBenchmark, self).__init__(config_path)
         if not self.config:
-            self.config = LUBY_DEFAULTS
+            self.config = objdict(LUBY_DEFAULTS.copy())
 
         for key in LUBY_DEFAULTS:
             if key not in self.config:
@@ -53,9 +53,9 @@ class LubyBenchmark(AbstractBenchmark):
         LubyEnv
             Luby environment
         """
-        if "instance_set" not in self.config.keys() or self.config.instance_set == [
-            [0, 0]
-        ]:
+        if "instance_set" not in self.config.keys():  # or self.config.instance_set == [
+            #        [0, 0]
+            #    ]:
             self.read_instance_set()
 
         return LubyEnv(self.config)
@@ -115,7 +115,7 @@ class LubyBenchmark(AbstractBenchmark):
 
     def get_benchmark(self, L=8, fuzziness=1.5, seed=0):
         """Get Benchmark from DAC paper"""
-        self.config = LUBY_DEFAULTS
+        self.config = objdict(LUBY_DEFAULTS.copy())
         self.config.min_steps = L
         self.config.seed = seed
         self.config.instance_set = [[0, 0]]

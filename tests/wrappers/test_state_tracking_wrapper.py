@@ -1,8 +1,6 @@
-import pytest
 import unittest
 
 import numpy as np
-from gym import spaces
 from daclib.benchmarks import LubyBenchmark
 from daclib.wrappers import StateTrackingWrapper
 
@@ -57,9 +55,8 @@ class TestStateTrackingWrapper(unittest.TestCase):
         overall, intervals = wrapped2.get_states()
         self.assertTrue(np.array_equal(overall, overall_only))
         self.assertTrue(len(overall_only) == 5)
-        self.assertTrue(len(overall_only[4]) == 21)
+        self.assertTrue(len(overall_only[4]) == 6)
 
-        print(intervals)
         self.assertTrue(len(intervals) == 3)
         self.assertTrue(len(intervals[0]) == 2)
         self.assertTrue(len(intervals[1]) == 2)

@@ -1,4 +1,7 @@
 import unittest
+import json
+import os
+
 from daclib.benchmarks import SigmoidBenchmark
 from daclib.envs import SigmoidEnv
 from daclib.wrappers import InstanceSamplingWrapper
@@ -13,6 +16,13 @@ class TestSigmoidBenchmark(unittest.TestCase):
     def test_setup(self):
         bench = SigmoidBenchmark()
         self.assertTrue(bench.config is not None)
+
+        config = {"dummy": 0}
+        with open("test_conf.json", "w+") as fp:
+            json.dump(config, fp)
+        bench = SigmoidBenchmark("test_conf.json")
+        self.assertTrue(bench.config.dummy == 0)
+        os.remove("test_conf.json")
 
     def test_read_instances(self):
         bench = SigmoidBenchmark()
@@ -30,8 +40,14 @@ class TestSigmoidBenchmark(unittest.TestCase):
 
     def test_benchmark_env(self):
         bench = SigmoidBenchmark()
-        env = bench.get_benchmark()
-        self.assertTrue(issubclass(type(env), InstanceSamplingWrapper))
+
+        for d in [1, 2, 3, 5]:
+            env = bench.get_benchmark(d)
+            self.assertTrue(issubclass(type(env), InstanceSamplingWrapper))
+            env.reset()
+            s, r, d, i = env.step(0)
+            self.assertTrue(env.inst_id == 0)
+            self.assertTrue(len(env.instance_set) == 1)
 
     def test_action_value_setting(self):
         bench = SigmoidBenchmark()

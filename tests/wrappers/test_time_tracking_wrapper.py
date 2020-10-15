@@ -1,8 +1,6 @@
-import pytest
 import unittest
 
 import numpy as np
-from gym import spaces
 from daclib.benchmarks import LubyBenchmark
 from daclib.wrappers import EpisodeTimeWrapper
 

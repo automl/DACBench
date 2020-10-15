@@ -69,6 +69,8 @@ class FastDownwardEnv(AbstractEnv):
         self.port = config.port
         self.fd_path = config.fd_path
         self.fd = None
+        if "domain_file" in config.keys():
+            self.domain_file = config["domain_file"]
 
         self.socket = None
         self.conn = None
@@ -327,7 +329,7 @@ class FastDownwardEnv(AbstractEnv):
                 [
                     "python3",
                     f"{self.fd_path}",
-                    self.config.domain_file,
+                    self.domain_file,
                     self.instance,
                     "--search",
                     f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})",

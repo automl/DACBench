@@ -46,7 +46,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
     def __init__(self, config_path=None):
         super(FastDownwardBenchmark, self).__init__(config_path)
         if not self.config:
-            self.config = FD_DEFAULTS
+            self.config = objdict(FD_DEFAULTS.copy())
 
         for key in FD_DEFAULTS:
             if key not in self.config:
@@ -89,7 +89,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
 
     def get_benchmark(self, seed=0, train=True):
         """Get benchmark from the paper"""
-        self.config = FD_DEFAULTS
+        self.config = objdict(FD_DEFAULTS.copy())
         self.read_instance_set()
         self.config.seed = seed
         env = FastDownwardEnv(self.config)

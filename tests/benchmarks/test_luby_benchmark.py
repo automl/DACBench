@@ -1,4 +1,7 @@
 import unittest
+import json
+import os
+
 import numpy as np
 from daclib.benchmarks import LubyBenchmark
 from daclib.envs import LubyEnv
@@ -14,6 +17,13 @@ class TestLubyBenchmark(unittest.TestCase):
     def test_setup(self):
         bench = LubyBenchmark()
         self.assertTrue(bench.config is not None)
+
+        config = {"dummy": 0}
+        with open("test_conf.json", "w+") as fp:
+            json.dump(config, fp)
+        bench = LubyBenchmark("test_conf.json")
+        self.assertTrue(bench.config.dummy == 0)
+        os.remove("test_conf.json")
 
     def test_read_instances(self):
         bench = LubyBenchmark()
@@ -31,6 +41,9 @@ class TestLubyBenchmark(unittest.TestCase):
         bench = LubyBenchmark()
         env = bench.get_benchmark()
         self.assertTrue(issubclass(type(env), RewardNoiseWrapper))
+        env.reset()
+        _, r, _, _ = env.step(1)
+        self.assertTrue(r != 0 and r != -1)
 
     def test_cutoff_setting(self):
         bench = LubyBenchmark()

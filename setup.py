@@ -1,5 +1,4 @@
-from os.path import dirname, abspath, join
-from setuptools import setup, find_packages
+from setuptools import setup
 import toml
 
 with open("pyproject.toml", "r") as f:

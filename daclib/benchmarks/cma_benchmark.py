@@ -57,7 +57,7 @@ class CMAESBenchmark(AbstractBenchmark):
     def __init__(self, config_path=None):
         super(CMAESBenchmark, self).__init__(config_path)
         if not self.config:
-            self.config = CMAES_DEFAULTS
+            self.config = objdict(CMAES_DEFAULTS.copy())
 
         for key in CMAES_DEFAULTS:
             if key not in self.config:
@@ -102,7 +102,7 @@ class CMAESBenchmark(AbstractBenchmark):
 
     def get_benchmark(self, seed=0):
         """Get benchmark from the LTO paper"""
-        self.config = CMAES_DEFAULTS
+        self.config = objdict(CMAES_DEFAULTS.copy())
         self.config.seed = seed
         self.read_instance_set()
         return CMAESEnv(self.config)

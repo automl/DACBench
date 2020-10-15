@@ -36,7 +36,7 @@ class SigmoidBenchmark(AbstractBenchmark):
     def __init__(self, config_path=None):
         super(SigmoidBenchmark, self).__init__(config_path)
         if not self.config:
-            self.config = SIGMOID_DEFAULTS
+            self.config = objdict(SIGMOID_DEFAULTS.copy())
 
         for key in SIGMOID_DEFAULTS:
             if key not in self.config:
@@ -52,7 +52,9 @@ class SigmoidBenchmark(AbstractBenchmark):
             Sigmoid environment
 
         """
-        if "instance_set" not in self.config.keys():
+        if (
+            "instance_set" not in self.config.keys()
+        ):  # or self.config.instance_set == [0]:
             self.read_instance_set()
 
         return SigmoidEnv(self.config)
@@ -96,11 +98,11 @@ class SigmoidBenchmark(AbstractBenchmark):
 
     def get_benchmark(self, dimension=None, seed=0):
         """Get Benchmark from DAC paper"""
-        self.config = SIGMOID_DEFAULTS
+        self.config = objdict(SIGMOID_DEFAULTS.copy())
         if dimension == 1:
-            self.set_action_values((3))
+            self.set_action_values([3])
         if dimension == 2:
-            self.set_action_values((3, 3))
+            self.set_action_values([3, 3])
         if dimension == 3:
             self.set_action_values((3, 3, 3))
         if dimension == 5:
