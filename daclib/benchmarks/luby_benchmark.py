@@ -53,9 +53,7 @@ class LubyBenchmark(AbstractBenchmark):
         LubyEnv
             Luby environment
         """
-        if "instance_set" not in self.config.keys():  # or self.config.instance_set == [
-            #        [0, 0]
-            #    ]:
+        if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
         return LubyEnv(self.config)

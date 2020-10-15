@@ -52,9 +52,7 @@ class SigmoidBenchmark(AbstractBenchmark):
             Sigmoid environment
 
         """
-        if (
-            "instance_set" not in self.config.keys()
-        ):  # or self.config.instance_set == [0]:
+        if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
         return SigmoidEnv(self.config)
