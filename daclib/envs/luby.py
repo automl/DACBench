@@ -37,7 +37,6 @@ class LubyEnv(AbstractEnv):
             [next(luby_gen(i)) for i in range(1, 2 * config["cutoff"] + 2)]
         )
         self._jenny_i = 1
-        self._fuzz = config["fuzzy"]
         self.logger = logging.getLogger(self.__str__())
 
         self._start_dist = None
@@ -67,7 +66,7 @@ class LubyEnv(AbstractEnv):
         if action == self._next_goal:
             self._r = 0  # we don't want to allow for exploiting large rewards by tending towards long sequences
         else:  # mean and var chosen s.t. ~1/4 of rewards are positive
-            self._r = -1 if not self._fuzz else self.rng.normal(-1, self.noise_sig)
+            self._r = -1
 
         if (
             self.__error < self.__lower

@@ -20,11 +20,10 @@ LUBY_DEFAULTS = objdict(
             np.array([-1 for _ in range(HISTORY_LENGTH + 1)]),
             np.array([2 ** max(LUBY_SEQUENCE + 1) for _ in range(HISTORY_LENGTH + 1)]),
         ],
-        "reward_range": (-1, 0),
+        "reward_range": (-10, 10),
         "cutoff": MAX_STEPS,
         "hist_length": HISTORY_LENGTH,
         "min_steps": 2 ** 3,
-        "fuzzy": False,
         "seed": 0,
         "instance_set_path": "../instance_sets/luby_train.csv",
     }

@@ -4,69 +4,49 @@ import unittest
 import numpy as np
 from gym import spaces
 from daclib.benchmarks import LubyBenchmark
-from daclib.wrappers import EpisodeTimeWrapper
+from daclib.wrappers import RewardNoiseWrapper
 
 
 class TestTimeTrackingWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
         env = bench.get_benchmark_env()
-        wrapped = EpisodeTimeWrapper(env)
-        self.assertTrue(len(wrapped.overall) == 0)
-        self.assertTrue(wrapped.tracking_interval is None)
-        wrapped.instance = [0]
-        self.assertTrue(wrapped.instance[0] == 0)
+        wrapped = RewardNoiseWrapper(env)
+        self.assertFalse(wrapped.noise_function is None)
 
-        wrapped2 = EpisodeTimeWrapper(env, 10)
-        self.assertTrue(len(wrapped2.overall) == 0)
-        self.assertTrue(wrapped2.tracking_interval == 10)
-        self.assertTrue(len(wrapped2.interval_list) == 0)
-        self.assertTrue(len(wrapped2.current_interval) == 0)
+        with pytest.raises(Exception):
+            wrapped = RewardNoiseWrapper(env, noise_dist=None)
+        with pytest.raises(Exception):
+            wrapped = RewardNoiseWrapper(env, noise_dist="norm")
+
+        wrapped = RewardNoiseWrapper(env, noise_dist="normal", dist_args=[0, 0.3])
+        self.assertFalse(wrapped.noise_function is None)
+
+        def dummy():
+            return 0
+        wrapped = RewardNoiseWrapper(env, noise_function=dummy)
+        self.assertFalse(wrapped.noise_function is None)
+
 
     def test_step(self):
         bench = LubyBenchmark()
         env = bench.get_benchmark_env()
-        wrapped = EpisodeTimeWrapper(env, 10)
+        env.reset()
+        _, raw_reward, _, _ = env.step(1)
 
-        state = wrapped.reset()
-        self.assertTrue(len(state) > 1)
-
-        state, reward, done, _ = wrapped.step(1)
-        self.assertTrue(len(state) > 1)
-        self.assertTrue(reward < 0)
-        self.assertFalse(done)
-
-        self.assertTrue(len(wrapped.overall) == 1)
-        self.assertTrue(len(wrapped.current_interval) == 1)
-        self.assertTrue(len(wrapped.interval_list) == 0)
-
-    def test_get_times(self):
-        bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
-        wrapped = EpisodeTimeWrapper(env)
+        wrapped = RewardNoiseWrapper(env)
         wrapped.reset()
-        for i in range(5):
-            wrapped.step(i)
-        wrapped2 = EpisodeTimeWrapper(env, 2)
-        wrapped2.reset()
-        for i in range(5):
-            wrapped2.step(i)
+        _, reward, _, _ = wrapped.step(1)
+        self.assertTrue(reward!=raw_reward)
 
-        overall_only = wrapped.get_times()
-        overall, intervals = wrapped2.get_times()
-        self.assertTrue(
-            np.array_equal(
-                np.round(overall, decimals=2), np.round(overall_only, decimals=2)
-            )
-        )
+        wrapped = RewardNoiseWrapper(env, noise_dist="normal", dist_args=[0, 0.3])
+        wrapped.reset()
+        _, reward, _, _ = wrapped.step(1)
+        self.assertTrue(reward!=raw_reward)
 
-        self.assertTrue(len(intervals) == 3)
-        self.assertTrue(len(intervals[0]) == 2)
-        self.assertTrue(len(intervals[1]) == 2)
-        self.assertTrue(len(intervals[2]) == 1)
-
-    # TODO
-    def test_rendering(self):
-        bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
-        wrapped = EpisodeTimeWrapper(env, 10)
+        def dummy():
+            return 0
+        wrapped = RewardNoiseWrapper(env, noise_function=dummy)
+        wrapped.reset()
+        _, reward, _, _ = wrapped.step(1)
+        self.assertTrue(reward==raw_reward)
