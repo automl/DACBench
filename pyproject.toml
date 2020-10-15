@@ -46,6 +46,7 @@ tensorflow = "1.15"
 [dev-dependencies]
 black = "^18.3"
 scikit-learn = "0.23.2"
+flake8 = "3.8.4"
 
 [build-system]
 requires = [
