@@ -59,3 +59,22 @@ class TestAbstractBenchmark(unittest.TestCase):
         self.assertTrue(bench.config.observation_space == "Box")
         self.assertTrue(bench.config.observation_space_args[0] == [1])
         self.assertTrue(bench.config.observation_space_type == float)
+
+    def test_objdict(self):
+        d = objdict({"dummy": 0})
+
+        self.assertTrue(d["dummy"]==d.dummy)
+        with pytest.raises(KeyError):
+            dd = d["error"]
+        with pytest.raises(AttributeError):
+            dd = d.error
+
+        d["error"] = 12
+        self.assertTrue(d.error==12)
+        del(d.error)
+        self.assertFalse("error" in d.keys())
+
+        with pytest.raises(KeyError):
+            del(d["error"])
+        with pytest.raises(AttributeError):
+            del(d.error)

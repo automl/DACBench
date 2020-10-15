@@ -37,7 +37,14 @@ class TestAbstractEnv(unittest.TestCase):
         self.assertTrue(len(env.instance_set) >= 1)
         self.assertTrue(env.n_steps > 0)
         self.assertTrue(type(env.reward_range) is tuple)
-        print(env.observation_space)
+        self.assertTrue(issubclass(type(env.observation_space), spaces.Space))
+        self.assertTrue(issubclass(type(env.action_space), spaces.Space))
+
+        config = {"action_space": spaces.Discrete(2), "observation_space": spaces.Discrete(2), "reward_range": (-1, 0), "cutoff": 30, "instance_set": [[1], [1]],}
+        env = AbstractEnv(config)
+        self.assertTrue(len(env.instance_set) >= 1)
+        self.assertTrue(env.n_steps > 0)
+        self.assertTrue(type(env.reward_range) is tuple)
         self.assertTrue(issubclass(type(env.observation_space), spaces.Space))
         self.assertTrue(issubclass(type(env.action_space), spaces.Space))
 
@@ -75,3 +82,10 @@ class TestAbstractEnv(unittest.TestCase):
         )
         env.set_instance_set(100)
         self.assertTrue(100 == env.get_instance_set())
+
+    def test_seed(self):
+        env = self.make_env()
+        seeds = []
+        for _ in range(10):
+            seeds.append(env.seed()[0])
+        self.assertFalse(len(set(seeds))<8)
