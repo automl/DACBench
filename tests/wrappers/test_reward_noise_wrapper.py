@@ -7,7 +7,7 @@ from daclib.benchmarks import LubyBenchmark
 from daclib.wrappers import RewardNoiseWrapper
 
 
-class TestTimeTrackingWrapper(unittest.TestCase):
+class TestRewardNoiseWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
         env = bench.get_benchmark_env()
@@ -24,9 +24,9 @@ class TestTimeTrackingWrapper(unittest.TestCase):
 
         def dummy():
             return 0
+
         wrapped = RewardNoiseWrapper(env, noise_function=dummy)
         self.assertFalse(wrapped.noise_function is None)
-
 
     def test_step(self):
         bench = LubyBenchmark()
@@ -37,16 +37,17 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         wrapped = RewardNoiseWrapper(env)
         wrapped.reset()
         _, reward, _, _ = wrapped.step(1)
-        self.assertTrue(reward!=raw_reward)
+        self.assertTrue(reward != raw_reward)
 
         wrapped = RewardNoiseWrapper(env, noise_dist="normal", dist_args=[0, 0.3])
         wrapped.reset()
         _, reward, _, _ = wrapped.step(1)
-        self.assertTrue(reward!=raw_reward)
+        self.assertTrue(reward != raw_reward)
 
         def dummy():
             return 0
+
         wrapped = RewardNoiseWrapper(env, noise_function=dummy)
         wrapped.reset()
         _, reward, _, _ = wrapped.step(1)
-        self.assertTrue(reward==raw_reward)
+        self.assertTrue(reward == raw_reward)

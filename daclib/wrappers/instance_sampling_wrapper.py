@@ -1,4 +1,5 @@
 from gym import Wrapper
+import numpy as np
 from scipy.stats import norm
 
 
@@ -10,15 +11,11 @@ class InstanceSamplingWrapper(Wrapper):
         elif instances:
             self.sampling_function = self.fit_dist(instances)
         else:
-            print("No distribution to sample from given")
-            return
+            raise Exception("No distribution to sample from given")
 
     def __setattr__(self, name, value):
         if name in [
-            "tracking_interval",
-            "overall",
-            "interval_list",
-            "current_interval",
+            "sampling_function",
             "env",
         ]:
             object.__setattr__(self, name, value)
@@ -27,10 +24,7 @@ class InstanceSamplingWrapper(Wrapper):
 
     def __getattr__(self, name):
         if name in [
-            "tracking_interval",
-            "overall",
-            "interval_list",
-            "current_interval",
+            "sampling_function",
             "env",
         ]:
             return object.__getattribute__(self, name)
@@ -51,7 +45,6 @@ class InstanceSamplingWrapper(Wrapper):
         self.env.set_inst_id(0)
         return self.env.reset()
 
-    # TODO: check if this works
     def fit_dist(self, instances):
         """
         Approximate instance distribution in given instance set
@@ -67,7 +60,7 @@ class InstanceSamplingWrapper(Wrapper):
             sampling method for new instances
         """
         dists = []
-        for i in len(instances[0]):
+        for i in range(len(instances[0])):
             component = [inst[i] for inst in instances]
             dist = norm.fit(component)
             dists.append(dist)
@@ -75,7 +68,7 @@ class InstanceSamplingWrapper(Wrapper):
         def sample():
             instance = []
             for d in dists:
-                instance.append(d.rvs())
+                instance.append(np.random.normal(d[0], d[1]))
             return instance
 
         return sample

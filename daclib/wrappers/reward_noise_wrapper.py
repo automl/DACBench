@@ -1,8 +1,11 @@
 from gym import Wrapper
 import numpy as np
 
+
 class RewardNoiseWrapper(Wrapper):
-    def __init__(self, env, noise_function=None, noise_dist="standard_normal", dist_args=None):
+    def __init__(
+        self, env, noise_function=None, noise_dist="standard_normal", dist_args=None
+    ):
         super(RewardNoiseWrapper, self).__init__(env)
 
         if noise_function:
@@ -39,9 +42,11 @@ class RewardNoiseWrapper(Wrapper):
     def add_noise(self, dist, args):
         rng = np.random.default_rng()
         function = getattr(rng, dist)
+
         def sample_noise():
             if args:
                 return function(*args)
             else:
                 return function()
+
         return sample_noise

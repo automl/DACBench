@@ -1,72 +1,56 @@
 import pytest
 import unittest
 
+from sklearn.metrics import mutual_info_score
 import numpy as np
 from gym import spaces
 from daclib.benchmarks import LubyBenchmark
-from daclib.wrappers import EpisodeTimeWrapper
+from daclib.wrappers import InstanceSamplingWrapper
 
 
-class TestTimeTrackingWrapper(unittest.TestCase):
+class TestInstanceSamplingWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
         env = bench.get_benchmark_env()
-        wrapped = EpisodeTimeWrapper(env)
-        self.assertTrue(len(wrapped.overall) == 0)
-        self.assertTrue(wrapped.tracking_interval is None)
-        wrapped.instance = [0]
-        self.assertTrue(wrapped.instance[0] == 0)
 
-        wrapped2 = EpisodeTimeWrapper(env, 10)
-        self.assertTrue(len(wrapped2.overall) == 0)
-        self.assertTrue(wrapped2.tracking_interval == 10)
-        self.assertTrue(len(wrapped2.interval_list) == 0)
-        self.assertTrue(len(wrapped2.current_interval) == 0)
+        with pytest.raises(Exception):
+            wrapped = InstanceSamplingWrapper(env)
 
-    def test_step(self):
+        def sample():
+            return [0, 0]
+        wrapped = InstanceSamplingWrapper(env, sampling_function=sample)
+        self.assertFalse(wrapped.sampling_function is None)
+
+    def test_reset(self):
         bench = LubyBenchmark()
         env = bench.get_benchmark_env()
-        wrapped = EpisodeTimeWrapper(env, 10)
+        def sample():
+            return [0, 0]
+        wrapped = InstanceSamplingWrapper(env, sampling_function=sample)
 
-        state = wrapped.reset()
-        self.assertTrue(len(state) > 1)
+        self.assertFalse(np.array_equal(wrapped.instance, sample()))
+        self.assertFalse(np.array_equal(wrapped.instance_set, [sample()]))
+        self.assertTrue(wrapped.inst_id==0)
 
-        state, reward, done, _ = wrapped.step(1)
-        self.assertTrue(len(state) > 1)
-        self.assertTrue(reward < 0)
-        self.assertFalse(done)
-
-        self.assertTrue(len(wrapped.overall) == 1)
-        self.assertTrue(len(wrapped.current_interval) == 1)
-        self.assertTrue(len(wrapped.interval_list) == 0)
-
-    def test_get_times(self):
-        bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
-        wrapped = EpisodeTimeWrapper(env)
         wrapped.reset()
-        for i in range(5):
-            wrapped.step(i)
-        wrapped2 = EpisodeTimeWrapper(env, 2)
-        wrapped2.reset()
-        for i in range(5):
-            wrapped2.step(i)
+        self.assertTrue(np.array_equal(wrapped.instance, sample()))
+        self.assertTrue(np.array_equal(wrapped.instance_set, [sample()]))
+        self.assertTrue(wrapped.inst_id==0)
 
-        overall_only = wrapped.get_times()
-        overall, intervals = wrapped2.get_times()
-        self.assertTrue(
-            np.array_equal(
-                np.round(overall, decimals=2), np.round(overall_only, decimals=2)
-            )
-        )
-
-        self.assertTrue(len(intervals) == 3)
-        self.assertTrue(len(intervals[0]) == 2)
-        self.assertTrue(len(intervals[1]) == 2)
-        self.assertTrue(len(intervals[2]) == 1)
-
-    # TODO
-    def test_rendering(self):
+    def test_fit(self):
         bench = LubyBenchmark()
+        bench.read_instance_set()
+        instances = bench.config.instance_set
         env = bench.get_benchmark_env()
-        wrapped = EpisodeTimeWrapper(env, 10)
+
+        wrapped = InstanceSamplingWrapper(env, instances=instances)
+        samples = []
+        for _ in range(100):
+            samples.append(wrapped.sampling_function())
+        mi1 = mutual_info_score(np.array(instances)[:, 0], np.array(samples)[:, 0])
+        mi2 = mutual_info_score(np.array(instances)[:, 1], np.array(samples)[:, 1])
+
+        self.assertTrue(mi1 > 0.99)
+        self.assertTrue(mi1!=1)
+        self.assertTrue(mi2 > 0.99)
+        self.assertTrue(mi2!=1)

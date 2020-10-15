@@ -7,6 +7,7 @@ import gym
 
 from daclib.wrappers import RewardNoiseWrapper
 
+
 class DummyEnv(gym.Env):
     def __init__(self):
         self.c_step = None
@@ -16,11 +17,12 @@ class DummyEnv(gym.Env):
 
     def step(self, action):
         self.c_step += 1
-        return np.array([0]), 0 , self.c_step > 9, {}
+        return np.array([0]), 0, self.c_step > 9, {}
 
     def reset(self):
         self.c_step = 0
         return np.array([1])
+
 
 def train(env):
     num_episodes = 10
@@ -35,7 +37,10 @@ def train(env):
             r += reward
             state = next_state
         agent.stop_episode_and_train(state, reward, done=done)
-        print(f"Episode {i}/{num_episodes}...........................................Reward: {r}")
+        print(
+            f"Episode {i}/{num_episodes}...........................................Reward: {r}"
+        )
+
 
 # We use a constant reward of 1 to demontrate the different noise values
 env = DummyEnv()
@@ -51,10 +56,12 @@ q_func = q_functions.FCStateQFunctionWithDiscreteAction(obs_size, n_actions, 50,
 explorer = explorers.ConstantEpsilonGreedy(0.1, action_space.sample)
 opt = optimizers.Adam(eps=1e-2)
 opt.setup(q_func)
-rbuf = replay_buffer.ReplayBuffer(10**5)
+rbuf = replay_buffer.ReplayBuffer(10 ** 5)
 agent = DQN(q_func, opt, rbuf, explorer=explorer, gamma=0.9)
 
-print("Demonstrating the most common distributions: standard versions of normal and exponential")
+print(
+    "Demonstrating the most common distributions: standard versions of normal and exponential"
+)
 print("\n")
 for noise_dist in ["standard_normal", "standard_exponential"]:
     print(f"Current noise distribution: {noise_dist}")
@@ -65,7 +72,9 @@ for noise_dist in ["standard_normal", "standard_exponential"]:
 
 print("Other distributions with added arguments")
 print("\n")
-for noise_dist, args in zip(["normal", "uniform", "logistic"], [[0, 0.1], [-1, 1], [0, 2]]):
+for noise_dist, args in zip(
+    ["normal", "uniform", "logistic"], [[0, 0.1], [-1, 1], [0, 2]]
+):
     print(f"Current noise distribution: {noise_dist}")
     print("Base reward is 0")
     wrapped = RewardNoiseWrapper(env, noise_dist=noise_dist, dist_args=args)
@@ -74,7 +83,11 @@ for noise_dist, args in zip(["normal", "uniform", "logistic"], [[0, 0.1], [-1, 1
 
 print("Custom 'noise' function: always add 1")
 print("\n")
+
+
 def noise():
     return 1
+
+
 wrapped = RewardNoiseWrapper(env, noise_function=noise)
 train(wrapped)

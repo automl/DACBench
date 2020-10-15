@@ -3,10 +3,9 @@ from ray import tune
 from daclib.benchmarks import FastDownwardBenchmark
 
 
-# Overwrite the default config and get env
 def make_fast_downward(config):
     bench = FastDownwardBenchmark()
-    return bench.get_complete_benchmark(config["seed"])
+    return bench.get_benchmark(config["seed"])
 
 
 ray.init()
