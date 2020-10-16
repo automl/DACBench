@@ -110,7 +110,7 @@ class SigmoidBenchmark(AbstractBenchmark):
         env = SigmoidEnv(self.config)
 
         def sample_sigmoid():
-            rng = np.random.RandomState(seed)
+            rng = np.random.default_rng()
             shifts = rng.normal(
                 self.config.cutoff / 2,
                 self.config.cutoff / 4,
