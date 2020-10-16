@@ -3,8 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import time
+import seaborn as sb
 
-plt.rcParams["axes.grid"] = False
+sb.set_style("darkgrid")
+current_palette = list(sb.color_palette())
 
 
 class EpisodeTimeWrapper(Wrapper):
@@ -139,7 +141,7 @@ class EpisodeTimeWrapper(Wrapper):
             np.arange(len(self.all_steps)),
             self.all_steps,
             label="Step time",
-            color="b",
+            color="g",
         )
         if self.tracking_interval:
             interval_means = [np.mean(interval) for interval in self.step_intervals] + [
@@ -149,7 +151,7 @@ class EpisodeTimeWrapper(Wrapper):
                 np.arange(len(self.step_intervals) + 2) * self.tracking_interval,
                 [interval_means[0]] + interval_means,
                 label="Mean interval time",
-                color="r",
+                color="orange",
             )
         plt.legend(loc="upper right")
         canvas.draw()
@@ -172,7 +174,7 @@ class EpisodeTimeWrapper(Wrapper):
             np.arange(len(self.overall)),
             [sum(episode) for episode in self.overall],
             label="Episode time",
-            color="b",
+            color="g",
         )
         if self.tracking_interval:
             interval_sums = []
@@ -188,7 +190,7 @@ class EpisodeTimeWrapper(Wrapper):
                 np.arange(len(self.interval_list) + 2) * self.tracking_interval,
                 [interval_sums[0]] + interval_sums,
                 label="Mean interval time",
-                color="r",
+                color="orange",
             )
         plt.legend(loc="upper right")
         canvas.draw()

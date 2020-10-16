@@ -31,7 +31,7 @@ def flatten(li):
 # We use the configuration from the "Learning to Optimize Step-size Adaption in CMA-ES" Paper by Shala et al.
 bench = CMAESBenchmark()
 env = bench.get_benchmark()
-env = EpisodeTimeWrapper(env, 5)
+env = EpisodeTimeWrapper(env, 2)
 
 obs_space = env.observation_space
 space_array = [obs_space[k].low for k in list(obs_space.spaces.keys())]
@@ -47,7 +47,7 @@ agent = a3c.A3C(model, opt, 10 ** 5, 0.9)
 f, axarr = plt.subplots(2)
 axarr[0].axis('off')
 axarr[1].axis('off')
-num_episodes = 10
+num_episodes = 5
 for i in range(num_episodes):
     state = env.reset()
     # Flattening state
