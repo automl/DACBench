@@ -3,43 +3,22 @@ from chainer import optimizers
 from chainerrl import links, policies
 from chainerrl.agents import a3c
 import numpy as np
+
+from example_utils import make_chainer_a3c
 from daclib.benchmarks import CMAESBenchmark
-
-
-# Example model class taken from chainerrl examples:
-# https://github.com/chainer/chainerrl/blob/master/examples/gym/train_a3c_gym.py
-class A3CFFSoftmax(chainer.ChainList, a3c.A3CModel):
-    """An example of A3C feedforward softmax policy."""
-
-    def __init__(self, ndim_obs, n_actions, hidden_sizes=(200, 200)):
-        self.pi = policies.SoftmaxPolicy(
-            model=links.MLP(ndim_obs, n_actions, hidden_sizes)
-        )
-        self.v = links.MLP(ndim_obs, 1, hidden_sizes=hidden_sizes)
-        super().__init__(self.pi, self.v)
-
-    def pi_and_v(self, state):
-        return self.pi(state), self.v(state)
-
 
 def flatten(li):
     return [value for sublist in li for value in sublist]
-
 
 # We use the configuration from the "Learning to Optimize Step-size Adaption in CMA-ES" Paper by Shala et al.
 bench = CMAESBenchmark()
 env = bench.get_benchmark()
 
-obs_space = env.observation_space
-space_array = [obs_space[k].low for k in list(obs_space.spaces.keys())]
+space_array = [env.observation_space[k].low for k in list(env.observation_space.spaces.keys())]
 obs_size = np.array(flatten(space_array)).size
-action_space = env.action_space
-action_size = action_space.low.size
+action_size = env.action_space.low.size
 
-model = A3CFFSoftmax(obs_size, action_size)
-opt = optimizers.Adam(eps=1e-2)
-opt.setup(model)
-agent = a3c.A3C(model, opt, 10 ** 5, 0.9)
+agent = make_chainer_a3c(obs_size, action_size)
 
 num_episodes = 10 ** 5
 for i in range(num_episodes):

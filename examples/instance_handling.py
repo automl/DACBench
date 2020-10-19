@@ -1,6 +1,3 @@
-from chainer import optimizers
-from chainerrl import q_functions, wrappers, replay_buffer, explorers
-from chainerrl.agents import DQN
 import numpy as np
 import gym
 
