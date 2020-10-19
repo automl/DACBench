@@ -87,13 +87,10 @@ class FastDownwardBenchmark(AbstractBenchmark):
         if instances[0].endswith(".pddl"):
             self.config.domain_file = self.config.instance_set_path + "/domain.pddl"
 
-    def get_benchmark(self, seed=0, train=True):
+    def get_benchmark(self, seed=0):
         """Get benchmark from the paper"""
         self.config = objdict(FD_DEFAULTS.copy())
         self.read_instance_set()
         self.config.seed = seed
         env = FastDownwardEnv(self.config)
-        if train:
-            return chainerrl.wrappers.ScaleReward(env, 1)
-        else:
-            return env
+        return env

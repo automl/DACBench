@@ -20,7 +20,7 @@ action_size = env.action_space.low.size
 
 agent = make_chainer_a3c(obs_size, action_size)
 
-num_episodes = 10 ** 5
+num_episodes = 10
 for i in range(num_episodes):
     state = env.reset()
     # Flattening state

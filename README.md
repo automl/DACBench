@@ -41,4 +41,3 @@ As some papers use different benchmark configurations, there are sometimes more 
 These are:
 - Sigmoid: dimension (problem dimension, in the paper either 1, 2, 3 or 5)
 - Luby: L (minimum number of steps, in the paper either 8, 16 or 32) and fuzziness (in the paper 0.1, 0.8, 1.5, 2.0 and 2.5)
-- Fast Downward: rewards are scaled in train mode (default), deactivate for testing

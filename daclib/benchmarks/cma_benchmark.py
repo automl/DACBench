@@ -69,8 +69,8 @@ class CMAESBenchmark(AbstractBenchmark):
 
         Returns
         -------
-        LubyEnv
-            Luby environment
+        CMAESEnv
+            CMAES environment
         """
         if "instance_set" not in self.config.keys():
             self.read_instance_set()

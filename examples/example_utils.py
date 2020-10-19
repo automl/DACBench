@@ -1,9 +1,11 @@
 import gym
-from collections import defaultdict
+import sys
+import numpy as np
+from collections import defaultdict, namedtuple
 import chainer
 from chainer import optimizers
-from chainerrl import q_functions, wrappers, replay_buffer, explorers
-from chainerrl.agents import DQN
+from chainerrl import q_functions, wrappers, replay_buffer, explorers, policies, links
+from chainerrl.agents import DQN, a3c
 
 class DummyEnv(gym.Env):
     def __init__(self):
@@ -184,6 +186,7 @@ def update(
         episode_length,
     )  # Q, cumulative reward
 
+EpisodeStats = namedtuple(                                                                                                  "Stats", ["episode_lengths", "episode_rewards", "expected_rewards"]                                                 )   
 
 def q_learning(
     environment,
@@ -207,7 +210,7 @@ def q_learning(
     assert alpha > 0, "Learning rate has to be positive"
     # The action-value function.
     # Nested dict that maps state -> (action -> action-value).
-    Q = QTable(env.action_space.n, float_state)
+    Q = QTable(environment.action_space.n, float_state)
     test_stats = None
     if track_test_stats:
         test_stats = EpisodeStats(
@@ -306,9 +309,12 @@ def make_chainer_dqn(obs_size, action_space):
 def flatten(li):
     return [value for sublist in li for value in sublist]
 
-def train_chainer(agent, env, num_episodes=10, flatten=False):
+def train_chainer(agent, env, num_episodes=10, flatten_state=False):
     for i in range(num_episodes):
         state = env.reset()
+        if flatten_state:
+            state = np.array(flatten([state[k] for k in state.keys()]))
+            state = state.astype(np.float32)
         done = False
         r = 0
         reward = 0
@@ -316,7 +322,7 @@ def train_chainer(agent, env, num_episodes=10, flatten=False):
             action = agent.act_and_train(state, reward)
             next_state, reward, done, _ = env.step(action)
             r += reward
-            if flatten:
+            if flatten_state:
                 state = np.array(flatten([next_state[k] for k in next_state.keys()]))
                 state = state.astype(np.float32)
             else:

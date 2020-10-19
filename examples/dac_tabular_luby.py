@@ -8,18 +8,14 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 import argparse
 import logging
 import sys
-from collections import defaultdict
 import numpy as np
 import datetime
 import pickle
 import os
-from example_utils import q_learning
+from example_utils import q_learning, zeroOne
 from daclib.benchmarks import LubyBenchmark
 
 
-EpisodeStats = namedtuple(
-    "Stats", ["episode_lengths", "episode_rewards", "expected_rewards"]
-)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Tabular Q-learning example")

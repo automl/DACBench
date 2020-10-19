@@ -13,7 +13,7 @@ env = DummyEnv()
 env = wrappers.CastObservationToFloat32(env)
 
 obs_size = env.observation_space.n
-make_chainer_dqn(obs_size, env.action_space)
+agent = make_chainer_dqn(obs_size, env.action_space)
 
 print(
     "Demonstrating the most common distributions: standard versions of normal and exponential"
@@ -23,7 +23,7 @@ for noise_dist in ["standard_normal", "standard_exponential"]:
     print(f"Current noise distribution: {noise_dist}")
     print("Base reward is 0")
     wrapped = RewardNoiseWrapper(env, noise_dist=noise_dist)
-    train_chainer(wrapped)
+    train_chainer(agent, wrapped)
     print("\n")
 
 print("Other distributions with added arguments")
@@ -34,7 +34,7 @@ for noise_dist, args in zip(
     print(f"Current noise distribution: {noise_dist}")
     print("Base reward is 0")
     wrapped = RewardNoiseWrapper(env, noise_dist=noise_dist, dist_args=args)
-    train_chainer(wrapped)
+    train_chainer(agent, wrapped)
     print("\n")
 
 print("Custom 'noise' function: always add 1")
@@ -44,4 +44,4 @@ def noise():
     return 1
 
 wrapped = RewardNoiseWrapper(env, noise_function=noise)
-train_chainer(wrapped)
+train_chainer(agent, wrapped)
