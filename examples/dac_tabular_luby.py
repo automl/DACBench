@@ -8,7 +8,7 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 import argparse
 import logging
 import sys
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 import numpy as np
 import datetime
 import pickle
