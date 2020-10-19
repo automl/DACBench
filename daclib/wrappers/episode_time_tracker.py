@@ -5,7 +5,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import time
 import seaborn as sb
 
-sb.set_style("darkgrid")
+#sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())
 
 
@@ -159,7 +159,7 @@ class EpisodeTimeWrapper(Wrapper):
         img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
             int(height), int(width), 3
         )
-        plt.close(figure)
+        #plt.close(figure)
         return img
 
     def render_episode_time(self):
@@ -198,5 +198,4 @@ class EpisodeTimeWrapper(Wrapper):
         img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
             int(height), int(width), 3
         )
-        plt.close(figure)
         return img

@@ -30,7 +30,7 @@ class RewardNoiseWrapper(Wrapper):
     def step(self, action):
         state, reward, done, info = self.env.step(action)
         reward += self.noise_function()
-        reward = max(self.env.reward_range[0], min(self.env.reward_range[1], reward))
+        reward = max(self.env.reward_range[1], min(self.env.reward_range[0], reward))
         return state, reward, done, info
 
     def add_noise(self, dist, args):

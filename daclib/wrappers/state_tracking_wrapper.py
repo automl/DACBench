@@ -179,7 +179,7 @@ class StateTrackingWrapper(Wrapper):
 
 
         if self.state_type == spaces.Discrete:
-            figure = plt.figure(figsize=(12, 6))
+            figure = plt.figure(figsize=(20, 20))
             canvas = FigureCanvas(figure)
             p, p2 = plot_single()
             canvas.draw()
@@ -198,7 +198,7 @@ class StateTrackingWrapper(Wrapper):
                 figure, axarr = plt.subplots(state_length)
             else:
                 dim = state_length%4
-                figure, axarr = plt.subplots((state_length%4)+1, state_length//dim)
+                figure, axarr = plt.subplots((state_length%4), state_length//dim)
             figure.suptitle("State over time")
             canvas = FigureCanvas(figure)
             for i in range(state_length):
@@ -210,8 +210,6 @@ class StateTrackingWrapper(Wrapper):
                 else:
                     y = i%state_length//dim==0
                     p, p2 = plot_single(axarr[i%dim, i//dim], i, x=x, y=y)
-            for i in range(state_length//dim-1):
-                figure.delaxes(axarr[dim, i])
             canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
         img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
