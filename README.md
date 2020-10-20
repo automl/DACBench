@@ -6,7 +6,7 @@ Its focus is on reproducibility and comparability of different DAC methods as we
 We recommend to install DACBench in a virtual environment.
 To install DACBench including the dependencies to run examples:
 ```
-git clone https://github.com/automl/DAClib.git
+git clone https://github.com/automl/DACBench.git
 cd DACBench
 pip install -e .[example]
 ```
