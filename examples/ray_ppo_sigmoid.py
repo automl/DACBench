@@ -1,6 +1,6 @@
 import ray
 from ray import tune
-from daclib.benchmarks import SigmoidBenchmark
+from dacbench.benchmarks import SigmoidBenchmark
 
 
 # Overwrite standard config, but adapt action space automatically

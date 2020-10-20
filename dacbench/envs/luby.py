@@ -9,7 +9,7 @@ import logging
 from typing import List
 import numpy as np
 
-from daclib import AbstractEnv
+from dacbench import AbstractEnv
 
 
 # Instance IDEA 1: shift luby seq -> feat is sum of skipped action values

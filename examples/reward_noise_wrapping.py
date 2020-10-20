@@ -5,7 +5,7 @@ import numpy as np
 import gym
 
 from example_utils import DummyEnv, train_chainer, make_chainer_dqn
-from daclib.wrappers import RewardNoiseWrapper
+from dacbench.wrappers import RewardNoiseWrapper
 
 # We use a constant reward of 1 to demontrate the different noise values
 env = DummyEnv()

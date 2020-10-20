@@ -10,7 +10,7 @@ from collections import deque
 from cma.evolution_strategy import CMAEvolutionStrategy
 import threading
 
-from daclib import AbstractEnv
+from dacbench import AbstractEnv
 
 
 def _norm(x):

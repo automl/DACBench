@@ -1,5 +1,5 @@
-from daclib.abstract_benchmark import AbstractBenchmark, objdict
-from daclib.envs import FastDownwardEnv
+from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.envs import FastDownwardEnv
 import chainerrl
 
 import numpy as np

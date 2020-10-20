@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from example_utils import make_chainer_a3c, train_chainer
-from daclib.benchmarks import CMAESBenchmark
-from daclib.wrappers import EpisodeTimeWrapper
+from dacbench.benchmarks import CMAESBenchmark
+from dacbench.wrappers import EpisodeTimeWrapper
 
 def flatten(li):                                                                                                            return [value for sublist in li for value in sublist]  
 
@@ -24,15 +24,9 @@ action_size = action_space.low.size
 
 agent = make_chainer_a3c(obs_size, action_size)
 
-f, axarr = plt.subplots(2)
-axarr[0].axis('off')
-axarr[1].axis('off')
-num_episodes = 5
-
 train_chainer(agent, env, flatten_state=True)
 
 img = env.render_step_time()
-axarr[0].imshow(img)
+plt.show()
 img = env.render_episode_time()
-axarr[1].imshow(img)
 plt.show()

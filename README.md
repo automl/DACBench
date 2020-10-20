@@ -1,14 +1,14 @@
 # DAClib
-DAClib is a benchmark library for Dynamic Algorithm Configuration.
+DACBench is a benchmark library for Dynamic Algorithm Configuration.
 Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
 ## Installation
-We recommend to install DAClib in a virtual environment.
-To install, run the following:
+We recommend to install DACBench in a virtual environment.
+To install DACBench including the dependencies to run examples:
 ```
 git clone https://github.com/automl/DAClib.git
-cd DAClib
-pip install .
+cd DACBench
+pip install -e .[example]
 ```
 When using the Fast Downward Benchmark, you need to build it separately:
 ```
@@ -17,7 +17,7 @@ When using the Fast Downward Benchmark, you need to build it separately:
 ## Using DAClib
 Benchmarks follow the OpenAI gym standard interface. To create an environment simply:
 ```python
-from daclib.bechmarks.sigmoid_benchmark import SigmoidBenchmark
+from dacbench.bechmarks.sigmoid_benchmark import SigmoidBenchmark
 benchmark = SigmoidBenchmark()
 benchmark.config.seed = 42
 env = benchmark.get_benchmark_env()
@@ -26,14 +26,16 @@ The environment configuration can be changed manually or loaded from file.
 Additionally, there are several wrappers with added functionality available.
 
 ## Benchmarks
-Currently, DAClib includes the following Benchmarks:
+Currently, DACbench includes the following Benchmarks:
 - Sigmoid: tracing sigmoid curves in different dimensions and resolutions
 - Luby: learning the Luby sequence
+- Planning: controling the heuristics of the FastDownward Planner
+- CMA-ES: adapting step-size of CMA
 
 ## Reproducing previous experiments
 To reproduce the experiments from the paper a benchmark originated from, you can call
 ```python
-from daclib.bechmarks.sigmoid_benchmark import SigmoidBenchmark
+from dacbench.bechmarks.sigmoid_benchmark import SigmoidBenchmark
 benchmark = SigmoidBenchmark()
 env = benchmark.get_benchmark(seed)
 ```

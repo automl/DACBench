@@ -1,6 +1,6 @@
-from daclib.abstract_benchmark import AbstractBenchmark, objdict
-from daclib.envs import LubyEnv, luby_gen
-from daclib.wrappers import RewardNoiseWrapper
+from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.envs import LubyEnv, luby_gen
+from dacbench.wrappers import RewardNoiseWrapper
 
 import numpy as np
 import os

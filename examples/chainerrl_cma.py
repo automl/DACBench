@@ -5,7 +5,7 @@ from chainerrl.agents import a3c
 import numpy as np
 
 from example_utils import make_chainer_a3c
-from daclib.benchmarks import CMAESBenchmark
+from dacbench.benchmarks import CMAESBenchmark
 
 def flatten(li):
     return [value for sublist in li for value in sublist]

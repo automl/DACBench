@@ -1,6 +1,6 @@
-from daclib.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 
-from daclib.envs import CMAESEnv
+from dacbench.envs import CMAESEnv
 from cma import bbobbenchmarks as bn
 
 from gym import spaces

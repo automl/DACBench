@@ -6,8 +6,8 @@ import numpy as np
 import gym
 
 from example_utils import train_chainer, make_chainer_dqn
-from daclib.benchmarks import FastDownwardBenchmark
-from daclib.wrappers import StateTrackingWrapper
+from dacbench.benchmarks import FastDownwardBenchmark
+from dacbench.wrappers import StateTrackingWrapper
 
 bench = FastDownwardBenchmark()
 env = bench.get_benchmark_env()
@@ -22,6 +22,4 @@ agent = make_chainer_dqn(obs_size, env.action_space)
 train_chainer(agent, env)
 
 img = env.render_state_tracking()
-plt.axis("off")
-plt.imshow(img)
 plt.show()

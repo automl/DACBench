@@ -4,8 +4,8 @@ import gym
 
 from chainerrl import wrappers
 from example_utils import train_chainer, make_chainer_dqn
-from daclib.benchmarks import LubyBenchmark
-from daclib.wrappers import ActionFrequencyWrapper
+from dacbench.benchmarks import LubyBenchmark
+from dacbench.wrappers import ActionFrequencyWrapper
 
 
 bench = LubyBenchmark()
@@ -22,5 +22,4 @@ agent = make_chainer_dqn(obs_size, env.action_space)
 train_chainer(agent, env)
 img = env.render_action_tracking()
 plt.axis("off")
-plt.imshow(img)
 plt.show()

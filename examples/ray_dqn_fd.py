@@ -1,6 +1,6 @@
 import ray
 from ray import tune
-from daclib.benchmarks import FastDownwardBenchmark
+from dacbench.benchmarks import FastDownwardBenchmark
 
 
 def make_fast_downward(config):

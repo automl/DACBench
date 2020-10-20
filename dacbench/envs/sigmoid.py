@@ -13,7 +13,7 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
 
-from daclib import AbstractEnv
+from dacbench import AbstractEnv
 
 
 class SigmoidEnv(AbstractEnv):

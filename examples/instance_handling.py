@@ -1,8 +1,8 @@
 import numpy as np
 import gym
 
-from daclib.benchmarks import SigmoidBenchmark
-from daclib.wrappers import InstanceSamplingWrapper
+from dacbench.benchmarks import SigmoidBenchmark
+from dacbench.wrappers import InstanceSamplingWrapper
 
 def sample_sigmoid():
     rng = np.random.default_rng()

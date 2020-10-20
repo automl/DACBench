@@ -1,5 +1,5 @@
 [project]
-name = "DAClib"
+name = "DACBench"
 version = "0.0.1"
 description = "A benchmark library for DAC"
 authors = [
@@ -30,7 +30,7 @@ classifiers = [
 
 [install_requires]
 gym = "0.15"
-numpy = "1.18"
+numpy = "1.19.0"
 scipy = "1.4.1"
 cma = "2.7"
 pandas = "1.0.3"

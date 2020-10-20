@@ -1,6 +1,6 @@
-from daclib.abstract_benchmark import AbstractBenchmark, objdict
-from daclib.envs import SigmoidEnv
-from daclib.wrappers import InstanceSamplingWrapper
+from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.envs import SigmoidEnv
+from dacbench.wrappers import InstanceSamplingWrapper
 
 import numpy as np
 import os
