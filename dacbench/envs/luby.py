@@ -22,7 +22,6 @@ class LubyEnv(AbstractEnv):
     def __init__(self, config) -> None:
         super().__init__(config)
         self.rng = np.random.RandomState(config["seed"])
-        self._c_step = 0
         self.logger = None
 
         self._hist_len = config["hist_length"]
@@ -33,7 +32,7 @@ class LubyEnv(AbstractEnv):
         self._genny = luby_gen(1)
         self._next_goal = next(self._genny)
         # Generate luby sequence up to 2*max_steps + 2 as mode 1 could potentially shift up to max_steps
-        self.__seq = np.log2(
+        self._seq = np.log2(
             [next(luby_gen(i)) for i in range(1, 2 * config["cutoff"] + 2)]
         )
         self._jenny_i = 1
@@ -83,17 +82,17 @@ class LubyEnv(AbstractEnv):
         # thereby repeated actions. With check against lower/upper we reset the sequence to the correct timestep in
         # the t+1 timestep.
         luby_t = max(1, int(np.round(self._jenny_i + self._start_shift + self.__error)))
-        self._next_goal = self.__seq[luby_t - 1]
-        if self._c_step - 1 < self._hist_len:
-            self._state[(self._c_step - 1)] = action
+        self._next_goal = self._seq[luby_t - 1]
+        if self.c_step - 1 < self._hist_len:
+            self._state[(self.c_step - 1)] = action
         else:
             self._state[:-2] = self._state[1:-1]
             self._state[-2] = action
-        self._state[-1] = self._c_step - 1
+        self._state[-1] = self.c_step - 1
         next_state = self._state if not done else prev_state
         self.logger.debug(
             "i: (s, a, r, s') / %+5d: (%s, %d, %5.2f, %2s)     g: %3d  l: %3d",
-            self._c_step - 1,
+            self.c_step - 1,
             str(prev_state),
             action,
             self._r,
@@ -113,15 +112,15 @@ class LubyEnv(AbstractEnv):
             Environment state
         """
         super(LubyEnv, self).reset_()
-        self.__start_shift = self.instance[0]
-        self.__sticky_shif = self.instance[1]
+        self._start_shift = self.instance[0]
+        self._sticky_shif = self.instance[1]
         self._r = 0
         self.n_steps = self._mi
 
         self.__error = 0 + self._sticky_shif
         self._jenny_i = 1
         luby_t = max(1, int(np.round(self._jenny_i + self._start_shift + self.__error)))
-        self._next_goal = self.__seq[luby_t - 1]
+        self._next_goal = self._seq[luby_t - 1]
         self.logger.debug(
             "i: (s, a, r, s') / %+5d: (%2d, %d, %5.2f, %2d)     g: %3d  l: %3d",
             -1,

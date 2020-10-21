@@ -34,7 +34,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
 
         state, reward, done, _ = wrapped.step(1)
         self.assertTrue(len(state) > 1)
-        self.assertTrue(reward < 0)
+        self.assertTrue(reward <= 0)
         self.assertFalse(done)
 
         self.assertTrue(len(wrapped.overall) == 2)

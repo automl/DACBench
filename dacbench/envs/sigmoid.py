@@ -28,10 +28,8 @@ class SigmoidEnv(AbstractEnv):
     def __init__(self, config) -> None:
         super(SigmoidEnv, self).__init__(config)
         self.rng = np.random.RandomState(config["seed"])
-        self._c_step = 0
         self.shifts = [self.n_steps / 2 for _ in config["action_values"]]
         self.slopes = [-1 for _ in config["action_values"]]
-        self.reward_range = config["reward_range"]
         self.slope_multiplier = config["slope_multiplier"]
         self.action_vals = config["action_values"]
         self.n_actions = len(self.action_vals)
@@ -65,7 +63,7 @@ class SigmoidEnv(AbstractEnv):
             action
         ), f"action should be of length {self.n_actions}."
 
-        val = self._c_step
+        val = self.c_step
         r = [
             1 - np.abs(self._sig(val, slope, shift) - (act / (max_act - 1)))
             for slope, shift, act, max_act in zip(
@@ -74,7 +72,7 @@ class SigmoidEnv(AbstractEnv):
         ]
         r = np.clip(np.prod(r), 0.0, 1.0)
         r= max(self.reward_range[0], min(self.reward_range[1], r))
-        remaining_budget = self.n_steps - self._c_step
+        remaining_budget = self.n_steps - self.c_step
 
         next_state = [remaining_budget]
         for shift, slope in zip(self.shifts, self.slopes):
@@ -85,13 +83,12 @@ class SigmoidEnv(AbstractEnv):
 
         self.logger.debug(
             "i: (s, a, r, s') / %d: (%s, %d, %5.2f, %2s)",
-            self._c_step - 1,
+            self.c_step - 1,
             str(prev_state),
             action,
             r,
             str(next_state),
         )
-        self._c_step += 1
         self._prev_state = next_state
         return np.array(next_state), r, done, {}
 
@@ -107,7 +104,7 @@ class SigmoidEnv(AbstractEnv):
         super(SigmoidEnv, self).reset_()
         self.shifts = self.instance[: self.n_actions]
         self.slopes = self.instance[self.n_actions :]
-        remaining_budget = self.n_steps - self._c_step
+        remaining_budget = self.n_steps - self.c_step
         next_state = [remaining_budget]
         for shift, slope in zip(self.shifts, self.slopes):
             next_state.append(shift)
@@ -154,8 +151,8 @@ class SigmoidEnv(AbstractEnv):
                 interpolation="nearest",
                 cmap=cm.plasma,
             )
-            plt.axvline(x=self._c_step, color="r", linestyle="-", linewidth=2)
-            plt.axhline(y=self._c_step, color="r", linestyle="-", linewidth=2)
+            plt.axvline(x=self.c_step, color="r", linestyle="-", linewidth=2)
+            plt.axhline(y=self.c_step, color="r", linestyle="-", linewidth=2)
 
             plt.draw()
             plt.pause(0.005)

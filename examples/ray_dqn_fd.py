@@ -16,7 +16,7 @@ config = {
         "seed": 0,
     },
 }
-stop = {"training_iteration": 100}
+stop = {"training_iteration": 10}
 
 results = tune.run("DQN", config=config, stop=stop)
 ray.shutdown()

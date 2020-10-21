@@ -11,7 +11,6 @@ import csv
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
 
-# TODO: fix this
 CMAES_DEFAULTS = objdict(
     {
         "action_space_class": "Box",

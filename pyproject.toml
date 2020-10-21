@@ -67,7 +67,7 @@ filterwarnings = [
 testpaths = ["tests"]
 
 [tool.coverage.run]
-omit = ["daclib/envs/fast-downward/*"]
+omit = ["dacbench/envs/fast-downward/*"]
 
 [tool.coverage.html]
 directory = "coverage_report"

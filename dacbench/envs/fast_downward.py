@@ -67,6 +67,8 @@ class FastDownwardEnv(AbstractEnv):
         self.__num_heuristics = config.num_heuristics
         self.host = config.host
         self.port = config.port
+        if config["parallel"]:
+            self.port += np.random.randint(50)
         self.fd_path = config.fd_path
         self.fd = None
         if "domain_file" in config.keys():
@@ -270,27 +272,6 @@ class FastDownwardEnv(AbstractEnv):
             self.kill_connection()
         return s, r, d or self.done, info
 
-    def porttry(self, s):
-        """
-        Scan for open ports. After:
-        https://stackoverflow.com/questions/26174743/making-a-fast-port-scanner
-
-        Parameters
-        ----------
-        Socket
-            socket for which to probe
-
-        Returns
-        ----------
-        bool
-            Port free or not
-        """
-        try:
-            s.bind((self.host, self.port))
-            return True
-        except Exception:
-            return False
-
     def reset(self):
         """
         Reset environment
@@ -315,13 +296,7 @@ class FastDownwardEnv(AbstractEnv):
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.socket.settimeout(0.5)
-            count = 0
-            while not self.porttry(self.socket):
-                self.port += 1
-                count += 1
-                if count >= 100:
-                    print(self.port)
-                    raise TimeoutError
+            self.socket.bind((self.host, self.port))
 
         if self.fd:
             self.fd.terminate()
@@ -350,7 +325,7 @@ class FastDownwardEnv(AbstractEnv):
         if self._port_file_id:
             fp = joinpath(self._config_dir, "port_{:d}.txt".format(self._port_file_id))
         else:
-            fp = joinpath(self._config_dir, "port.txt")
+            fp = joinpath(self._config_dir, f"port_{self.port}.txt")
         with open(fp, "w") as portfh:
             portfh.write(str(self.port))
         print(fp)
@@ -383,6 +358,7 @@ class FastDownwardEnv(AbstractEnv):
     def close(self):
         """Needs to "kill" the environment"""
         self.kill_connection()
+        return True
 
     def render(self, mode: str = "human") -> None:
         """

@@ -122,6 +122,22 @@ class CMAESEnv(AbstractEnv):
         self.history.append([self.f_difference, self.velocity])
         return self.get_state()
 
+    def close(self):
+        return True
+
+    def render(self, mode: str = "human"):
+        """
+        Render env in human mode
+
+        Parameters
+        ----------
+        mode : str
+            Execution mode
+        """
+        if mode != "human":
+            raise NotImplementedError
+        pass
+
     def get_default_state(self):
         """
         Gather state description
