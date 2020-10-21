@@ -259,6 +259,7 @@ class FastDownwardEnv(AbstractEnv):
             msg = str(action)
         self.send_msg(str.encode(msg))
         s, r, d = self._process_data()
+        r= max(self.reward_range[0], min(self.reward_range[1], r))
         info = {}
         if d:
             self.done = True

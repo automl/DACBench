@@ -3,9 +3,9 @@ import json
 import os
 
 import numpy as np
-from daclib.benchmarks import LubyBenchmark
-from daclib.envs import LubyEnv
-from daclib.wrappers import RewardNoiseWrapper
+from dacbench.benchmarks import LubyBenchmark
+from dacbench.envs import LubyEnv
+from dacbench.wrappers import RewardNoiseWrapper
 
 
 class TestLubyBenchmark(unittest.TestCase):

@@ -20,7 +20,7 @@ LUBY_DEFAULTS = objdict(
             np.array([-1 for _ in range(HISTORY_LENGTH + 1)]),
             np.array([2 ** max(LUBY_SEQUENCE + 1) for _ in range(HISTORY_LENGTH + 1)]),
         ],
-        "reward_range": (-1, 1),
+        "reward_range": (-1, 0),
         "cutoff": MAX_STEPS,
         "hist_length": HISTORY_LENGTH,
         "min_steps": 2 ** 3,
@@ -117,6 +117,7 @@ class LubyBenchmark(AbstractBenchmark):
         self.config.min_steps = L
         self.config.seed = seed
         self.config.instance_set = [[0, 0]]
+        self.config.reward_range = (-10, 10)
         env = LubyEnv(self.config)
 
         def fuzz():

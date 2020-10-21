@@ -2,8 +2,8 @@ import unittest
 import pytest
 import gym
 import numpy as np
-from daclib.benchmarks import LubyBenchmark, FastDownwardBenchmark, CMAESBenchmark
-from daclib.wrappers import ActionFrequencyWrapper
+from dacbench.benchmarks import LubyBenchmark, FastDownwardBenchmark, CMAESBenchmark
+from dacbench.wrappers import ActionFrequencyWrapper
 
 
 class TestActionTrackingWrapper(unittest.TestCase):

@@ -89,7 +89,6 @@ class ActionFrequencyWrapper(Wrapper):
         else:
             return self.overall
 
-    # TODO: test this
     def render_action_tracking(self):
         """
         Render action progression
@@ -161,16 +160,17 @@ class ActionFrequencyWrapper(Wrapper):
             raise NotImplementedError
         elif self.action_space_type == spaces.MultiDiscrete or self.action_space_type == spaces.MultiBinary or self.action_space_type == spaces.Box:
             if self.action_space_type == spaces.MultiDiscrete:
-                action_size = len(self.env.observation_space.nvec)
+                action_size = len(self.env.action_space.nvec)
             elif self.action_space_type == spaces.MultiBinary:
-                action_size = self.env.observation_space.n
+                action_size = self.env.action_space.n
             else:
-                action_size = len(self.env.observation_space.high)
+                action_size = len(self.env.action_space.high)
             if action_size < 5:
+                dim = 1
                 figure, axarr = plt.subplots(action_size)
             else:
                 dim = action_size%4
-                figure, axarr = plt.subplots((action_size%4)+1, action_size//dim)
+                figure, axarr = plt.subplots(action_size%4, action_size//dim)
             figure.suptitle("State over time")
             canvas = FigureCanvas(figure)
             for i in range(action_size):
@@ -182,8 +182,6 @@ class ActionFrequencyWrapper(Wrapper):
                 else:
                     y = i%action_size//dim==0
                     p, p2 = plot_single(axarr[i%dim, i//dim], i, x=x, y=y)
-            for i in range(action_size//dim-1):
-                figure.delaxes(axarr[dim, i])
             canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
         img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(

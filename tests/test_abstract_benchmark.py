@@ -2,7 +2,7 @@ import pytest
 import unittest
 import json
 import os
-from daclib.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 
 
 class TestAbstractBenchmark(unittest.TestCase):

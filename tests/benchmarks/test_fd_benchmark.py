@@ -1,9 +1,8 @@
 import unittest
 import os
 import json
-import chainerrl
-from daclib.benchmarks import FastDownwardBenchmark
-from daclib.envs import FastDownwardEnv
+from dacbench.benchmarks import FastDownwardBenchmark
+from dacbench.envs import FastDownwardEnv
 
 
 class TestFDBenchmark(unittest.TestCase):
@@ -44,6 +43,4 @@ class TestFDBenchmark(unittest.TestCase):
     def test_benchmark_env(self):
         bench = FastDownwardBenchmark()
         env = bench.get_benchmark()
-        self.assertTrue(issubclass(type(env), chainerrl.wrappers.ScaleReward))
-        env = bench.get_benchmark(train=False)
-        self.assertFalse(issubclass(type(env), chainerrl.wrappers.ScaleReward))
+        self.assertTrue(issubclass(type(env), FastDownwardEnv))

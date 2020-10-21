@@ -2,9 +2,9 @@ import unittest
 import json
 import os
 
-from daclib.benchmarks import SigmoidBenchmark
-from daclib.envs import SigmoidEnv
-from daclib.wrappers import InstanceSamplingWrapper
+from dacbench.benchmarks import SigmoidBenchmark
+from dacbench.envs import SigmoidEnv
+from dacbench.wrappers import InstanceSamplingWrapper
 
 
 class TestSigmoidBenchmark(unittest.TestCase):

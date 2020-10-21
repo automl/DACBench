@@ -1,8 +1,8 @@
 import unittest
 
 import numpy as np
-from daclib.benchmarks import LubyBenchmark
-from daclib.wrappers import EpisodeTimeWrapper
+from dacbench.benchmarks import LubyBenchmark
+from dacbench.wrappers import EpisodeTimeWrapper
 
 
 class TestTimeTrackingWrapper(unittest.TestCase):

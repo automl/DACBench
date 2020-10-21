@@ -73,6 +73,7 @@ class SigmoidEnv(AbstractEnv):
             )
         ]
         r = np.clip(np.prod(r), 0.0, 1.0)
+        r= max(self.reward_range[0], min(self.reward_range[1], r))
         remaining_budget = self.n_steps - self._c_step
 
         next_state = [remaining_budget]

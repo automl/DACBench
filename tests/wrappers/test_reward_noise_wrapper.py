@@ -1,8 +1,8 @@
 import pytest
 import unittest
 
-from daclib.benchmarks import LubyBenchmark
-from daclib.wrappers import RewardNoiseWrapper
+from dacbench.benchmarks import LubyBenchmark
+from dacbench.wrappers import RewardNoiseWrapper
 
 
 class TestRewardNoiseWrapper(unittest.TestCase):
@@ -28,6 +28,7 @@ class TestRewardNoiseWrapper(unittest.TestCase):
 
     def test_step(self):
         bench = LubyBenchmark()
+        bench.config.reward_range = (-10, 10)
         env = bench.get_benchmark_env()
         env.reset()
         _, raw_reward, _, _ = env.step(1)
@@ -39,6 +40,8 @@ class TestRewardNoiseWrapper(unittest.TestCase):
 
         wrapped = RewardNoiseWrapper(env, noise_dist="normal", dist_args=[0, 0.3])
         wrapped.reset()
+        env.reset()
+        _, raw_reward, _, _ = env.step(1)
         _, reward, _, _ = wrapped.step(1)
         self.assertTrue(reward != raw_reward)
 
@@ -47,6 +50,8 @@ class TestRewardNoiseWrapper(unittest.TestCase):
 
         wrapped = RewardNoiseWrapper(env, noise_function=dummy)
         wrapped.reset()
+        env.reset()
+        _, raw_reward, _, _ = env.step(1)
         _, reward, _, _ = wrapped.step(1)
         self.assertTrue(reward == raw_reward)
 

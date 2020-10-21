@@ -67,6 +67,7 @@ class LubyEnv(AbstractEnv):
             self._r = 0  # we don't want to allow for exploiting large rewards by tending towards long sequences
         else:  # mean and var chosen s.t. ~1/4 of rewards are positive
             self._r = -1
+        self._r= max(self.reward_range[0], min(self.reward_range[1], self._r))
 
         if (
             self.__error < self.__lower

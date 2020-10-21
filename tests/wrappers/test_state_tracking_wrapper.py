@@ -3,8 +3,8 @@ import pytest
 
 import gym
 import numpy as np
-from daclib.benchmarks import LubyBenchmark, CMAESBenchmark
-from daclib.wrappers import StateTrackingWrapper
+from dacbench.benchmarks import LubyBenchmark, CMAESBenchmark
+from dacbench.wrappers import StateTrackingWrapper
 
 
 class TestStateTrackingWrapper(unittest.TestCase):

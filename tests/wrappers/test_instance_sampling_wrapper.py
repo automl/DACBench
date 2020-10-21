@@ -3,8 +3,8 @@ import unittest
 
 from sklearn.metrics import mutual_info_score
 import numpy as np
-from daclib.benchmarks import LubyBenchmark
-from daclib.wrappers import InstanceSamplingWrapper
+from dacbench.benchmarks import LubyBenchmark
+from dacbench.wrappers import InstanceSamplingWrapper
 
 
 class TestInstanceSamplingWrapper(unittest.TestCase):

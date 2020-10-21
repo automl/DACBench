@@ -2,8 +2,8 @@ import unittest
 import json
 import os
 
-from daclib.benchmarks import CMAESBenchmark
-from daclib.envs import CMAESEnv
+from dacbench.benchmarks import CMAESBenchmark
+from dacbench.envs import CMAESEnv
 
 
 class TestCMABenchmark(unittest.TestCase):

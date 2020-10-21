@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 from gym import spaces
-from daclib.abstract_env import AbstractEnv
+from dacbench.abstract_env import AbstractEnv
 
 
 class TestAbstractEnv(unittest.TestCase):
