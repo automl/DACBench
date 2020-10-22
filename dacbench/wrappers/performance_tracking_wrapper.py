@@ -23,9 +23,8 @@ class PerformanceTrackingWrapper(Wrapper):
             "performance_intervals",
             "current_performance",
             "env",
-            "get_actions",
+            "get_performance",
             "step",
-            "render_action_tracking",
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -39,9 +38,8 @@ class PerformanceTrackingWrapper(Wrapper):
             "performance_intervals",
             "current_performance",
             "env",
-            "get_actions",
+            "get_performance",
             "step",
-            "render_action_tracking",
         ]:
             return object.__getattribute__(self, name)
         else:
