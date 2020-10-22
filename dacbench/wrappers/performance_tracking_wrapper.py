@@ -70,10 +70,10 @@ class PerformanceTrackingWrapper(Wrapper):
                 self.performance_intervals.append(self.current_performance)
                 self.current_performance = [reward]
         if self.track_instances:
-            if env.instance in instance_performances.keys():
-                self.instance_performances[env.instance].append(reward)
+            if self.env.instance in instance_performances.keys():
+                self.instance_performances[self.env.instance].append(reward)
             else:
-                self.instance_performances[env.instance] = [reward]
+                self.instance_performances[self.env.instance] = [reward]
         return state, reward, done, info
 
     def get_performance(self):
