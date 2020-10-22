@@ -6,6 +6,7 @@ class PerformanceTrackingWrapper(Wrapper):
         super(PerformanceTrackingWrapper, self).__init__(env)
         self.performance_interval = performance_interval
         self.overall_performance = []
+        self.episode_performance = 0
         if self.performance_interval:
             self.performance_intervals = []
             self.current_performance = []
@@ -24,6 +25,7 @@ class PerformanceTrackingWrapper(Wrapper):
             "get_performance",
             "step",
             "instance_performances",
+            "episode_performance"
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -40,6 +42,7 @@ class PerformanceTrackingWrapper(Wrapper):
             "get_performance",
             "step",
             "instance_performances",
+            "episode_performance"
         ]:
             return object.__getattribute__(self, name)
         else:
@@ -60,25 +63,28 @@ class PerformanceTrackingWrapper(Wrapper):
             state, reward, done, metainfo
         """
         state, reward, done, info = self.env.step(action)
-        self.overall_performance.append(reward)
-        if self.performance_interval:
-            if len(self.current_performance) < self.performance_interval:
-                self.current_performance.append(reward)
-            else:
-                self.performance_intervals.append(self.current_performance)
-                self.current_performance = [reward]
-        if self.track_instances:
-            if (
-                "".join(str(e) for e in self.env.instance)
-                in self.instance_performances.keys()
-            ):
-                self.instance_performances[
+        self.episode_performance += reward
+        if done:
+            self.overall_performance.append(self.episode_performance)
+            self.episode_performance = 0
+            if self.performance_interval:
+                if len(self.current_performance) < self.performance_interval:
+                    self.current_performance.append(self.episode_performance)
+                else:
+                    self.performance_intervals.append(self.current_performance)
+                    self.current_performance = [self.episode_performance]
+            if self.track_instances:
+                if (
                     "".join(str(e) for e in self.env.instance)
-                ].append(reward)
-            else:
-                self.instance_performances[
-                    "".join(str(e) for e in self.env.instance)
-                ] = [reward]
+                    in self.instance_performances.keys()
+                ):
+                    self.instance_performances[
+                        "".join(str(e) for e in self.env.instance)
+                    ].append(self.episode_performance)
+                else:
+                    self.instance_performances[
+                        "".join(str(e) for e in self.env.instance)
+                    ] = [self.episode_performance]
         return state, reward, done, info
 
     def get_performance(self):
