@@ -1,11 +1,8 @@
 import pytest
 import unittest
-from unittest import mock
 
 import numpy as np
-from gym import spaces
 from dacbench import AbstractEnv
-from dacbench.envs import CMAESEnv
 from dacbench.benchmarks.cma_benchmark import CMAESBenchmark, CMAES_DEFAULTS
 
 
@@ -27,7 +24,7 @@ class TestCMAEnv(unittest.TestCase):
 
     def test_reset(self):
         env = self.make_env()
-        state = env.reset()
+        env.reset()
         self.assertFalse(env.fcn is None)
         self.assertFalse(env.dim is None)
         self.assertFalse(env.init_sigma is None)
@@ -41,30 +38,54 @@ class TestCMAEnv(unittest.TestCase):
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertFalse(done)
-        self.assertTrue(len(meta.keys())==0)
+        self.assertTrue(len(meta.keys()) == 0)
 
     def test_get_default_state(self):
         env = self.make_env()
         state = env.reset()
         self.assertTrue(issubclass(type(state), dict))
-        self.assertTrue(np.array_equal(list(state.keys()), ["current_loc", "past_deltas", "current_ps", "current_sigma", "history_deltas", "past_sigma_deltas"]))
-        self.assertTrue(len(state["current_ps"])==1)
-        self.assertTrue(len(state["current_sigma"])==1)
-        self.assertTrue(len(state["current_loc"])==10)
-        self.assertTrue(len(state["past_deltas"])==env.history_len)
-        self.assertTrue(len(state["past_sigma_deltas"])==env.history_len)
-        self.assertTrue(len(state["history_deltas"])==2*env.history_len)
+        self.assertTrue(
+            np.array_equal(
+                list(state.keys()),
+                [
+                    "current_loc",
+                    "past_deltas",
+                    "current_ps",
+                    "current_sigma",
+                    "history_deltas",
+                    "past_sigma_deltas",
+                ],
+            )
+        )
+        self.assertTrue(len(state["current_ps"]) == 1)
+        self.assertTrue(len(state["current_sigma"]) == 1)
+        self.assertTrue(len(state["current_loc"]) == 10)
+        self.assertTrue(len(state["past_deltas"]) == env.history_len)
+        self.assertTrue(len(state["past_sigma_deltas"]) == env.history_len)
+        self.assertTrue(len(state["history_deltas"]) == 2 * env.history_len)
 
         env.step(1)
         state, _, _, _ = env.step(1)
         self.assertTrue(issubclass(type(state), dict))
-        self.assertTrue(np.array_equal(list(state.keys()), ["current_loc", "past_deltas", "current_ps", "current_sigma", "history_deltas", "past_sigma_deltas"]))
-        self.assertTrue(len(state["current_ps"])==1)
-        self.assertTrue(len(state["current_sigma"])==1)
-        self.assertTrue(len(state["current_loc"])==10)
-        self.assertTrue(len(state["past_deltas"])==env.history_len)
-        self.assertTrue(len(state["past_sigma_deltas"])==env.history_len)
-        self.assertTrue(len(state["history_deltas"])==2*env.history_len)
+        self.assertTrue(
+            np.array_equal(
+                list(state.keys()),
+                [
+                    "current_loc",
+                    "past_deltas",
+                    "current_ps",
+                    "current_sigma",
+                    "history_deltas",
+                    "past_sigma_deltas",
+                ],
+            )
+        )
+        self.assertTrue(len(state["current_ps"]) == 1)
+        self.assertTrue(len(state["current_sigma"]) == 1)
+        self.assertTrue(len(state["current_loc"]) == 10)
+        self.assertTrue(len(state["past_deltas"]) == env.history_len)
+        self.assertTrue(len(state["past_sigma_deltas"]) == env.history_len)
+        self.assertTrue(len(state["history_deltas"]) == 2 * env.history_len)
 
     def test_close(self):
         env = self.make_env()

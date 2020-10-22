@@ -147,12 +147,18 @@ class StateTrackingWrapper(Wrapper):
 
             if ax is None:
                 p = plt.plot(
-                    np.arange(len(self.overall)), ys, label="Episode state", color="g",
-                    )
+                    np.arange(len(self.overall)),
+                    ys,
+                    label="Episode state",
+                    color="g",
+                )
             else:
                 p = ax.plot(
-                    np.arange(len(self.overall)), ys, label="Episode state", color="g",
-                    )
+                    np.arange(len(self.overall)),
+                    ys,
+                    label="Episode state",
+                    color="g",
+                )
             p2 = None
             if self.tracking_interval:
                 if index is not None:
@@ -165,18 +171,19 @@ class StateTrackingWrapper(Wrapper):
                     p2 = plt.plot(
                         np.arange(len(self.interval_list)),
                         [np.mean(interval) for interval in y_ints],
-                        label="Mean interval state", color="orange"
-                        )
+                        label="Mean interval state",
+                        color="orange",
+                    )
                     plt.legend(loc="upper left")
                 else:
                     p2 = ax.plot(
-                        np.arange(len(self.interval_list))*self.tracking_interval,
+                        np.arange(len(self.interval_list)) * self.tracking_interval,
                         [np.mean(interval) for interval in y_ints],
-                        label="Mean interval state", color="orange"
-                        )
+                        label="Mean interval state",
+                        color="orange",
+                    )
                     ax.legend(loc="upper left")
             return p, p2
-
 
         if self.state_type == spaces.Discrete:
             figure = plt.figure(figsize=(20, 20))
@@ -187,7 +194,11 @@ class StateTrackingWrapper(Wrapper):
             raise NotImplementedError
         elif self.state_type == spaces.Tuple:
             raise NotImplementedError
-        elif self.state_type == spaces.MultiDiscrete or self.state_type == spaces.MultiBinary or self.state_type == spaces.Box:
+        elif (
+            self.state_type == spaces.MultiDiscrete
+            or self.state_type == spaces.MultiBinary
+            or self.state_type == spaces.Box
+        ):
             if self.state_type == spaces.MultiDiscrete:
                 state_length = len(self.env.observation_space.nvec)
             elif self.state_type == spaces.MultiBinary:
@@ -198,19 +209,19 @@ class StateTrackingWrapper(Wrapper):
                 dim = 1
                 figure, axarr = plt.subplots(state_length)
             else:
-                dim = state_length%4
-                figure, axarr = plt.subplots(state_length%4, state_length//dim)
+                dim = state_length % 4
+                figure, axarr = plt.subplots(state_length % 4, state_length // dim)
             figure.suptitle("State over time")
             canvas = FigureCanvas(figure)
             for i in range(state_length):
-                x=False
-                if i%dim==dim-1:
-                    x=True
+                x = False
+                if i % dim == dim - 1:
+                    x = True
                 if state_length < 5:
-                    p, p2 = plot_single(axarr[i], i,y=True, x=x)
+                    p, p2 = plot_single(axarr[i], i, y=True, x=x)
                 else:
-                    y = i%state_length//dim==0
-                    p, p2 = plot_single(axarr[i%dim, i//dim], i, x=x, y=y)
+                    y = i % state_length // dim == 0
+                    p, p2 = plot_single(axarr[i % dim, i // dim], i, x=x, y=y)
             canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
         img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(

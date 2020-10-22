@@ -1,12 +1,6 @@
-import pytest
 import unittest
-from unittest import mock
-
-import numpy as np
-from gym import spaces
 from dacbench import AbstractEnv
-from dacbench.envs import FastDownwardEnv
-from dacbench.benchmarks.fast_downward_benchmark import FastDownwardBenchmark, FD_DEFAULTS
+from dacbench.benchmarks.fast_downward_benchmark import FastDownwardBenchmark
 
 
 class TestFDEnv(unittest.TestCase):
@@ -21,7 +15,7 @@ class TestFDEnv(unittest.TestCase):
 
     def test_reset(self):
         env = self.make_env()
-        state = env.reset()
+        env.reset()
         self.assertFalse(env.socket is None)
         self.assertFalse(env.fd is None)
 
@@ -32,8 +26,8 @@ class TestFDEnv(unittest.TestCase):
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertFalse(done)
-        self.assertTrue(len(meta.keys())==0)
-        self.assertTrue(len(state)==10)
+        self.assertTrue(len(meta.keys()) == 0)
+        self.assertTrue(len(state) == 10)
 
     def test_close(self):
         env = self.make_env()

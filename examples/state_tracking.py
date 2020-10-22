@@ -1,10 +1,5 @@
-from chainer import optimizers
-from chainerrl import q_functions, wrappers, replay_buffer, explorers
-from chainerrl.agents import DQN
+from chainerrl import wrappers
 import matplotlib.pyplot as plt
-import numpy as np
-import gym
-
 from example_utils import train_chainer, make_chainer_dqn
 from dacbench.benchmarks import FastDownwardBenchmark
 from dacbench.wrappers import StateTrackingWrapper

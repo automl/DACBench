@@ -1,9 +1,4 @@
-from chainer import optimizers
-from chainerrl import q_functions, wrappers, replay_buffer, explorers
-from chainerrl.agents import DQN
-import numpy as np
-import gym
-
+from chainerrl import wrappers
 from example_utils import DummyEnv, train_chainer, make_chainer_dqn
 from dacbench.wrappers import RewardNoiseWrapper
 
@@ -40,8 +35,10 @@ for noise_dist, args in zip(
 print("Custom 'noise' function: always add 1")
 print("\n")
 
+
 def noise():
     return 1
+
 
 wrapped = RewardNoiseWrapper(env, noise_function=noise)
 train_chainer(agent, wrapped)

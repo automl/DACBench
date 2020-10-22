@@ -1,6 +1,5 @@
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import FastDownwardEnv
-import chainerrl
 
 import numpy as np
 import os
@@ -34,7 +33,7 @@ FD_DEFAULTS = objdict(
         "instance_set_path": "../instance_sets/fast_downward/train",
         "fd_path": os.path.dirname(os.path.abspath(__file__))
         + "/../envs/fast-downward/fast-downward.py",
-        "parallel": True
+        "parallel": True,
     }
 )
 

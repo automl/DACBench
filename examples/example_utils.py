@@ -1,11 +1,13 @@
 import gym
 import sys
+import argparse
 import numpy as np
 from collections import defaultdict, namedtuple
 import chainer
 from chainer import optimizers
-from chainerrl import q_functions, wrappers, replay_buffer, explorers, policies, links
+from chainerrl import q_functions, replay_buffer, explorers, policies, links
 from chainerrl.agents import DQN, a3c
+
 
 class DummyEnv(gym.Env):
     def __init__(self):
@@ -21,6 +23,7 @@ class DummyEnv(gym.Env):
     def reset(self):
         self.c_step = 0
         return np.array([1])
+
 
 class QTable(dict):
     def __init__(self, n_actions, float_to_int=False, **kwargs):
@@ -62,6 +65,7 @@ class QTable(dict):
 
     def keys(self):
         return self.__table.keys()
+
 
 def make_tabular_policy(Q: QTable, epsilon: float, nA: int) -> callable:
     """
@@ -186,7 +190,11 @@ def update(
         episode_length,
     )  # Q, cumulative reward
 
-EpisodeStats = namedtuple(                                                                                                  "Stats", ["episode_lengths", "episode_rewards", "expected_rewards"]                                                 )   
+
+EpisodeStats = namedtuple(
+    "Stats", ["episode_lengths", "episode_rewards", "expected_rewards"]
+)
+
 
 def q_learning(
     environment,
@@ -275,6 +283,7 @@ def zeroOne(stringput):
         raise argparse.ArgumentTypeError("%r is not in [0, 1]", stringput)
     return val
 
+
 # Example model class taken from chainerrl examples:
 # https://github.com/chainer/chainerrl/blob/master/examples/gym/train_a3c_gym.py
 class A3CFFSoftmax(chainer.ChainList, a3c.A3CModel):
@@ -290,6 +299,7 @@ class A3CFFSoftmax(chainer.ChainList, a3c.A3CModel):
     def pi_and_v(self, state):
         return self.pi(state), self.v(state)
 
+
 def make_chainer_a3c(obs_size, action_size):
     model = A3CFFSoftmax(obs_size, action_size)
     opt = optimizers.Adam(eps=1e-2)
@@ -297,8 +307,11 @@ def make_chainer_a3c(obs_size, action_size):
     agent = a3c.A3C(model, opt, 10 ** 5, 0.9)
     return agent
 
+
 def make_chainer_dqn(obs_size, action_space):
-    q_func = q_functions.FCStateQFunctionWithDiscreteAction(obs_size, action_space.n, 50, 1)
+    q_func = q_functions.FCStateQFunctionWithDiscreteAction(
+        obs_size, action_space.n, 50, 1
+    )
     explorer = explorers.ConstantEpsilonGreedy(0.1, action_space.sample)
     opt = optimizers.Adam(eps=1e-2)
     opt.setup(q_func)
@@ -306,8 +319,10 @@ def make_chainer_dqn(obs_size, action_space):
     agent = DQN(q_func, opt, rbuf, explorer=explorer, gamma=0.9)
     return agent
 
+
 def flatten(li):
     return [value for sublist in li for value in sublist]
+
 
 def train_chainer(agent, env, num_episodes=10, flatten_state=False):
     for i in range(num_episodes):

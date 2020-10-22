@@ -1,15 +1,13 @@
-import chainer
-from chainer import optimizers
-from chainerrl import links, policies
-from chainerrl.agents import a3c
 import matplotlib.pyplot as plt
 import numpy as np
-
 from example_utils import make_chainer_a3c, train_chainer
 from dacbench.benchmarks import CMAESBenchmark
 from dacbench.wrappers import EpisodeTimeWrapper
 
-def flatten(li):                                                                                                            return [value for sublist in li for value in sublist]  
+
+def flatten(li):
+    return [value for sublist in li for value in sublist]
+
 
 # We use the configuration from the "Learning to Optimize Step-size Adaption in CMA-ES" Paper by Shala et al.
 bench = CMAESBenchmark()

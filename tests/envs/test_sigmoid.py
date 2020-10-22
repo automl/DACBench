@@ -1,9 +1,7 @@
-import pytest
 import unittest
 from unittest import mock
 
 import numpy as np
-from gym import spaces
 from dacbench import AbstractEnv
 from dacbench.envs import SigmoidEnv
 from dacbench.benchmarks.sigmoid_benchmark import SIGMOID_DEFAULTS
@@ -20,8 +18,16 @@ class TestSigmoidEnv(unittest.TestCase):
         env = self.make_env()
         self.assertTrue(issubclass(type(env), AbstractEnv))
         self.assertFalse(env.rng is None)
-        self.assertTrue(np.array_equal(env.shifts, 5*np.ones(len(SIGMOID_DEFAULTS["action_values"]))))
-        self.assertTrue(np.array_equal(env.slopes, -1*np.ones(len(SIGMOID_DEFAULTS["action_values"]))))
+        self.assertTrue(
+            np.array_equal(
+                env.shifts, 5 * np.ones(len(SIGMOID_DEFAULTS["action_values"]))
+            )
+        )
+        self.assertTrue(
+            np.array_equal(
+                env.slopes, -1 * np.ones(len(SIGMOID_DEFAULTS["action_values"]))
+            )
+        )
         self.assertTrue(env.n_actions == len(SIGMOID_DEFAULTS["action_values"]))
         self.assertTrue(env.slope_multiplier == SIGMOID_DEFAULTS["slope_multiplier"])
         self.assertTrue(env.action_vals == SIGMOID_DEFAULTS["action_values"])
@@ -31,10 +37,10 @@ class TestSigmoidEnv(unittest.TestCase):
         state = env.reset()
         self.assertTrue(np.array_equal(env.shifts, [0, 1]))
         self.assertTrue(np.array_equal(env.slopes, [2, 3]))
-        self.assertTrue(state[0]==SIGMOID_DEFAULTS["cutoff"])
+        self.assertTrue(state[0] == SIGMOID_DEFAULTS["cutoff"])
         self.assertTrue(np.array_equal([state[1], state[3]], env.shifts))
         self.assertTrue(np.array_equal([state[2], state[4]], env.slopes))
-        self.assertTrue(np.array_equal(state[5:], -1*np.ones(2)))
+        self.assertTrue(np.array_equal(state[5:], -1 * np.ones(2)))
 
     def test_step(self):
         env = self.make_env()
@@ -42,12 +48,12 @@ class TestSigmoidEnv(unittest.TestCase):
         state, reward, done, meta = env.step(1)
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
-        self.assertTrue(state[0]==9)
+        self.assertTrue(state[0] == 9)
         self.assertTrue(np.array_equal([state[1], state[3]], env.shifts))
         self.assertTrue(np.array_equal([state[2], state[4]], env.slopes))
-        self.assertTrue(len(state)==7)
+        self.assertTrue(len(state) == 7)
         self.assertFalse(done)
-        self.assertTrue(len(meta.keys())==0)
+        self.assertTrue(len(meta.keys()) == 0)
 
     def test_close(self):
         env = self.make_env()

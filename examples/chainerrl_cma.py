@@ -1,20 +1,19 @@
-import chainer
-from chainer import optimizers
-from chainerrl import links, policies
-from chainerrl.agents import a3c
 import numpy as np
-
 from example_utils import make_chainer_a3c
 from dacbench.benchmarks import CMAESBenchmark
 
+
 def flatten(li):
     return [value for sublist in li for value in sublist]
+
 
 # We use the configuration from the "Learning to Optimize Step-size Adaption in CMA-ES" Paper by Shala et al.
 bench = CMAESBenchmark()
 env = bench.get_benchmark()
 
-space_array = [env.observation_space[k].low for k in list(env.observation_space.spaces.keys())]
+space_array = [
+    env.observation_space[k].low for k in list(env.observation_space.spaces.keys())
+]
 obs_size = np.array(flatten(space_array)).size
 action_size = env.action_space.low.size
 

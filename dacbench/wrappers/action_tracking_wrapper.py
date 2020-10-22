@@ -119,12 +119,18 @@ class ActionFrequencyWrapper(Wrapper):
 
             if ax is None:
                 p = plt.plot(
-                    np.arange(len(self.overall)), ys, label="Step actions", color="g",
-                    )
+                    np.arange(len(self.overall)),
+                    ys,
+                    label="Step actions",
+                    color="g",
+                )
             else:
                 p = ax.plot(
-                    np.arange(len(self.overall)), ys, label="Step actions", color="g",
-                    )
+                    np.arange(len(self.overall)),
+                    ys,
+                    label="Step actions",
+                    color="g",
+                )
             p2 = None
             if self.tracking_interval:
                 if index is not None:
@@ -135,17 +141,19 @@ class ActionFrequencyWrapper(Wrapper):
                     y_ints = self.interval_list
                 if ax is None:
                     p2 = plt.plot(
-                        np.arange(len(self.interval_list))*self.tracking_interval,
+                        np.arange(len(self.interval_list)) * self.tracking_interval,
                         [np.mean(interval) for interval in y_ints],
-                        label="Mean interval action", color="orange"
-                        )
+                        label="Mean interval action",
+                        color="orange",
+                    )
                     plt.legend(loc="upper left")
                 else:
                     p2 = ax.plot(
-                        np.arange(len(self.interval_list))*self.tracking_interval,
+                        np.arange(len(self.interval_list)) * self.tracking_interval,
                         [np.mean(interval) for interval in y_ints],
-                        label="Mean interval action", color="orange"
-                        )
+                        label="Mean interval action",
+                        color="orange",
+                    )
                     ax.legend(loc="upper left")
             return p, p2
 
@@ -158,7 +166,11 @@ class ActionFrequencyWrapper(Wrapper):
             raise NotImplementedError
         elif self.action_space_type == spaces.Tuple:
             raise NotImplementedError
-        elif self.action_space_type == spaces.MultiDiscrete or self.action_space_type == spaces.MultiBinary or self.action_space_type == spaces.Box:
+        elif (
+            self.action_space_type == spaces.MultiDiscrete
+            or self.action_space_type == spaces.MultiBinary
+            or self.action_space_type == spaces.Box
+        ):
             if self.action_space_type == spaces.MultiDiscrete:
                 action_size = len(self.env.action_space.nvec)
             elif self.action_space_type == spaces.MultiBinary:
@@ -169,19 +181,19 @@ class ActionFrequencyWrapper(Wrapper):
                 dim = 1
                 figure, axarr = plt.subplots(action_size)
             else:
-                dim = action_size%4
-                figure, axarr = plt.subplots(action_size%4, action_size//dim)
+                dim = action_size % 4
+                figure, axarr = plt.subplots(action_size % 4, action_size // dim)
             figure.suptitle("State over time")
             canvas = FigureCanvas(figure)
             for i in range(action_size):
-                x=False
-                if i%dim==dim-1:
-                    x=True
+                x = False
+                if i % dim == dim - 1:
+                    x = True
                 if action_size < 5:
-                    p, p2 = plot_single(axarr[i], i,y=True, x=x)
+                    p, p2 = plot_single(axarr[i], i, y=True, x=x)
                 else:
-                    y = i%action_size//dim==0
-                    p, p2 = plot_single(axarr[i%dim, i//dim], i, x=x, y=y)
+                    y = i % action_size // dim == 0
+                    p, p2 = plot_single(axarr[i % dim, i // dim], i, x=x, y=y)
             canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
         img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
