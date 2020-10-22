@@ -23,6 +23,7 @@ class TestTimeTrackingWrapper(unittest.TestCase):
 
     def test_step(self):
         bench = LubyBenchmark()
+        bench.config.instance_set = [[0, 0], [1, 1], [3, 4], [5, 6]]
         env = bench.get_benchmark_env()
         wrapped = PerformanceTrackingWrapper(env, 10)
 
@@ -38,7 +39,16 @@ class TestTimeTrackingWrapper(unittest.TestCase):
             wrapped.step(1)
 
         self.assertTrue(len(wrapped.overall_performance) > 2)
-        self.assertTrue(len(wrapped.performance_intervals) == 1)
+        self.assertTrue(len(wrapped.performance_intervals) == 2)
+        self.assertTrue(len(wrapped.performance_intervals[0]) == 10)
+        self.assertTrue(len(wrapped.current_performance) == 1)
+
+        self.assertTrue(len(wrapped.instance_performances.keys()) == 1)
+        wrapped.reset()
+        wrapped.step(1)
+        wrapped.reset()
+        wrapped.step(1)
+        self.assertTrue(len(wrapped.instance_performances.keys()) == 3)
 
     def test_get_performance(self):
         bench = LubyBenchmark()
@@ -54,14 +64,15 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         wrapped3 = PerformanceTrackingWrapper(env, track_instance_performance=False)
         wrapped3.reset()
         for i in range(5):
-            wrapped2.step(i)
+            wrapped3.step(i)
 
         overall, instance_performance = wrapped.get_performance()
         overall_performance_only = wrapped3.get_performance()
         overall_performance, intervals = wrapped2.get_performance()
         self.assertTrue(
             np.array_equal(
-                np.round(overall_performance, decimals=2), np.round(overall_performance_only, decimals=2)
+                np.round(overall_performance, decimals=2),
+                np.round(overall_performance_only, decimals=2),
             )
         )
         self.assertTrue(
@@ -70,8 +81,9 @@ class TestTimeTrackingWrapper(unittest.TestCase):
             )
         )
 
-        self.assertTrue(len(instance_performance.keys())==1)
-        self.assertTrue(len(instance_performance.values()[0])==5)
+        self.assertTrue(len(instance_performance.keys()) == 1)
+        self.assertTrue(len(list(instance_performance.values())[0]) == 5)
 
-        self.assertTrue(len(intervals)==3)
-        self.assertTrue(len(intervals[2])==2)
+        self.assertTrue(len(intervals) == 3)
+        self.assertTrue(len(intervals[1]) == 2)
+        self.assertTrue(len(intervals[2]) == 1)

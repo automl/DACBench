@@ -183,9 +183,7 @@ class EpisodeTimeWrapper(Wrapper):
                 for episode in interval:
                     ep_times.append(sum(episode))
                 interval_sums.append(np.mean(ep_times))
-            interval_sums += [
-                np.mean([sum(episode) for episode in self.current_times])
-            ]
+            interval_sums += [np.mean([sum(episode) for episode in self.current_times])]
             plt.plot(
                 np.arange(len(self.time_intervals) + 2) * self.time_interval,
                 [interval_sums[0]] + interval_sums,

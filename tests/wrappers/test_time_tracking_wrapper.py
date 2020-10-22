@@ -60,7 +60,8 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         overall_times, steps, intervals, step_intervals = wrapped2.get_times()
         self.assertTrue(
             np.array_equal(
-                np.round(overall_times, decimals=2), np.round(overall_times_only, decimals=2)
+                np.round(overall_times, decimals=2),
+                np.round(overall_times_only, decimals=2),
             )
         )
         self.assertTrue(len(step_intervals) == 3)

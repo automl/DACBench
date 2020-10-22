@@ -1,6 +1,4 @@
 from gym import Wrapper
-import numpy as np
-from gym import spaces
 
 
 class PerformanceTrackingWrapper(Wrapper):
@@ -25,6 +23,7 @@ class PerformanceTrackingWrapper(Wrapper):
             "env",
             "get_performance",
             "step",
+            "instance_performances",
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -40,6 +39,7 @@ class PerformanceTrackingWrapper(Wrapper):
             "env",
             "get_performance",
             "step",
+            "instance_performances",
         ]:
             return object.__getattribute__(self, name)
         else:
@@ -68,10 +68,17 @@ class PerformanceTrackingWrapper(Wrapper):
                 self.performance_intervals.append(self.current_performance)
                 self.current_performance = [reward]
         if self.track_instances:
-            if ''.join(str(e) for e in self.env.instance) in self.instance_performances.keys():
-                self.instance_performances[''.join(str(e) for e in self.env.instance)].append(reward)
+            if (
+                "".join(str(e) for e in self.env.instance)
+                in self.instance_performances.keys()
+            ):
+                self.instance_performances[
+                    "".join(str(e) for e in self.env.instance)
+                ].append(reward)
             else:
-                self.instance_performances[''.join(str(e) for e in self.env.instance)] = [reward]
+                self.instance_performances[
+                    "".join(str(e) for e in self.env.instance)
+                ] = [reward]
         return state, reward, done, info
 
     def get_performance(self):
@@ -86,7 +93,11 @@ class PerformanceTrackingWrapper(Wrapper):
         """
         if self.performance_interval and self.track_instances:
             complete_intervals = self.performance_intervals + [self.current_performance]
-            return self.overall_performance, complete_intervals, self.instance_performances
+            return (
+                self.overall_performance,
+                complete_intervals,
+                self.instance_performances,
+            )
         elif self.performance_interval:
             complete_intervals = self.performance_intervals + [self.current_performance]
             return self.overall_performance, complete_intervals
