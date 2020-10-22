@@ -12,25 +12,25 @@ current_palette = list(sb.color_palette())
 class StateTrackingWrapper(Wrapper):
     """ Wrapper to track state changed over time """
 
-    def __init__(self, env, tracking_interval=None):
+    def __init__(self, env, state_interval=None):
         super(StateTrackingWrapper, self).__init__(env)
-        self.tracking_interval = tracking_interval
-        self.overall = []
-        if self.tracking_interval:
-            self.interval_list = []
-            self.current_interval = []
-        self.episode = None
+        self.state_interval = state_interval
+        self.overall_states = []
+        if self.state_interval:
+            self.state_intervals = []
+            self.current_states = []
+        self.episode_states = None
         self.state_type = type(env.observation_space)
 
     def __setattr__(self, name, value):
         if name in [
-            "tracking_interval",
-            "overall",
-            "interval_list",
-            "current_interval",
+            "state_interval",
+            "overall_states",
+            "state_intervals",
+            "current_states",
             "state_type",
             "env",
-            "episode",
+            "episode_states",
             "get_states",
             "step",
             "reset",
@@ -42,13 +42,13 @@ class StateTrackingWrapper(Wrapper):
 
     def __getattribute__(self, name):
         if name in [
-            "tracking_interval",
-            "overall",
-            "interval_list",
-            "current_interval",
+            "state_interval",
+            "overall_states",
+            "state_intervals",
+            "current_states",
             "state_type",
             "env",
-            "episode",
+            "episode_states",
             "get_states",
             "step",
             "reset",
@@ -68,13 +68,13 @@ class StateTrackingWrapper(Wrapper):
             state
         """
         state = self.env.reset()
-        self.overall.append(state)
-        if self.tracking_interval:
-            if len(self.current_interval) < self.tracking_interval:
-                self.current_interval.append(state)
+        self.overall_states.append(state)
+        if self.state_interval:
+            if len(self.current_states) < self.state_interval:
+                self.current_states.append(state)
             else:
-                self.interval_list.append(self.current_interval)
-                self.current_interval = [state]
+                self.state_intervals.append(self.current_states)
+                self.current_states = [state]
         return state
 
     def step(self, action):
@@ -92,13 +92,13 @@ class StateTrackingWrapper(Wrapper):
             state, reward, done, metainfo
         """
         state, reward, done, info = self.env.step(action)
-        self.overall.append(state)
-        if self.tracking_interval:
-            if len(self.current_interval) < self.tracking_interval:
-                self.current_interval.append(state)
+        self.overall_states.append(state)
+        if self.state_interval:
+            if len(self.current_states) < self.state_interval:
+                self.current_states.append(state)
             else:
-                self.interval_list.append(self.current_interval)
-                self.current_interval = [state]
+                self.state_intervals.append(self.current_states)
+                self.current_states = [state]
         return state, reward, done, info
 
     def get_states(self):
@@ -111,11 +111,11 @@ class StateTrackingWrapper(Wrapper):
             all states or all states and interval sorted states
 
         """
-        if self.tracking_interval:
-            complete_intervals = self.interval_list + [self.current_interval]
-            return self.overall, complete_intervals
+        if self.state_interval:
+            complete_intervals = self.state_intervals + [self.current_states]
+            return self.overall_states, complete_intervals
         else:
-            return self.overall
+            return self.overall_states
 
     def render_state_tracking(self):
         """
@@ -141,35 +141,35 @@ class StateTrackingWrapper(Wrapper):
                 ax.set_ylabel("State")
 
             if index is not None:
-                ys = [state[index] for state in self.overall]
+                ys = [state[index] for state in self.overall_states]
             else:
-                ys = self.overall
+                ys = self.overall_states
 
             if ax is None:
                 p = plt.plot(
-                    np.arange(len(self.overall)),
+                    np.arange(len(self.overall_states)),
                     ys,
                     label="Episode state",
                     color="g",
                 )
             else:
                 p = ax.plot(
-                    np.arange(len(self.overall)),
+                    np.arange(len(self.overall_states)),
                     ys,
                     label="Episode state",
                     color="g",
                 )
             p2 = None
-            if self.tracking_interval:
+            if self.state_interval:
                 if index is not None:
                     y_ints = []
-                    for interval in self.interval_list:
+                    for interval in self.state_intervals:
                         y_ints.append([state[index] for state in interval])
                 else:
-                    y_ints = self.interval_list
+                    y_ints = self.state_intervals
                 if ax is None:
                     p2 = plt.plot(
-                        np.arange(len(self.interval_list)),
+                        np.arange(len(self.state_intervals)),
                         [np.mean(interval) for interval in y_ints],
                         label="Mean interval state",
                         color="orange",
@@ -177,7 +177,7 @@ class StateTrackingWrapper(Wrapper):
                     plt.legend(loc="upper left")
                 else:
                     p2 = ax.plot(
-                        np.arange(len(self.interval_list)) * self.tracking_interval,
+                        np.arange(len(self.state_intervals)) * self.state_interval,
                         [np.mean(interval) for interval in y_ints],
                         label="Mean interval state",
                         color="orange",

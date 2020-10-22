@@ -10,16 +10,16 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         bench = LubyBenchmark()
         env = bench.get_benchmark_env()
         wrapped = EpisodeTimeWrapper(env)
-        self.assertTrue(len(wrapped.overall) == 0)
-        self.assertTrue(wrapped.tracking_interval is None)
+        self.assertTrue(len(wrapped.overall_times) == 0)
+        self.assertTrue(wrapped.time_interval is None)
         wrapped.instance = [0]
         self.assertTrue(wrapped.instance[0] == 0)
 
         wrapped2 = EpisodeTimeWrapper(env, 10)
-        self.assertTrue(len(wrapped2.overall) == 0)
-        self.assertTrue(wrapped2.tracking_interval == 10)
-        self.assertTrue(len(wrapped2.interval_list) == 0)
-        self.assertTrue(len(wrapped2.current_interval) == 0)
+        self.assertTrue(len(wrapped2.overall_times) == 0)
+        self.assertTrue(wrapped2.time_interval == 10)
+        self.assertTrue(len(wrapped2.time_intervals) == 0)
+        self.assertTrue(len(wrapped2.current_times) == 0)
 
     def test_step(self):
         bench = LubyBenchmark()
@@ -41,8 +41,8 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         for _ in range(20):
             wrapped.step(1)
 
-        self.assertTrue(len(wrapped.overall) > 2)
-        self.assertTrue(len(wrapped.interval_list) == 1)
+        self.assertTrue(len(wrapped.overall_times) > 2)
+        self.assertTrue(len(wrapped.time_intervals) == 1)
 
     def test_get_times(self):
         bench = LubyBenchmark()
@@ -56,11 +56,11 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         for i in range(5):
             wrapped2.step(i)
 
-        overall_only, steps_only = wrapped.get_times()
-        overall, steps, intervals, step_intervals = wrapped2.get_times()
+        overall_times_only, steps_only = wrapped.get_times()
+        overall_times, steps, intervals, step_intervals = wrapped2.get_times()
         self.assertTrue(
             np.array_equal(
-                np.round(overall, decimals=2), np.round(overall_only, decimals=2)
+                np.round(overall_times, decimals=2), np.round(overall_times_only, decimals=2)
             )
         )
         self.assertTrue(len(step_intervals) == 3)

@@ -4,6 +4,7 @@ from dacbench.wrappers.instance_sampling_wrapper import InstanceSamplingWrapper
 from dacbench.wrappers.policy_progress_wrapper import PolicyProgressWrapper
 from dacbench.wrappers.reward_noise_wrapper import RewardNoiseWrapper
 from dacbench.wrappers.state_tracking_wrapper import StateTrackingWrapper
+from dacbench.wrappers.performance_tracking_wrapper import PerformanceTrackingWrapper
 
 __all__ = [
     "ActionFrequencyWrapper",
@@ -12,4 +13,5 @@ __all__ = [
     "PolicyProgressWrapper",
     "RewardNoiseWrapper",
     "StateTrackingWrapper",
+    "PerformanceTrackingWrapper"
 ]

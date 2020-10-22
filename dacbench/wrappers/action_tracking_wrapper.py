@@ -10,21 +10,21 @@ current_palette = list(sb.color_palette())
 
 
 class ActionFrequencyWrapper(Wrapper):
-    def __init__(self, env, tracking_interval=None):
+    def __init__(self, env, action_interval=None):
         super(ActionFrequencyWrapper, self).__init__(env)
-        self.tracking_interval = tracking_interval
-        self.overall = []
-        if self.tracking_interval:
-            self.interval_list = []
-            self.current_interval = []
+        self.action_interval = action_interval
+        self.overall_actions = []
+        if self.action_interval:
+            self.action_intervals = []
+            self.current_actions = []
         self.action_space_type = type(self.env.action_space)
 
     def __setattr__(self, name, value):
         if name in [
-            "tracking_interval",
-            "overall",
-            "interval_list",
-            "current_interval",
+            "action_interval",
+            "overall_actions",
+            "action_intervals",
+            "current_actions",
             "env",
             "get_actions",
             "step",
@@ -36,10 +36,10 @@ class ActionFrequencyWrapper(Wrapper):
 
     def __getattribute__(self, name):
         if name in [
-            "tracking_interval",
-            "overall",
-            "interval_list",
-            "current_interval",
+            "action_interval",
+            "overall_actions",
+            "action_intervals",
+            "current_actions",
             "env",
             "get_actions",
             "step",
@@ -64,13 +64,13 @@ class ActionFrequencyWrapper(Wrapper):
             state, reward, done, metainfo
         """
         state, reward, done, info = self.env.step(action)
-        self.overall.append(action)
-        if self.tracking_interval:
-            if len(self.current_interval) < self.tracking_interval:
-                self.current_interval.append(action)
+        self.overall_actions.append(action)
+        if self.action_interval:
+            if len(self.current_actions) < self.action_interval:
+                self.current_actions.append(action)
             else:
-                self.interval_list.append(self.current_interval)
-                self.current_interval = [action]
+                self.action_intervals.append(self.current_actions)
+                self.current_actions = [action]
         return state, reward, done, info
 
     def get_actions(self):
@@ -83,11 +83,11 @@ class ActionFrequencyWrapper(Wrapper):
             all states or all states and interval sorted states
 
         """
-        if self.tracking_interval:
-            complete_intervals = self.interval_list + [self.current_interval]
-            return self.overall, complete_intervals
+        if self.action_interval:
+            complete_intervals = self.action_intervals + [self.current_actions]
+            return self.overall_actions, complete_intervals
         else:
-            return self.overall
+            return self.overall_actions
 
     def render_action_tracking(self):
         """
@@ -113,35 +113,35 @@ class ActionFrequencyWrapper(Wrapper):
                 ax.set_ylabel("Action value")
 
             if index is not None:
-                ys = [state[index] for state in self.overall]
+                ys = [state[index] for state in self.overall_actions]
             else:
-                ys = self.overall
+                ys = self.overall_actions
 
             if ax is None:
                 p = plt.plot(
-                    np.arange(len(self.overall)),
+                    np.arange(len(self.overall_actions)),
                     ys,
                     label="Step actions",
                     color="g",
                 )
             else:
                 p = ax.plot(
-                    np.arange(len(self.overall)),
+                    np.arange(len(self.overall_actions)),
                     ys,
                     label="Step actions",
                     color="g",
                 )
             p2 = None
-            if self.tracking_interval:
+            if self.action_interval:
                 if index is not None:
                     y_ints = []
-                    for interval in self.interval_list:
+                    for interval in self.action_intervals:
                         y_ints.append([state[index] for state in interval])
                 else:
-                    y_ints = self.interval_list
+                    y_ints = self.action_intervals
                 if ax is None:
                     p2 = plt.plot(
-                        np.arange(len(self.interval_list)) * self.tracking_interval,
+                        np.arange(len(self.action_intervals)) * self.action_interval,
                         [np.mean(interval) for interval in y_ints],
                         label="Mean interval action",
                         color="orange",
@@ -149,7 +149,7 @@ class ActionFrequencyWrapper(Wrapper):
                     plt.legend(loc="upper left")
                 else:
                     p2 = ax.plot(
-                        np.arange(len(self.interval_list)) * self.tracking_interval,
+                        np.arange(len(self.action_intervals)) * self.action_interval,
                         [np.mean(interval) for interval in y_ints],
                         label="Mean interval action",
                         color="orange",

@@ -15,25 +15,25 @@ class EpisodeTimeWrapper(Wrapper):
     Includes interval mode that return times in lists of len(interval) instead of one long list.
     """
 
-    def __init__(self, env, tracking_interval=None):
+    def __init__(self, env, time_interval=None):
         super(EpisodeTimeWrapper, self).__init__(env)
-        self.tracking_interval = tracking_interval
+        self.time_interval = time_interval
         self.all_steps = []
-        if self.tracking_interval:
+        if self.time_interval:
             self.step_intervals = []
             self.current_step_interval = []
-        self.overall = []
+        self.overall_times = []
         self.episode = []
-        if self.tracking_interval:
-            self.interval_list = []
-            self.current_interval = []
+        if self.time_interval:
+            self.time_intervals = []
+            self.current_times = []
 
     def __setattr__(self, name, value):
         if name in [
-            "tracking_interval",
-            "overall",
-            "interval_list",
-            "current_interval",
+            "time_interval",
+            "overall_times",
+            "time_intervals",
+            "current_times",
             "env",
             "get_times",
             "step",
@@ -51,10 +51,10 @@ class EpisodeTimeWrapper(Wrapper):
 
     def __getattribute__(self, name):
         if name in [
-            "tracking_interval",
-            "overall",
-            "interval_list",
-            "current_interval",
+            "time_interval",
+            "overall_times",
+            "time_intervals",
+            "current_times",
             "env",
             "get_times",
             "step",
@@ -90,20 +90,20 @@ class EpisodeTimeWrapper(Wrapper):
         duration = stop - start
         self.episode.append(duration)
         self.all_steps.append(duration)
-        if self.tracking_interval:
-            if len(self.current_step_interval) < self.tracking_interval:
+        if self.time_interval:
+            if len(self.current_step_interval) < self.time_interval:
                 self.current_step_interval.append(duration)
             else:
                 self.step_intervals.append(self.current_step_interval)
                 self.current_step_interval = [duration]
         if done:
-            self.overall.append(self.episode)
-            if self.tracking_interval:
-                if len(self.current_interval) < self.tracking_interval:
-                    self.current_interval.append(self.episode)
+            self.overall_times.append(self.episode)
+            if self.time_interval:
+                if len(self.current_times) < self.time_interval:
+                    self.current_times.append(self.episode)
                 else:
-                    self.interval_list.append(self.current_interval)
-                    self.current_interval = []
+                    self.time_intervals.append(self.current_times)
+                    self.current_times = []
             self.episode = []
         return state, reward, done, info
 
@@ -117,17 +117,17 @@ class EpisodeTimeWrapper(Wrapper):
             all times or all times and interval sorted times
 
         """
-        if self.tracking_interval:
-            complete_intervals = self.interval_list + [self.current_interval]
+        if self.time_interval:
+            complete_intervals = self.time_intervals + [self.current_times]
             complete_step_intervals = self.step_intervals + [self.current_step_interval]
             return (
-                self.overall,
+                self.overall_times,
                 self.all_steps,
                 complete_intervals,
                 complete_step_intervals,
             )
         else:
-            return np.array(self.overall), np.array(self.all_steps)
+            return np.array(self.overall_times), np.array(self.all_steps)
 
     def render_step_time(self):
         """Render step times"""
@@ -143,12 +143,12 @@ class EpisodeTimeWrapper(Wrapper):
             label="Step time",
             color="g",
         )
-        if self.tracking_interval:
+        if self.time_interval:
             interval_means = [np.mean(interval) for interval in self.step_intervals] + [
                 np.mean(self.current_step_interval)
             ]
             plt.plot(
-                np.arange(len(self.step_intervals) + 2) * self.tracking_interval,
+                np.arange(len(self.step_intervals) + 2) * self.time_interval,
                 [interval_means[0]] + interval_means,
                 label="Mean interval time",
                 color="orange",
@@ -171,23 +171,23 @@ class EpisodeTimeWrapper(Wrapper):
         plt.ylabel("Time (s)")
 
         plt.plot(
-            np.arange(len(self.overall)),
-            [sum(episode) for episode in self.overall],
+            np.arange(len(self.overall_times)),
+            [sum(episode) for episode in self.overall_times],
             label="Episode time",
             color="g",
         )
-        if self.tracking_interval:
+        if self.time_interval:
             interval_sums = []
-            for interval in self.interval_list:
+            for interval in self.time_intervals:
                 ep_times = []
                 for episode in interval:
                     ep_times.append(sum(episode))
                 interval_sums.append(np.mean(ep_times))
             interval_sums += [
-                np.mean([sum(episode) for episode in self.current_interval])
+                np.mean([sum(episode) for episode in self.current_times])
             ]
             plt.plot(
-                np.arange(len(self.interval_list) + 2) * self.tracking_interval,
+                np.arange(len(self.time_intervals) + 2) * self.time_interval,
                 [interval_sums[0]] + interval_sums,
                 label="Mean interval time",
                 color="orange",

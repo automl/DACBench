@@ -11,16 +11,16 @@ class TestActionTrackingWrapper(unittest.TestCase):
         bench = LubyBenchmark()
         env = bench.get_benchmark_env()
         wrapped = ActionFrequencyWrapper(env)
-        self.assertTrue(len(wrapped.overall) == 0)
-        self.assertTrue(wrapped.tracking_interval is None)
+        self.assertTrue(len(wrapped.overall_actions) == 0)
+        self.assertTrue(wrapped.action_interval is None)
         wrapped.instance = [0]
         self.assertTrue(wrapped.instance[0] == 0)
 
         wrapped2 = ActionFrequencyWrapper(env, 10)
-        self.assertTrue(len(wrapped2.overall) == 0)
-        self.assertTrue(wrapped2.tracking_interval == 10)
-        self.assertTrue(len(wrapped2.interval_list) == 0)
-        self.assertTrue(len(wrapped2.current_interval) == 0)
+        self.assertTrue(len(wrapped2.overall_actions) == 0)
+        self.assertTrue(wrapped2.action_interval == 10)
+        self.assertTrue(len(wrapped2.action_intervals) == 0)
+        self.assertTrue(len(wrapped2.current_actions) == 0)
 
     def test_step(self):
         bench = LubyBenchmark()
@@ -35,11 +35,11 @@ class TestActionTrackingWrapper(unittest.TestCase):
         self.assertTrue(reward <= 0)
         self.assertFalse(done)
 
-        self.assertTrue(len(wrapped.overall) == 1)
-        self.assertTrue(wrapped.overall[0] == 1)
-        self.assertTrue(len(wrapped.current_interval) == 1)
-        self.assertTrue(wrapped.current_interval[0] == 1)
-        self.assertTrue(len(wrapped.interval_list) == 0)
+        self.assertTrue(len(wrapped.overall_actions) == 1)
+        self.assertTrue(wrapped.overall_actions[0] == 1)
+        self.assertTrue(len(wrapped.current_actions) == 1)
+        self.assertTrue(wrapped.current_actions[0] == 1)
+        self.assertTrue(len(wrapped.action_intervals) == 0)
 
     def test_get_actions(self):
         bench = LubyBenchmark()
@@ -53,10 +53,10 @@ class TestActionTrackingWrapper(unittest.TestCase):
         for i in range(5):
             wrapped2.step(i)
 
-        overall_only = wrapped.get_actions()
-        overall, intervals = wrapped2.get_actions()
-        self.assertTrue(np.array_equal(overall, overall_only))
-        self.assertTrue(overall_only == [0, 1, 2, 3, 4])
+        overall_actions_only = wrapped.get_actions()
+        overall_actions, intervals = wrapped2.get_actions()
+        self.assertTrue(np.array_equal(overall_actions, overall_actions_only))
+        self.assertTrue(overall_actions_only == [0, 1, 2, 3, 4])
 
         self.assertTrue(len(intervals) == 3)
         self.assertTrue(len(intervals[0]) == 2)

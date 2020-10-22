@@ -1,0 +1,77 @@
+import unittest
+
+import numpy as np
+from dacbench.benchmarks import LubyBenchmark
+from dacbench.wrappers import PerformanceTrackingWrapper
+
+
+class TestTimeTrackingWrapper(unittest.TestCase):
+    def test_init(self):
+        bench = LubyBenchmark()
+        env = bench.get_benchmark_env()
+        wrapped = PerformanceTrackingWrapper(env)
+        self.assertTrue(len(wrapped.overall_performance) == 0)
+        self.assertTrue(wrapped.performance_interval is None)
+        wrapped.instance = [0]
+        self.assertTrue(wrapped.instance[0] == 0)
+
+        wrapped2 = PerformanceTrackingWrapper(env, 10)
+        self.assertTrue(len(wrapped2.overall_performance) == 0)
+        self.assertTrue(wrapped2.performance_interval == 10)
+        self.assertTrue(len(wrapped2.performance_intervals) == 0)
+        self.assertTrue(len(wrapped2.current_performance) == 0)
+
+    def test_step(self):
+        bench = LubyBenchmark()
+        env = bench.get_benchmark_env()
+        wrapped = PerformanceTrackingWrapper(env, 10)
+
+        state = wrapped.reset()
+        self.assertTrue(len(state) > 1)
+
+        state, reward, done, _ = wrapped.step(1)
+        self.assertTrue(len(state) > 1)
+        self.assertTrue(reward <= 0)
+        self.assertFalse(done)
+
+        for _ in range(20):
+            wrapped.step(1)
+
+        self.assertTrue(len(wrapped.overall_performance) > 2)
+        self.assertTrue(len(wrapped.performance_intervals) == 1)
+
+    def test_get_performance(self):
+        bench = LubyBenchmark()
+        env = bench.get_benchmark_env()
+        wrapped = PerformanceTrackingWrapper(env)
+        wrapped.reset()
+        for i in range(5):
+            wrapped.step(i)
+        wrapped2 = PerformanceTrackingWrapper(env, 2, track_instance_performance=False)
+        wrapped2.reset()
+        for i in range(5):
+            wrapped2.step(i)
+        wrapped3 = PerformanceTrackingWrapper(env, track_instance_performance=False)
+        wrapped3.reset()
+        for i in range(5):
+            wrapped2.step(i)
+
+        overall, instance_performance = wrapped.get_performance()
+        overall_performance_only = wrapped3.get_performance()
+        overall_performance, intervals = wrapped2.get_performance()
+        self.assertTrue(
+            np.array_equal(
+                np.round(overall_performance, decimals=2), np.round(overall_performance_only, decimals=2)
+            )
+        )
+        self.assertTrue(
+            np.array_equal(
+                np.round(overall_performance, decimals=2), np.round(overall, decimals=2)
+            )
+        )
+
+        self.assertTrue(len(instance_performance.keys())==1)
+        self.assertTrue(len(instance_performance.values()[0])==5)
+
+        self.assertTrue(len(intervals)==3)
+        self.assertTrue(len(intervals[2])==2)
