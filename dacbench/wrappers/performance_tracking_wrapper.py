@@ -66,7 +66,6 @@ class PerformanceTrackingWrapper(Wrapper):
         self.episode_performance += reward
         if done:
             self.overall_performance.append(self.episode_performance)
-            self.episode_performance = 0
             if self.performance_interval:
                 if len(self.current_performance) < self.performance_interval:
                     self.current_performance.append(self.episode_performance)
@@ -85,6 +84,7 @@ class PerformanceTrackingWrapper(Wrapper):
                     self.instance_performances[
                         "".join(str(e) for e in self.env.instance)
                     ] = [self.episode_performance]
+            self.episode_performance = 0
         return state, reward, done, info
 
     def get_performance(self):
