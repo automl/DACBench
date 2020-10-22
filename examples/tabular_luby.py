@@ -5,7 +5,7 @@ by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
 Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 """
 
-from example_utils import q_learning, zeroOne
+from example_utils import q_learning
 from dacbench.benchmarks import LubyBenchmark
 
 # Make Luby environment
