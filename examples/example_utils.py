@@ -169,19 +169,18 @@ def update(
     policy_state = environment.reset()
     episode_length, cummulative_reward = 0, 0
     expected_reward = np.max(Q[policy_state])
-    while True:  # roll out episode
+    done = False
+    while not done:  # roll out episode
         policy_action = np.random.choice(
             list(range(environment.action_space.n)), p=policy(policy_state)
         )
-        s_, policy_reward, policy_done, _ = environment.step(policy_action)
+        s_, policy_reward, done, _ = environment.step(policy_action)
         cummulative_reward += policy_reward
         episode_length += 1
         Q[[policy_state, policy_action]] = Q[[policy_state, policy_action]] + alpha * (
             (policy_reward + discount_factor * Q[[s_, np.argmax(Q[s_])]])
             - Q[[policy_state, policy_action]]
         )
-        if policy_done:
-            break
         policy_state = s_
     return (
         Q,
@@ -252,22 +251,9 @@ def q_learning(
                 )
                 sys.stdout.flush()
         Q, rs, exp_rew, ep_len = update(Q, environment, policy, alpha, discount_factor)
-        if (
-            track_test_stats
-        ):  # Keep track of test performance, s.t. they don't influence the training Q
-            if test_environment:
-                test_reward, test_expected_reward, test_episode_length = greedy_eval_Q(
-                    Q, test_environment, nevaluations=number_of_evaluations
-                )
-                test_stats.episode_rewards[i_episode] = test_reward
-                test_stats.expected_rewards[i_episode] = test_expected_reward
-                test_stats.episode_lengths[i_episode] = test_episode_length
-        train_reward, train_expected_reward, train_episode_length = greedy_eval_Q(
-            Q, environment, nevaluations=number_of_evaluations
-        )
-        train_stats.episode_rewards[i_episode] = train_reward
-        train_stats.expected_rewards[i_episode] = train_expected_reward
-        train_stats.episode_lengths[i_episode] = train_episode_length
+        train_stats.episode_rewards[i_episode] = rs
+        train_stats.expected_rewards[i_episode] = exp_rew
+        train_stats.episode_lengths[i_episode] = ep_len
     if not verbose:
         print("\rEpisode {:>5d}/{}.".format(i_episode + 1, num_episodes))
 

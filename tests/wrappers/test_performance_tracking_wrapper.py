@@ -35,19 +35,22 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         self.assertTrue(reward <= 0)
         self.assertFalse(done)
 
-        for _ in range(20):
-            wrapped.step(1)
+        while not done:
+            _, _, done, _ = wrapped.step(1)
 
-        self.assertTrue(len(wrapped.overall_performance) > 2)
-        self.assertTrue(len(wrapped.performance_intervals) == 2)
-        self.assertTrue(len(wrapped.performance_intervals[0]) == 10)
+        self.assertTrue(len(wrapped.overall_performance) == 1)
+        self.assertTrue(len(wrapped.performance_intervals) == 0)
         self.assertTrue(len(wrapped.current_performance) == 1)
 
         self.assertTrue(len(wrapped.instance_performances.keys()) == 1)
         wrapped.reset()
-        wrapped.step(1)
+        done = False
+        while not done:
+            _, _, done, _ = wrapped.step(1)
         wrapped.reset()
-        wrapped.step(1)
+        done = False
+        while not done:
+            _, _, done, _ = wrapped.step(1)
         self.assertTrue(len(wrapped.instance_performances.keys()) == 3)
 
     def test_get_performance(self):
@@ -55,8 +58,9 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         env = bench.get_benchmark_env()
         wrapped = PerformanceTrackingWrapper(env)
         wrapped.reset()
-        for i in range(5):
-            wrapped.step(i)
+        done = False
+        while not done:
+            _, _, done, _ = wrapped.step(1)
         wrapped2 = PerformanceTrackingWrapper(env, 2, track_instance_performance=False)
         wrapped2.reset()
         for i in range(5):
@@ -75,15 +79,9 @@ class TestTimeTrackingWrapper(unittest.TestCase):
                 np.round(overall_performance_only, decimals=2),
             )
         )
-        self.assertTrue(
-            np.array_equal(
-                np.round(overall_performance, decimals=2), np.round(overall, decimals=2)
-            )
-        )
-
+       
         self.assertTrue(len(instance_performance.keys()) == 1)
-        self.assertTrue(len(list(instance_performance.values())[0]) == 5)
+        self.assertTrue(len(list(instance_performance.values())[0]) == 1)
 
-        self.assertTrue(len(intervals) == 3)
-        self.assertTrue(len(intervals[1]) == 2)
-        self.assertTrue(len(intervals[2]) == 1)
+        self.assertTrue(len(intervals) == 1)
+        self.assertTrue(len(intervals[0]) == 0)
