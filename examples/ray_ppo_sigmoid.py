@@ -2,6 +2,7 @@ import ray
 from ray import tune
 from dacbench.benchmarks import SigmoidBenchmark
 
+
 # Environment creation method
 # Overwrite standard configuration with given options, but adapt action space automatically
 def make_sigmoid(config):
@@ -12,6 +13,7 @@ def make_sigmoid(config):
         else:
             bench.config[k] = config[k]
     return bench.get_benchmark_env()
+
 
 # Initialize ray
 ray.init()

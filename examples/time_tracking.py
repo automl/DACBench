@@ -4,6 +4,7 @@ from example_utils import make_chainer_a3c, train_chainer
 from dacbench.benchmarks import CMAESBenchmark
 from dacbench.wrappers import EpisodeTimeWrapper
 
+
 # Helper function to flatten observation space
 def flatten(li):
     return [value for sublist in li for value in sublist]
@@ -19,7 +20,9 @@ env = bench.get_benchmark()
 env = EpisodeTimeWrapper(env, 2)
 
 # Make chainer agent
-space_array = [env.observation_space[k].low for k in list(env.observation_space.spaces.keys())]
+space_array = [
+    env.observation_space[k].low for k in list(env.observation_space.spaces.keys())
+]
 obs_size = np.array(flatten(space_array)).size
 action_size = env.action_space.low.size
 agent = make_chainer_a3c(obs_size, action_size)

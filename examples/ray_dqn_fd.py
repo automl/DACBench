@@ -2,10 +2,12 @@ import ray
 from ray import tune
 from dacbench.benchmarks import FastDownwardBenchmark
 
+
 # Method to create env
 def make_fast_downward(config):
     bench = FastDownwardBenchmark()
     return bench.get_benchmark(config["seed"])
+
 
 # Initialize ray
 ray.init()

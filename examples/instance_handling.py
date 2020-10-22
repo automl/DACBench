@@ -2,12 +2,14 @@ import numpy as np
 from dacbench.benchmarks import SigmoidBenchmark
 from dacbench.wrappers import InstanceSamplingWrapper
 
+
 # Helper method to sample a single sigmoid instance
 def sample_sigmoid():
     rng = np.random.default_rng()
     shifts = rng.normal(5, 2.5, 1)
     slopes = rng.choice([-1, 1], 1) * rng.uniform(size=1) * 2
     return np.concatenate((shifts, slopes))
+
 
 # Sample n sigmoid instances
 def sample_instance(n):
@@ -16,12 +18,14 @@ def sample_instance(n):
         instances.append(sample_sigmoid())
     return instances
 
+
 # Helper method to print current set
 def print_instance_set(instance_set):
     c = 1
     for i in instance_set:
         print(f"Instance {c}: {i[0]}, {i[1]}")
         c += 1
+
 
 # Make Sigmoid benchmark
 bench = SigmoidBenchmark()

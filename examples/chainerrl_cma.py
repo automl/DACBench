@@ -2,9 +2,11 @@ import numpy as np
 from example_utils import make_chainer_a3c
 from dacbench.benchmarks import CMAESBenchmark
 
+
 # Helper method to flatten observation space
 def flatten(li):
     return [value for sublist in li for value in sublist]
+
 
 # Make CMA-ES environment
 # We use the configuration from the "Learning to Optimize Step-size Adaption in CMA-ES" Paper by Shala et al.
