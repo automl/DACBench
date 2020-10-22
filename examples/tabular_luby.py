@@ -14,4 +14,5 @@ env = bench.get_benchmark_env()
 
 # Execute 10 episodes of tabular Q-Learning
 q_func, test_train_stats = q_learning(env, 10)
-print(f"Rewards: {test_train_stats[1]}")
+print(f"Rewards: {test_train_stats[1].episode_rewards}")
+print(f"Episode Lenghts: {test_train_stats[1].episode_lengths}")
