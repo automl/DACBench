@@ -2,8 +2,8 @@ import ray
 from ray import tune
 from dacbench.benchmarks import SigmoidBenchmark
 
-
-# Overwrite standard config, but adapt action space automatically
+# Environment creation method
+# Overwrite standard configuration with given options, but adapt action space automatically
 def make_sigmoid(config):
     bench = SigmoidBenchmark()
     for k in config.keys():
@@ -13,11 +13,13 @@ def make_sigmoid(config):
             bench.config[k] = config[k]
     return bench.get_benchmark_env()
 
-
+# Initialize ray
 ray.init()
+# Register Sigmoid env with creation method
 tune.register_env("sigmoid", make_sigmoid)
 
-# Play 5D scenario with irregular action count
+# Experiment configuration
+# Play 5D scenario
 action_values = (3, 3, 3, 3, 3)
 sigmoid_config = {
     "env": "sigmoid",
@@ -27,7 +29,8 @@ sigmoid_config = {
         "instance_set_path": "../instance_sets/sigmoid_5D3M_train.csv",
     },
 }
-stop = {"training_iteration": 50}
+stop = {"training_iteration": 10}
 
+# Train for 10 iterations
 results = tune.run("PPO", config=sigmoid_config, stop=stop)
 ray.shutdown()

@@ -5,18 +5,24 @@ from dacbench.benchmarks import LubyBenchmark
 from dacbench.wrappers import ActionFrequencyWrapper
 
 
+# Make Luby environment
 bench = LubyBenchmark()
 env = bench.get_benchmark_env()
+
+# Wrap environment to track action frequency
+# In this case we also want the mean of each 5 step interval
 env = ActionFrequencyWrapper(env, 5)
 
-# Chainer requires casting
+# Chainer requires casting to float32
 env = wrappers.CastObservationToFloat32(env)
 
+# Make chainer agent
 obs_size = env.observation_space.low.size
 agent = make_chainer_dqn(obs_size, env.action_space)
 
-# Train agent in any way
+# Train agent for 10 episodes
 train_chainer(agent, env)
-img = env.render_action_tracking()
-plt.axis("off")
+
+# Plot action progression after training
+env.render_action_tracking()
 plt.show()
