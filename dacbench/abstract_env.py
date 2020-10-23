@@ -27,22 +27,26 @@ class AbstractEnv(gym.Env):
                 try:
                     self.observation_space = getattr(
                         gym.spaces, config["observation_space_class"]
-                        )(
+                    )(
                         *config["observation_space_args"],
                         dtype=config["observation_space_type"],
                     )
                 except KeyError:
                     raise KeyError
-                    print("Either submit a predefined gym.space 'observation_space' or an 'observation_space_class' as well as a list of 'observation_space_args' and the 'observation_space_type' in the configuration.")
+                    print(
+                        "Either submit a predefined gym.space 'observation_space' or an 'observation_space_class' as well as a list of 'observation_space_args' and the 'observation_space_type' in the configuration."
+                    )
                     print("Tuple observation_spaces are currently not supported.")
             else:
                 try:
                     self.observation_space = getattr(
                         gym.spaces, config["observation_space_class"]
-                        )(*config["observation_space_args"])
+                    )(*config["observation_space_args"])
                 except TypeError:
                     raise TypeError
-                    print("To use a Dict observation space, the 'observation_space_args' in the configuration should be a list containing a Dict of gym.Spaces")
+                    print(
+                        "To use a Dict observation space, the 'observation_space_args' in the configuration should be a list containing a Dict of gym.Spaces"
+                    )
 
         if "action_space" in config.keys():
             self.action_space = config["action_space"]
@@ -53,7 +57,9 @@ class AbstractEnv(gym.Env):
                 )
             except KeyError:
                 raise KeyError
-                print("Either submit a predefined gym.space 'action_space' or an 'action_space_class' as well as a list of 'action_space_args' in the configuration")
+                print(
+                    "Either submit a predefined gym.space 'action_space' or an 'action_space_class' as well as a list of 'action_space_args' in the configuration"
+                )
             except TypeError:
                 raise TypeError
                 print("Tuple and Dict action spaces are currently not supported")

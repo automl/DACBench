@@ -30,7 +30,7 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": [[1], [1]],
         }
         with pytest.raises(TypeError):
-            env = AbstractEnv(config)
+            AbstractEnv(config)
 
         config = {
             "action_space_class": "Discrete",
@@ -42,7 +42,7 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": [[1], [1]],
         }
         with pytest.raises(KeyError):
-            env = AbstractEnv(config)
+            AbstractEnv(config)
 
         config = {
             "action_space_class": "Discrete",
@@ -57,7 +57,7 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": [[1], [1]],
         }
         with pytest.raises(KeyError):
-            env = AbstractEnv(config)
+            AbstractEnv(config)
 
         config = {
             "action_space_class": "Tuple",
@@ -73,7 +73,7 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": [[1], [1]],
         }
         with pytest.raises(TypeError):
-            env = AbstractEnv(config)
+            AbstractEnv(config)
 
         config = {
             "action_space_args": np.array([4]).astype(np.float32),
@@ -88,7 +88,7 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": [[1], [1]],
         }
         with pytest.raises(KeyError):
-            env = AbstractEnv(config)
+            AbstractEnv(config)
 
     def make_env(self):
         config = {
