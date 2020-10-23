@@ -8,7 +8,7 @@ from dacbench.wrappers import RewardNoiseWrapper
 class TestRewardNoiseWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = RewardNoiseWrapper(env)
         self.assertFalse(wrapped.noise_function is None)
 
@@ -29,7 +29,7 @@ class TestRewardNoiseWrapper(unittest.TestCase):
     def test_step(self):
         bench = LubyBenchmark()
         bench.config.reward_range = (-10, 10)
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         env.reset()
         _, raw_reward, _, _ = env.step(1)
 
@@ -55,7 +55,7 @@ class TestRewardNoiseWrapper(unittest.TestCase):
 
     def test_getters_and_setters(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = RewardNoiseWrapper(env)
 
         self.assertTrue(wrapped.noise_function == getattr(wrapped, "noise_function"))

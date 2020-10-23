@@ -6,7 +6,7 @@ from dacbench.wrappers import StateTrackingWrapper
 
 # Get FastDownward Environment
 bench = FastDownwardBenchmark()
-env = bench.get_benchmark_env()
+env = bench.get_environment()
 
 # Wrap environment to track state
 # In this case we also want the mean of each 5 step interval

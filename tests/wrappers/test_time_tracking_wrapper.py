@@ -8,7 +8,7 @@ from dacbench.wrappers import EpisodeTimeWrapper
 class TestTimeTrackingWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = EpisodeTimeWrapper(env)
         self.assertTrue(len(wrapped.overall_times) == 0)
         self.assertTrue(wrapped.time_interval is None)
@@ -23,7 +23,7 @@ class TestTimeTrackingWrapper(unittest.TestCase):
 
     def test_step(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = EpisodeTimeWrapper(env, 10)
 
         state = wrapped.reset()
@@ -46,7 +46,7 @@ class TestTimeTrackingWrapper(unittest.TestCase):
 
     def test_get_times(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = EpisodeTimeWrapper(env)
         wrapped.reset()
         for i in range(5):
@@ -71,7 +71,7 @@ class TestTimeTrackingWrapper(unittest.TestCase):
 
     def test_rendering(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = EpisodeTimeWrapper(env, 10)
         wrapped.reset()
         for _ in range(30):

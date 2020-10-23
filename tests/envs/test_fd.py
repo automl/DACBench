@@ -6,7 +6,7 @@ from dacbench.benchmarks.fast_downward_benchmark import FastDownwardBenchmark
 class TestFDEnv(unittest.TestCase):
     def make_env(self):
         bench = FastDownwardBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         return env
 
     def test_setup(self):

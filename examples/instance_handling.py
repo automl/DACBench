@@ -32,7 +32,7 @@ bench = SigmoidBenchmark()
 bench.set_action_values([3])
 
 # First example: read instances from default instance set path
-instances_from_file = bench.get_benchmark_env()
+instances_from_file = bench.get_environment()
 print("Instance set read from file")
 print_instance_set(instances_from_file.instance_set)
 print("\n")
@@ -40,7 +40,7 @@ print("\n")
 # Second example: Sample instance set before training
 instance_set = sample_instance(20)
 bench.config.instance_set = instance_set
-instances_sampled_beforehand = bench.get_benchmark_env()
+instances_sampled_beforehand = bench.get_environment()
 print("Instance set sampled before env creation")
 print_instance_set(instances_sampled_beforehand.instance_set)
 print("\n")
@@ -74,7 +74,7 @@ print("Resetting")
 print("\n")
 
 # Advanced option: directly setting the instance set during training
-env = SigmoidBenchmark()
+env = bench.get_environment()
 print("Replacing the instance_set mid training")
 env.instance_set = [[0, 0]]
 print_instance_set(env.instance_set)

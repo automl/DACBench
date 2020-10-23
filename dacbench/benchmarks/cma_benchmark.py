@@ -1,8 +1,6 @@
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-
 from dacbench.envs import CMAESEnv
 from cma import bbobbenchmarks as bn
-
 from gym import spaces
 import numpy as np
 import os
@@ -15,8 +13,7 @@ CMAES_DEFAULTS = objdict(
     {
         "action_space_class": "Box",
         "action_space_args": [
-            -np.inf * np.ones(INPUT_DIM),
-            np.inf * np.ones(INPUT_DIM),
+            np.array([0]), np.array([10**4]),
         ],
         "observation_space_class": "Dict",
         "observation_space_type": None,
@@ -31,14 +28,14 @@ CMAES_DEFAULTS = objdict(
                 "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
                 "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
                 "history_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH * 2).shape
+                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH*2).shape
                 ),
                 "past_sigma_deltas": spaces.Box(
                     low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape
                 ),
             }
         ],
-        "reward_range": (-np.inf, np.inf),
+        "reward_range": (-10**9, 10**9),
         "cutoff": 1e6,
         "hist_length": HISTORY_LENGTH,
         "popsize": 10,
@@ -62,7 +59,7 @@ class CMAESBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = CMAES_DEFAULTS[key]
 
-    def get_benchmark_env(self):
+    def get_environment(self):
         """
         Return CMAESEnv env with current configuration
 

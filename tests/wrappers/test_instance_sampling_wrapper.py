@@ -10,7 +10,7 @@ from dacbench.wrappers import InstanceSamplingWrapper
 class TestInstanceSamplingWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
 
         with pytest.raises(Exception):
             wrapped = InstanceSamplingWrapper(env)
@@ -23,7 +23,7 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
 
     def test_reset(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
 
         def sample():
             return [0, 0]
@@ -43,7 +43,7 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
         bench = LubyBenchmark()
         bench.read_instance_set()
         instances = bench.config.instance_set
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
 
         wrapped = InstanceSamplingWrapper(env, instances=instances)
         samples = []

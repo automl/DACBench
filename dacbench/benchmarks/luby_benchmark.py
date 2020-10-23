@@ -44,7 +44,7 @@ class LubyBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = LUBY_DEFAULTS[key]
 
-    def get_benchmark_env(self):
+    def get_environment(self):
         """
         Return Luby env with current configuration
 

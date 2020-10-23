@@ -42,7 +42,7 @@ class SigmoidBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = SIGMOID_DEFAULTS[key]
 
-    def get_benchmark_env(self):
+    def get_environment(self):
         """
         Return Sigmoid env with current configuration
 

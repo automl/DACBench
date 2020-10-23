@@ -4,6 +4,7 @@ from dacbench.benchmarks import FastDownwardBenchmark
 
 
 # Method to create env
+# Here we use the published version of the FastDownward Benchmark
 def make_fast_downward(config):
     bench = FastDownwardBenchmark()
     return bench.get_benchmark(config["seed"])

@@ -8,7 +8,7 @@ from dacbench.wrappers import PerformanceTrackingWrapper
 class TestTimeTrackingWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = PerformanceTrackingWrapper(env)
         self.assertTrue(len(wrapped.overall_performance) == 0)
         self.assertTrue(wrapped.performance_interval is None)
@@ -24,7 +24,7 @@ class TestTimeTrackingWrapper(unittest.TestCase):
     def test_step(self):
         bench = LubyBenchmark()
         bench.config.instance_set = [[0, 0], [1, 1], [3, 4], [5, 6]]
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = PerformanceTrackingWrapper(env, 2)
 
         state = wrapped.reset()
@@ -76,7 +76,7 @@ class TestTimeTrackingWrapper(unittest.TestCase):
 
     def test_get_performance(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = PerformanceTrackingWrapper(env)
         wrapped.reset()
         done = False

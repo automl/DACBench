@@ -10,7 +10,7 @@ from dacbench.wrappers import InstanceSamplingWrapper
 class TestSigmoidBenchmark(unittest.TestCase):
     def test_get_env(self):
         bench = SigmoidBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         self.assertTrue(issubclass(type(env), SigmoidEnv))
 
     def test_setup(self):
@@ -33,7 +33,7 @@ class TestSigmoidBenchmark(unittest.TestCase):
             bench.config.instance_set[0] == [2.0004403531465558, 7.903476325943215]
         )
         bench2 = SigmoidBenchmark()
-        env = bench2.get_benchmark_env()
+        env = bench2.get_environment()
         self.assertTrue(len(env.instance_set[0]) == 2)
         self.assertTrue(env.instance_set[0] == [2.0004403531465558, 7.903476325943215])
         self.assertTrue(len(env.instance_set) == 100)

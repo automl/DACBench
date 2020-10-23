@@ -13,7 +13,7 @@ from enum import Enum
 from os import remove
 from os.path import join as joinpath
 import subprocess
-
+import os
 import numpy as np
 from dacbench import AbstractEnv
 
@@ -301,26 +301,28 @@ class FastDownwardEnv(AbstractEnv):
         if self.fd:
             self.fd.terminate()
         if self.instance.endswith(".pddl"):
-            self.fd = subprocess.Popen(
-                [
-                    "python3",
-                    f"{self.fd_path}",
-                    self.domain_file,
-                    self.instance,
-                    "--search",
-                    f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})",
-                ]
-            )
+            with open(os.devnull, 'w') as fp:
+                self.fd = subprocess.Popen(
+                    [
+                        "python3",
+                        f"{self.fd_path}",
+                        self.domain_file,
+                        self.instance,
+                        "--search",
+                        f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})",
+                    ], stdout=fp
+                )
         else:
-            self.fd = subprocess.Popen(
-                [
-                    "python3",
-                    f"{self.fd_path}",
-                    self.instance,
-                    "--search",
-                    f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})",
-                ]
-            )
+            with open(os.devnull, 'w') as fp:
+                self.fd = subprocess.Popen(
+                    [
+                        "python3",
+                        f"{self.fd_path}",
+                        self.instance,
+                        "--search",
+                        f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})",
+                    ], stdout=fp
+                )
         # write down port such that FD can potentially read where to connect to
         if self._port_file_id:
             fp = joinpath(self._config_dir, "port_{:d}.txt".format(self._port_file_id))
@@ -328,7 +330,6 @@ class FastDownwardEnv(AbstractEnv):
             fp = joinpath(self._config_dir, f"port_{self.port}.txt")
         with open(fp, "w") as portfh:
             portfh.write(str(self.port))
-        print(fp)
 
         self.socket.listen()
         self.conn, address = self.socket.accept()

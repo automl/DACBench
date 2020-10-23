@@ -48,7 +48,7 @@ class AbstractBenchmark:
         with open(path, "r") as fp:
             self.config = objdict(json.load(fp))
 
-    def get_benchmark_env(self):
+    def get_environment(self):
         raise NotImplementedError
 
     def set_seed(self, seed):
