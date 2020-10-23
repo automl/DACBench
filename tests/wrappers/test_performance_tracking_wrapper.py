@@ -25,7 +25,7 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         bench = LubyBenchmark()
         bench.config.instance_set = [[0, 0], [1, 1], [3, 4], [5, 6]]
         env = bench.get_benchmark_env()
-        wrapped = PerformanceTrackingWrapper(env, 10)
+        wrapped = PerformanceTrackingWrapper(env, 2)
 
         state = wrapped.reset()
         self.assertTrue(len(state) > 1)
@@ -41,8 +41,18 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         self.assertTrue(len(wrapped.overall_performance) == 1)
         self.assertTrue(len(wrapped.performance_intervals) == 0)
         self.assertTrue(len(wrapped.current_performance) == 1)
-
         self.assertTrue(len(wrapped.instance_performances.keys()) == 1)
+
+        done = False
+        while not done:
+            _, _, done, _ = wrapped.step(1)
+        done = False
+        while not done:
+            _, _, done, _ = wrapped.step(1)
+
+        self.assertTrue(len(wrapped.performance_intervals) == 1)
+        self.assertTrue(len(wrapped.current_performance) == 1)
+
         wrapped.reset()
         done = False
         while not done:
@@ -53,6 +63,17 @@ class TestTimeTrackingWrapper(unittest.TestCase):
             _, _, done, _ = wrapped.step(1)
         self.assertTrue(len(wrapped.instance_performances.keys()) == 3)
 
+        wrapped.reset()
+        done = False
+        while not done:
+            _, _, done, _ = wrapped.step(1)
+        wrapped.reset()
+        done = False
+        while not done:
+            _, _, done, _ = wrapped.step(1)
+        self.assertTrue(len(wrapped.instance_performances.keys()) == 4)
+
+
     def test_get_performance(self):
         bench = LubyBenchmark()
         env = bench.get_benchmark_env()
@@ -61,27 +82,44 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         done = False
         while not done:
             _, _, done, _ = wrapped.step(1)
-        wrapped2 = PerformanceTrackingWrapper(env, 2, track_instance_performance=False)
+        wrapped2 = PerformanceTrackingWrapper(env, 2)
         wrapped2.reset()
-        for i in range(5):
-            wrapped2.step(i)
-        wrapped3 = PerformanceTrackingWrapper(env, track_instance_performance=False)
+        done = False
+        while not done:
+            _, _, done, _ = wrapped2.step(1)
+        wrapped3 = PerformanceTrackingWrapper(env, 2, track_instance_performance=False)
         wrapped3.reset()
         for i in range(5):
             wrapped3.step(i)
+        wrapped4 = PerformanceTrackingWrapper(env, track_instance_performance=False)
+        wrapped4.reset()
+        for i in range(5):
+            wrapped4.step(i)
 
         overall, instance_performance = wrapped.get_performance()
-        overall_performance_only = wrapped3.get_performance()
-        overall_performance, intervals = wrapped2.get_performance()
+        overall_perf, interval_perf, instance_perf = wrapped2.get_performance()
+        overall_performance_only = wrapped4.get_performance()
+        overall_performance, intervals = wrapped3.get_performance()
         self.assertTrue(
             np.array_equal(
                 np.round(overall_performance, decimals=2),
                 np.round(overall_performance_only, decimals=2),
             )
         )
-       
+
+        self.assertTrue(
+            np.array_equal(
+                np.round(overall_perf, decimals=2),
+                np.round(overall, decimals=2),
+            )
+        )
+
         self.assertTrue(len(instance_performance.keys()) == 1)
         self.assertTrue(len(list(instance_performance.values())[0]) == 1)
+        self.assertTrue(len(instance_perf.keys()) == 1)
+        self.assertTrue(len(list(instance_perf.values())[0]) == 1)
 
         self.assertTrue(len(intervals) == 1)
         self.assertTrue(len(intervals[0]) == 0)
+        self.assertTrue(len(interval_perf) == 1)
+        self.assertTrue(len(interval_perf[0]) == 1)

@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for dacbench/wrappers/performance_tracking_wrapper.py: 89%</title>
+    <title>Coverage for dacbench/wrappers/performance_tracking_wrapper.py: 100%</title>
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="jquery.hotkeys.js"></script>
@@ -17,13 +17,13 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>dacbench/wrappers/performance_tracking_wrapper.py</b> :
-            <span class="pc_cov">89%</span>
+            <span class="pc_cov">100%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
             47 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">42 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">5 missing</button>
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">47 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">0 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
     </div>
@@ -123,14 +123,14 @@
     <p id="t70" class="run"><span class="n"><a href="#t70">70</a></span><span class="t">                <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">current_performance</span><span class="op">)</span> <span class="op">&lt;</span> <span class="nam">self</span><span class="op">.</span><span class="nam">performance_interval</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t71" class="run"><span class="n"><a href="#t71">71</a></span><span class="t">                    <span class="nam">self</span><span class="op">.</span><span class="nam">current_performance</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">episode_performance</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t72" class="pln"><span class="n"><a href="#t72">72</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t73" class="mis show_mis"><span class="n"><a href="#t73">73</a></span><span class="t">                    <span class="nam">self</span><span class="op">.</span><span class="nam">performance_intervals</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">current_performance</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t74" class="mis show_mis"><span class="n"><a href="#t74">74</a></span><span class="t">                    <span class="nam">self</span><span class="op">.</span><span class="nam">current_performance</span> <span class="op">=</span> <span class="op">[</span><span class="nam">self</span><span class="op">.</span><span class="nam">episode_performance</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t73" class="run"><span class="n"><a href="#t73">73</a></span><span class="t">                    <span class="nam">self</span><span class="op">.</span><span class="nam">performance_intervals</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">current_performance</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t74" class="run"><span class="n"><a href="#t74">74</a></span><span class="t">                    <span class="nam">self</span><span class="op">.</span><span class="nam">current_performance</span> <span class="op">=</span> <span class="op">[</span><span class="nam">self</span><span class="op">.</span><span class="nam">episode_performance</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p id="t75" class="run"><span class="n"><a href="#t75">75</a></span><span class="t">            <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">track_instances</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t76" class="run"><span class="n"><a href="#t76">76</a></span><span class="t">                <span class="key">if</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p id="t77" class="pln"><span class="n"><a href="#t77">77</a></span><span class="t">                    <span class="str">""</span><span class="op">.</span><span class="nam">join</span><span class="op">(</span><span class="nam">str</span><span class="op">(</span><span class="nam">e</span><span class="op">)</span> <span class="key">for</span> <span class="nam">e</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">env</span><span class="op">.</span><span class="nam">instance</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t78" class="pln"><span class="n"><a href="#t78">78</a></span><span class="t">                    <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">instance_performances</span><span class="op">.</span><span class="nam">keys</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t79" class="pln"><span class="n"><a href="#t79">79</a></span><span class="t">                <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t80" class="mis show_mis"><span class="n"><a href="#t80">80</a></span><span class="t">                    <span class="nam">self</span><span class="op">.</span><span class="nam">instance_performances</span><span class="op">[</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t80" class="run"><span class="n"><a href="#t80">80</a></span><span class="t">                    <span class="nam">self</span><span class="op">.</span><span class="nam">instance_performances</span><span class="op">[</span>&nbsp;</span><span class="r"></span></p>
     <p id="t81" class="pln"><span class="n"><a href="#t81">81</a></span><span class="t">                        <span class="str">""</span><span class="op">.</span><span class="nam">join</span><span class="op">(</span><span class="nam">str</span><span class="op">(</span><span class="nam">e</span><span class="op">)</span> <span class="key">for</span> <span class="nam">e</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">env</span><span class="op">.</span><span class="nam">instance</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t82" class="pln"><span class="n"><a href="#t82">82</a></span><span class="t">                    <span class="op">]</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">episode_performance</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t83" class="pln"><span class="n"><a href="#t83">83</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -151,8 +151,8 @@
     <p id="t98" class="pln"><span class="n"><a href="#t98">98</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t99" class="pln"><span class="n"><a href="#t99">99</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
     <p id="t100" class="run"><span class="n"><a href="#t100">100</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">performance_interval</span> <span class="key">and</span> <span class="nam">self</span><span class="op">.</span><span class="nam">track_instances</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t101" class="mis show_mis"><span class="n"><a href="#t101">101</a></span><span class="t">            <span class="nam">complete_intervals</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">performance_intervals</span> <span class="op">+</span> <span class="op">[</span><span class="nam">self</span><span class="op">.</span><span class="nam">current_performance</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t102" class="mis show_mis"><span class="n"><a href="#t102">102</a></span><span class="t">            <span class="key">return</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t101" class="run"><span class="n"><a href="#t101">101</a></span><span class="t">            <span class="nam">complete_intervals</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">performance_intervals</span> <span class="op">+</span> <span class="op">[</span><span class="nam">self</span><span class="op">.</span><span class="nam">current_performance</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t102" class="run"><span class="n"><a href="#t102">102</a></span><span class="t">            <span class="key">return</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p id="t103" class="pln"><span class="n"><a href="#t103">103</a></span><span class="t">                <span class="nam">self</span><span class="op">.</span><span class="nam">overall_performance</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t104" class="pln"><span class="n"><a href="#t104">104</a></span><span class="t">                <span class="nam">complete_intervals</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t105" class="pln"><span class="n"><a href="#t105">105</a></span><span class="t">                <span class="nam">self</span><span class="op">.</span><span class="nam">instance_performances</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -169,7 +169,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.3</a>,
-            created at 2020-10-22 14:42 +0200
+            created at 2020-10-23 09:39 +0200
         </p>
     </div>
 </div>
