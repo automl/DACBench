@@ -27,7 +27,7 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * Python version should be explicit in README.md (maybe with a conda virtualenv creation example)
 * Think about OpenAI listing [Theresa]
 * Is python 3.9 a good idea?
-* cmake version for FD is important and should me mentioned somewhere
+* cmake version for FD is important and should be mentioned somewhere
 * Readme should include an explicit mention that env == benchmark
 * Maybe use DynaQ for one of the examples to cover more bases
 * Make errors for env init more explicit than KeyErrors
