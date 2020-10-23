@@ -34,7 +34,7 @@ class TestCMAEnv(unittest.TestCase):
     def test_step(self):
         env = self.make_env()
         env.reset()
-        state, reward, done, meta = env.step(1)
+        state, reward, done, meta = env.step([1])
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertFalse(done)
@@ -64,8 +64,8 @@ class TestCMAEnv(unittest.TestCase):
         self.assertTrue(len(state["past_sigma_deltas"]) == env.history_len)
         self.assertTrue(len(state["history_deltas"]) == 2 * env.history_len)
 
-        env.step(1)
-        state, _, _, _ = env.step(1)
+        env.step([1])
+        state, _, _, _ = env.step([1])
         self.assertTrue(issubclass(type(state), dict))
         self.assertTrue(
             np.array_equal(
