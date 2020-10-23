@@ -33,3 +33,4 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * Make errors for env init more explicit than KeyErrors
 * For plotting: maybe use pandas for data collection and plotting?
 * Add plotting in the performance wrapper
+* Do GitHub actions make sense at the moment? If yes, implement them
