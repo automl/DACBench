@@ -24,11 +24,8 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 
 #### Current low level issues:
 * Check installation method: is this a good/the best way to do it?
-* Python version should be explicit in README.md (maybe with a conda virtualenv creation example)
 * Think about OpenAI listing [Theresa]
 * Is python 3.9 a good idea?
-* cmake version for FD is important and should be mentioned somewhere
-* Readme should include an explicit mention that env == benchmark
 * Maybe use DynaQ for one of the examples to cover more bases
 * For plotting: maybe use pandas for data collection and plotting?
 * Add plotting in the performance wrapper
