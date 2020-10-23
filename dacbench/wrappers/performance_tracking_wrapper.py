@@ -25,7 +25,7 @@ class PerformanceTrackingWrapper(Wrapper):
             "get_performance",
             "step",
             "instance_performances",
-            "episode_performance"
+            "episode_performance",
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -42,7 +42,7 @@ class PerformanceTrackingWrapper(Wrapper):
             "get_performance",
             "step",
             "instance_performances",
-            "episode_performance"
+            "episode_performance",
         ]:
             return object.__getattribute__(self, name)
         else:

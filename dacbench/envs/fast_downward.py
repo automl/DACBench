@@ -301,7 +301,7 @@ class FastDownwardEnv(AbstractEnv):
         if self.fd:
             self.fd.terminate()
         if self.instance.endswith(".pddl"):
-            with open(os.devnull, 'w') as fp:
+            with open(os.devnull, "w") as fp:
                 self.fd = subprocess.Popen(
                     [
                         "python3",
@@ -310,10 +310,11 @@ class FastDownwardEnv(AbstractEnv):
                         self.instance,
                         "--search",
                         f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})",
-                    ], stdout=fp
+                    ],
+                    stdout=fp,
                 )
         else:
-            with open(os.devnull, 'w') as fp:
+            with open(os.devnull, "w") as fp:
                 self.fd = subprocess.Popen(
                     [
                         "python3",
@@ -321,7 +322,8 @@ class FastDownwardEnv(AbstractEnv):
                         self.instance,
                         "--search",
                         f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})",
-                    ], stdout=fp
+                    ],
+                    stdout=fp,
                 )
         # write down port such that FD can potentially read where to connect to
         if self._port_file_id:
