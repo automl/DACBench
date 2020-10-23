@@ -205,7 +205,11 @@ class StateTrackingWrapper(Wrapper):
                 state_length = self.env.observation_space.n
             else:
                 state_length = len(self.env.observation_space.high)
-            if state_length < 5:
+            if state_length == 1:
+                figure = plt.figure(figsize=(20, 20))
+                canvas = FigureCanvas(figure)
+                p, p2 = plot_single()
+            elif state_length < 5:
                 dim = 1
                 figure, axarr = plt.subplots(state_length)
             else:
@@ -214,6 +218,8 @@ class StateTrackingWrapper(Wrapper):
             figure.suptitle("State over time")
             canvas = FigureCanvas(figure)
             for i in range(state_length):
+                if state_length == 1:
+                    continue
                 x = False
                 if i % dim == dim - 1:
                     x = True

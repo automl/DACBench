@@ -177,7 +177,12 @@ class ActionFrequencyWrapper(Wrapper):
                 action_size = self.env.action_space.n
             else:
                 action_size = len(self.env.action_space.high)
-            if action_size < 5:
+
+            if action_size == 1:
+                figure = plt.figure(figsize=(12, 6))
+                canvas = FigureCanvas(figure)
+                p, p2 = plot_single()
+            elif action_size < 5:
                 dim = 1
                 figure, axarr = plt.subplots(action_size)
             else:
@@ -186,6 +191,8 @@ class ActionFrequencyWrapper(Wrapper):
             figure.suptitle("State over time")
             canvas = FigureCanvas(figure)
             for i in range(action_size):
+                if action_size == 1:
+                    continue
                 x = False
                 if i % dim == dim - 1:
                     x = True
