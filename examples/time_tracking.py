@@ -13,7 +13,7 @@ def flatten(li):
 # Make CMA-ES environment
 # We use the configuration from the "Learning to Optimize Step-size Adaption in CMA-ES" Paper by Shala et al.
 bench = CMAESBenchmark()
-env = bench.get_benchmark()
+env = bench.get_environment()
 
 # Wrap environment to track time
 # Here we also want the mean of each 2 step interval

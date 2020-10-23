@@ -9,7 +9,7 @@ class TestAbstractBenchmark(unittest.TestCase):
     def test_not_implemented_method(self):
         bench = AbstractBenchmark()
         with pytest.raises(NotImplementedError):
-            bench.get_benchmark_env()
+            bench.get_environment()
 
     def test_setup(self):
         bench = AbstractBenchmark()

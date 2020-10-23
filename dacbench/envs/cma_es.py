@@ -57,7 +57,7 @@ class CMAESEnv(AbstractEnv):
         """
         done = super(CMAESEnv, self).step_()
         self.history.append([self.f_difference, self.velocity])
-        done = done or self.es.stop()
+        done = done or self.es.stop() != {}
         if not done:
             """Moves forward in time one step"""
             sigma = action
@@ -98,9 +98,9 @@ class CMAESEnv(AbstractEnv):
         self.past_obj_vals.clear()
         self.past_sigma.clear()
         self.cur_loc = self.instance[3]
-        self.init_sigma = self.instance[2]
-        self.cur_sigma = self.init_sigma
         self.dim = self.instance[1]
+        self.init_sigma = self.instance[2]
+        self.cur_sigma = [self.init_sigma]
         self.fcn = self.instance[0]
 
         self.func_values = []
@@ -190,7 +190,7 @@ class CMAESEnv(AbstractEnv):
 
         cur_loc = np.array(self.cur_loc)
         cur_ps = np.array([self.cur_ps])
-        cur_sigma = np.array([self.cur_sigma])
+        cur_sigma = np.array(self.cur_sigma)
 
         state = {
             "current_loc": cur_loc,

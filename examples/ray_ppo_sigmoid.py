@@ -12,7 +12,7 @@ def make_sigmoid(config):
             bench.set_action_values(config[k])
         else:
             bench.config[k] = config[k]
-    return bench.get_benchmark_env()
+    return bench.get_environment()
 
 
 # Initialize ray

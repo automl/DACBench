@@ -11,7 +11,7 @@ from dacbench.wrappers import RewardNoiseWrapper
 class TestLubyBenchmark(unittest.TestCase):
     def test_get_env(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         self.assertTrue(issubclass(type(env), LubyEnv))
 
     def test_setup(self):
@@ -32,7 +32,7 @@ class TestLubyBenchmark(unittest.TestCase):
         self.assertTrue(len(bench.config.instance_set[0]) == 2)
         self.assertTrue(bench.config.instance_set[0] == [34, -0.07])
         bench2 = LubyBenchmark()
-        env = bench2.get_benchmark_env()
+        env = bench2.get_environment()
         self.assertTrue(len(env.instance_set[0]) == 2)
         self.assertTrue(env.instance_set[0] == [34, -0.07])
         self.assertTrue(len(env.instance_set) == 100)

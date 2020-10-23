@@ -10,7 +10,7 @@ from dacbench.benchmarks import LubyBenchmark
 
 # Make Luby environment
 bench = LubyBenchmark()
-env = bench.get_benchmark_env()
+env = bench.get_environment()
 
 # Execute 10 episodes of tabular Q-Learning
 q_func, test_train_stats = q_learning(env, 10)

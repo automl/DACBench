@@ -9,7 +9,7 @@ from dacbench.wrappers import ActionFrequencyWrapper
 class TestActionTrackingWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = ActionFrequencyWrapper(env)
         self.assertTrue(len(wrapped.overall_actions) == 0)
         self.assertTrue(wrapped.action_interval is None)
@@ -24,7 +24,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
 
     def test_step(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = ActionFrequencyWrapper(env, 10)
 
         state = wrapped.reset()
@@ -43,7 +43,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
 
     def test_get_actions(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = ActionFrequencyWrapper(env)
         wrapped.reset()
         for i in range(5):
@@ -68,7 +68,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
 
     def test_rendering(self):
         bench = FastDownwardBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = ActionFrequencyWrapper(env, 2)
         wrapped.reset()
         for _ in range(10):
@@ -77,7 +77,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
         self.assertTrue(img.shape[-1] == 3)
 
         bench = CMAESBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = ActionFrequencyWrapper(env, 2)
         wrapped.reset()
         wrapped.step(np.ones(10))

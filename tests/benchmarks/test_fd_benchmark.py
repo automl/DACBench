@@ -8,12 +8,12 @@ from dacbench.envs import FastDownwardEnv
 class TestFDBenchmark(unittest.TestCase):
     def test_get_env(self):
         bench = FastDownwardBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         self.assertTrue(issubclass(type(env), FastDownwardEnv))
 
         bench.config.instance_set_path = "../instance_sets/fast_downward/childsnack"
         bench.read_instance_set()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         self.assertTrue(issubclass(type(env), FastDownwardEnv))
 
     def test_setup(self):
@@ -35,7 +35,7 @@ class TestFDBenchmark(unittest.TestCase):
         self.assertTrue(os.path.isfile(bench.config.instance_set[0]))
         path = bench.config.instance_set[0]
         bench2 = FastDownwardBenchmark()
-        env = bench2.get_benchmark_env()
+        env = bench2.get_environment()
         self.assertTrue(type(env.instance_set[0]) == str)
         self.assertTrue(len(env.instance_set) == 30)
         self.assertTrue(path == env.instance_set[0])

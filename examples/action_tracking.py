@@ -7,7 +7,7 @@ from dacbench.wrappers import ActionFrequencyWrapper
 
 # Make Luby environment
 bench = LubyBenchmark()
-env = bench.get_benchmark_env()
+env = bench.get_environment()
 
 # Wrap environment to track action frequency
 # In this case we also want the mean of each 5 step interval

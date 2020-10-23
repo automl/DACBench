@@ -10,7 +10,7 @@ from dacbench.wrappers import StateTrackingWrapper
 class TestStateTrackingWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = StateTrackingWrapper(env)
         self.assertTrue(len(wrapped.overall_states) == 0)
         self.assertTrue(wrapped.state_interval is None)
@@ -25,7 +25,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
 
     def test_step_reset(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = StateTrackingWrapper(env, 2)
 
         state = wrapped.reset()
@@ -48,7 +48,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
 
     def test_get_states(self):
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = StateTrackingWrapper(env)
         wrapped.reset()
         for i in range(4):
@@ -71,7 +71,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
 
     def test_rendering(self):
         bench = CMAESBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = StateTrackingWrapper(env)
         wrapped.reset()
         with pytest.raises(NotImplementedError):
@@ -89,14 +89,14 @@ class TestStateTrackingWrapper(unittest.TestCase):
                 gym.spaces.Box(low=np.array([-1, 1]), high=np.array([5, 5])),
             )
         )
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = StateTrackingWrapper(env)
         wrapped.reset()
         with pytest.raises(NotImplementedError):
             wrapped.render_state_tracking()
 
         bench = LubyBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         wrapped = StateTrackingWrapper(env, 2)
         wrapped.reset()
         wrapped.step(1)

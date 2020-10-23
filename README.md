@@ -12,7 +12,7 @@ pip install -e .[example]
 ```
 When using the Fast Downward Benchmark, you need to build it separately:
 ```
-./daclib/envs/fast-downward/build.py
+./dacbench/envs/fast-downward/build.py
 ```
 ## Using DAClib
 Benchmarks follow the OpenAI gym standard interface. To create an environment simply:
@@ -20,7 +20,7 @@ Benchmarks follow the OpenAI gym standard interface. To create an environment si
 from dacbench.bechmarks.sigmoid_benchmark import SigmoidBenchmark
 benchmark = SigmoidBenchmark()
 benchmark.config.seed = 42
-env = benchmark.get_benchmark_env()
+env = benchmark.get_environment()
 ```
 The environment configuration can be changed manually or loaded from file.
 Additionally, there are several wrappers with added functionality available.

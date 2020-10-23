@@ -4,9 +4,12 @@ import argparse
 import numpy as np
 from collections import defaultdict, namedtuple
 import chainer
+from chainer import functions as F
+from chainer import links as L
 from chainer import optimizers
-from chainerrl import q_functions, replay_buffer, explorers, policies, links
+from chainerrl import q_functions, replay_buffer, explorers, policies, links, v_function
 from chainerrl.agents import DQN, a3c
+from chainerrl.recurrent import RecurrentChainMixin
 
 
 class DummyEnv(gym.Env):
@@ -277,17 +280,40 @@ class A3CFFSoftmax(chainer.ChainList, a3c.A3CModel):
 
     def __init__(self, ndim_obs, n_actions, hidden_sizes=(200, 200)):
         self.pi = policies.SoftmaxPolicy(
-            model=links.MLP(ndim_obs, n_actions, hidden_sizes)
-        )
+            model=links.MLP(ndim_obs, n_actions, hidden_sizes))
         self.v = links.MLP(ndim_obs, 1, hidden_sizes=hidden_sizes)
         super().__init__(self.pi, self.v)
 
     def pi_and_v(self, state):
         return self.pi(state), self.v(state)
 
+class A3CLSTMGaussian(chainer.ChainList, a3c.A3CModel, RecurrentChainMixin):
+    """An example of A3C recurrent Gaussian policy."""
+
+    def __init__(self, obs_size, action_size, hidden_size=200, lstm_size=128):
+        self.pi_head = L.Linear(obs_size, hidden_size)
+        self.v_head = L.Linear(obs_size, hidden_size)
+        self.pi_lstm = L.LSTM(hidden_size, lstm_size)
+        self.v_lstm = L.LSTM(hidden_size, lstm_size)
+        self.pi = policies.FCGaussianPolicy(lstm_size, action_size)
+        self.v = v_function.FCVFunction(lstm_size)
+        super().__init__(self.pi_head, self.v_head,
+                         self.pi_lstm, self.v_lstm, self.pi, self.v)
+
+    def pi_and_v(self, state):
+
+        def forward(head, lstm, tail):
+            h = F.relu(head(state))
+            h = lstm(h)
+            return tail(h)
+
+        pout = forward(self.pi_head, self.pi_lstm, self.pi)
+        vout = forward(self.v_head, self.v_lstm, self.v)
+
+        return pout, vout
 
 def make_chainer_a3c(obs_size, action_size):
-    model = A3CFFSoftmax(obs_size, action_size)
+    model = A3CLSTMGaussian(obs_size, action_size)
     opt = optimizers.Adam(eps=1e-2)
     opt.setup(model)
     agent = a3c.A3C(model, opt, 10 ** 5, 0.9)

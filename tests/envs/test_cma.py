@@ -9,7 +9,7 @@ from dacbench.benchmarks.cma_benchmark import CMAESBenchmark, CMAES_DEFAULTS
 class TestCMAEnv(unittest.TestCase):
     def make_env(self):
         bench = CMAESBenchmark()
-        env = bench.get_benchmark_env()
+        env = bench.get_environment()
         return env
 
     def test_setup(self):
