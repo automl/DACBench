@@ -20,7 +20,7 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
   - Benchmark wrapper slowdowns
   - Fix the janky port assignment in FD
   - Enable parallel CMA
-  - Singularity containers for each benchmark
+  - Singularity containers for each benchmark (ask Katha for advice on this)
 
 #### Current low level issues:
 * Check installation method: is this a good/the best way to do it?
@@ -30,7 +30,7 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * cmake version for FD is important and should be mentioned somewhere
 * Readme should include an explicit mention that env == benchmark
 * Maybe use DynaQ for one of the examples to cover more bases
-* Make errors for env init more explicit than KeyErrors
 * For plotting: maybe use pandas for data collection and plotting?
 * Add plotting in the performance wrapper
 * Do GitHub actions make sense at the moment? If yes, implement them
+* Get test coverage to 100%
