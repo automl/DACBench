@@ -9,6 +9,9 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
   - BBO competition pipeline (Freiburg/Difan, ask after results are public)
   - Modular CMA-ES (code not public)
   - any other interesting ones should be cleared with Marius/Theresa first
+* Useful features:
+  - State information on demand
+  - Speedup techniques from AC, e.g. adaptive capping, racing, ...
 * User experience:
   - Intro to RL Notebook using our envs
   - Make Basic Demo less basic and maybe into a Collab
