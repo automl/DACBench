@@ -35,3 +35,4 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * Get test coverage to 100%
 * Find the weird bug in performance tracking that logs twice
 * Performance tracking example
+* Find potential bug in runner/CMA
