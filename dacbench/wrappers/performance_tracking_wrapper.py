@@ -127,6 +127,7 @@ class PerformanceTrackingWrapper(Wrapper):
         plt.title("Mean Performance per episode")
         plt.xlabel("Episode")
         plt.ylabel("Reward")
+        plt.show()
 
     def render_instance_performance(self):
         plt.figure(figsize=(12, 6))
@@ -139,3 +140,4 @@ class PerformanceTrackingWrapper(Wrapper):
             np.arange(len(self.instance_performances.keys())),
         ):
             ax.bar(str(i), np.mean(self.instance_performances[k]))
+        plt.show()

@@ -30,7 +30,7 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * Think about OpenAI listing [Theresa]
 * Is python 3.9 a good idea?
 * Maybe use DynaQ for one of the examples to cover more bases
+* Make a baselines example
 * For plotting: maybe use pandas for data collection and plotting?
-* Add plotting in the performance wrapper
-* Do GitHub actions make sense at the moment? If yes, implement them
 * Get test coverage to 100%
+* Find the weird bug in performance tracking that logs twice

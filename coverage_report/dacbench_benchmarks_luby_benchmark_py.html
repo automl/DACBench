@@ -21,8 +21,8 @@
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
-            49 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">49 run</button>
+            50 statements &nbsp;
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">50 run</button>
             <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">0 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
@@ -172,18 +172,19 @@
     <p id="t119" class="run"><span class="n"><a href="#t119">119</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">config</span><span class="op">.</span><span class="nam">instance_set</span> <span class="op">=</span> <span class="op">[</span><span class="op">[</span><span class="num">0</span><span class="op">,</span> <span class="num">0</span><span class="op">]</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p id="t120" class="run"><span class="n"><a href="#t120">120</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">config</span><span class="op">.</span><span class="nam">reward_range</span> <span class="op">=</span> <span class="op">(</span><span class="op">-</span><span class="num">10</span><span class="op">,</span> <span class="num">10</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t121" class="run"><span class="n"><a href="#t121">121</a></span><span class="t">        <span class="nam">env</span> <span class="op">=</span> <span class="nam">LubyEnv</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">config</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t122" class="pln"><span class="n"><a href="#t122">122</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t123" class="run"><span class="n"><a href="#t123">123</a></span><span class="t">        <span class="key">def</span> <span class="nam">fuzz</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t124" class="run"><span class="n"><a href="#t124">124</a></span><span class="t">            <span class="key">return</span> <span class="nam">np</span><span class="op">.</span><span class="nam">random</span><span class="op">.</span><span class="nam">RandomState</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">config</span><span class="op">.</span><span class="nam">seed</span><span class="op">)</span><span class="op">.</span><span class="nam">normal</span><span class="op">(</span><span class="op">-</span><span class="num">1</span><span class="op">,</span> <span class="nam">fuzziness</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t125" class="pln"><span class="n"><a href="#t125">125</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t126" class="run"><span class="n"><a href="#t126">126</a></span><span class="t">        <span class="nam">fuzzy_env</span> <span class="op">=</span> <span class="nam">RewardNoiseWrapper</span><span class="op">(</span><span class="nam">env</span><span class="op">,</span> <span class="nam">noise_function</span><span class="op">=</span><span class="nam">fuzz</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t127" class="run"><span class="n"><a href="#t127">127</a></span><span class="t">        <span class="key">return</span> <span class="nam">fuzzy_env</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t122" class="run"><span class="n"><a href="#t122">122</a></span><span class="t">        <span class="nam">rng</span> <span class="op">=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">random</span><span class="op">.</span><span class="nam">RandomState</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">config</span><span class="op">.</span><span class="nam">seed</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t123" class="pln"><span class="n"><a href="#t123">123</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t124" class="run"><span class="n"><a href="#t124">124</a></span><span class="t">        <span class="key">def</span> <span class="nam">fuzz</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t125" class="run"><span class="n"><a href="#t125">125</a></span><span class="t">            <span class="key">return</span> <span class="nam">rng</span><span class="op">.</span><span class="nam">normal</span><span class="op">(</span><span class="op">-</span><span class="num">1</span><span class="op">,</span> <span class="nam">fuzziness</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t126" class="pln"><span class="n"><a href="#t126">126</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t127" class="run"><span class="n"><a href="#t127">127</a></span><span class="t">        <span class="nam">fuzzy_env</span> <span class="op">=</span> <span class="nam">RewardNoiseWrapper</span><span class="op">(</span><span class="nam">env</span><span class="op">,</span> <span class="nam">noise_function</span><span class="op">=</span><span class="nam">fuzz</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t128" class="run"><span class="n"><a href="#t128">128</a></span><span class="t">        <span class="key">return</span> <span class="nam">fuzzy_env</span>&nbsp;</span><span class="r"></span></p>
 </div>
 <div id="footer">
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.3</a>,
-            created at 2020-10-26 12:28 +0100
+            created at 2020-10-30 10:39 +0100
         </p>
     </div>
 </div>
