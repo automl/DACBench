@@ -28,26 +28,35 @@ def run_dacbench(results_path, agent_method, num_episodes):
         os.makedirs(results_path)
 
     for b in map(benchmarks.__dict__.get, benchmarks.__all__):
-        bench = b()
-        env = bench.get_benchmark()
-        env = PerformanceTrackingWrapper(env)
-        agent = agent_method(env)
-        run_benchmark(env, agent, num_episodes)
-        performance = env.get_performance()[0]
+        overall = []
+        print(f"Evaluating {b.__name__}")
+        for i in range(10):
+            print(f"Seed {i}/10")
+            bench = b()
+            env = bench.get_benchmark(seed=i)
+            env = PerformanceTrackingWrapper(env)
+            agent = agent_method(env)
+            run_benchmark(env, agent, num_episodes)
+            performance = env.get_performance()[0]
+            overall.append(performance)
+        print("\n")
         file_name = results_path + "/" + b.__name__ + ".json"
         with open(file_name, "w+") as fp:
-            json.dump(performance, fp)
+            json.dump(overall, fp)
 
 
 def plot_results(path):
     performances = {}
+    stds = {}
     with os.scandir(path) as it:
         for entry in it:
             if entry.name.endswith(".json"):
                 key = entry.name.split(".")[0]
                 filename = path + "/" + entry.name
                 with open(filename, "r") as fp:
-                    performances[key] = json.load(fp)
+                    overall = json.load(fp)
+                    performances[key] = np.mean(overall, axis=0)
+                    stds[key] = np.std(overall, axis=0)
 
     num_benchmarks = len(list(performances.keys()))
     if num_benchmarks > 5:
@@ -61,22 +70,29 @@ def plot_results(path):
         plt.subplots_adjust(hspace=0.4)
         perf = np.array(performances[k])
         perf = np.interp(perf, (perf.min(), perf.max()), (-1, +1))
+        std = np.interp(stds[k], (perf.min(), perf.max()), (-1, +1))
         if num_benchmarks > 5:
             axs[i // 5, i % 5].set_xlabel("Episodes")
             axs[i // 5, i % 5].set_ylabel("Reward")
             axs[i // 5, i % 5].set_title(k)
             axs[i // 5, i % 5].plot(np.arange(len(perf)), perf, label=k)
+            axs[i // 5, i % 5].fill_between(
+                np.arange(len(perf)), perf - std, perf + std, alpha=0.25
+            )
         else:
             axs[i].set_xlabel("Episodes")
             axs[i].set_ylabel("Reward")
             axs[i].set_title(k)
             axs[i].plot(np.arange(len(perf)), perf, label=k)
+            axs[i].fill_between(
+                np.arange(len(perf)), perf - std, perf + std, alpha=0.25
+            )
     plt.show()
 
 
 class AbstractDACBenchAgent:
     def __init__(self, env):
-        raise NotImplementedError
+        pass
 
     def act(self, state, reward):
         raise NotImplementedError
