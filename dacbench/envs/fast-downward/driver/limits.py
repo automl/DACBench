@@ -34,8 +34,10 @@ def can_set_memory_limit():
 def set_time_limit(time_limit):
     if time_limit is None:
         return
+
     if not can_set_time_limit():
         raise NotImplementedError(CANNOT_LIMIT_TIME_MSG)
+
     # Reaching the soft time limit leads to a (catchable) SIGXCPU signal,
     # which we catch to gracefully exit. Reaching the hard limit leads to
     # a SIGKILL, which is unpreventable. We set a hard limit one second
@@ -55,8 +57,10 @@ def set_memory_limit(memory):
     """*memory* must be given in bytes or None."""
     if memory is None:
         return
+
     if not can_set_memory_limit():
         raise NotImplementedError(CANNOT_LIMIT_MEMORY_MSG)
+
     resource.setrlimit(resource.RLIMIT_AS, (memory, memory))
 
 

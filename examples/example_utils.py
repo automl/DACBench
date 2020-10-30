@@ -47,6 +47,7 @@ class QTable(dict):
             if self.float_to_int:
                 table_state = map(int, table_state)
             return self.__table[tuple(table_state)][table_action]
+
         except ValueError:
             if self.float_to_int:
                 item = map(int, item)
@@ -105,6 +106,7 @@ def get_decay_schedule(
     """
     if type_ == "const":
         return np.array([start_val for _ in range(num_episodes)])
+
     elif type_ == "log":
         return np.hstack(
             [
@@ -116,6 +118,7 @@ def get_decay_schedule(
                 ),
             ]
         )
+
     elif type_ == "linear":
         return np.hstack(
             [
@@ -123,6 +126,7 @@ def get_decay_schedule(
                 np.linspace(start_val, 0, (num_episodes - decay_start)),
             ]
         )
+
     else:
         raise NotImplementedError
 
@@ -152,6 +156,7 @@ def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
             episode_length += 1
             if evaluation_done:
                 break
+
             evaluation_state = s_
         cumuls.append(cummulative_reward)
     return np.mean(cumuls), expected_reward, episode_length  # Q, cumulative reward
@@ -270,11 +275,14 @@ def zeroOne(stringput):
     val = float(stringput)
     if val < 0 or val > 1.0:
         raise argparse.ArgumentTypeError("%r is not in [0, 1]", stringput)
+
     return val
 
 
 # Example model class taken from chainerrl examples:
 # https://github.com/chainer/chainerrl/blob/master/examples/gym/train_a3c_gym.py
+
+
 class A3CFFSoftmax(chainer.ChainList, a3c.A3CModel):
     """An example of A3C feedforward softmax policy."""
 

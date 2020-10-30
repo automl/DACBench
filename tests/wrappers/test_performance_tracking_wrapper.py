@@ -1,4 +1,5 @@
 import unittest
+from unittest import mock
 
 import numpy as np
 from dacbench.benchmarks import LubyBenchmark
@@ -108,8 +109,7 @@ class TestTimeTrackingWrapper(unittest.TestCase):
 
         self.assertTrue(
             np.array_equal(
-                np.round(overall_perf, decimals=2),
-                np.round(overall, decimals=2),
+                np.round(overall_perf, decimals=2), np.round(overall, decimals=2)
             )
         )
 
@@ -122,3 +122,18 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         self.assertTrue(len(intervals[0]) == 0)
         self.assertTrue(len(interval_perf) == 1)
         self.assertTrue(len(interval_perf[0]) == 1)
+
+    @mock.patch("dacbench.wrappers.performance_tracking_wrapper.plt")
+    def test_render(self, mock_plt):
+        bench = LubyBenchmark()
+        env = bench.get_environment()
+        env = PerformanceTrackingWrapper(env)
+        for _ in range(10):
+            done = False
+            env.reset()
+            while not done:
+                _, _, done, _ = env.step(1)
+        env.render_performance()
+        self.assertTrue(mock_plt.show.called)
+        env.render_instance_performance()
+        self.assertTrue(mock_plt.show.called)

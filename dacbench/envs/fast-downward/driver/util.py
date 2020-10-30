@@ -21,6 +21,7 @@ def get_elapsed_time():
     if os.name == "nt":
         # The child time components of os.times() are 0 on Windows.
         raise NotImplementedError("cannot use get_elapsed_time() on Windows")
+
     return sum(os.times()[:4])
 
 
@@ -55,6 +56,7 @@ def shell_escape(s):
     """Return a shell-escaped version of the string *s*."""
     if not s:
         return "''"
+
     if _find_unsafe(s) is None:
         return s
 

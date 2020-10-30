@@ -7,6 +7,7 @@ def _try_remove(f):
         os.remove(f)
     except OSError:
         return False
+
     return True
 
 

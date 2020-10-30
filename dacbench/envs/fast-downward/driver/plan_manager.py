@@ -30,6 +30,7 @@ def _parse_plan(plan_filename):
     match = _PLAN_INFO_REGEX.match(last_line)
     if match:
         return int(match.group(1)), match.group(2)
+
     else:
         return None, None
 
@@ -60,6 +61,7 @@ class PlanManager(object):
         """
         if self._plan_costs:
             return self._plan_costs[-1]
+
         else:
             return self._portfolio_bound
 
@@ -91,6 +93,7 @@ class PlanManager(object):
 
             if not os.path.exists(plan_filename):
                 break
+
             if had_incomplete_plan:
                 bogus_plan("plan found after incomplete plan")
             cost, problem_type = _parse_plan(plan_filename)
@@ -120,6 +123,7 @@ class PlanManager(object):
             plan_filename = self._get_plan_file(counter)
             if os.path.exists(plan_filename):
                 yield plan_filename
+
             else:
                 break
 

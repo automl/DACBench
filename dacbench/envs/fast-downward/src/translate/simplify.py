@@ -142,6 +142,7 @@ def build_dtgs(task):
                 elif cond_val != result:
                     # We have contradictory conditions on var_no.
                     return None
+
         return result
 
     for op in task.operators:
@@ -365,6 +366,7 @@ class VarValueRenaming(object):
         except Impossible:
             # The operator is never applicable.
             return None
+
         conditions_dict = dict(applicability_conditions)
         new_prevail_vars = set(conditions_dict)
 
@@ -380,6 +382,7 @@ class VarValueRenaming(object):
         if not new_pre_post:
             # The operator has no effect.
             return None
+
         new_prevail = sorted(
             (var, value)
             for (var, value) in conditions_dict.items()
@@ -399,6 +402,7 @@ class VarValueRenaming(object):
         assert not new_value is always_false
         if new_value is always_true:
             raise DoesNothing
+
         axiom.effect = new_var, new_value
 
     def translate_pre_post(self, pre_post_entry, conditions_dict):
@@ -482,6 +486,7 @@ class VarValueRenaming(object):
             new_var_no, new_value = self.translate_pair(pair)
             if new_value is always_false:
                 raise Impossible
+
             elif new_value is not always_true:
                 assert new_var_no is not None
                 new_pairs.append((new_var_no, new_value))

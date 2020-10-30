@@ -84,6 +84,7 @@ def run_translate(args):
             if "MemoryError" not in line:
                 output_related_to_memory_error = False
                 break
+
         if output_related_to_memory_error:
             do_print_on_stderr = False
 
@@ -92,10 +93,12 @@ def run_translate(args):
 
     if returncode == 0:
         return (0, True)
+
     elif returncode == 1:
         # Unlikely case that the translator crashed without raising an
         # exception.
         return (returncodes.TRANSLATE_CRITICAL_ERROR, False)
+
     else:
         # Pass on any other exit code, including in particular signals or
         # exit codes such as running out of memory or time.
@@ -128,6 +131,7 @@ def run_search(args):
             time_limit,
             memory_limit,
         )
+
     else:
         if not args.search_options:
             returncodes.exit_with_driver_input_error(
@@ -153,6 +157,7 @@ def run_search(args):
                 err.returncode >= 10 or err.returncode < 0
             ), "got returncode < 10: {}".format(err.returncode)
             return (err.returncode, False)
+
         else:
             return (0, True)
 
@@ -175,6 +180,7 @@ def run_validate(args):
     if not plan_files:
         print("Not running validate since no plans found.")
         return (0, True)
+
     validate_inputs = [domain, task] + plan_files
 
     try:

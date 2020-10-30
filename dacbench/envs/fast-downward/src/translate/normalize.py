@@ -148,10 +148,13 @@ def get_axiom_predicate(axiom):
 def all_conditions(task):
     for action in task.actions:
         yield PreconditionProxy(action)
+
         for effect in action.effects:
             yield EffectConditionProxy(action, effect)
+
     for axiom in task.axioms:
         yield AxiomConditionProxy(axiom)
+
     yield GoalConditionProxy(task)
 
 
@@ -180,6 +183,7 @@ def remove_universal_quantifiers(task):
                 axiom = task.add_axiom(list(typed_parameters), condition)
                 new_axioms_by_condition[(condition, typed_parameters)] = axiom
             return pddl.NegatedAtom(axiom.name, parameters)
+
         else:
             new_parts = [recurse(part) for part in condition.parts]
             return condition.change_parts(new_parts)
@@ -199,6 +203,8 @@ def remove_universal_quantifiers(task):
 # (1) or(phi, or(psi, psi'))      ==  or(phi, psi, psi')
 # (2) exists(vars, or(phi, psi))  ==  or(exists(vars, phi), exists(vars, psi))
 # (3) and(phi, or(psi, psi'))     ==  or(and(phi, psi), and(phi, psi'))
+
+
 def build_DNF(task):
     def recurse(condition):
         disjunctive_parts = []
@@ -246,6 +252,8 @@ def build_DNF(task):
 
 
 # [3] Split conditions at the outermost disjunction.
+
+
 def split_disjunctions(task):
     for proxy in tuple(all_conditions(task)):
         # Cannot use generator directly because we add/delete entries.
@@ -264,6 +272,8 @@ def split_disjunctions(task):
 # (1) exists(vars, exists(vars', phi))  ==  exists(vars + vars', phi)
 # (2) and(phi, exists(vars, psi))       ==  exists(vars, and(phi, psi)),
 #       if var does not occur in phi as a free variable.
+
+
 def move_existential_quantifiers(task):
     def recurse(condition):
         existential_parts = []
@@ -338,6 +348,8 @@ def eliminate_existential_quantifiers_from_preconditions(task):
 #
 # For effect conditions, we replace "when exists(x, phi) then e" with
 # "forall(x): when phi then e.
+
+
 def eliminate_existential_quantifiers_from_conditional_effects(task):
     for action in task.actions:
         for effect in action.effects:
@@ -352,12 +364,15 @@ def substitute_complicated_goal(task):
     goal = task.goal
     if isinstance(goal, pddl.Literal):
         return
+
     elif isinstance(goal, pddl.Conjunction):
         for item in goal.parts:
             if not isinstance(item, pddl.Literal):
                 break
+
         else:
             return
+
     new_axiom = task.add_axiom([], goal)
     task.goal = pddl.Atom(new_axiom.name, new_axiom.parameters)
 
@@ -405,6 +420,8 @@ def verify_axiom_predicates(task):
 
 
 # [6] Build rules for exploration component.
+
+
 def build_exploration_rules(task):
     result = []
     for proxy in all_conditions(task):
@@ -431,6 +448,7 @@ def condition_to_rule_body(parameters, condition):
                 # it is not initially true and doesn't occur in the
                 # head of any rule.
                 return [pddl.Atom("@always-false", [])]
+
             assert isinstance(part, pddl.Literal), "Condition not normalized: %r" % part
             if not part.negated:
                 result.append(part)

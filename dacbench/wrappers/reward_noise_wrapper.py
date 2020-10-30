@@ -24,6 +24,7 @@ class RewardNoiseWrapper(Wrapper):
     def __getattribute__(self, name):
         if name in ["noise_function", "env", "add_noise", "step"]:
             return object.__getattribute__(self, name)
+
         else:
             return getattr(self.env, name)
 
@@ -40,6 +41,7 @@ class RewardNoiseWrapper(Wrapper):
         def sample_noise():
             if args:
                 return function(*args)
+
             else:
                 return function()
 

@@ -67,6 +67,7 @@ class EpisodeTimeWrapper(Wrapper):
             "step_intervals",
         ]:
             return object.__getattribute__(self, name)
+
         else:
             return getattr(self.env, name)
 
@@ -126,6 +127,7 @@ class EpisodeTimeWrapper(Wrapper):
                 complete_intervals,
                 complete_step_intervals,
             )
+
         else:
             return np.array(self.overall_times), np.array(self.all_steps)
 
@@ -138,10 +140,7 @@ class EpisodeTimeWrapper(Wrapper):
         plt.ylabel("Time (s)")
 
         plt.plot(
-            np.arange(len(self.all_steps)),
-            self.all_steps,
-            label="Step time",
-            color="g",
+            np.arange(len(self.all_steps)), self.all_steps, label="Step time", color="g"
         )
         if self.time_interval:
             interval_means = [np.mean(interval) for interval in self.step_intervals] + [

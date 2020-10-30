@@ -95,6 +95,21 @@ class TestStateTrackingWrapper(unittest.TestCase):
         with pytest.raises(NotImplementedError):
             wrapped.render_state_tracking()
 
+        def dummy2():
+            return [0.5]
+
+        bench.config.state_method = dummy2
+        bench.config.observation_space = gym.spaces.Box(
+            low=np.array([0]), high=np.array([1])
+        )
+        env = bench.get_environment()
+        wrapped = StateTrackingWrapper(env)
+        wrapped.reset()
+        wrapped.step(1)
+        wrapped.step(1)
+        img = wrapped.render_state_tracking()
+        self.assertTrue(img.shape[-1] == 3)
+
         bench = LubyBenchmark()
         env = bench.get_environment()
         wrapped = StateTrackingWrapper(env, 2)
@@ -118,7 +133,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
                 return 1, 1, 1, 1
 
         env = discrete_obs_env()
-        wrapped = StateTrackingWrapper(env)
+        wrapped = StateTrackingWrapper(env, 2)
         wrapped.reset()
         wrapped.step(1)
         img = wrapped.render_state_tracking()

@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for dacbench/wrappers/state_tracking_wrapper.py: 94%</title>
+    <title>Coverage for dacbench/wrappers/state_tracking_wrapper.py: 100%</title>
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="jquery.hotkeys.js"></script>
@@ -17,13 +17,13 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>dacbench/wrappers/state_tracking_wrapper.py</b> :
-            <span class="pc_cov">94%</span>
+            <span class="pc_cov">100%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
             120 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">113 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">7 missing</button>
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">120 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">0 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
     </div>
@@ -219,15 +219,15 @@
     <p id="t166" class="run"><span class="n"><a href="#t166">166</a></span><span class="t">                    <span class="key">for</span> <span class="nam">interval</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">state_intervals</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t167" class="run"><span class="n"><a href="#t167">167</a></span><span class="t">                        <span class="nam">y_ints</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="op">[</span><span class="nam">state</span><span class="op">[</span><span class="nam">index</span><span class="op">]</span> <span class="key">for</span> <span class="nam">state</span> <span class="key">in</span> <span class="nam">interval</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t168" class="pln"><span class="n"><a href="#t168">168</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t169" class="mis show_mis"><span class="n"><a href="#t169">169</a></span><span class="t">                    <span class="nam">y_ints</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">state_intervals</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t169" class="run"><span class="n"><a href="#t169">169</a></span><span class="t">                    <span class="nam">y_ints</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">state_intervals</span>&nbsp;</span><span class="r"></span></p>
     <p id="t170" class="run"><span class="n"><a href="#t170">170</a></span><span class="t">                <span class="key">if</span> <span class="nam">ax</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t171" class="mis show_mis"><span class="n"><a href="#t171">171</a></span><span class="t">                    <span class="nam">p2</span> <span class="op">=</span> <span class="nam">plt</span><span class="op">.</span><span class="nam">plot</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t171" class="run"><span class="n"><a href="#t171">171</a></span><span class="t">                    <span class="nam">p2</span> <span class="op">=</span> <span class="nam">plt</span><span class="op">.</span><span class="nam">plot</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p id="t172" class="pln"><span class="n"><a href="#t172">172</a></span><span class="t">                        <span class="nam">np</span><span class="op">.</span><span class="nam">arange</span><span class="op">(</span><span class="nam">len</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">state_intervals</span><span class="op">)</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t173" class="pln"><span class="n"><a href="#t173">173</a></span><span class="t">                        <span class="op">[</span><span class="nam">np</span><span class="op">.</span><span class="nam">mean</span><span class="op">(</span><span class="nam">interval</span><span class="op">)</span> <span class="key">for</span> <span class="nam">interval</span> <span class="key">in</span> <span class="nam">y_ints</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t174" class="pln"><span class="n"><a href="#t174">174</a></span><span class="t">                        <span class="nam">label</span><span class="op">=</span><span class="str">"Mean interval state"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t175" class="pln"><span class="n"><a href="#t175">175</a></span><span class="t">                        <span class="nam">color</span><span class="op">=</span><span class="str">"orange"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t176" class="pln"><span class="n"><a href="#t176">176</a></span><span class="t">                    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t177" class="mis show_mis"><span class="n"><a href="#t177">177</a></span><span class="t">                    <span class="nam">plt</span><span class="op">.</span><span class="nam">legend</span><span class="op">(</span><span class="nam">loc</span><span class="op">=</span><span class="str">"upper left"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t177" class="run"><span class="n"><a href="#t177">177</a></span><span class="t">                    <span class="nam">plt</span><span class="op">.</span><span class="nam">legend</span><span class="op">(</span><span class="nam">loc</span><span class="op">=</span><span class="str">"upper left"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t178" class="pln"><span class="n"><a href="#t178">178</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t179" class="run"><span class="n"><a href="#t179">179</a></span><span class="t">                    <span class="nam">p2</span> <span class="op">=</span> <span class="nam">ax</span><span class="op">.</span><span class="nam">plot</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p id="t180" class="pln"><span class="n"><a href="#t180">180</a></span><span class="t">                        <span class="nam">np</span><span class="op">.</span><span class="nam">arange</span><span class="op">(</span><span class="nam">len</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">state_intervals</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="nam">self</span><span class="op">.</span><span class="nam">state_interval</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -259,9 +259,9 @@
     <p id="t206" class="pln"><span class="n"><a href="#t206">206</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t207" class="run"><span class="n"><a href="#t207">207</a></span><span class="t">                <span class="nam">state_length</span> <span class="op">=</span> <span class="nam">len</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">env</span><span class="op">.</span><span class="nam">observation_space</span><span class="op">.</span><span class="nam">high</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t208" class="run"><span class="n"><a href="#t208">208</a></span><span class="t">            <span class="key">if</span> <span class="nam">state_length</span> <span class="op">==</span> <span class="num">1</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t209" class="mis show_mis"><span class="n"><a href="#t209">209</a></span><span class="t">                <span class="nam">figure</span> <span class="op">=</span> <span class="nam">plt</span><span class="op">.</span><span class="nam">figure</span><span class="op">(</span><span class="nam">figsize</span><span class="op">=</span><span class="op">(</span><span class="num">20</span><span class="op">,</span> <span class="num">20</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t210" class="mis show_mis"><span class="n"><a href="#t210">210</a></span><span class="t">                <span class="nam">canvas</span> <span class="op">=</span> <span class="nam">FigureCanvas</span><span class="op">(</span><span class="nam">figure</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t211" class="mis show_mis"><span class="n"><a href="#t211">211</a></span><span class="t">                <span class="nam">p</span><span class="op">,</span> <span class="nam">p2</span> <span class="op">=</span> <span class="nam">plot_single</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t209" class="run"><span class="n"><a href="#t209">209</a></span><span class="t">                <span class="nam">figure</span> <span class="op">=</span> <span class="nam">plt</span><span class="op">.</span><span class="nam">figure</span><span class="op">(</span><span class="nam">figsize</span><span class="op">=</span><span class="op">(</span><span class="num">20</span><span class="op">,</span> <span class="num">20</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t210" class="run"><span class="n"><a href="#t210">210</a></span><span class="t">                <span class="nam">canvas</span> <span class="op">=</span> <span class="nam">FigureCanvas</span><span class="op">(</span><span class="nam">figure</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t211" class="run"><span class="n"><a href="#t211">211</a></span><span class="t">                <span class="nam">p</span><span class="op">,</span> <span class="nam">p2</span> <span class="op">=</span> <span class="nam">plot_single</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t212" class="run"><span class="n"><a href="#t212">212</a></span><span class="t">            <span class="key">elif</span> <span class="nam">state_length</span> <span class="op">&lt;</span> <span class="num">5</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t213" class="run"><span class="n"><a href="#t213">213</a></span><span class="t">                <span class="nam">dim</span> <span class="op">=</span> <span class="num">1</span>&nbsp;</span><span class="r"></span></p>
     <p id="t214" class="run"><span class="n"><a href="#t214">214</a></span><span class="t">                <span class="nam">figure</span><span class="op">,</span> <span class="nam">axarr</span> <span class="op">=</span> <span class="nam">plt</span><span class="op">.</span><span class="nam">subplots</span><span class="op">(</span><span class="nam">state_length</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -272,7 +272,7 @@
     <p id="t219" class="run"><span class="n"><a href="#t219">219</a></span><span class="t">            <span class="nam">canvas</span> <span class="op">=</span> <span class="nam">FigureCanvas</span><span class="op">(</span><span class="nam">figure</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t220" class="run"><span class="n"><a href="#t220">220</a></span><span class="t">            <span class="key">for</span> <span class="nam">i</span> <span class="key">in</span> <span class="nam">range</span><span class="op">(</span><span class="nam">state_length</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t221" class="run"><span class="n"><a href="#t221">221</a></span><span class="t">                <span class="key">if</span> <span class="nam">state_length</span> <span class="op">==</span> <span class="num">1</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t222" class="mis show_mis"><span class="n"><a href="#t222">222</a></span><span class="t">                    <span class="key">continue</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t222" class="run"><span class="n"><a href="#t222">222</a></span><span class="t">                    <span class="key">continue</span>&nbsp;</span><span class="r"></span></p>
     <p id="t223" class="run"><span class="n"><a href="#t223">223</a></span><span class="t">                <span class="nam">x</span> <span class="op">=</span> <span class="key">False</span>&nbsp;</span><span class="r"></span></p>
     <p id="t224" class="run"><span class="n"><a href="#t224">224</a></span><span class="t">                <span class="key">if</span> <span class="nam">i</span> <span class="op">%</span> <span class="nam">dim</span> <span class="op">==</span> <span class="nam">dim</span> <span class="op">-</span> <span class="num">1</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t225" class="run"><span class="n"><a href="#t225">225</a></span><span class="t">                    <span class="nam">x</span> <span class="op">=</span> <span class="key">True</span>&nbsp;</span><span class="r"></span></p>
@@ -292,7 +292,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.3</a>,
-            created at 2020-10-26 12:28 +0100
+            created at 2020-10-30 10:55 +0100
         </p>
     </div>
 </div>

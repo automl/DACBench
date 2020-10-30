@@ -9,8 +9,10 @@ import numpy as np
 from collections import deque
 from cma.evolution_strategy import CMAEvolutionStrategy
 import threading
-
+import warnings
 from dacbench import AbstractEnv
+
+warnings.filterwarnings("ignore")
 
 
 def _norm(x):
@@ -18,6 +20,8 @@ def _norm(x):
 
 
 # IDEA: if we ask cma instead of ask_eval, we could make this parallel
+
+
 class CMAESEnv(AbstractEnv):
     def __init__(self, config):
         super(CMAESEnv, self).__init__(config)
@@ -136,6 +140,7 @@ class CMAESEnv(AbstractEnv):
         """
         if mode != "human":
             raise NotImplementedError
+
         pass
 
     def get_default_state(self):

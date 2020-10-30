@@ -75,6 +75,7 @@ def translate_strips_conditions_aux(conditions, dictionary, ranges):
             # can recognize when the negative condition is already
             # ensured by a positive condition
             continue
+
         for var, val in dictionary.get(fact, ()):
             # The default () here is a bit of a hack. For goals (but
             # only for goals!), we can get static facts here. They
@@ -88,6 +89,7 @@ def translate_strips_conditions_aux(conditions, dictionary, ranges):
             if condition.get(var) is not None and val not in condition.get(var):
                 # Conflicting conditions on this variable: Operator invalid.
                 return None
+
             condition[var] = set([val])
 
     def number_of_values(var_vals_pair):
@@ -181,6 +183,7 @@ def translate_strips_operator(
     )
     if conditions is None:
         return []
+
     sas_operators = []
     for condition in conditions:
         op = translate_strips_operator_aux(
@@ -207,6 +210,7 @@ def negate_and_translate_condition(
     negation = []
     if [] in condition:  # condition always satisfied
         return None  # negation unsatisfiable
+
     for combination in product(*condition):
         cond = [l.negate() for l in combination]
         cond = translate_strips_conditions(
@@ -231,6 +235,7 @@ def translate_strips_operator_aux(
         )
         if eff_condition_list is None:  # Impossible condition for this effect.
             continue
+
         for var, val in dictionary[fact]:
             effects_by_variable[var][val].extend(eff_condition_list)
             add_conds_by_variable[var].append(conditions)
@@ -243,6 +248,7 @@ def translate_strips_operator_aux(
         )
         if eff_condition_list is None:  # Impossible condition for this effect.
             continue
+
         for var, val in dictionary[fact]:
             del_effects_by_variable[var][val].extend(eff_condition_list)
 
@@ -254,12 +260,14 @@ def translate_strips_operator_aux(
         )
         if no_add_effect_condition is None:  # there is always an add effect
             continue
+
         none_of_those = ranges[var] - 1
         for val, conds in del_effects_by_variable[var].items():
             for cond in conds:
                 # add guard
                 if var in cond and cond[var] != val:
                     continue  # condition inconsistent with deleted atom
+
                 cond[var] = val
                 # add condition that no add effect triggers
                 for no_add_cond in no_add_effect_condition:
@@ -280,6 +288,7 @@ def translate_strips_operator_aux(
                             # imply that some add effect on the variable
                             # triggers
                             break
+
                         new_cond[cvar] = cval
                     else:
                         effects_by_variable[var][none_of_those].append(new_cond)
@@ -311,6 +320,7 @@ def build_sas_operator(
             # if the effect does not change the variable value, we ignore it
             if pre == post:
                 continue
+
             eff_condition_lists = [
                 sorted(eff_cond.items()) for eff_cond in eff_conditions
             ]
@@ -340,10 +350,12 @@ def build_sas_operator(
                         if prevail_and_pre[variable] != value:
                             eff_condition_contradicts_precondition = True
                             break
+
                     else:
                         filtered_eff_condition.append((variable, value))
                 if eff_condition_contradicts_precondition:
                     continue
+
                 pre_post.append((var, pre, post, filtered_eff_condition))
                 added_effect = True
         if added_effect:
@@ -352,6 +364,7 @@ def build_sas_operator(
             condition.pop(var, -1)
     if not pre_post:  # operator is noop
         return None
+
     prevail = list(condition.items())
     return sas_tasks.SASOperator(name, prevail, pre_post, cost)
 
@@ -374,11 +387,13 @@ def prune_stupid_effect_conditions(var, val, conditions, effects_on_var):
     ## returns True when anything was changed
     if conditions == [[]]:
         return False  # Quick exit for common case.
+
     assert val in [0, 1]
     dual_val = 1 - val
     dual_fact = (var, dual_val)
     if dual_val in effects_on_var:
         return False
+
     simplified = False
     for condition in conditions:
         # Apply rule 1.
@@ -391,6 +406,7 @@ def prune_stupid_effect_conditions(var, val, conditions, effects_on_var):
             conditions[:] = [[]]
             simplified = True
             break
+
     return simplified
 
 
@@ -400,6 +416,7 @@ def translate_strips_axiom(axiom, dictionary, ranges, mutex_dict, mutex_ranges):
     )
     if conditions is None:
         return []
+
     if axiom.effect.negated:
         [(var, _)] = dictionary[axiom.effect.positive()]
         effect = (var, ranges[var] - 1)
@@ -516,6 +533,7 @@ def translate_task(
     goal_pairs = list(goal_dict_list[0].items())
     if not goal_pairs:
         return solvable_sas_task("Empty goal")
+
     goal = sas_tasks.SASGoal(goal_pairs)
 
     operators = translate_strips_operators(
@@ -644,6 +662,7 @@ def pddl_to_sas(task):
                 simplify.filter_unreachable_propositions(sas_task)
             except simplify.Impossible:
                 return unsolvable_sas_task("Simplified to trivially false goal")
+
             except simplify.TriviallySolvable:
                 return solvable_sas_task("Simplified to empty goal")
 

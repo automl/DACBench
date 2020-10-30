@@ -57,6 +57,7 @@ class Condition(object):
         # for quantified effects.
         if not self.parts:
             return self
+
         else:
             return self.__class__(
                 [part.uniquify_variables(type_map, renamings) for part in self.parts]
@@ -78,18 +79,21 @@ class Condition(object):
         for part in self.parts:
             if part.has_disjunction():
                 return True
+
         return False
 
     def has_existential_part(self):
         for part in self.parts:
             if part.has_existential_part():
                 return True
+
         return False
 
     def has_universal_part(self):
         for part in self.parts:
             if part.has_universal_part():
                 return True
+
         return False
 
 
@@ -155,12 +159,15 @@ class Conjunction(JunctorCondition):
                 result_parts += part.parts
             elif isinstance(part, Falsity):
                 return Falsity()
+
             elif not isinstance(part, Truth):
                 result_parts.append(part)
         if not result_parts:
             return Truth()
+
         if len(result_parts) == 1:
             return result_parts[0]
+
         return Conjunction(result_parts)
 
     def to_untyped_strips(self):
@@ -186,12 +193,15 @@ class Disjunction(JunctorCondition):
                 result_parts += part.parts
             elif isinstance(part, Truth):
                 return Truth()
+
             elif not isinstance(part, Falsity):
                 result_parts.append(part)
         if not result_parts:
             return Falsity()
+
         if len(result_parts) == 1:
             return result_parts[0]
+
         return Disjunction(result_parts)
 
     def negate(self):
@@ -226,6 +236,7 @@ class QuantifiedCondition(Condition):
     def _simplified(self, parts):
         if isinstance(parts[0], ConstantCondition):
             return parts[0]
+
         else:
             return self._propagate(parts)
 

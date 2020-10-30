@@ -46,6 +46,7 @@ class ActionFrequencyWrapper(Wrapper):
             "render_action_tracking",
         ]:
             return object.__getattribute__(self, name)
+
         else:
             return getattr(self.env, name)
 
@@ -86,6 +87,7 @@ class ActionFrequencyWrapper(Wrapper):
         if self.action_interval:
             complete_intervals = self.action_intervals + [self.current_actions]
             return self.overall_actions, complete_intervals
+
         else:
             return self.overall_actions
 
@@ -164,8 +166,10 @@ class ActionFrequencyWrapper(Wrapper):
             canvas.draw()
         elif self.action_space_type == spaces.Dict:
             raise NotImplementedError
+
         elif self.action_space_type == spaces.Tuple:
             raise NotImplementedError
+
         elif (
             self.action_space_type == spaces.MultiDiscrete
             or self.action_space_type == spaces.MultiBinary
@@ -193,6 +197,7 @@ class ActionFrequencyWrapper(Wrapper):
             for i in range(action_size):
                 if action_size == 1:
                     continue
+
                 x = False
                 if i % dim == dim - 1:
                     x = True

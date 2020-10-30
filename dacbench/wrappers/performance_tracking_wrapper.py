@@ -1,6 +1,10 @@
 from gym import Wrapper
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sb
+
+sb.set_style("darkgrid")
+current_palette = list(sb.color_palette())
 
 
 class PerformanceTrackingWrapper(Wrapper):
@@ -51,6 +55,7 @@ class PerformanceTrackingWrapper(Wrapper):
             "render_instance_performance",
         ]:
             return object.__getattribute__(self, name)
+
         else:
             return getattr(self.env, name)
 
@@ -110,11 +115,14 @@ class PerformanceTrackingWrapper(Wrapper):
                 complete_intervals,
                 self.instance_performances,
             )
+
         elif self.performance_interval:
             complete_intervals = self.performance_intervals + [self.current_performance]
             return self.overall_performance, complete_intervals
+
         elif self.track_instances:
             return self.overall_performance, self.instance_performances
+
         else:
             return self.overall_performance
 
@@ -127,6 +135,7 @@ class PerformanceTrackingWrapper(Wrapper):
         plt.title("Mean Performance per episode")
         plt.xlabel("Episode")
         plt.ylabel("Reward")
+        plt.show()
 
     def render_instance_performance(self):
         plt.figure(figsize=(12, 6))
@@ -139,3 +148,4 @@ class PerformanceTrackingWrapper(Wrapper):
             np.arange(len(self.instance_performances.keys())),
         ):
             ax.bar(str(i), np.mean(self.instance_performances[k]))
+        plt.show()

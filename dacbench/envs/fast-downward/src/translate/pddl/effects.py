@@ -8,6 +8,7 @@ def cartesian_product(*sequences):
     #       differently). Not good. Need proper import paths.
     if not sequences:
         yield ()
+
     else:
         for tup in cartesian_product(*sequences[1:]):
             for item in sequences[0]:
@@ -72,6 +73,7 @@ class Effect(object):
             self.condition.instantiate(var_mapping, init_facts, fluent_facts, condition)
         except conditions.Impossible:
             return
+
         effects = []
         self.literal.instantiate(var_mapping, init_facts, fluent_facts, effects)
         assert len(effects) <= 1
@@ -81,6 +83,7 @@ class Effect(object):
     def relaxed(self):
         if self.literal.negated:
             return None
+
         else:
             return Effect(self.parameters, self.condition.relaxed(), self.literal)
 
@@ -113,10 +116,12 @@ class ConditionalEffect(object):
                 )
                 new_effects.append(ConditionalEffect(self.condition, effect))
             return ConjunctiveEffect(new_effects)
+
         elif isinstance(norm_effect, UniversalEffect):
             child = norm_effect.effect
             cond_effect = ConditionalEffect(self.condition, child)
             return UniversalEffect(norm_effect.parameters, cond_effect)
+
         else:
             return ConditionalEffect(self.condition, norm_effect)
 
@@ -149,6 +154,7 @@ class UniversalEffect(object):
                 )
                 new_effects.append(UniversalEffect(self.parameters, effect))
             return ConjunctiveEffect(new_effects)
+
         else:
             return UniversalEffect(self.parameters, norm_effect)
 
@@ -215,4 +221,5 @@ class CostEffect(object):
     def extract_cost(self):
         return self, None  # this would only happen if
 
-    # an action has no effect apart from the cost effect
+
+# an action has no effect apart from the cost effect
