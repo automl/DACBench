@@ -15,6 +15,81 @@ class TestAbstractEnv(unittest.TestCase):
         with pytest.raises(NotImplementedError):
             env.reset()
 
+    def test_exceptions(self):
+        config = {
+            "action_space_class": "Discrete",
+            "action_space_args": np.array([4]).astype(np.float32),
+            "observation_space_class": "Dict",
+            "observation_space_type": np.float32,
+            "observation_space_args": [
+                np.array([-1, -1, -1], dtype=np.float32),
+                np.array([1, 1, 1], dtype=np.float32),
+            ],
+            "reward_range": (-1, 0),
+            "cutoff": 30,
+            "instance_set": [[1], [1]],
+        }
+        with pytest.raises(TypeError):
+            AbstractEnv(config)
+
+        config = {
+            "action_space_class": "Discrete",
+            "action_space_args": np.array([4]).astype(np.float32),
+            "observation_space_class": "Box",
+            "observation_space_type": np.float32,
+            "reward_range": (-1, 0),
+            "cutoff": 30,
+            "instance_set": [[1], [1]],
+        }
+        with pytest.raises(KeyError):
+            AbstractEnv(config)
+
+        config = {
+            "action_space_class": "Discrete",
+            "action_space_args": np.array([4]).astype(np.float32),
+            "observation_space_type": np.float32,
+            "observation_space_args": [
+                np.array([-1, -1, -1], dtype=np.float32),
+                np.array([1, 1, 1], dtype=np.float32),
+            ],
+            "reward_range": (-1, 0),
+            "cutoff": 30,
+            "instance_set": [[1], [1]],
+        }
+        with pytest.raises(KeyError):
+            AbstractEnv(config)
+
+        config = {
+            "action_space_class": "Tuple",
+            "action_space_args": np.array([4]).astype(np.float32),
+            "observation_space_class": "Box",
+            "observation_space_type": np.float32,
+            "observation_space_args": [
+                np.array([-1, -1, -1], dtype=np.float32),
+                np.array([1, 1, 1], dtype=np.float32),
+            ],
+            "reward_range": (-1, 0),
+            "cutoff": 30,
+            "instance_set": [[1], [1]],
+        }
+        with pytest.raises(TypeError):
+            AbstractEnv(config)
+
+        config = {
+            "action_space_args": np.array([4]).astype(np.float32),
+            "observation_space_class": "Box",
+            "observation_space_type": np.float32,
+            "observation_space_args": [
+                np.array([-1, -1, -1], dtype=np.float32),
+                np.array([1, 1, 1], dtype=np.float32),
+            ],
+            "reward_range": (-1, 0),
+            "cutoff": 30,
+            "instance_set": [[1], [1]],
+        }
+        with pytest.raises(KeyError):
+            AbstractEnv(config)
+
     def make_env(self):
         config = {
             "action_space_class": "Discrete",

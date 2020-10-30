@@ -1,4 +1,6 @@
 from gym import Wrapper
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 class PerformanceTrackingWrapper(Wrapper):
@@ -25,7 +27,9 @@ class PerformanceTrackingWrapper(Wrapper):
             "get_performance",
             "step",
             "instance_performances",
-            "episode_performance"
+            "episode_performance",
+            "render_performance",
+            "render_instance_performance",
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -42,7 +46,9 @@ class PerformanceTrackingWrapper(Wrapper):
             "get_performance",
             "step",
             "instance_performances",
-            "episode_performance"
+            "episode_performance",
+            "render_performance",
+            "render_instance_performance",
         ]:
             return object.__getattribute__(self, name)
         else:
@@ -111,3 +117,25 @@ class PerformanceTrackingWrapper(Wrapper):
             return self.overall_performance, self.instance_performances
         else:
             return self.overall_performance
+
+    def render_performance(self):
+        plt.figure(figsize=(12, 6))
+        plt.plot(
+            np.arange(len(self.overall_performance) // 2),
+            self.overall_performance[1::2],
+        )
+        plt.title("Mean Performance per episode")
+        plt.xlabel("Episode")
+        plt.ylabel("Reward")
+
+    def render_instance_performance(self):
+        plt.figure(figsize=(12, 6))
+        plt.title("Mean Performance per Instance")
+        plt.ylabel("Mean reward")
+        plt.xlabel("Instance")
+        ax = plt.subplot(111)
+        for k, i in zip(
+            self.instance_performances.keys(),
+            np.arange(len(self.instance_performances.keys())),
+        ):
+            ax.bar(str(i), np.mean(self.instance_performances[k]))

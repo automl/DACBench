@@ -1,4 +1,4 @@
-# DAClib
+# DACBench
 DACBench is a benchmark library for Dynamic Algorithm Configuration.
 Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
@@ -6,16 +6,18 @@ Its focus is on reproducibility and comparability of different DAC methods as we
 We recommend to install DACBench in a virtual environment.
 To install DACBench including the dependencies to run examples:
 ```
+conda create -n dacbench python=3.6
+conda activate dacbench
 git clone https://github.com/automl/DACBench.git
 cd DACBench
 pip install -e .[example]
 ```
-When using the Fast Downward Benchmark, you need to build it separately:
+When using the Fast Downward Benchmark, you need to build it separately (we recommend cmake version 3.10.2):
 ```
 ./dacbench/envs/fast-downward/build.py
 ```
 ## Using DAClib
-Benchmarks follow the OpenAI gym standard interface. To create an environment simply:
+Benchmarks follow the OpenAI gym standard interface. That means each benchmark is created as an OpenAI gym environment. To create an environment simply:
 ```python
 from dacbench.bechmarks.sigmoid_benchmark import SigmoidBenchmark
 benchmark = SigmoidBenchmark()

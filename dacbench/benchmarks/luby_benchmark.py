@@ -119,9 +119,10 @@ class LubyBenchmark(AbstractBenchmark):
         self.config.instance_set = [[0, 0]]
         self.config.reward_range = (-10, 10)
         env = LubyEnv(self.config)
+        rng = np.random.RandomState(self.config.seed)
 
         def fuzz():
-            return np.random.RandomState(self.config.seed).normal(-1, fuzziness)
+            return rng.normal(-1, fuzziness)
 
         fuzzy_env = RewardNoiseWrapper(env, noise_function=fuzz)
         return fuzzy_env

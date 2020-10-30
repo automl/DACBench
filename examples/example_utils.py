@@ -280,12 +280,14 @@ class A3CFFSoftmax(chainer.ChainList, a3c.A3CModel):
 
     def __init__(self, ndim_obs, n_actions, hidden_sizes=(200, 200)):
         self.pi = policies.SoftmaxPolicy(
-            model=links.MLP(ndim_obs, n_actions, hidden_sizes))
+            model=links.MLP(ndim_obs, n_actions, hidden_sizes)
+        )
         self.v = links.MLP(ndim_obs, 1, hidden_sizes=hidden_sizes)
         super().__init__(self.pi, self.v)
 
     def pi_and_v(self, state):
         return self.pi(state), self.v(state)
+
 
 class A3CLSTMGaussian(chainer.ChainList, a3c.A3CModel, RecurrentChainMixin):
     """An example of A3C recurrent Gaussian policy."""
@@ -297,11 +299,11 @@ class A3CLSTMGaussian(chainer.ChainList, a3c.A3CModel, RecurrentChainMixin):
         self.v_lstm = L.LSTM(hidden_size, lstm_size)
         self.pi = policies.FCGaussianPolicy(lstm_size, action_size)
         self.v = v_function.FCVFunction(lstm_size)
-        super().__init__(self.pi_head, self.v_head,
-                         self.pi_lstm, self.v_lstm, self.pi, self.v)
+        super().__init__(
+            self.pi_head, self.v_head, self.pi_lstm, self.v_lstm, self.pi, self.v
+        )
 
     def pi_and_v(self, state):
-
         def forward(head, lstm, tail):
             h = F.relu(head(state))
             h = lstm(h)
@@ -311,6 +313,7 @@ class A3CLSTMGaussian(chainer.ChainList, a3c.A3CModel, RecurrentChainMixin):
         vout = forward(self.v_head, self.v_lstm, self.v)
 
         return pout, vout
+
 
 def make_chainer_a3c(obs_size, action_size):
     model = A3CLSTMGaussian(obs_size, action_size)

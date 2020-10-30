@@ -73,7 +73,6 @@ class TestTimeTrackingWrapper(unittest.TestCase):
             _, _, done, _ = wrapped.step(1)
         self.assertTrue(len(wrapped.instance_performances.keys()) == 4)
 
-
     def test_get_performance(self):
         bench = LubyBenchmark()
         env = bench.get_environment()
