@@ -85,7 +85,7 @@ class CMAESEnv(AbstractEnv):
         self.cur_loc = self.es.best.x
         self.cur_sigma = self.es.sigma
         self.cur_obj_val = self.es.best.f
-        self.fbest = max(self.reward_range[1], min(self.reward_range[0], self.fbest))
+        self.fbest = min(self.reward_range[1], max(self.reward_range[0], self.fbest))
         return self.get_state(), -self.fbest, done, {}
 
     def reset(self):

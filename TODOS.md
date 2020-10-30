@@ -32,6 +32,3 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * For plotting: maybe use pandas for data collection and plotting?
 * Get test coverage to 100%
 * Find the weird bug in performance tracking that logs twice
-* Performance tracking example
-* Find potential bug in runner/CMA
-* The runner should do 10 instead of 1 evaluation and also plot std
