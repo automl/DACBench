@@ -13,10 +13,10 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
   - State information on demand
   - Speedup techniques from AC, e.g. adaptive capping, racing, ...
 * User experience:
-  - Intro to RL Notebook using our envs
-  - Make Basic Demo less basic and maybe into a Collab
+  - Make Feature Demo better
+  - Turn Basic Demo into a Collab
   - Make visuals nicer
-  - Provide basline comparisons like optimal static and random policy as data to load into plots
+  - Provide baseline comparisons like optimal static and random policy as data to load into plots
   - Maintain examples regularly and improve readability & diversity
   - Maybe use lazy importing for examples to prevent so many packages needing to be installed
 * Backend performance:
@@ -26,7 +26,6 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
   - Singularity containers for each benchmark (ask Katha for advice on this)
 
 #### Current low level issues:
-* Check installation method: is this a good/the best way to do it?
 * Think about OpenAI listing [Theresa]
 * Is python 3.9 a good idea?
 * Maybe use DynaQ for one of the examples to cover more bases (for future benchmarks)
