@@ -121,7 +121,8 @@ class PerformanceTrackingWrapper(Wrapper):
     def render_performance(self):
         plt.figure(figsize=(12, 6))
         plt.plot(
-            np.arange(len(self.overall_performance) / 2), self.overall_performance[1::2]
+            np.arange(len(self.overall_performance) // 2),
+            self.overall_performance[1::2],
         )
         plt.title("Mean Performance per episode")
         plt.xlabel("Episode")
