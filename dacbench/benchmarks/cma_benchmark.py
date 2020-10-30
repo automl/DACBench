@@ -12,7 +12,7 @@ INPUT_DIM = 10
 CMAES_DEFAULTS = objdict(
     {
         "action_space_class": "Box",
-        "action_space_args": [np.array([0]), np.array([10 ** 4]),],
+        "action_space_args": [np.array([0]), np.array([10 ** 4])],
         "observation_space_class": "Dict",
         "observation_space_type": None,
         "observation_space_args": [

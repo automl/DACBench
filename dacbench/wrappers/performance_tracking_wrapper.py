@@ -55,6 +55,7 @@ class PerformanceTrackingWrapper(Wrapper):
             "render_instance_performance",
         ]:
             return object.__getattribute__(self, name)
+
         else:
             return getattr(self.env, name)
 
@@ -114,11 +115,14 @@ class PerformanceTrackingWrapper(Wrapper):
                 complete_intervals,
                 self.instance_performances,
             )
+
         elif self.performance_interval:
             complete_intervals = self.performance_intervals + [self.current_performance]
             return self.overall_performance, complete_intervals
+
         elif self.track_instances:
             return self.overall_performance, self.instance_performances
+
         else:
             return self.overall_performance
 

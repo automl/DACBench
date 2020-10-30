@@ -109,7 +109,7 @@ class TestTimeTrackingWrapper(unittest.TestCase):
 
         self.assertTrue(
             np.array_equal(
-                np.round(overall_perf, decimals=2), np.round(overall, decimals=2),
+                np.round(overall_perf, decimals=2), np.round(overall, decimals=2)
             )
         )
 

@@ -95,6 +95,7 @@ class Action(object):
             )
         except conditions.Impossible:
             return None
+
         effects = []
         for eff in self.effects:
             eff.instantiate(
@@ -111,6 +112,7 @@ class Action(object):
             else:
                 cost = 1
             return PropositionalAction(name, precondition, effects, cost)
+
         else:
             return None
 

@@ -29,8 +29,7 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * Check installation method: is this a good/the best way to do it?
 * Think about OpenAI listing [Theresa]
 * Is python 3.9 a good idea?
-* Maybe use DynaQ for one of the examples to cover more bases
-* Make a baselines example
+* Maybe use DynaQ for one of the examples to cover more bases (for future benchmarks)
 * For plotting: maybe use pandas for data collection and plotting?
 * Get test coverage to 100%
 * Find the weird bug in performance tracking that logs twice

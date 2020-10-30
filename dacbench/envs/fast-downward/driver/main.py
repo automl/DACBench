@@ -46,6 +46,7 @@ def main():
         if not continue_execution:
             print("Driver aborting after {}".format(component))
             break
+
     # Exit with the exit code of the last component that ran successfully.
     # This means for example that if no plan was found, validate is not run,
     # and therefore the return code is that of the search.

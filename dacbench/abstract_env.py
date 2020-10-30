@@ -37,6 +37,7 @@ class AbstractEnv(gym.Env):
                     )
                     print("Tuple observation_spaces are currently not supported.")
                     raise KeyError
+
             else:
                 try:
                     self.observation_space = getattr(
@@ -60,6 +61,7 @@ class AbstractEnv(gym.Env):
                     "Either submit a predefined gym.space 'action_space' or an 'action_space_class' as well as a list of 'action_space_args' in the configuration"
                 )
                 raise KeyError
+
             except TypeError:
                 print("Tuple and Dict action spaces are currently not supported")
                 raise TypeError

@@ -55,6 +55,7 @@ class StateTrackingWrapper(Wrapper):
             "render_state_tracking",
         ]:
             return object.__getattribute__(self, name)
+
         else:
             return getattr(self.env, name)
 
@@ -114,6 +115,7 @@ class StateTrackingWrapper(Wrapper):
         if self.state_interval:
             complete_intervals = self.state_intervals + [self.current_states]
             return self.overall_states, complete_intervals
+
         else:
             return self.overall_states
 
@@ -192,8 +194,10 @@ class StateTrackingWrapper(Wrapper):
             canvas.draw()
         elif self.state_type == spaces.Dict:
             raise NotImplementedError
+
         elif self.state_type == spaces.Tuple:
             raise NotImplementedError
+
         elif (
             self.state_type == spaces.MultiDiscrete
             or self.state_type == spaces.MultiBinary
@@ -220,6 +224,7 @@ class StateTrackingWrapper(Wrapper):
             for i in range(state_length):
                 if state_length == 1:
                     continue
+
                 x = False
                 if i % dim == dim - 1:
                     x = True

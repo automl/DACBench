@@ -95,6 +95,8 @@ class AbstractBenchmark:
 
 
 # TODO: source!
+
+
 class objdict(dict):
     """
     Modified dict to make config changes more flexible
@@ -103,6 +105,7 @@ class objdict(dict):
     def __getattr__(self, name):
         if name in self:
             return self[name]
+
         else:
             raise AttributeError("No such attribute: " + name)
 

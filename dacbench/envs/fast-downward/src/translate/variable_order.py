@@ -167,6 +167,7 @@ class MaxDAG(object):
                 # there can be weights with a "done" entry in
                 # weight_to_nodes
                 continue
+
             done.add(min_elem)
             result.append(min_elem)
             for target, weight in self.weighted_graph[min_elem]:
@@ -174,6 +175,7 @@ class MaxDAG(object):
                     weight = weight % 100000
                     if weight == 0:
                         continue
+
                     old_in_weight = incoming_weights[target]
                     new_in_weight = old_in_weight - weight
                     incoming_weights[target] = new_in_weight

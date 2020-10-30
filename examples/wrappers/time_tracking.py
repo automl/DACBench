@@ -6,6 +6,8 @@ from dacbench.wrappers import EpisodeTimeWrapper
 
 
 # Helper function to flatten observation space
+
+
 def flatten(li):
     return [value for sublist in li for value in sublist]
 

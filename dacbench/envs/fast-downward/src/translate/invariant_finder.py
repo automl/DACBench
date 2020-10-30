@@ -51,12 +51,14 @@ class BalanceChecker(object):
     def add_inequality_preconds(self, action, reachable_action_params):
         if reachable_action_params is None or len(action.parameters) < 2:
             return action
+
         inequal_params = []
         combs = itertools.combinations(range(len(action.parameters)), 2)
         for pos1, pos2 in combs:
             for params in reachable_action_params[action]:
                 if params[pos1] == params[pos2]:
                     break
+
             else:
                 inequal_params.append((pos1, pos2))
 
@@ -76,6 +78,7 @@ class BalanceChecker(object):
                 action.effects,
                 action.cost,
             )
+
         else:
             return action
 
@@ -116,6 +119,7 @@ def find_invariants(task, reachable_action_params):
         if time.clock() - start_time > options.invariant_generation_max_time:
             print("Time limit reached, aborting invariant generation")
             return
+
         if candidate.check_balance(balance_checker, enqueue_func):
             yield candidate
 
@@ -131,6 +135,7 @@ def useful_groups(invariants, initial_facts):
     for atom in initial_facts:
         if isinstance(atom, pddl.Assign):
             continue
+
         for invariant in predicate_to_invariants.get(atom.predicate, ()):
             group_key = (invariant, tuple(invariant.get_parameters(atom)))
             if group_key not in nonempty_groups:

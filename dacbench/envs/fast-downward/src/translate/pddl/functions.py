@@ -7,6 +7,7 @@ class Function(object):
                 "Error: object fluents not supported\n"
                 + "(function %s has type %s)" % (name, type_name)
             )
+
         self.type_name = type_name
 
     def __str__(self):

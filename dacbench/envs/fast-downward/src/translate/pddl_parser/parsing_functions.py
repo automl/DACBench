@@ -73,6 +73,7 @@ def parse_condition_aux(alist, negated, type_dict, predicate_dict):
         if tag == "not":
             assert len(args) == 1
             return parse_condition_aux(args[0], not negated, type_dict, predicate_dict)
+
     elif tag in ("forall", "exists"):
         parameters = parse_typed_list(alist[1])
         args = alist[2:]
@@ -94,10 +95,13 @@ def parse_condition_aux(alist, negated, type_dict, predicate_dict):
 
     if tag == "and" and not negated or tag == "or" and negated:
         return pddl.Conjunction(parts)
+
     elif tag == "or" and not negated or tag == "and" and negated:
         return pddl.Disjunction(parts)
+
     elif tag == "forall" and not negated or tag == "exists" and negated:
         return pddl.UniversalCondition(parameters, parts)
+
     elif tag == "exists" and not negated or tag == "forall" and negated:
         return pddl.ExistentialCondition(parameters, parts)
 
@@ -115,6 +119,7 @@ def parse_literal(alist, type_dict, predicate_dict, negated=False):
 
     if negated:
         return pddl.NegatedAtom(pred_id, alist[1:])
+
     else:
         return pddl.Atom(pred_id, alist[1:])
 
@@ -130,6 +135,7 @@ def _get_predicate_id_and_arity(text, type_dict, predicate_dict):
 
     if the_type is None and the_predicate is None:
         raise SystemExit("Undeclared predicate: %s" % text)
+
     elif the_predicate is not None:
         if the_type is not None and not SEEN_WARNING_TYPE_PREDICATE_NAME_CLASH:
             msg = (
@@ -139,6 +145,7 @@ def _get_predicate_id_and_arity(text, type_dict, predicate_dict):
             print(msg, file=sys.stderr)
             SEEN_WARNING_TYPE_PREDICATE_NAME_CLASH = True
         return the_predicate.name, the_predicate.get_arity()
+
     else:
         assert the_type is not None
         return the_type.get_predicate_name(), 1
@@ -152,6 +159,7 @@ def parse_effects(alist, result, type_dict, predicate_dict):
     add_effect(rest_effect, result)
     if cost_eff:
         return cost_eff.effect
+
     else:
         return None
 
@@ -164,6 +172,7 @@ def add_effect(tmp_effect, result):
         for effect in tmp_effect.effects:
             add_effect(effect, result)
         return
+
     else:
         parameters = []
         condition = pddl.Truth()
@@ -203,21 +212,25 @@ def parse_effect(alist, type_dict, predicate_dict):
         return pddl.ConjunctiveEffect(
             [parse_effect(eff, type_dict, predicate_dict) for eff in alist[1:]]
         )
+
     elif tag == "forall":
         assert len(alist) == 3
         parameters = parse_typed_list(alist[1])
         effect = parse_effect(alist[2], type_dict, predicate_dict)
         return pddl.UniversalEffect(parameters, effect)
+
     elif tag == "when":
         assert len(alist) == 3
         condition = parse_condition(alist[1], type_dict, predicate_dict)
         effect = parse_effect(alist[2], type_dict, predicate_dict)
         return pddl.ConditionalEffect(condition, effect)
+
     elif tag == "increase":
         assert len(alist) == 3
         assert alist[1] == ["total-cost"]
         assignment = parse_assignment(alist)
         return pddl.CostEffect(assignment)
+
     else:
         # We pass in {} instead of type_dict here because types must
         # be static predicates, so cannot be the target of an effect.
@@ -228,10 +241,13 @@ def parse_expression(exp):
     if isinstance(exp, list):
         functionsymbol = exp[0]
         return pddl.PrimitiveNumericExpression(functionsymbol, exp[1:])
+
     elif exp.replace(".", "").isdigit():
         return pddl.NumericConstant(float(exp))
+
     elif exp[0] == "-":
         raise ValueError("Negative numbers are not supported")
+
     else:
         return pddl.PrimitiveNumericExpression(exp, [])
 
@@ -243,8 +259,10 @@ def parse_assignment(alist):
     exp = parse_expression(alist[2])
     if op == "=":
         return pddl.Assign(head, exp)
+
     elif op == "increase":
         return pddl.Increase(head, exp)
+
     else:
         assert False, "Assignment operator not supported."
 
@@ -280,10 +298,12 @@ def parse_action(alist, type_dict, predicate_dict):
             cost = parse_effects(effect_list, eff, type_dict, predicate_dict)
         except ValueError as e:
             raise SystemExit("Error in Action %s\nReason: %s." % (name, e))
+
     for rest in iterator:
         assert False, rest
     if eff:
         return pddl.Action(name, parameters, len(parameters), precondition, eff, cost)
+
     else:
         return None
 
@@ -378,11 +398,13 @@ def parse_domain_pddl(domain_pddl):
         if field not in correct_order:
             first_action = opt
             break
+
         if field in seen_fields:
             raise SystemExit(
                 "Error in domain specification\n"
                 + "Reason: two '%s' specifications." % field
             )
+
         if seen_fields and correct_order.index(seen_fields[-1]) > correct_order.index(
             field
         ):
@@ -413,10 +435,12 @@ def parse_domain_pddl(domain_pddl):
     set_supertypes(the_types)
     yield requirements
     yield the_types
+
     type_dict = dict((type.name, type) for type in the_types)
     yield type_dict
     yield constants
     yield the_predicates
+
     predicate_dict = dict((pred.name, pred) for pred in the_predicates)
     yield predicate_dict
     yield the_functions
@@ -448,6 +472,7 @@ def parse_task_pddl(task_pddl, type_dict, predicate_dict):
     problem_line = next(iterator)
     assert problem_line[0] == "problem" and len(problem_line) == 2
     yield problem_line[1]
+
     domain_line = next(iterator)
     assert domain_line[0] == ":domain" and len(domain_line) == 2
     yield domain_line[1]
@@ -463,9 +488,11 @@ def parse_task_pddl(task_pddl, type_dict, predicate_dict):
 
     if objects_opt[0] == ":objects":
         yield parse_typed_list(objects_opt[1:])
+
         init = next(iterator)
     else:
         yield []
+
         init = objects_opt
 
     assert init[0] == ":init"
@@ -481,11 +508,13 @@ def parse_task_pddl(task_pddl, type_dict, predicate_dict):
                 raise SystemExit(
                     "Error in initial state specification\n" + "Reason: %s." % e
                 )
+
             if not isinstance(assignment.expression, pddl.NumericConstant):
                 raise SystemExit(
                     "Illegal assignment in initial state "
                     + "specification:\n%s" % assignment
                 )
+
             if assignment.fluent in initial_assignments:
                 prev = initial_assignments[assignment.fluent]
                 if assignment.expression == prev.expression:
@@ -499,6 +528,7 @@ def parse_task_pddl(task_pddl, type_dict, predicate_dict):
                         + "Reason: conflicting assignment for "
                         + "%s." % assignment.fluent
                     )
+
             else:
                 initial_assignments[assignment.fluent] = assignment
                 initial.append(assignment)
@@ -538,6 +568,7 @@ def check_atom_consistency(
             "Error in initial state specification\n"
             + "Reason: %s is true and false." % atom
         )
+
     if atom in same_truth_value:
         if not atom_is_true:
             atom = atom.negate()

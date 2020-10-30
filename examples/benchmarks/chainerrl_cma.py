@@ -4,6 +4,8 @@ from dacbench.benchmarks import CMAESBenchmark
 
 
 # Helper method to flatten observation space
+
+
 def flatten(li):
     return [value for sublist in li for value in sublist]
 

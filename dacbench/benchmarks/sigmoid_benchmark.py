@@ -91,6 +91,7 @@ class SigmoidBenchmark(AbstractBenchmark):
                             f.append(float(row[i]))
                         except Exception:
                             continue
+
                 if not len(f) == 0:
                     self.config.instance_set.append(f)
 

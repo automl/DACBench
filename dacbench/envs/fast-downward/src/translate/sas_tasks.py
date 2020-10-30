@@ -262,6 +262,7 @@ class SASOperator:
         # Return a sorted and uniquified version of pre_post. We would
         # like to just use sorted(set(pre_post)), but this fails because
         # the effect conditions are a list and hence not hashable.
+
         def tuplify(entry):
             var, pre, post, cond = entry
             return var, pre, post, tuple(cond)

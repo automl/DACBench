@@ -55,6 +55,7 @@ def _get_preexec_function(time_limit, memory_limit):
 
     if time_limit is None and memory_limit is None:
         return None
+
     else:
         return set_limits
 
@@ -68,6 +69,7 @@ def check_call(nick, cmd, stdin=None, time_limit=None, memory_limit=None):
     if stdin:
         with open(stdin) as stdin_file:
             return subprocess.check_call(cmd, stdin=stdin_file, **kwargs)
+
     else:
         return subprocess.check_call(cmd, **kwargs)
 

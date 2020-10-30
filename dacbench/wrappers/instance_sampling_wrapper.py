@@ -22,6 +22,7 @@ class InstanceSamplingWrapper(Wrapper):
     def __getattribute__(self, name):
         if name in ["sampling_function", "env", "fit_dist", "reset"]:
             return object.__getattribute__(self, name)
+
         else:
             return getattr(self.env, name)
 
