@@ -1,6 +1,6 @@
 from chainerrl import wrappers
 import matplotlib.pyplot as plt
-from example_utils import train_chainer, make_chainer_dqn
+from examples.example_utils import train_chainer, make_chainer_dqn
 from dacbench.benchmarks import FastDownwardBenchmark
 from dacbench.wrappers import StateTrackingWrapper
 

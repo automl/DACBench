@@ -16,7 +16,7 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
   - Intro to RL Notebook using our envs
   - Make Basic Demo less basic and maybe into a Collab
   - Make visuals nicer
-  - Have an "execute and forget" run_DACBench() function (including result plotting, maybe even rankings)
+  - Provide basline comparisons like optimal static and random policy as data to load into plots
   - Maintain examples regularly and improve readability & diversity
   - Maybe use lazy importing for examples to prevent so many packages needing to be installed
 * Backend performance:
@@ -34,3 +34,4 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * For plotting: maybe use pandas for data collection and plotting?
 * Get test coverage to 100%
 * Find the weird bug in performance tracking that logs twice
+* Performance tracking example

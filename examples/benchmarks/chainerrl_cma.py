@@ -1,5 +1,5 @@
 import numpy as np
-from example_utils import make_chainer_a3c
+from examples.example_utils import make_chainer_a3c
 from dacbench.benchmarks import CMAESBenchmark
 
 
@@ -22,7 +22,7 @@ action_size = env.action_space.low.size
 agent = make_chainer_a3c(obs_size, action_size)
 
 # Training
-num_episodes = 10
+num_episodes = 3
 for i in range(num_episodes):
     # Reset environment to begin episode
     state = env.reset()

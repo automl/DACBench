@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from chainerrl import wrappers
-from example_utils import train_chainer, make_chainer_dqn
+from examples.example_utils import train_chainer, make_chainer_dqn
 from dacbench.benchmarks import LubyBenchmark
 from dacbench.wrappers import ActionFrequencyWrapper
 

@@ -17,9 +17,7 @@ tune.register_env("fd", make_fast_downward)
 # Experiment configuration
 config = {
     "env": "fd",
-    "env_config": {
-        "seed": 0,
-    },
+    "env_config": {"seed": 0,},
 }
 stop = {"training_iteration": 10}
 

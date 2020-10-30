@@ -9,8 +9,10 @@ import numpy as np
 from collections import deque
 from cma.evolution_strategy import CMAEvolutionStrategy
 import threading
-
+import warnings
 from dacbench import AbstractEnv
+
+warnings.filterwarnings("ignore")
 
 
 def _norm(x):

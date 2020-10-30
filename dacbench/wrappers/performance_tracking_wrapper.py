@@ -1,6 +1,10 @@
 from gym import Wrapper
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sb
+
+sb.set_style("darkgrid")
+current_palette = list(sb.color_palette())
 
 
 class PerformanceTrackingWrapper(Wrapper):
