@@ -4,7 +4,24 @@ from scipy.stats import norm
 
 
 class InstanceSamplingWrapper(Wrapper):
+    """
+    Wrapper to sample a new isntance each training episode.
+    Instances can either be sampled using a given method or a distribution infered from a given list of instances.
+    """
     def __init__(self, env, sampling_function=None, instances=None):
+        """
+        Initialize wrapper
+        Either sampling_function or instances must be given
+
+        Parameters
+        -------
+        env : gym.Env
+            Environment to wrap
+        sampling_function : function
+            Function to sample instances from
+        instances : list
+            List of instances to infer distribution from
+        """
         super(InstanceSamplingWrapper, self).__init__(env)
         if sampling_function:
             self.sampling_function = sampling_function
@@ -14,14 +31,38 @@ class InstanceSamplingWrapper(Wrapper):
             raise Exception("No distribution to sample from given")
 
     def __setattr__(self, name, value):
+        """
+        Set attribute in wrapper if available and in env if not
+
+        Parameters
+        ----------
+        name : str
+            Attribute to set
+        value
+            Value to set attribute to
+        """
         if name in ["sampling_function", "env", "fit_dist", "reset"]:
             object.__setattr__(self, name, value)
         else:
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
+        """
+        Get attribute value of wrapper if available and of env if not
+
+        Parameters
+        ----------
+        name : str
+            Attribute to get
+
+        Returns
+        -------
+        value
+            Value of given name
+        """
         if name in ["sampling_function", "env", "fit_dist", "reset"]:
             return object.__getattribute__(self, name)
+
         else:
             return getattr(self.env, name)
 

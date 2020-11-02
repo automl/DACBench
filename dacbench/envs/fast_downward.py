@@ -30,11 +30,18 @@ class StateType(Enum):
 
 
 class FastDownwardEnv(AbstractEnv):
+    """
+    Environment to control Solver Heuristics of FastDownward
+    """
     def __init__(self, config):
         """
-        Initialize environment
-        """
+        Initialize FD Env
 
+        Parameters
+        -------
+        config : objdict
+            Environment configuration
+        """
         super(FastDownwardEnv, self).__init__(config)
         self._heuristic_state_features = [
             "Average Value",  # 'Dead Ends Reliable',
@@ -122,6 +129,21 @@ class FastDownwardEnv(AbstractEnv):
 
     @staticmethod
     def _save_div(a, b):
+        """
+        Helper method for safe division
+
+        Parameters
+        ----------
+        a : list or np.array
+            values to be divided
+        b : list or np.array
+            values to divide by
+
+        Returns
+        -------
+        np.array
+            Division result
+        """
         return np.divide(a, b, out=np.zeros_like(a), where=b != 0)
 
     def send_msg(self, msg: bytes):
@@ -359,14 +381,24 @@ class FastDownwardEnv(AbstractEnv):
             self.socket = None
 
     def close(self):
-        """Needs to "kill" the environment"""
+        """
+        Close Env
+
+        Returns
+        -------
+        bool
+            Closing confirmation
+        """
         self.kill_connection()
         return True
 
     def render(self, mode: str = "human") -> None:
         """
         Required by gym.Env but not implemented
-        :param mode:
-        :return: None
+
+        Parameters
+        -------
+        mode : str
+            Rendering mode
         """
         pass

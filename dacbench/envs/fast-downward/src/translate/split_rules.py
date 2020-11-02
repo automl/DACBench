@@ -38,6 +38,7 @@ def split_rule(rule, name_generator):
             if arg[0] == "?":
                 important_conditions.append(cond)
                 break
+
         else:
             trivial_conditions.append(cond)
 
@@ -71,4 +72,5 @@ def split_into_binary_rules(rule, name_generator):
     if len(rule.conditions) <= 1:
         rule.type = "project"
         return [rule]
+
     return greedy_join.greedy_join(rule, name_generator)

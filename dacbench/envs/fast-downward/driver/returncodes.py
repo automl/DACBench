@@ -80,6 +80,7 @@ def generate_portfolio_exitcode(exitcodes):
         print("Error: Unexpected exit codes: {}".format(unrecoverable_codes))
         if len(unrecoverable_codes) == 1:
             return (unrecoverable_codes[0], False)
+
         else:
             return (SEARCH_CRITICAL_ERROR, False)
 
@@ -87,10 +88,13 @@ def generate_portfolio_exitcode(exitcodes):
     if SUCCESS in exitcodes:
         if SEARCH_OUT_OF_MEMORY in exitcodes and SEARCH_OUT_OF_TIME in exitcodes:
             return (SEARCH_PLAN_FOUND_AND_OUT_OF_MEMORY_AND_TIME, True)
+
         elif SEARCH_OUT_OF_MEMORY in exitcodes:
             return (SEARCH_PLAN_FOUND_AND_OUT_OF_MEMORY, True)
+
         elif SEARCH_OUT_OF_TIME in exitcodes:
             return (SEARCH_PLAN_FOUND_AND_OUT_OF_TIME, True)
+
         else:
             return (SUCCESS, True)
 
@@ -102,8 +106,10 @@ def generate_portfolio_exitcode(exitcodes):
     # No plan was found due to hitting resource limits.
     if SEARCH_OUT_OF_MEMORY in exitcodes and SEARCH_OUT_OF_TIME in exitcodes:
         return (SEARCH_OUT_OF_MEMORY_AND_TIME, False)
+
     elif SEARCH_OUT_OF_MEMORY in exitcodes:
         return (SEARCH_OUT_OF_MEMORY, False)
+
     elif SEARCH_OUT_OF_TIME in exitcodes:
         return (SEARCH_OUT_OF_TIME, False)
 

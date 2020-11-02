@@ -10,6 +10,7 @@ def cartesian_product(sequences):
     # but that does not produce the same results
     if not sequences:
         yield []
+
     else:
         temp = list(cartesian_product(sequences[1:]))
         for item in sequences[0]:
@@ -25,6 +26,7 @@ def get_peak_memory_in_kb():
                 parts = line.split()
                 if parts[0] == "VmPeak:":
                     return int(parts[1])
+
     except IOError:
         pass
     raise Warning("warning: could not determine peak memory")

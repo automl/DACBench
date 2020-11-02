@@ -111,4 +111,5 @@ def FINAL_CONFIG_BUILDER(successful_args):
             )
             new_args[pos + 1] = new_search
             break
+
     return new_args

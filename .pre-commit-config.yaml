@@ -10,4 +10,3 @@ repos:
     hooks:
     - id: flake8
       exclude: dacbench/envs/fast-downward
-

@@ -7,6 +7,14 @@ class AbstractBenchmark:
     """
 
     def __init__(self, config_path=None):
+        """
+        Initialize benchmark class
+
+        Parameters
+        -------
+        config_path : str
+            Path to load configuration from (if read from file)
+        """
         if config_path:
             self.config_path = config_path
             self.read_config_file(self.config_path)
@@ -49,6 +57,14 @@ class AbstractBenchmark:
             self.config = objdict(json.load(fp))
 
     def get_environment(self):
+        """
+        Make benchmark environment
+
+        Returns
+        -------
+        env : gym.Env
+            Benchmark environment
+        """
         raise NotImplementedError
 
     def set_seed(self, seed):
@@ -94,7 +110,7 @@ class AbstractBenchmark:
         self.config["observation_space_type"] = data_type
 
 
-# TODO: source!
+# This code is taken from https://goodcode.io/articles/python-dict-object/
 class objdict(dict):
     """
     Modified dict to make config changes more flexible

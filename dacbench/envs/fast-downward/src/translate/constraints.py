@@ -7,6 +7,7 @@ import itertools
 
 class NegativeClause(object):
     # disjunction of inequalities
+
     def __init__(self, parts):
         self.parts = parts
         assert len(parts)
@@ -19,6 +20,7 @@ class NegativeClause(object):
         for part in self.parts:
             if part[0] != part[1]:
                 return True
+
         return False
 
     def apply_mapping(self, m):
@@ -68,6 +70,7 @@ class Assignment(object):
                 self.consistent = False
                 self.mapping = None
                 return
+
             if constants:
                 set_val = constants[0]
             else:
@@ -111,6 +114,7 @@ class ConstraintSystem(object):
             clause = neg_clause.apply_mapping(mapping)
             if not clause.is_satisfiable():
                 return False
+
         return True
 
     def _combine_assignments(self, assignments):
@@ -159,6 +163,8 @@ class ConstraintSystem(object):
             combined = self._combine_assignments(assignments)
             if not combined.is_consistent():
                 continue
+
             if self._all_clauses_satisfiable(combined):
                 return True
+
         return False

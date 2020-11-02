@@ -23,6 +23,7 @@ class NumericConstant(FunctionalExpression):
     def __init__(self, value):
         if value != int(value):
             raise ValueError("Fractional numbers are not supported")
+
         self.value = int(value)
 
     def __eq__(self, other):
@@ -75,6 +76,7 @@ class PrimitiveNumericExpression(FunctionalExpression):
             if isinstance(fact, FunctionAssignment):
                 if fact.fluent == pne:
                     return fact.expression
+
         assert False, "Could not find instantiation for PNE!"
 
 
@@ -100,6 +102,7 @@ class FunctionAssignment(object):
             or isinstance(self.expression, NumericConstant)
         ):
             raise ValueError("Cannot instantiate assignment: not normalized")
+
         # We know that this assignment is a cost effect of an action (for initial state
         # assignments, "instantiate" is not called). Hence, we know that the fluent is
         # the 0-ary "total-cost" which does not need to be instantiated

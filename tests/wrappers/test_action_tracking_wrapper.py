@@ -174,3 +174,23 @@ class TestActionTrackingWrapper(unittest.TestCase):
         wrapped.step([1, 0])
         img = wrapped.render_action_tracking()
         self.assertTrue(img.shape[-1] == 3)
+
+        class large_action_env:
+            def __init__(self):
+                self.action_space = gym.spaces.Box(low=np.zeros(15), high=np.ones(15))
+                self.observation_space = gym.spaces.Discrete(2)
+                self.reward_range = (1, 2)
+                self.metadata = {}
+
+            def reset(self):
+                return 1
+
+            def step(self, action):
+                return 1, 1, 1, 1
+
+        env = large_action_env()
+        wrapped = ActionFrequencyWrapper(env)
+        wrapped.reset()
+        wrapped.step(0.5 * np.ones(15))
+        img = wrapped.render_action_tracking()
+        self.assertTrue(img.shape[-1] == 3)

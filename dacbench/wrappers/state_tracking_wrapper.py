@@ -10,9 +10,22 @@ current_palette = list(sb.color_palette())
 
 
 class StateTrackingWrapper(Wrapper):
-    """ Wrapper to track state changed over time """
+    """
+    Wrapper to track state changed over time
+    Includes interval mode that returns states in lists of len(interval) instead of one long list.
+    """
 
     def __init__(self, env, state_interval=None):
+        """
+        Initialize wrapper
+
+        Parameters
+        -------
+        env : gym.Env
+            Environment to wrap
+        state_interval : int
+            If not none, mean in given intervals is tracked, too
+        """
         super(StateTrackingWrapper, self).__init__(env)
         self.state_interval = state_interval
         self.overall_states = []
@@ -23,6 +36,16 @@ class StateTrackingWrapper(Wrapper):
         self.state_type = type(env.observation_space)
 
     def __setattr__(self, name, value):
+        """
+        Set attribute in wrapper if available and in env if not
+
+        Parameters
+        ----------
+        name : str
+            Attribute to set
+        value
+            Value to set attribute to
+        """
         if name in [
             "state_interval",
             "overall_states",
@@ -41,6 +64,19 @@ class StateTrackingWrapper(Wrapper):
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
+        """
+        Get attribute value of wrapper if available and of env if not
+
+        Parameters
+        ----------
+        name : str
+            Attribute to get
+
+        Returns
+        -------
+        value
+            Value of given name
+        """
         if name in [
             "state_interval",
             "overall_states",
@@ -55,6 +91,7 @@ class StateTrackingWrapper(Wrapper):
             "render_state_tracking",
         ]:
             return object.__getattribute__(self, name)
+
         else:
             return getattr(self.env, name)
 
@@ -114,6 +151,7 @@ class StateTrackingWrapper(Wrapper):
         if self.state_interval:
             complete_intervals = self.state_intervals + [self.current_states]
             return self.overall_states, complete_intervals
+
         else:
             return self.overall_states
 
@@ -125,7 +163,6 @@ class StateTrackingWrapper(Wrapper):
         -------
         np.array
             RBG data of state tracking
-
         """
 
         def plot_single(ax=None, index=None, title=None, x=False, y=False):
@@ -192,8 +229,10 @@ class StateTrackingWrapper(Wrapper):
             canvas.draw()
         elif self.state_type == spaces.Dict:
             raise NotImplementedError
+
         elif self.state_type == spaces.Tuple:
             raise NotImplementedError
+
         elif (
             self.state_type == spaces.MultiDiscrete
             or self.state_type == spaces.MultiBinary
@@ -220,6 +259,7 @@ class StateTrackingWrapper(Wrapper):
             for i in range(state_length):
                 if state_length == 1:
                     continue
+
                 x = False
                 if i % dim == dim - 1:
                     x = True

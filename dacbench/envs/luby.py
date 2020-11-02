@@ -14,12 +14,22 @@ from dacbench import AbstractEnv
 
 # Instance IDEA 1: shift luby seq -> feat is sum of skipped action values
 # Instance IDEA 2: "Wiggle" luby i.e. luby(t + N(0, 0.1)) -> feat is sampled value
+
+
 class LubyEnv(AbstractEnv):
     """
     Environment to learn Luby Sequence
     """
 
     def __init__(self, config) -> None:
+        """
+        Initialize Luby Env
+
+        Parameters
+        -------
+        config : objdict
+            Environment configuration
+        """
         super().__init__(config)
         self.rng = np.random.RandomState(config["seed"])
         self.logger = None
@@ -57,8 +67,7 @@ class LubyEnv(AbstractEnv):
         Returns
         -------
         np.array, float, bool, dict
-            state, reward, done, metainfo
-
+            state, reward, done, info
         """
         done = super(LubyEnv, self).step_()
         prev_state = self._state.copy()
@@ -146,6 +155,7 @@ class LubyEnv(AbstractEnv):
         return True
 
     # TODO: this should render!
+
     def render(self, mode: str = "human") -> None:
         """
         Render env in human mode
@@ -157,6 +167,7 @@ class LubyEnv(AbstractEnv):
         """
         if mode != "human":
             raise NotImplementedError
+
         pass
 
 
@@ -165,6 +176,7 @@ def luby_gen(i):
     for k in range(1, 33):
         if i == ((1 << k) - 1):
             yield 1 << (k - 1)
+
     for k in range(1, 9999):
         if 1 << (k - 1) <= i < (1 << k) - 1:
             for x in luby_gen(i - (1 << (k - 1)) + 1):

@@ -44,8 +44,8 @@ def verify_layering_condition(axioms, axiom_init, axiom_layers):
             assert literal.negate() not in literals_in_heads, literal
     else:
         print("Verifying 1... [skipped]")
-        # We currently violate this condition because we introduce
-        # "negated axioms". See issue454 and issue453.
+    # We currently violate this condition because we introduce
+    # "negated axioms". See issue454 and issue453.
 
     # 2. A variable has a defined layer iff it appears in a head.
     #    (This is stricter than it needs to be; we could allow
@@ -177,6 +177,7 @@ def compute_axiom_layers(axioms, axiom_init):
             # or at least have some kind of special status that marks
             # them as "not the primary axioms".
             continue
+
         u = axiom.effect.positive()
         for condition in axiom.condition:
             v = condition.positive()
@@ -221,6 +222,7 @@ def compute_axiom_layers(axioms, axiom_init):
             # non-stratifiable.
             if weight == 1:
                 raise ValueError("Cyclic dependencies in axioms; cannot stratify.")
+
         else:
             old_weight = scc_weighted_depends_on[scc_u_id].get(scc_v_id, -1)
             if weight > old_weight:
@@ -334,8 +336,10 @@ def simplify(axioms):
     for axiom in axioms:
         if id(axiom) in axioms_to_skip:
             continue  # Required to keep one of multiple identical axioms.
+
         if not axiom.condition:  # empty condition: dominates everything
             return [axiom]
+
         literals = iter(axiom.condition)
         dominated_axioms = axioms_by_literal[next(literals)]
         for literal in literals:
@@ -366,6 +370,7 @@ def negate(axioms):
             # empty condition, so it is always true and its negation
             # is always false.
             return []
+
         elif len(condition) == 1:  # Handle easy special case quickly.
             new_literal = condition[0].negate()
             for result_axiom in result:

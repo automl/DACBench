@@ -115,6 +115,7 @@ def run_sat_config(
     run_time = compute_run_time(timeout, configs, pos)
     if run_time <= 0:
         return None
+
     _, args_template = configs[pos]
     args = list(args_template)
     adapt_args(args, search_cost_type, heuristic_cost_type, plan_manager)
@@ -164,12 +165,14 @@ def run_sat(
                 return
 
             yield exitcode
+
             if exitcode == returncodes.SEARCH_UNSOLVABLE:
                 return
 
             if exitcode == returncodes.SUCCESS:
                 if plan_manager.abort_portfolio_after_first_plan():
                     return
+
                 configs_next_round.append((relative_time, args))
                 if (
                     not changed_cost_types
@@ -195,8 +198,10 @@ def run_sat(
                         return
 
                     yield exitcode
+
                     if exitcode == returncodes.SEARCH_UNSOLVABLE:
                         return
+
                 if final_config_builder:
                     print("Build final config.")
                     final_config = final_config_builder(args)

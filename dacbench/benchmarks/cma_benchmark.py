@@ -12,10 +12,7 @@ INPUT_DIM = 10
 CMAES_DEFAULTS = objdict(
     {
         "action_space_class": "Box",
-        "action_space_args": [
-            np.array([0]),
-            np.array([10 ** 4]),
-        ],
+        "action_space_args": [np.array([0]), np.array([10])],
         "observation_space_class": "Dict",
         "observation_space_type": None,
         "observation_space_args": [
@@ -36,7 +33,7 @@ CMAES_DEFAULTS = objdict(
                 ),
             }
         ],
-        "reward_range": (-(10 ** 9), 10 ** 9),
+        "reward_range": (-(10 ** 9), 0),
         "cutoff": 1e6,
         "hist_length": HISTORY_LENGTH,
         "popsize": 10,
@@ -52,6 +49,14 @@ class CMAESBenchmark(AbstractBenchmark):
     """
 
     def __init__(self, config_path=None):
+        """
+        Initialize CMA Benchmark
+
+        Parameters
+        -------
+        config_path : str
+            Path to config file (optional)
+        """
         super(CMAESBenchmark, self).__init__(config_path)
         if not self.config:
             self.config = objdict(CMAES_DEFAULTS.copy())
@@ -98,7 +103,19 @@ class CMAESBenchmark(AbstractBenchmark):
                 self.config["instance_set"][int(row["ID"])] = instance
 
     def get_benchmark(self, seed=0):
-        """Get benchmark from the LTO paper"""
+        """
+        Get benchmark from the LTO paper
+
+        Parameters
+        -------
+        seed : int
+            Environment seed
+
+        Returns
+        -------
+        env : CMAESEnv
+            CMAES environment
+        """
         self.config = objdict(CMAES_DEFAULTS.copy())
         self.config.seed = seed
         self.read_instance_set()

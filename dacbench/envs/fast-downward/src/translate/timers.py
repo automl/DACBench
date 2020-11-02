@@ -33,6 +33,7 @@ def timing(text, block=False):
         print("%s..." % text, end=" ")
     sys.stdout.flush()
     yield
+
     if block:
         print("%s: %s" % (text, timer))
     else:

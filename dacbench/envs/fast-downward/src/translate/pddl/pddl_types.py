@@ -56,6 +56,7 @@ class TypedObject(object):
         if self.name not in type_map:
             type_map[self.name] = self.type_name
             return self
+
         for counter in itertools.count(1):
             new_name = self.name + str(counter)
             if new_name not in type_map:

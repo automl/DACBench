@@ -44,12 +44,14 @@ def find_unique_variables(action, invariant):
             if new_name not in params:
                 inv_vars.append(new_name)
                 break
+
     return inv_vars
 
 
 def get_literals(condition):
     if isinstance(condition, pddl.Literal):
         yield condition
+
     elif isinstance(condition, pddl.Conjunction):
         for literal in condition.parts:
             yield literal
@@ -157,6 +159,7 @@ class InvariantPart:
         allowed_omissions = len(other_literal.args) - len(self.order)
         if allowed_omissions not in (0, 1):
             return []
+
         own_parameters = self.get_parameters(own_literal)
         arg_to_ordered_pos = invert_list(own_parameters)
         other_arg_to_pos = invert_list(other_literal.args)
@@ -172,6 +175,7 @@ class InvariantPart:
                 and not allowed_omissions
             ):
                 return []
+
             if len_diff:
                 own_positions.append(-1)
                 allowed_omissions = 0
@@ -242,8 +246,9 @@ class Invariant:
     def get_covering_assignments(self, parameters, atom):
         part = self.predicate_to_part[atom.predicate]
         return [part.get_assignment(parameters, atom)]
-        # if there were more parts for the same predicate the list
-        # contained more than one element
+
+    # if there were more parts for the same predicate the list
+    # contained more than one element
 
     def check_balance(self, balance_checker, enqueue_func):
         # Check balance for this hypothesis.
@@ -254,8 +259,10 @@ class Invariant:
             heavy_action = balance_checker.get_heavy_action(action)
             if self.operator_too_heavy(heavy_action):
                 return False
+
             if self.operator_unbalanced(action, enqueue_func):
                 return False
+
         return True
 
     def operator_too_heavy(self, h_action):
@@ -285,6 +292,7 @@ class Invariant:
             )
             if system.is_solvable():
                 return True
+
         return False
 
     def operator_unbalanced(self, action, enqueue_func):
@@ -301,6 +309,7 @@ class Invariant:
                 action, eff, del_effects, inv_vars, enqueue_func
             ):
                 return True
+
         return False
 
     def minimal_covering_renamings(self, action, add_effect, inv_vars):
@@ -406,6 +415,7 @@ class Invariant:
                 if not implies_system:
                     still_unbalanced.append(renaming)
                     continue
+
                 new_sys = new_sys.combine(implies_system)
             if not new_sys.is_solvable():
                 still_unbalanced.append(renaming)
@@ -429,10 +439,12 @@ class Invariant:
             for match in lhs_by_pred[literal.predicate]:
                 if match.negated != literal.negated:
                     continue
+
                 else:
                     a = constraints.Assignment(list(zip(literal.args, match.args)))
                     poss_assignments.append(a)
             if not poss_assignments:
                 return None
+
             implies_system.add_assignment_disjunction(poss_assignments)
         return implies_system

@@ -71,6 +71,7 @@ class GroupCoverQueue:
                 if len(candidate) == self.max_size:
                     self.top = candidate
                     return
+
                 self.groups_by_size[len(candidate)].append(candidate)
             self.max_size -= 1
 

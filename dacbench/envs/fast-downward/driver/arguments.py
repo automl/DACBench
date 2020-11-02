@@ -155,6 +155,7 @@ class RawHelpFormatter(argparse.HelpFormatter):
         """Show explicit help for remaining args instead of "..."."""
         if action.nargs == argparse.REMAINDER:
             return "INPUT_FILE1 [INPUT_FILE2] [COMPONENT_OPTION ...]"
+
         else:
             return argparse.HelpFormatter._format_args(self, action, default_metavar)
 
@@ -192,6 +193,7 @@ def _split_off_filenames(planner_args):
             # to support this later.
             if arg.startswith("-") and arg != "-":
                 break
+
             num_filenames += 1
     return planner_args[:num_filenames], planner_args[num_filenames:]
 

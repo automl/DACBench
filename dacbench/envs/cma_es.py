@@ -9,8 +9,10 @@ import numpy as np
 from collections import deque
 from cma.evolution_strategy import CMAEvolutionStrategy
 import threading
-
+import warnings
 from dacbench import AbstractEnv
+
+warnings.filterwarnings("ignore")
 
 
 def _norm(x):
@@ -18,8 +20,21 @@ def _norm(x):
 
 
 # IDEA: if we ask cma instead of ask_eval, we could make this parallel
+
+
 class CMAESEnv(AbstractEnv):
+    """
+    Environment to control the step size of CMA-ES
+    """
     def __init__(self, config):
+        """
+        Initialize CMA Env
+
+        Parameters
+        -------
+        config : objdict
+            Environment configuration
+        """
         super(CMAESEnv, self).__init__(config)
         self.b = None
         self.bounds = [None, None]
@@ -52,8 +67,7 @@ class CMAESEnv(AbstractEnv):
         Returns
         -------
         np.array, float, bool, dict
-            state, reward, done, metainfo
-
+            state, reward, done, info
         """
         done = super(CMAESEnv, self).step_()
         self.history.append([self.f_difference, self.velocity])
@@ -81,7 +95,7 @@ class CMAESEnv(AbstractEnv):
         self.cur_loc = self.es.best.x
         self.cur_sigma = self.es.sigma
         self.cur_obj_val = self.es.best.f
-        self.fbest = max(self.reward_range[1], min(self.reward_range[0], self.fbest))
+        self.fbest = min(self.reward_range[1], max(self.reward_range[0], self.fbest))
         return self.get_state(), -self.fbest, done, {}
 
     def reset(self):
@@ -91,7 +105,7 @@ class CMAESEnv(AbstractEnv):
         Returns
         -------
         np.array
-            state
+            Environment state
         """
         super(CMAESEnv, self).reset_()
         self.history.clear()
@@ -123,6 +137,14 @@ class CMAESEnv(AbstractEnv):
         return self.get_state()
 
     def close(self):
+        """
+        No additional cleanup necessary
+
+        Returns
+        -------
+        bool
+            Cleanup flag
+        """
         return True
 
     def render(self, mode: str = "human"):
@@ -136,6 +158,7 @@ class CMAESEnv(AbstractEnv):
         """
         if mode != "human":
             raise NotImplementedError
+
         pass
 
     def get_default_state(self):
@@ -145,7 +168,7 @@ class CMAESEnv(AbstractEnv):
         Returns
         -------
         dict
-            state
+            Environment state
 
         """
         past_obj_val_deltas = []

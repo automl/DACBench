@@ -1,11 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from example_utils import make_chainer_a3c, train_chainer
+from examples.example_utils import make_chainer_a3c, train_chainer
 from dacbench.benchmarks import CMAESBenchmark
 from dacbench.wrappers import EpisodeTimeWrapper
 
 
 # Helper function to flatten observation space
+
+
 def flatten(li):
     return [value for sublist in li for value in sublist]
 

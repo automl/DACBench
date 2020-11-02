@@ -148,8 +148,10 @@ def _get_lama(**kwargs):
                          ],repeat_last=true,continue_on_fail=true)""",
         "--always",
     ]
-    # Append --always to be on the safe side if we want to append
-    # additional options later.
+
+
+# Append --always to be on the safe side if we want to append
+# additional options later.
 
 
 ALIASES["seq-sat-lama-2011"] = _get_lama(pref="true")

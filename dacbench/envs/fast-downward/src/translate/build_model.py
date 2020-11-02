@@ -12,11 +12,7 @@ from functools import reduce
 
 
 def convert_rules(prog):
-    RULE_TYPES = {
-        "join": JoinRule,
-        "product": ProductRule,
-        "project": ProjectRule,
-    }
+    RULE_TYPES = {"join": JoinRule, "product": ProductRule, "project": ProjectRule}
     result = []
     for rule in prog.rules:
         RuleType = RULE_TYPES[rule.type]
@@ -165,6 +161,7 @@ class ProductRule(BuildRule):
         for pos, cond in enumerate(self.conditions):
             if pos == cond_index:
                 continue
+
             atoms = self.atoms_by_index[pos]
             assert atoms, "if we have no atoms, this should never be called"
             factor = [self._get_bindings(atom, cond) for atom in atoms]
@@ -247,6 +244,7 @@ class LeafGenerator:
         if not args:
             self.matches.append(value)
             return self
+
         else:
             root = LeafGenerator()
             root.matches.append(value)
@@ -283,16 +281,19 @@ class MatchGenerator:
         if not args:
             self.matches.append(value)
             return self
+
         else:
             arg_index, arg = args[0]
             if self.index < arg_index:
                 self.next = self.next._insert(args, value)
                 return self
+
             elif self.index > arg_index:
                 new_parent = MatchGenerator(arg_index, self)
                 new_branch = LeafGenerator()._insert(args[1:], value)
                 new_parent.match_generator[arg] = new_branch
                 return new_parent
+
             else:
                 branch_generator = self.match_generator.get(arg)
                 if not branch_generator:
