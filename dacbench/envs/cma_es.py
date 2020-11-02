@@ -26,6 +26,7 @@ class CMAESEnv(AbstractEnv):
     """
     Environment to control the step size of CMA-ES
     """
+
     def __init__(self, config):
         """
         Initialize CMA Env

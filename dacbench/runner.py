@@ -124,6 +124,7 @@ def plot_results(path):
 
 class AbstractDACBenchAgent:
     """ Abstract class to implement for use with the runner function """
+
     def __init__(self, env):
         """
         Initialize agent

@@ -6,6 +6,7 @@ class AbstractEnv(gym.Env):
     """
     Abstract template for environments
     """
+
     def __init__(self, config):
         """
         Initialize environment

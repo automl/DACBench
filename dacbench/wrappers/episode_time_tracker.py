@@ -14,6 +14,7 @@ class EpisodeTimeWrapper(Wrapper):
     Wrapper to track time spent per episode.
     Includes interval mode that returns times in lists of len(interval) instead of one long list.
     """
+
     def __init__(self, env, time_interval=None):
         """
         Initialize wrapper

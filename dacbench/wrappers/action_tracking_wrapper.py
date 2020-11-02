@@ -14,6 +14,7 @@ class ActionFrequencyWrapper(Wrapper):
     Wrapper to action frequency.
     Includes interval mode that returns frequencies in lists of len(interval) instead of one long list.
     """
+
     def __init__(self, env, action_interval=None):
         """
         Initialize wrapper

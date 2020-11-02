@@ -7,6 +7,7 @@ class RewardNoiseWrapper(Wrapper):
     Wrapper to add noise to the reward signal.
     Noise can be sampled from a custom distribution or any distribution in numpy's random module
     """
+
     def __init__(
         self, env, noise_function=None, noise_dist="standard_normal", dist_args=None
     ):

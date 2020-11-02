@@ -6,11 +6,13 @@ import seaborn as sb
 sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())
 
+
 class PerformanceTrackingWrapper(Wrapper):
     """
     Wrapper to track episode performance.
     Includes interval mode that returns performance in lists of len(interval) instead of one long list.
     """
+
     def __init__(self, env, performance_interval=None, track_instance_performance=True):
         """
         Initialize wrapper

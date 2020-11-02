@@ -8,6 +8,7 @@ class InstanceSamplingWrapper(Wrapper):
     Wrapper to sample a new isntance each training episode.
     Instances can either be sampled using a given method or a distribution infered from a given list of instances.
     """
+
     def __init__(self, env, sampling_function=None, instances=None):
         """
         Initialize wrapper

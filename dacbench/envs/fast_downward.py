@@ -33,6 +33,7 @@ class FastDownwardEnv(AbstractEnv):
     """
     Environment to control Solver Heuristics of FastDownward
     """
+
     def __init__(self, config):
         """
         Initialize FD Env
