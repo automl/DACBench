@@ -1,4 +1,5 @@
 from gym import Wrapper
+import matplotlib.pyplot as plt
 
 
 class PolicyProgressWrapper(Wrapper):

@@ -15,7 +15,7 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * User experience:
   - Make Feature Demo better
   - Turn Basic Demo into a Collab
-  - Make visuals nicer
+  - Make visuals nicer/more useful
   - Provide baseline comparisons like optimal static and random policy as data to load into plots
   - Maintain examples regularly and improve readability & diversity
   - Maybe use lazy importing for examples to prevent so many packages needing to be installed
