@@ -6,8 +6,15 @@ class AbstractEnv(gym.Env):
     """
     Abstract template for environments
     """
-
     def __init__(self, config):
+        """
+        Initialize environment
+
+        Parameters
+        -------
+        config : dict
+            Environment configuration
+        """
         super(AbstractEnv, self).__init__()
         self.instance_set = config["instance_set"]
         self.inst_id = 0
@@ -90,21 +97,47 @@ class AbstractEnv(gym.Env):
         self.c_step = 0
 
     def step(self, action):
+        """
+        Execute environment step
+
+        Parameters
+        -------
+        action
+            Action to take
+
+        Returns
+        -------
+        state
+            Environment state
+        reward
+            Environment reward
+        done : bool
+            Run finished flag
+        info : dict
+            Additional metainfo
+        """
         raise NotImplementedError
 
     def reset(self):
+        """
+        Reset environment
+
+        Returns
+        -------
+        state
+            Environment state
+        """
         raise NotImplementedError
 
     def get_inst_id(self):
         """
-        Return isntance ID
+        Return instance ID
 
         Returns
         -------
         int
             ID of current instance
         """
-
         return self.inst_id
 
     def get_instance_set(self):

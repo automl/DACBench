@@ -22,6 +22,14 @@ class LubyEnv(AbstractEnv):
     """
 
     def __init__(self, config) -> None:
+        """
+        Initialize Luby Env
+
+        Parameters
+        -------
+        config : objdict
+            Environment configuration
+        """
         super().__init__(config)
         self.rng = np.random.RandomState(config["seed"])
         self.logger = None
@@ -59,8 +67,7 @@ class LubyEnv(AbstractEnv):
         Returns
         -------
         np.array, float, bool, dict
-            state, reward, done, metainfo
-
+            state, reward, done, info
         """
         done = super(LubyEnv, self).step_()
         prev_state = self._state.copy()

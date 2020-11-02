@@ -23,7 +23,18 @@ def _norm(x):
 
 
 class CMAESEnv(AbstractEnv):
+    """
+    Environment to control the step size of CMA-ES
+    """
     def __init__(self, config):
+        """
+        Initialize CMA Env
+
+        Parameters
+        -------
+        config : objdict
+            Environment configuration
+        """
         super(CMAESEnv, self).__init__(config)
         self.b = None
         self.bounds = [None, None]
@@ -56,8 +67,7 @@ class CMAESEnv(AbstractEnv):
         Returns
         -------
         np.array, float, bool, dict
-            state, reward, done, metainfo
-
+            state, reward, done, info
         """
         done = super(CMAESEnv, self).step_()
         self.history.append([self.f_difference, self.velocity])
@@ -95,7 +105,7 @@ class CMAESEnv(AbstractEnv):
         Returns
         -------
         np.array
-            state
+            Environment state
         """
         super(CMAESEnv, self).reset_()
         self.history.clear()
@@ -127,6 +137,14 @@ class CMAESEnv(AbstractEnv):
         return self.get_state()
 
     def close(self):
+        """
+        No additional cleanup necessary
+
+        Returns
+        -------
+        bool
+            Cleanup flag
+        """
         return True
 
     def render(self, mode: str = "human"):
@@ -150,7 +168,7 @@ class CMAESEnv(AbstractEnv):
         Returns
         -------
         dict
-            state
+            Environment state
 
         """
         past_obj_val_deltas = []

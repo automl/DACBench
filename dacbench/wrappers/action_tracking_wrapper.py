@@ -10,7 +10,21 @@ current_palette = list(sb.color_palette())
 
 
 class ActionFrequencyWrapper(Wrapper):
+    """
+    Wrapper to action frequency.
+    Includes interval mode that returns frequencies in lists of len(interval) instead of one long list.
+    """
     def __init__(self, env, action_interval=None):
+        """
+        Initialize wrapper
+
+        Parameters
+        -------
+        env : gym.Env
+            Environment to wrap
+        action_interval : int
+            If not none, mean in given intervals is tracked, too
+        """
         super(ActionFrequencyWrapper, self).__init__(env)
         self.action_interval = action_interval
         self.overall_actions = []
@@ -20,6 +34,16 @@ class ActionFrequencyWrapper(Wrapper):
         self.action_space_type = type(self.env.action_space)
 
     def __setattr__(self, name, value):
+        """
+        Set attribute in wrapper if available and in env if not
+
+        Parameters
+        ----------
+        name : str
+            Attribute to set
+        value
+            Value to set attribute to
+        """
         if name in [
             "action_interval",
             "overall_actions",
@@ -35,6 +59,19 @@ class ActionFrequencyWrapper(Wrapper):
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
+        """
+        Get attribute value of wrapper if available and of env if not
+
+        Parameters
+        ----------
+        name : str
+            Attribute to get
+
+        Returns
+        -------
+        value
+            Value of given name
+        """
         if name in [
             "action_interval",
             "overall_actions",

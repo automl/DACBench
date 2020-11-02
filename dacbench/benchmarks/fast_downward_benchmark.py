@@ -44,6 +44,14 @@ class FastDownwardBenchmark(AbstractBenchmark):
     """
 
     def __init__(self, config_path=None):
+        """
+        Initialize FD Benchmark
+
+        Parameters
+        -------
+        config_path : str
+            Path to config file (optional)
+        """
         super(FastDownwardBenchmark, self).__init__(config_path)
         if not self.config:
             self.config = objdict(FD_DEFAULTS.copy())
@@ -88,7 +96,19 @@ class FastDownwardBenchmark(AbstractBenchmark):
             self.config.domain_file = self.config.instance_set_path + "/domain.pddl"
 
     def get_benchmark(self, seed=0):
-        """Get benchmark from the paper"""
+        """
+        Get published benchmark
+
+        Parameters
+        -------
+        seed : int
+            Environment seed
+
+        Returns
+        -------
+        env : FastDownwardEnv
+            FD environment
+        """
         self.config = objdict(FD_DEFAULTS.copy())
         self.read_instance_set()
         self.config.seed = seed

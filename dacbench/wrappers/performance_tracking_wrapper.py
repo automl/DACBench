@@ -6,9 +6,24 @@ import seaborn as sb
 sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())
 
-
 class PerformanceTrackingWrapper(Wrapper):
+    """
+    Wrapper to track episode performance.
+    Includes interval mode that returns performance in lists of len(interval) instead of one long list.
+    """
     def __init__(self, env, performance_interval=None, track_instance_performance=True):
+        """
+        Initialize wrapper
+
+        Parameters
+        -------
+        env : gym.Env
+            Environment to wrap
+        performance_interval : int
+            If not none, mean in given intervals is tracked, too
+        track_instance_performance : bool
+            Indicates whether to track per-instance performance
+        """
         super(PerformanceTrackingWrapper, self).__init__(env)
         self.performance_interval = performance_interval
         self.overall_performance = []
@@ -21,6 +36,16 @@ class PerformanceTrackingWrapper(Wrapper):
             self.instance_performances = {}
 
     def __setattr__(self, name, value):
+        """
+        Set attribute in wrapper if available and in env if not
+
+        Parameters
+        ----------
+        name : str
+            Attribute to set
+        value
+            Value to set attribute to
+        """
         if name in [
             "performance_interval",
             "track_instances",
@@ -40,6 +65,19 @@ class PerformanceTrackingWrapper(Wrapper):
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
+        """
+        Get attribute value of wrapper if available and of env if not
+
+        Parameters
+        ----------
+        name : str
+            Attribute to get
+
+        Returns
+        -------
+        value
+            Value of given name
+        """
         if name in [
             "performance_interval",
             "track_instances",
@@ -127,6 +165,7 @@ class PerformanceTrackingWrapper(Wrapper):
             return self.overall_performance
 
     def render_performance(self):
+        """ Plot performance """
         plt.figure(figsize=(12, 6))
         plt.plot(
             np.arange(len(self.overall_performance) // 2),
@@ -138,6 +177,7 @@ class PerformanceTrackingWrapper(Wrapper):
         plt.show()
 
     def render_instance_performance(self):
+        """ Plot mean performance for each instance """
         plt.figure(figsize=(12, 6))
         plt.title("Mean Performance per Instance")
         plt.ylabel("Mean reward")

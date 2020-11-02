@@ -49,6 +49,14 @@ class CMAESBenchmark(AbstractBenchmark):
     """
 
     def __init__(self, config_path=None):
+        """
+        Initialize CMA Benchmark
+
+        Parameters
+        -------
+        config_path : str
+            Path to config file (optional)
+        """
         super(CMAESBenchmark, self).__init__(config_path)
         if not self.config:
             self.config = objdict(CMAES_DEFAULTS.copy())
@@ -95,7 +103,19 @@ class CMAESBenchmark(AbstractBenchmark):
                 self.config["instance_set"][int(row["ID"])] = instance
 
     def get_benchmark(self, seed=0):
-        """Get benchmark from the LTO paper"""
+        """
+        Get benchmark from the LTO paper
+
+        Parameters
+        -------
+        seed : int
+            Environment seed
+
+        Returns
+        -------
+        env : CMAESEnv
+            CMAES environment
+        """
         self.config = objdict(CMAES_DEFAULTS.copy())
         self.config.seed = seed
         self.read_instance_set()

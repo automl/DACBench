@@ -22,10 +22,18 @@ class SigmoidEnv(AbstractEnv):
     """
 
     def _sig(self, x, scaling, inflection):
-        """ Simple sigmoid """
+        """ Simple sigmoid function """
         return 1 / (1 + np.exp(-scaling * (x - inflection)))
 
     def __init__(self, config) -> None:
+        """
+        Initialize Sigmoid Env
+
+        Parameters
+        -------
+        config : objdict
+            Environment configuration
+        """
         super(SigmoidEnv, self).__init__(config)
         self.rng = np.random.RandomState(config["seed"])
         self.shifts = [self.n_steps / 2 for _ in config["action_values"]]
@@ -54,8 +62,7 @@ class SigmoidEnv(AbstractEnv):
         Returns
         -------
         np.array, float, bool, dict
-            state, reward, done, metainfo
-
+            state, reward, done, info
         """
         done = super(SigmoidEnv, self).step_()
         action = self.action_mapper[action]

@@ -36,6 +36,14 @@ class LubyBenchmark(AbstractBenchmark):
     """
 
     def __init__(self, config_path=None):
+        """
+        Initialize Luby Benchmark
+
+        Parameters
+        -------
+        config_path : str
+            Path to config file (optional)
+        """
         super(LubyBenchmark, self).__init__(config_path)
         if not self.config:
             self.config = objdict(LUBY_DEFAULTS.copy())
@@ -112,7 +120,23 @@ class LubyBenchmark(AbstractBenchmark):
         self.config["instance_set"] = list(self.config["instance_set"].values())
 
     def get_benchmark(self, L=8, fuzziness=1.5, seed=0):
-        """Get Benchmark from DAC paper"""
+        """
+        Get Benchmark from DAC paper
+
+        Parameters
+        -------
+        L : int
+            Minimum sequence lenght, was 8, 16 or 32 in the paper
+        fuzziness : float
+            Amount of noise applied. Was 1.5 for most of the experiments
+        seed : int
+            Environment seed
+
+        Returns
+        -------
+        env : LubyEnv
+            Luby environment
+        """
         self.config = objdict(LUBY_DEFAULTS.copy())
         self.config.min_steps = L
         self.config.seed = seed

@@ -11,6 +11,18 @@ current_palette = list(sb.color_palette())
 
 
 def run_benchmark(env, agent, num_episodes):
+    """
+    Run single benchmark env for a given number of episodes with a given agent
+
+    Parameters
+    -------
+    env : gym.Env
+        Benchmark environment
+    agent
+        Any agent implementing the methods act, train and end_episode (see AbstractDACBenchAgent below)
+    num_episodes : int
+        Number of episodes to run
+    """
     for _ in range(num_episodes):
         state = env.reset()
         done = False
@@ -24,6 +36,18 @@ def run_benchmark(env, agent, num_episodes):
 
 
 def run_dacbench(results_path, agent_method, num_episodes):
+    """
+    Run all benchmarks for 10 seeds for a given number of episodes with a given agent and save result
+
+    Parameters
+    -------
+    results_path : str
+        Path to where results should be saved
+    agent_method : function
+        Method that takes an env as input and returns an agent
+    num_episodes : int
+        Number of episodes to run for each benchmark
+    """
     if not os.path.exists(results_path):
         os.makedirs(results_path)
 
@@ -46,6 +70,14 @@ def run_dacbench(results_path, agent_method, num_episodes):
 
 
 def plot_results(path):
+    """
+    Load and plot results from file
+
+    Parameters
+    -------
+    path : str
+        Path to result directory
+    """
     performances = {}
     stds = {}
     with os.scandir(path) as it:
@@ -91,14 +123,58 @@ def plot_results(path):
 
 
 class AbstractDACBenchAgent:
+    """ Abstract class to implement for use with the runner function """
     def __init__(self, env):
+        """
+        Initialize agent
+
+        Parameters
+        -------
+        env : gym.Env
+            Environment to train on
+        """
         pass
 
     def act(self, state, reward):
+        """
+        Compute and return environment action
+
+        Parameters
+        -------
+        state
+            Environment state
+        reward
+            Environment reward
+
+        Returns
+        -------
+        action
+            Action to take
+        """
         raise NotImplementedError
 
     def train(self, next_state, reward):
+        """
+        Train during episode if needed (pass if not)
+
+        Parameters
+        -------
+        next_state
+            Environment state after step
+        reward
+            Environment reward
+        """
         raise NotImplementedError
 
     def end_episode(self, state, reward):
+        """
+        End of episode training if needed (pass if not)
+
+        Parameters
+        -------
+        state
+            Environment state
+        reward
+            Environment reward
+        """
         raise NotImplementedError

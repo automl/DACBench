@@ -5,17 +5,26 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import time
 import seaborn as sb
 
-# sb.set_style("darkgrid")
+sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())
 
 
 class EpisodeTimeWrapper(Wrapper):
     """
     Wrapper to track time spent per episode.
-    Includes interval mode that return times in lists of len(interval) instead of one long list.
+    Includes interval mode that returns times in lists of len(interval) instead of one long list.
     """
-
     def __init__(self, env, time_interval=None):
+        """
+        Initialize wrapper
+
+        Parameters
+        -------
+        env : gym.Env
+            Environment to wrap
+        time_interval : int
+            If not none, mean in given intervals is tracked, too
+        """
         super(EpisodeTimeWrapper, self).__init__(env)
         self.time_interval = time_interval
         self.all_steps = []
@@ -29,6 +38,16 @@ class EpisodeTimeWrapper(Wrapper):
             self.current_times = []
 
     def __setattr__(self, name, value):
+        """
+        Set attribute in wrapper if available and in env if not
+
+        Parameters
+        ----------
+        name : str
+            Attribute to set
+        value
+            Value to set attribute to
+        """
         if name in [
             "time_interval",
             "overall_times",
@@ -50,6 +69,19 @@ class EpisodeTimeWrapper(Wrapper):
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
+        """
+        Get attribute value of wrapper if available and of env if not
+
+        Parameters
+        ----------
+        name : str
+            Attribute to get
+
+        Returns
+        -------
+        value
+            Value of given name
+        """
         if name in [
             "time_interval",
             "overall_times",
