@@ -1,5 +1,6 @@
 from gym import Wrapper
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class PolicyProgressWrapper(Wrapper):
@@ -7,6 +8,7 @@ class PolicyProgressWrapper(Wrapper):
     Wrapper to track progress towards optimal policy.
     Can only be used if a way to obtain the optimal policy given an instance can be obtained
     """
+
     def __init__(self, env, compute_optimal):
         """
         Initialize wrapper
@@ -34,7 +36,13 @@ class PolicyProgressWrapper(Wrapper):
         value
             Value to set attribute to
         """
-        if name in ["compute_optimal", "env", "episode", "policy_progress", "render_policy_progress"]:
+        if name in [
+            "compute_optimal",
+            "env",
+            "episode",
+            "policy_progress",
+            "render_policy_progress",
+        ]:
             object.__setattr__(self, name, value)
         else:
             setattr(self.env, name, value)
@@ -53,7 +61,14 @@ class PolicyProgressWrapper(Wrapper):
         value
             Value of given name
         """
-        if name in ["compute_optimal", "env", "episode", "policy_progress", "render_policy_progress"]:
+        if name in [
+            "step",
+            "compute_optimal",
+            "env",
+            "episode",
+            "policy_progress",
+            "render_policy_progress",
+        ]:
             return object.__getattribute__(self, name)
         else:
             return getattr(self.env, name)
@@ -72,12 +87,13 @@ class PolicyProgressWrapper(Wrapper):
         np.array, float, bool, dict
             state, reward, done, metainfo
         """
-        state, reward, done, info = env.step(action)
-        if not done:
-            self.episode.append(action)
-        else:
-            optimal = self.compute_optimal(env.instance)
-            self.policy_progress.append(np.linalg.norm(optimal-self.episode))
+        state, reward, done, info = self.env.step(action)
+        self.episode.append(action)
+        if done:
+            optimal = self.compute_optimal(self.env.instance)
+            self.policy_progress.append(
+                np.linalg.norm(np.array(optimal) - np.array(self.episode))
+            )
             self.episode = []
         return state, reward, done, info
 

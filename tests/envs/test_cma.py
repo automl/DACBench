@@ -36,6 +36,7 @@ class TestCMAEnv(unittest.TestCase):
         env.reset()
         state, reward, done, meta = env.step([1])
         self.assertTrue(reward >= env.reward_range[0])
+        print(reward)
         self.assertTrue(reward <= env.reward_range[1])
         self.assertFalse(done)
         self.assertTrue(len(meta.keys()) == 0)
