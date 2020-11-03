@@ -15,7 +15,7 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * User experience:
   - Make Feature Demo better
   - Turn Basic Demo into a Collab
-  - Make visuals nicer/more useful
+  - Make visuals nicer
   - Provide baseline comparisons like optimal static and random policy as data to load into plots
   - Maintain examples regularly and improve readability & diversity
   - Maybe use lazy importing for examples to prevent so many packages needing to be installed
@@ -32,3 +32,4 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * For plotting: maybe use pandas for data collection and plotting?
 * Get test coverage to 100%
 * Find the weird bug in performance tracking that logs twice
+* Is yaml a better choice for configs than json? Should the default configs maybe be yaml files instead of dicts inside the benchmark definition files?
