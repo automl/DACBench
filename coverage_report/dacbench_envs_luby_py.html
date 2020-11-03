@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for dacbench/envs/luby.py: 100%</title>
+    <title>Coverage for dacbench/envs/luby.py: 92%</title>
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="jquery.hotkeys.js"></script>
@@ -17,13 +17,13 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>dacbench/envs/luby.py</b> :
-            <span class="pc_cov">100%</span>
+            <span class="pc_cov">92%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
             75 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">75 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">0 missing</button>
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">69 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">6 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
     </div>
@@ -133,9 +133,9 @@
     <p id="t80" class="run"><span class="n"><a href="#t80">80</a></span><span class="t">        <span class="key">if</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p id="t81" class="pln"><span class="n"><a href="#t81">81</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">__error</span> <span class="op">&lt;</span> <span class="nam">self</span><span class="op">.</span><span class="nam">__lower</span>&nbsp;</span><span class="r"></span></p>
     <p id="t82" class="pln"><span class="n"><a href="#t82">82</a></span><span class="t">        <span class="op">)</span><span class="op">:</span>  <span class="com"># needed to avoid too long sequences of sticky actions</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t83" class="run"><span class="n"><a href="#t83">83</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">__error</span> <span class="op">+=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">abs</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">__lower</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t83" class="mis show_mis"><span class="n"><a href="#t83">83</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">__error</span> <span class="op">+=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">abs</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">__lower</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t84" class="run"><span class="n"><a href="#t84">84</a></span><span class="t">        <span class="key">elif</span> <span class="nam">self</span><span class="op">.</span><span class="nam">__error</span> <span class="op">></span> <span class="nam">self</span><span class="op">.</span><span class="nam">__upper</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t85" class="run"><span class="n"><a href="#t85">85</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">__error</span> <span class="op">-=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">abs</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">__upper</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t85" class="mis show_mis"><span class="n"><a href="#t85">85</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">__error</span> <span class="op">-=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">abs</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">__upper</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t86" class="run"><span class="n"><a href="#t86">86</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">_jenny_i</span> <span class="op">+=</span> <span class="num">1</span>&nbsp;</span><span class="r"></span></p>
     <p id="t87" class="run"><span class="n"><a href="#t87">87</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">__error</span> <span class="op">+=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_sticky_shif</span>&nbsp;</span><span class="r"></span></p>
     <p id="t88" class="pln"><span class="n"><a href="#t88">88</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -205,7 +205,7 @@
     <p id="t152" class="pln"><span class="n"><a href="#t152">152</a></span><span class="t"><span class="str">        bool</span>&nbsp;</span><span class="r"></span></p>
     <p id="t153" class="pln"><span class="n"><a href="#t153">153</a></span><span class="t"><span class="str">            Closing confirmation</span>&nbsp;</span><span class="r"></span></p>
     <p id="t154" class="pln"><span class="n"><a href="#t154">154</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t155" class="run"><span class="n"><a href="#t155">155</a></span><span class="t">        <span class="key">return</span> <span class="key">True</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t155" class="mis show_mis"><span class="n"><a href="#t155">155</a></span><span class="t">        <span class="key">return</span> <span class="key">True</span>&nbsp;</span><span class="r"></span></p>
     <p id="t156" class="pln"><span class="n"><a href="#t156">156</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t157" class="pln"><span class="n"><a href="#t157">157</a></span><span class="t">    <span class="com"># TODO: this should render!</span>&nbsp;</span><span class="r"></span></p>
     <p id="t158" class="pln"><span class="n"><a href="#t158">158</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -218,10 +218,10 @@
     <p id="t165" class="pln"><span class="n"><a href="#t165">165</a></span><span class="t"><span class="str">        mode : str</span>&nbsp;</span><span class="r"></span></p>
     <p id="t166" class="pln"><span class="n"><a href="#t166">166</a></span><span class="t"><span class="str">            Execution mode</span>&nbsp;</span><span class="r"></span></p>
     <p id="t167" class="pln"><span class="n"><a href="#t167">167</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t168" class="run"><span class="n"><a href="#t168">168</a></span><span class="t">        <span class="key">if</span> <span class="nam">mode</span> <span class="op">!=</span> <span class="str">"human"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t169" class="run"><span class="n"><a href="#t169">169</a></span><span class="t">            <span class="key">raise</span> <span class="nam">NotImplementedError</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t168" class="mis show_mis"><span class="n"><a href="#t168">168</a></span><span class="t">        <span class="key">if</span> <span class="nam">mode</span> <span class="op">!=</span> <span class="str">"human"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t169" class="mis show_mis"><span class="n"><a href="#t169">169</a></span><span class="t">            <span class="key">raise</span> <span class="nam">NotImplementedError</span>&nbsp;</span><span class="r"></span></p>
     <p id="t170" class="pln"><span class="n"><a href="#t170">170</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t171" class="run"><span class="n"><a href="#t171">171</a></span><span class="t">        <span class="key">pass</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t171" class="mis show_mis"><span class="n"><a href="#t171">171</a></span><span class="t">        <span class="key">pass</span>&nbsp;</span><span class="r"></span></p>
     <p id="t172" class="pln"><span class="n"><a href="#t172">172</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t173" class="pln"><span class="n"><a href="#t173">173</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t174" class="run"><span class="n"><a href="#t174">174</a></span><span class="t"><span class="key">def</span> <span class="nam">luby_gen</span><span class="op">(</span><span class="nam">i</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -239,7 +239,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.3</a>,
-            created at 2020-11-02 15:45 +0100
+            created at 2020-11-03 17:04 +0100
         </p>
     </div>
 </div>

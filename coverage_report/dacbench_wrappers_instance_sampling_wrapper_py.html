@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for dacbench/wrappers/instance_sampling_wrapper.py: 100%</title>
+    <title>Coverage for dacbench/wrappers/instance_sampling_wrapper.py: 61%</title>
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="jquery.hotkeys.js"></script>
@@ -17,13 +17,13 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>dacbench/wrappers/instance_sampling_wrapper.py</b> :
-            <span class="pc_cov">100%</span>
+            <span class="pc_cov">61%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
             36 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">36 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">0 missing</button>
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">22 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">14 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
     </div>
@@ -79,10 +79,10 @@
     <p id="t26" class="run"><span class="n"><a href="#t26">26</a></span><span class="t">        <span class="nam">super</span><span class="op">(</span><span class="nam">InstanceSamplingWrapper</span><span class="op">,</span> <span class="nam">self</span><span class="op">)</span><span class="op">.</span><span class="nam">__init__</span><span class="op">(</span><span class="nam">env</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t27" class="run"><span class="n"><a href="#t27">27</a></span><span class="t">        <span class="key">if</span> <span class="nam">sampling_function</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t28" class="run"><span class="n"><a href="#t28">28</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">sampling_function</span> <span class="op">=</span> <span class="nam">sampling_function</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t29" class="run"><span class="n"><a href="#t29">29</a></span><span class="t">        <span class="key">elif</span> <span class="nam">instances</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t30" class="run"><span class="n"><a href="#t30">30</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">sampling_function</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">fit_dist</span><span class="op">(</span><span class="nam">instances</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t29" class="mis show_mis"><span class="n"><a href="#t29">29</a></span><span class="t">        <span class="key">elif</span> <span class="nam">instances</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t30" class="mis show_mis"><span class="n"><a href="#t30">30</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">sampling_function</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">fit_dist</span><span class="op">(</span><span class="nam">instances</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t31" class="pln"><span class="n"><a href="#t31">31</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t32" class="run"><span class="n"><a href="#t32">32</a></span><span class="t">            <span class="key">raise</span> <span class="nam">Exception</span><span class="op">(</span><span class="str">"No distribution to sample from given"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t32" class="mis show_mis"><span class="n"><a href="#t32">32</a></span><span class="t">            <span class="key">raise</span> <span class="nam">Exception</span><span class="op">(</span><span class="str">"No distribution to sample from given"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t33" class="pln"><span class="n"><a href="#t33">33</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t34" class="run"><span class="n"><a href="#t34">34</a></span><span class="t">    <span class="key">def</span> <span class="nam">__setattr__</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">name</span><span class="op">,</span> <span class="nam">value</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t35" class="pln"><span class="n"><a href="#t35">35</a></span><span class="t">        <span class="str">"""</span>&nbsp;</span><span class="r"></span></p>
@@ -148,25 +148,25 @@
     <p id="t95" class="pln"><span class="n"><a href="#t95">95</a></span><span class="t"><span class="str">        method</span>&nbsp;</span><span class="r"></span></p>
     <p id="t96" class="pln"><span class="n"><a href="#t96">96</a></span><span class="t"><span class="str">            sampling method for new instances</span>&nbsp;</span><span class="r"></span></p>
     <p id="t97" class="pln"><span class="n"><a href="#t97">97</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t98" class="run"><span class="n"><a href="#t98">98</a></span><span class="t">        <span class="nam">dists</span> <span class="op">=</span> <span class="op">[</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t99" class="run"><span class="n"><a href="#t99">99</a></span><span class="t">        <span class="key">for</span> <span class="nam">i</span> <span class="key">in</span> <span class="nam">range</span><span class="op">(</span><span class="nam">len</span><span class="op">(</span><span class="nam">instances</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t100" class="run"><span class="n"><a href="#t100">100</a></span><span class="t">            <span class="nam">component</span> <span class="op">=</span> <span class="op">[</span><span class="nam">inst</span><span class="op">[</span><span class="nam">i</span><span class="op">]</span> <span class="key">for</span> <span class="nam">inst</span> <span class="key">in</span> <span class="nam">instances</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t101" class="run"><span class="n"><a href="#t101">101</a></span><span class="t">            <span class="nam">dist</span> <span class="op">=</span> <span class="nam">norm</span><span class="op">.</span><span class="nam">fit</span><span class="op">(</span><span class="nam">component</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t102" class="run"><span class="n"><a href="#t102">102</a></span><span class="t">            <span class="nam">dists</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">dist</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t98" class="mis show_mis"><span class="n"><a href="#t98">98</a></span><span class="t">        <span class="nam">dists</span> <span class="op">=</span> <span class="op">[</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t99" class="mis show_mis"><span class="n"><a href="#t99">99</a></span><span class="t">        <span class="key">for</span> <span class="nam">i</span> <span class="key">in</span> <span class="nam">range</span><span class="op">(</span><span class="nam">len</span><span class="op">(</span><span class="nam">instances</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t100" class="mis show_mis"><span class="n"><a href="#t100">100</a></span><span class="t">            <span class="nam">component</span> <span class="op">=</span> <span class="op">[</span><span class="nam">inst</span><span class="op">[</span><span class="nam">i</span><span class="op">]</span> <span class="key">for</span> <span class="nam">inst</span> <span class="key">in</span> <span class="nam">instances</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t101" class="mis show_mis"><span class="n"><a href="#t101">101</a></span><span class="t">            <span class="nam">dist</span> <span class="op">=</span> <span class="nam">norm</span><span class="op">.</span><span class="nam">fit</span><span class="op">(</span><span class="nam">component</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t102" class="mis show_mis"><span class="n"><a href="#t102">102</a></span><span class="t">            <span class="nam">dists</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">dist</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t103" class="pln"><span class="n"><a href="#t103">103</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t104" class="run"><span class="n"><a href="#t104">104</a></span><span class="t">        <span class="key">def</span> <span class="nam">sample</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t105" class="run"><span class="n"><a href="#t105">105</a></span><span class="t">            <span class="nam">instance</span> <span class="op">=</span> <span class="op">[</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t106" class="run"><span class="n"><a href="#t106">106</a></span><span class="t">            <span class="key">for</span> <span class="nam">d</span> <span class="key">in</span> <span class="nam">dists</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t107" class="run"><span class="n"><a href="#t107">107</a></span><span class="t">                <span class="nam">instance</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">np</span><span class="op">.</span><span class="nam">random</span><span class="op">.</span><span class="nam">normal</span><span class="op">(</span><span class="nam">d</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">,</span> <span class="nam">d</span><span class="op">[</span><span class="num">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t108" class="run"><span class="n"><a href="#t108">108</a></span><span class="t">            <span class="key">return</span> <span class="nam">instance</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t104" class="mis show_mis"><span class="n"><a href="#t104">104</a></span><span class="t">        <span class="key">def</span> <span class="nam">sample</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t105" class="mis show_mis"><span class="n"><a href="#t105">105</a></span><span class="t">            <span class="nam">instance</span> <span class="op">=</span> <span class="op">[</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t106" class="mis show_mis"><span class="n"><a href="#t106">106</a></span><span class="t">            <span class="key">for</span> <span class="nam">d</span> <span class="key">in</span> <span class="nam">dists</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t107" class="mis show_mis"><span class="n"><a href="#t107">107</a></span><span class="t">                <span class="nam">instance</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">np</span><span class="op">.</span><span class="nam">random</span><span class="op">.</span><span class="nam">normal</span><span class="op">(</span><span class="nam">d</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">,</span> <span class="nam">d</span><span class="op">[</span><span class="num">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t108" class="mis show_mis"><span class="n"><a href="#t108">108</a></span><span class="t">            <span class="key">return</span> <span class="nam">instance</span>&nbsp;</span><span class="r"></span></p>
     <p id="t109" class="pln"><span class="n"><a href="#t109">109</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t110" class="run"><span class="n"><a href="#t110">110</a></span><span class="t">        <span class="key">return</span> <span class="nam">sample</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t110" class="mis show_mis"><span class="n"><a href="#t110">110</a></span><span class="t">        <span class="key">return</span> <span class="nam">sample</span>&nbsp;</span><span class="r"></span></p>
 </div>
 <div id="footer">
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.3</a>,
-            created at 2020-11-02 15:45 +0100
+            created at 2020-11-03 17:04 +0100
         </p>
     </div>
 </div>
