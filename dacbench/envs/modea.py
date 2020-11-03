@@ -1,11 +1,10 @@
-from modea.algorithms import CustomizedES
+from modea.Algorithms import CustomizedES
 import modea.Sampling as Sam
 import modea.Mutation as Mut
 import modea.Selection as Sel
 from dacbench import AbstractEnv
 from modea.Utils import getOpts, getVals, options
-import fgeneric
-import bbobbenchmarks
+from cma import bbobbenchmarks as bn
 from functools import partial
 
 
@@ -29,28 +28,23 @@ class ModeaEnv(AbstractEnv):
         self.mu = self.representation[len(options) + 1]
         values = getVals(self.representation[len(options) + 2 :])
 
-        self.logging_function = fgeneric.LoggingFunction(self.datapath)
-        self.target = self.logging_function.setfun(
-            *bbobbenchmarks.instantiate(self.function_id, iinstance=self.instance_id)
-        ).ftarget
+        self.function = bn.instantiate(int(self.function_id))[0]
         self.es = CustomizedES(
-            self.dim,
-            self.logging_function.evalfun,
-            self.budget,
-            self.mu,
-            self.lambda_,
-            opts,
-            values,
+            self.dim, self.function, self.budget, self.mu, self.lambda_, opts, values,
         )
+
+        # This could be a config parameter. This is the not working CMA version:
+        # self.es.mutateParameters = self.es.parameters.adaptCovarianceMatrix
+        def mutateParameters(_):
+            pass
+
+        self.es.mutateParameters = mutateParameters
         return self.get_state()
 
     def step(self, action):
         done = super(ModeaEnv, self).step_()
-        if (
-            self.budget >= self.es.used_budget
-            or not self.es.best_individual.fitness - self.target > self.threshold
-            or self.es.parameters.checkLocalRestartConditions(self.es.used_budget)
-        ):
+        # Todo: currently this doesn't really support targets
+        if self.budget <= self.es.used_budget:
             done = True
 
         self.representation = action
@@ -59,25 +53,27 @@ class ModeaEnv(AbstractEnv):
         self.es.runOneGeneration()
         self.es.recordStatistics()
 
-        if done:
-            self.logging_function.finalizerun()
         return self.get_state(), self.get_reward(), done, {}
 
+    # Todo: flatten this
     def get_state(self):
         return [
-            self.es.generation_size[-1],
-            self.es.sigma_over_time[-1],
-            self.budget - self.es.budget_used,
+            self.es.gen_size,
+            self.es.parameters.sigma,
+            self.budget - self.es.used_budget,
             self.function_id,
             self.instance_id,
         ]
 
     def get_reward(self):
-        return -self.es.best_individual
+        return -self.es.best_individual.fitness
+
+    def close(self):
+        return True
 
     def adapt_es_opts(self, opts):
         self.es.opts = opts
-        parameter_opts = self.es.parameters
+        parameter_opts = self.es.parameters.getParameterOpts()
 
         # __init__ of CustomizedES without new instance of ES
         # not a great solution, if package gets updates we should change this
