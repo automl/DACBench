@@ -2,6 +2,15 @@
 DACBench is a benchmark library for Dynamic Algorithm Configuration.
 Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
+If you use DACBench in you research or application, please cite us:
+
+    @Misc{dacbench,
+        author    = {T. Eimer and A. Biedenkapp and F. Hutter and M. Lindauer},
+        title     = {Towards Self-Paced Context Evaluations for Contextual Reinforcement Learning},
+        howpublished = {\url{https://github.com/automl/DACBench}},
+        year = {2020}
+    }
+
 ## Installation
 We recommend to install DACBench in a virtual environment.
 To install DACBench including the dependencies to run examples:
