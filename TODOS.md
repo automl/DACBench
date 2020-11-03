@@ -7,7 +7,8 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * Benchmarks to include:
   - DL LR benchmark (Freiburg, should be finished early December)
   - BBO competition pipeline (Freiburg/Difan, ask after results are public)
-  - Modular CMA-ES (code not public)
+  - Modular CMA-ES (https://github.com/sjvrijn/ConfiguringCMAES/blob/master/EvolvingES.py)
+  - FD flexible search (https://github.com/pgomoluch/fd-learn)
   - any other interesting ones should be cleared with Marius/Theresa first
 * Useful features:
   - State information on demand
