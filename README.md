@@ -6,7 +6,7 @@ If you use DACBench in you research or application, please cite us:
 
     @Misc{dacbench,
         author    = {T. Eimer and A. Biedenkapp and F. Hutter and M. Lindauer},
-        title     = {Towards Self-Paced Context Evaluations for Contextual Reinforcement Learning},
+        title     = {DACBench: benchmarking Dynamic Algorithm Configuration},
         howpublished = {\url{https://github.com/automl/DACBench}},
         year = {2020}
     }
