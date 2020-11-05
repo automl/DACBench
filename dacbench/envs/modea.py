@@ -14,8 +14,6 @@ class ModeaEnv(AbstractEnv):
         super(ModeaEnv, self).__init__(config)
         self.es = None
         self.budget = config.budget
-        self.datapath = config.datapath
-        self.threshold = config.threshold
 
     def reset(self):
         super(ModeaEnv, self).reset_()

@@ -12,6 +12,7 @@ MODEA_DEFAULTS = objdict(
             low=-np.inf * np.ones(5), high=np.inf * np.ones(5)
         ),
         "reward_range": (-(10 ** 12), 0),
+        "budget": 100,
         "cutoff": 1e6,
         "seed": 0,
         "instance_set_path": "../instance_sets/cma_train.csv",
