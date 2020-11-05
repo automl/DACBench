@@ -27,7 +27,7 @@ class TestRunner(unittest.TestCase):
             def __init__(self, env):
                 if isinstance(env.action_space, spaces.Discrete):
                     self.num_actions = env.action_space.n
-                if isinstance(env.action_space, spaces.MultiDiscrete):
+                elif isinstance(env.action_space, spaces.MultiDiscrete):
                     self.num_actions = env.action_space.nvec
                 else:
                     self.num_actions = int(env.action_space.high[0])
