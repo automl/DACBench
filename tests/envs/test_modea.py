@@ -9,12 +9,12 @@ from gym import spaces
 class TestModeaEnv(unittest.TestCase):
     def make_env(self):
         config = objdict({})
-        config.budget = 6
+        config.budget = 20
         config.datapath = "."
         config.threshold = 1e-8
-        config.instance_set = [[10, 12, 0, np.ones(14)]]
+        config.instance_set = [[10, 12, 0, np.ones(11)]]
         config.cutoff = 10
-        config.action_space = spaces.MultiDiscrete(14)
+        config.action_space = spaces.MultiDiscrete([2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3])
         config.observation_space = spaces.Box(
             low=-np.inf * np.ones(5), high=np.inf * np.ones(5)
         )
@@ -39,8 +39,7 @@ class TestModeaEnv(unittest.TestCase):
         self.assertFalse(done)
         self.assertTrue(len(meta.keys()) == 0)
         while not done:
-            print(env.es.new_population)
-            _, _, done, _ = env.step(np.ones(14))
+            _, _, done, _ = env.step(env.action_space.sample())
 
     def test_close(self):
         env = self.make_env()

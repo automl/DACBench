@@ -3,9 +3,10 @@ import modea.Sampling as Sam
 import modea.Mutation as Mut
 import modea.Selection as Sel
 from dacbench import AbstractEnv
-from modea.Utils import getOpts, getVals, options
+from modea.Utils import getOpts, getVals, options, initializable_parameters
 from cma import bbobbenchmarks as bn
 from functools import partial
+import numpy as np
 
 
 class ModeaEnv(AbstractEnv):
@@ -21,7 +22,7 @@ class ModeaEnv(AbstractEnv):
         self.dim = self.instance[0]
         self.function_id = self.instance[1]
         self.instance_id = self.instance[2]
-        self.representation = self.instance[3]
+        self.representation = self.ensureFullLengthRepresentation(self.instance[3])
 
         opts = getOpts(self.representation[: len(options)])
         self.lambda_ = self.representation[len(options)]
@@ -30,26 +31,25 @@ class ModeaEnv(AbstractEnv):
 
         self.function = bn.instantiate(int(self.function_id))[0]
         self.es = CustomizedES(
-            self.dim, self.function, self.budget, self.mu, self.lambda_, opts, values,
+            self.dim, self.function, self.budget, self.mu, self.lambda_, opts, values
         )
-
-        # This could be a config parameter. This is the not working CMA version:
-        # self.es.mutateParameters = self.es.parameters.adaptCovarianceMatrix
-        def mutateParameters(_):
-            pass
-
-        self.es.mutateParameters = mutateParameters
+        self.es.mutateParameters = self.es.parameters.adaptCovarianceMatrix
         return self.get_state()
 
     def step(self, action):
         done = super(ModeaEnv, self).step_()
-        # Todo: currently this doesn't really support targets
-        if self.budget <= self.es.used_budget:
+        # Todo: currently this doesn't support targets
+        if (
+            self.budget <= self.es.used_budget
+            or self.es.parameters.checkLocalRestartConditions(self.es.used_budget)
+        ):
             done = True
 
         self.representation = action
         opts = getOpts(self.representation[: len(options)])
         self.adapt_es_opts(opts)
+
+        # TODO: add ipop run (restarts)
         self.es.runOneGeneration()
         self.es.recordStatistics()
 
@@ -66,7 +66,10 @@ class ModeaEnv(AbstractEnv):
         ]
 
     def get_reward(self):
-        return -self.es.best_individual.fitness
+        return max(
+            self.reward_range[0],
+            min(self.reward_range[1], -self.es.best_individual.fitness),
+        )
 
     def close(self):
         return True
@@ -82,6 +85,17 @@ class ModeaEnv(AbstractEnv):
         )
 
         selector = Sel.pairwise if opts["selection"] == "pairwise" else Sel.best
+        # This is done for safety reasons
+        # Else offset and all_offspring may be None
+        if opts["selection"] == "pairwise":
+            self.es.parameters.offset = np.column_stack(
+                [ind.mutation_vector for ind in self.es.new_population]
+            )
+            self.es.parameters.all_offspring = np.column_stack(
+                [ind.genotype for ind in self.es.new_population]
+            )
+        # Same here. Probably the representation space should be restricted
+        self.es.parameters.tpa_result = -1
 
         def select(pop, new_pop, _, param):
             return selector(pop, new_pop, param)
@@ -114,3 +128,22 @@ class ModeaEnv(AbstractEnv):
         self.es.mutate = mutate
         self.es.parameters = self.es.instantiateParameters(parameter_opts)
         self.es.seq_cutoff = self.es.parameters.mu_int * self.es.parameters.seq_cutoff
+
+    # Source: https://github.com/sjvrijn/ConfiguringCMAES/blob/master/EvolvingES.py
+    def ensureFullLengthRepresentation(self, representation):
+        """
+        Given a (partial) representation, ensure that it is padded to become a full length customizedES representation,
+        consisting of the required number of structure, population and parameter values.
+        >>> ensureFullLengthRepresentation([])
+        [0,0,0,0,0,0,0,0,0,0,0, None,None, None,None,None,None,None,None,None,None,None,None,None,None,None]
+        :param representation:  List representation of a customizedES instance to check and pad if needed
+        :return:                Guaranteed full-length version of the representation
+        """
+        default_rep = (
+            [0] * len(options) + [None, None] + [None] * len(initializable_parameters)
+        )
+        if len(representation) < len(default_rep):
+            representation = np.append(
+                representation, default_rep[len(representation) :]
+            ).flatten()
+        return representation

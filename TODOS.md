@@ -27,10 +27,14 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
   - Singularity containers for each benchmark (ask Katha for advice on this)
 
 #### Current low level issues:
-* Think about OpenAI listing [Theresa]
+* Think about OpenAI listing [Theresa] - after publication
 * Is python 3.9 a good idea?
 * Maybe use DynaQ for one of the examples to cover more bases (for future benchmarks)
 * For plotting: maybe use pandas for data collection and plotting?
 * Get test coverage to 100%
 * Find the weird bug in performance tracking that logs twice
 * Is yaml a better choice for configs than json? Should the default configs maybe be yaml files instead of dicts inside the benchmark definition files?
+* Modea test needs to be improved [Theresa]
+* Modea benchmark [Theresa]
+* Fix CMA bug [Theresa]
+* Improve title for citation (s. main)

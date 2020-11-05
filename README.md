@@ -33,6 +33,7 @@ Currently, DACbench includes the following Benchmarks:
 - Luby: learning the Luby sequence
 - Planning: controling the heuristics of the FastDownward Planner
 - CMA-ES: adapting step-size of CMA
+- Modea: Modular CMA-ES
 
 ## Reproducing previous experiments
 To reproduce the experiments from the paper a benchmark originated from, you can call

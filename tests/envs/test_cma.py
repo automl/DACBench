@@ -1,6 +1,5 @@
 import pytest
 import unittest
-
 import numpy as np
 from dacbench import AbstractEnv
 from dacbench.benchmarks.cma_benchmark import CMAESBenchmark, CMAES_DEFAULTS
