@@ -72,7 +72,7 @@ class ModeaBenchmark(AbstractBenchmark):
                 function = int(row["fcn_id"])
                 instance = int(row["inst_id"])
                 dimension = int(row["dim"])
-                representation = [float(row[f"rep{i}"]) for i in range(14)]
+                representation = [float(row[f"rep{i}"]) for i in range(11)]
                 instance = [
                     dimension,
                     function,
