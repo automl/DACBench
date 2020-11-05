@@ -15,7 +15,7 @@ MODEA_DEFAULTS = objdict(
         "budget": 100,
         "cutoff": 1e6,
         "seed": 0,
-        "instance_set_path": "../instance_sets/cma_train.csv",
+        "instance_set_path": "../instance_sets/modea/modea_train.csv",
     }
 )
 
@@ -81,21 +81,21 @@ class ModeaBenchmark(AbstractBenchmark):
                 ]
                 self.config["instance_set"][int(row["ID"])] = instance
 
-    # def get_benchmark(self, seed=0):
-    #     """
-    #     Get benchmark from the LTO paper
-    #
-    #     Parameters
-    #     -------
-    #     seed : int
-    #         Environment seed
-    #
-    #     Returns
-    #     -------
-    #     env : CMAESEnv
-    #         CMAES environment
-    #     """
-    #     self.config = objdict(MODEA_DEFAULTS.copy())
-    #     self.config.seed = seed
-    #     self.read_instance_set()
-    #     return ModEnv(self.config)
+    def get_benchmark(self, seed=0):
+        """
+        Get benchmark from the LTO paper
+
+        Parameters
+        -------
+        seed : int
+            Environment seed
+
+        Returns
+        -------
+        env : CMAESEnv
+            CMAES environment
+        """
+        self.config = objdict(MODEA_DEFAULTS.copy())
+        self.config.seed = seed
+        self.read_instance_set()
+        return ModEnv(self.config)
