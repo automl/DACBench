@@ -1,11 +1,107 @@
 from gym import Wrapper
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 class PolicyProgressWrapper(Wrapper):
-    def __init__(self, env):
+    """
+    Wrapper to track progress towards optimal policy.
+    Can only be used if a way to obtain the optimal policy given an instance can be obtained
+    """
+
+    def __init__(self, env, compute_optimal):
+        """
+        Initialize wrapper
+
+        Parameters
+        -------
+        env : gym.Env
+            Environment to wrap
+        compute_optimal : function
+            Function to compute optimal policy
+        """
         super(PolicyProgressWrapper, self).__init__(env)
+        self.compute_optimal = compute_optimal
+        self.episode = []
+        self.policy_progress = []
 
-    # TODO: check for optimal policy in config
+    def __setattr__(self, name, value):
+        """
+        Set attribute in wrapper if available and in env if not
 
-    def render(self):
-        return
+        Parameters
+        ----------
+        name : str
+            Attribute to set
+        value
+            Value to set attribute to
+        """
+        if name in [
+            "compute_optimal",
+            "env",
+            "episode",
+            "policy_progress",
+            "render_policy_progress",
+        ]:
+            object.__setattr__(self, name, value)
+        else:
+            setattr(self.env, name, value)
+
+    def __getattribute__(self, name):
+        """
+        Get attribute value of wrapper if available and of env if not
+
+        Parameters
+        ----------
+        name : str
+            Attribute to get
+
+        Returns
+        -------
+        value
+            Value of given name
+        """
+        if name in [
+            "step",
+            "compute_optimal",
+            "env",
+            "episode",
+            "policy_progress",
+            "render_policy_progress",
+        ]:
+            return object.__getattribute__(self, name)
+        else:
+            return getattr(self.env, name)
+
+    def step(self, action):
+        """
+        Execute environment step and record distance
+
+        Parameters
+        ----------
+        action : int
+            action to execute
+
+        Returns
+        -------
+        np.array, float, bool, dict
+            state, reward, done, metainfo
+        """
+        state, reward, done, info = self.env.step(action)
+        self.episode.append(action)
+        if done:
+            optimal = self.compute_optimal(self.env.instance)
+            self.policy_progress.append(
+                np.linalg.norm(np.array(optimal) - np.array(self.episode))
+            )
+            self.episode = []
+        return state, reward, done, info
+
+    def render_policy_progress(self):
+        """ Plot progress """
+        plt.figure(figsize=(12, 6))
+        plt.plot(np.arange(len(self.policy_progress)), self.policy_progress)
+        plt.title("Policy progress over time")
+        plt.xlabel("Episode")
+        plt.ylabel("Distance to optimal policy")
+        plt.show()

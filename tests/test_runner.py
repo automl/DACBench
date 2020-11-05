@@ -2,6 +2,7 @@ import pytest
 import unittest
 from gym import spaces
 import os
+import numpy as np
 import shutil
 from dacbench.runner import AbstractDACBenchAgent, run_dacbench, plot_results
 import matplotlib
@@ -26,12 +27,18 @@ class TestRunner(unittest.TestCase):
         class DummyAgent(AbstractDACBenchAgent):
             def __init__(self, env):
                 if isinstance(env.action_space, spaces.Discrete):
-                    self.num_actions = env.action_space.n
+                    self.num_actions = 1
+                elif isinstance(env.action_space, spaces.MultiDiscrete):
+                    self.num_actions = len(env.action_space.nvec)
                 else:
-                    self.num_actions = int(env.action_space.high[0])
+                    self.num_actions = len(env.action_space.high)
 
             def act(self, reward, state):
-                return 1
+                action = np.ones(self.num_actions)
+                print(self.num_actions)
+                if self.num_actions == 1:
+                    action = 1
+                return action
 
             def train(self, reward, state):
                 pass

@@ -14,4 +14,5 @@ __all__ = [
     "RewardNoiseWrapper",
     "StateTrackingWrapper",
     "PerformanceTrackingWrapper",
+    "PolicyProgressWrapper",
 ]

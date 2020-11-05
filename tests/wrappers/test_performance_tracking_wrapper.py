@@ -6,7 +6,7 @@ from dacbench.benchmarks import LubyBenchmark
 from dacbench.wrappers import PerformanceTrackingWrapper
 
 
-class TestTimeTrackingWrapper(unittest.TestCase):
+class TestPerformanceWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
         env = bench.get_environment()

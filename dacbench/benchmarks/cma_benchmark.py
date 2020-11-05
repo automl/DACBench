@@ -38,7 +38,7 @@ CMAES_DEFAULTS = objdict(
         "hist_length": HISTORY_LENGTH,
         "popsize": 10,
         "seed": 0,
-        "instance_set_path": "../instance_sets/cma_train.csv",
+        "instance_set_path": "../instance_sets/cma/cma_train.csv",
     }
 )
 
