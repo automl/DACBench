@@ -67,6 +67,7 @@ build-backend = "setuptools.build_meta"
 filterwarnings = [
     "ignore::UserWarning",
     "ignore::DeprecationWarning",
+    "ignore::FutureWarning"
 ]
 testpaths = ["tests"]
 
