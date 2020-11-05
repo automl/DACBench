@@ -55,7 +55,6 @@ class ModeaEnv(AbstractEnv):
 
         return self.get_state(), self.get_reward(), done, {}
 
-    # Todo: flatten this
     def get_state(self):
         return [
             self.es.gen_size,

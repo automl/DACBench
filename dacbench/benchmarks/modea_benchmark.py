@@ -51,7 +51,7 @@ class ModeaBenchmark(AbstractBenchmark):
             Modea environment
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set()
+            self.config.instance_set = [1, 0, 0, np.ones(11)]
 
         return ModeaEnv(self.config)
 

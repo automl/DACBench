@@ -38,6 +38,7 @@ class TestModeaEnv(unittest.TestCase):
         self.assertTrue(reward <= env.reward_range[1])
         self.assertFalse(done)
         self.assertTrue(len(meta.keys()) == 0)
+        self.assertTrue(len(state)==5)
         while not done:
             _, _, done, _ = env.step(env.action_space.sample())
 
