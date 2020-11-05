@@ -43,7 +43,7 @@ class ModeaEnv(AbstractEnv):
         ):
             done = True
 
-        self.representation = action
+        self.representation = self.ensureFullLengthRepresentation(action)
         opts = getOpts(self.representation[: len(options)])
         self.adapt_es_opts(opts)
 
