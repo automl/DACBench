@@ -52,7 +52,7 @@ class ModeaBenchmark(AbstractBenchmark):
             Modea environment
         """
         if "instance_set" not in self.config.keys():
-            self.config.instance_set = [1, 0, 0, np.ones(11)]
+            self.read_instance_set()
 
         return ModeaEnv(self.config)
 
@@ -83,7 +83,7 @@ class ModeaBenchmark(AbstractBenchmark):
 
     def get_benchmark(self, seed=0):
         """
-        Get benchmark from the LTO paper
+        Get benchmark
 
         Parameters
         -------
@@ -92,10 +92,10 @@ class ModeaBenchmark(AbstractBenchmark):
 
         Returns
         -------
-        env : CMAESEnv
-            CMAES environment
+        env : ModeaEnv
+            Modea environment
         """
         self.config = objdict(MODEA_DEFAULTS.copy())
         self.config.seed = seed
         self.read_instance_set()
-        return ModEnv(self.config)
+        return ModeaEnv(self.config)
