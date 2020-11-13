@@ -20,6 +20,7 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
   - Provide baseline comparisons like optimal static and random policy as data to load into plots
   - Maintain examples regularly and improve readability & diversity
   - Maybe use lazy importing for examples to prevent so many packages needing to be installed
+  - Make runner save more metainformation like configurations
 * Backend performance:
   - Benchmark wrapper slowdowns
   - Fix the janky port assignment in FD
@@ -38,3 +39,8 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
 * Modea benchmark [Theresa]
 * Fix CMA bug [Theresa]
 * Improve title for citation (s. main)
+* Configuration setting for resetting early
+* potential based rewards
+* cascading
+* fix iteration over dicts in examples
+* "Future proof" benchmarks?
