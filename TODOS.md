@@ -21,6 +21,8 @@ Non-release ready chenges are on dev. Merge to master whenever you feel it's war
   - Maintain examples regularly and improve readability & diversity
   - Maybe use lazy importing for examples to prevent so many packages needing to be installed
   - Make runner save more metainformation like configurations
+  - Set up documentation page with information on how to contribute
+  - Transfer "DAC with RL" into a documentation page
 * Backend performance:
   - Benchmark wrapper slowdowns
   - Fix the janky port assignment in FD
