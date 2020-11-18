@@ -4,12 +4,14 @@ Its focus is on reproducibility and comparability of different DAC methods as we
 
 If you use DACBench in you research or application, please cite us:
 
-    @Misc{dacbench,
-        author    = {T. Eimer and A. Biedenkapp and F. Hutter and M. Lindauer},
-        title     = {DACBench: benchmarking Dynamic Algorithm Configuration},
-        howpublished = {\url{https://github.com/automl/DACBench}},
-        year = {2020}
-    }
+```bibtex
+@Misc{dacbench,
+    author    = {T. Eimer and A. Biedenkapp and F. Hutter and M. Lindauer},
+    title     = {DACBench: benchmarking Dynamic Algorithm Configuration},
+    howpublished = {\url{https://github.com/automl/DACBench}},
+    year = {2020}
+}
+```
 
 ## Installation
 We recommend to install DACBench in a virtual environment.
