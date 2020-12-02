@@ -33,6 +33,7 @@ def run_benchmark(env, agent, num_episodes):
             agent.train(next_state, reward)
             state = next_state
         agent.end_episode(state, reward)
+    env.close()
 
 
 def run_dacbench(results_path, agent_method, num_episodes):
@@ -179,3 +180,31 @@ class AbstractDACBenchAgent:
             Environment reward
         """
         raise NotImplementedError
+
+
+class RandomAgent(AbstractDACBenchAgent):
+    def __init__(self, env):
+        self.sample_action = env.action_space.sample
+
+    def act(self, state, reward):
+        return self.sample_action()
+
+    def train(self, next_state, reward):
+        pass
+
+    def end_episode(self, state, reward):
+        pass
+
+
+class StaticAgent(AbstractDACBenchAgent):
+    def __init__(self, env, action):
+        self.action = action
+
+    def act(self, state, reward):
+        return self.action
+
+    def train(self, next_state, reward):
+        pass
+
+    def end_episode(self, state, reward):
+        pass
