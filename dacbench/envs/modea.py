@@ -32,6 +32,7 @@ class ModeaEnv(AbstractEnv):
             self.dim, self.function, self.budget, self.mu, self.lambda_, opts, values
         )
         self.es.mutateParameters = self.es.parameters.adaptCovarianceMatrix
+        self.adapt_es_opts(opts)
         return self.get_state()
 
     def step(self, action):
@@ -84,13 +85,12 @@ class ModeaEnv(AbstractEnv):
         selector = Sel.pairwise if opts["selection"] == "pairwise" else Sel.best
         # This is done for safety reasons
         # Else offset and all_offspring may be None
-        if opts["selection"] == "pairwise":
-            self.es.parameters.offset = np.column_stack(
-                [ind.mutation_vector for ind in self.es.new_population]
-            )
-            self.es.parameters.all_offspring = np.column_stack(
-                [ind.genotype for ind in self.es.new_population]
-            )
+        self.es.parameters.offset = np.column_stack(
+            [ind.mutation_vector for ind in self.es.new_population]
+        )
+        self.es.parameters.all_offspring = np.column_stack(
+            [ind.genotype for ind in self.es.new_population]
+        )
         # Same here. Probably the representation space should be restricted
         self.es.parameters.tpa_result = -1
 
