@@ -21,7 +21,7 @@ conda create -n dacbench python=3.6
 conda activate dacbench
 git clone https://github.com/automl/DACBench.git
 cd DACBench
-pip install -e .[example]
+pip install -e .
 ```
 When using the Fast Downward Benchmark, you need to build it separately (we recommend cmake version 3.10.2):
 ```
@@ -30,7 +30,7 @@ When using the Fast Downward Benchmark, you need to build it separately (we reco
 ## Using DAClib
 Benchmarks follow the OpenAI gym standard interface. That means each benchmark is created as an OpenAI gym environment. To create an environment simply:
 ```python
-from dacbench.bechmarks.sigmoid_benchmark import SigmoidBenchmark
+from dacbench.benchmarks.sigmoid_benchmark import SigmoidBenchmark
 benchmark = SigmoidBenchmark()
 benchmark.config.seed = 42
 env = benchmark.get_environment()
