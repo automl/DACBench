@@ -7,7 +7,7 @@ If you use DACBench in you research or application, please cite us:
 ```bibtex
 @Misc{dacbench,
     author    = {T. Eimer and A. Biedenkapp and F. Hutter and M. Lindauer},
-    title     = {DACBench: benchmarking Dynamic Algorithm Configuration},
+    title     = {DACBench: Benchmarking Dynamic Algorithm Configuration},
     howpublished = {\url{https://github.com/automl/DACBench}},
     year = {2020}
 }
@@ -51,7 +51,7 @@ To reproduce the experiments from the paper a benchmark originated from, you can
 ```python
 from dacbench.benchmarks.sigmoid_benchmark import SigmoidBenchmark
 benchmark = SigmoidBenchmark()
-env = benchmark.get_benchmark(seed)
+env = benchmark.get_benchmark(seed=0)
 ```
 As some papers use different benchmark configurations, there are sometimes more options than just setting the seed.
 These are:
