@@ -27,6 +27,17 @@ When using the Fast Downward Benchmark, you need to build it separately (we reco
 ```
 ./dacbench/envs/fast-downward/build.py
 ```
+
+If want to work on DACBench as a developer you can use the `dev` extra option instead: 
+```bash
+pip install -e .[dev]
+```
+
+To install all extras (`dev` and `example`) run:
+```bash
+pip install -e .[dev,example]
+```
+
 ## Using DAClib
 Benchmarks follow the OpenAI gym standard interface. That means each benchmark is created as an OpenAI gym environment. To create an environment simply:
 ```python
