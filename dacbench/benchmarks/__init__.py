@@ -9,5 +9,5 @@ __all__ = [
     "SigmoidBenchmark",
     "FastDownwardBenchmark",
     "CMAESBenchmark",
-    "ModeaBenchmark"
+    "ModeaBenchmark",
 ]
