@@ -21,7 +21,7 @@ conda create -n dacbench python=3.6
 conda activate dacbench
 git clone https://github.com/automl/DACBench.git
 cd DACBench
-pip install -e .
+pip install -e .[example]
 ```
 When using the Fast Downward Benchmark, you need to build it separately (we recommend cmake version 3.10.2):
 ```
@@ -49,7 +49,7 @@ Currently, DACbench includes the following Benchmarks:
 ## Reproducing previous experiments
 To reproduce the experiments from the paper a benchmark originated from, you can call
 ```python
-from dacbench.bechmarks.sigmoid_benchmark import SigmoidBenchmark
+from dacbench.benchmarks.sigmoid_benchmark import SigmoidBenchmark
 benchmark = SigmoidBenchmark()
 env = benchmark.get_benchmark(seed)
 ```
