@@ -7,6 +7,7 @@ from dacbench.wrappers import PerformanceTrackingWrapper
 from dacbench.runner import run_benchmark, RandomAgent, StaticAgent, GenericAgent
 from dacbench.envs.policies.optimal_sigmoid import get_optimum as optimal_sigmoid
 from dacbench.envs.policies.optimal_luby import get_optimum as optimal_luby
+from dacbench.envs.policies.optimal_fd import get_optimum as optimal_fd
 import itertools
 
 modea_actions = [
@@ -81,6 +82,11 @@ def run_optimal(results_path, benchmark_name, num_episodes, seeds=np.arange(10))
         policy = optimal_luby
     elif benchmark_name == "SigmoidBenchmark":
         policy = optimal_sigmoid
+    elif benchmark_name == "FastDownwardBenchmark":
+        policy = optimal_fd
+    else:
+        print("No optimal policy found for this benchmark")
+        return
 
     for s in seeds:
         env = bench.get_benchmark(seed=s)
