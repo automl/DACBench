@@ -77,6 +77,13 @@ class FastDownwardEnv(AbstractEnv):
         self.port = config.port
         if config["parallel"]:
             self.port += np.random.randint(50)
+
+        self.fd_seed = config.fd_seed
+        self.control_interval = config.control_interval
+        if config["heuristic_mode"] == "toy":
+            self.argstring = f"rl_eager(rl([tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)]),tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])],random_seed={self.fd_seed},handle_empty_list=true),rl_control_interval={self.control_interval},rl_client_port={self.port})"
+        else:
+            self.argstring = f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})"
         self.fd_path = config.fd_path
         self.fd = None
         if "domain_file" in config.keys():
@@ -87,8 +94,6 @@ class FastDownwardEnv(AbstractEnv):
 
         self._prev_state = None
         self.num_steps = config.num_steps
-        self.control_interval = config.control_interval
-        self.fd_seed = config.fd_seed
 
         self.__state_type = StateType(config.state_type)
         self.__norm_vals = []
@@ -324,7 +329,7 @@ class FastDownwardEnv(AbstractEnv):
         if self.fd:
             self.fd.terminate()
         if self.instance.endswith(".pddl"):
-            with open(os.devnull, "w") as fp:
+            with open(os.devnull, "a") as fp:
                 self.fd = subprocess.Popen(
                     [
                         "python3",
@@ -332,19 +337,19 @@ class FastDownwardEnv(AbstractEnv):
                         self.domain_file,
                         self.instance,
                         "--search",
-                        f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})",
+                        self.argstring,
                     ],
                     stdout=fp,
                 )
         else:
-            with open(os.devnull, "w") as fp:
+            with open(os.devnull, "a+") as fp:
                 self.fd = subprocess.Popen(
                     [
                         "python3",
                         f"{self.fd_path}",
                         self.instance,
                         "--search",
-                        f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})",
+                        self.argstring,
                     ],
                     stdout=fp,
                 )
@@ -391,6 +396,9 @@ class FastDownwardEnv(AbstractEnv):
             Closing confirmation
         """
         self.kill_connection()
+        fp = joinpath(self._config_dir, f"port_{self.port}.txt")
+        if os.path.exists(fp):
+            remove(fp)
         return True
 
     def render(self, mode: str = "human") -> None:

@@ -77,7 +77,7 @@ class SigmoidEnv(AbstractEnv):
                 self.slopes, self.shifts, action, self.action_vals
             )
         ]
-        r = np.clip(np.prod(r), 0.0, 1.0)
+        r = np.prod(r)
         r = max(self.reward_range[0], min(self.reward_range[1], r))
         remaining_budget = self.n_steps - self.c_step
 

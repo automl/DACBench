@@ -21,7 +21,7 @@ FD_DEFAULTS = objdict(
         "cutoff": 1e6,
         "use_general_state_info": True,
         "host": "",
-        "port": 52322,
+        "port": 54322,
         "control_interval": 0,
         "fd_seed": 0,
         "num_steps": None,
@@ -34,6 +34,7 @@ FD_DEFAULTS = objdict(
         "fd_path": os.path.dirname(os.path.abspath(__file__))
         + "/../envs/fast-downward/fast-downward.py",
         "parallel": True,
+        "heuristic_mode": "toy",
     }
 )
 
