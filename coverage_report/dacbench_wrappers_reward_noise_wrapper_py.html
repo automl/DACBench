@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for dacbench/wrappers/reward_noise_wrapper.py: 68%</title>
+    <title>Coverage for dacbench/wrappers/reward_noise_wrapper.py: 100%</title>
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="jquery.hotkeys.js"></script>
@@ -17,13 +17,13 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>dacbench/wrappers/reward_noise_wrapper.py</b> :
-            <span class="pc_cov">68%</span>
+            <span class="pc_cov">100%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
             31 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">21 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">10 missing</button>
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">31 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">0 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
     </div>
@@ -83,10 +83,10 @@
     <p id="t30" class="pln"><span class="n"><a href="#t30">30</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t31" class="run"><span class="n"><a href="#t31">31</a></span><span class="t">        <span class="key">if</span> <span class="nam">noise_function</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t32" class="run"><span class="n"><a href="#t32">32</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">noise_function</span> <span class="op">=</span> <span class="nam">noise_function</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t33" class="mis show_mis"><span class="n"><a href="#t33">33</a></span><span class="t">        <span class="key">elif</span> <span class="nam">noise_dist</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t34" class="mis show_mis"><span class="n"><a href="#t34">34</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">noise_function</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">add_noise</span><span class="op">(</span><span class="nam">noise_dist</span><span class="op">,</span> <span class="nam">dist_args</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t33" class="run"><span class="n"><a href="#t33">33</a></span><span class="t">        <span class="key">elif</span> <span class="nam">noise_dist</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t34" class="run"><span class="n"><a href="#t34">34</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">noise_function</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">add_noise</span><span class="op">(</span><span class="nam">noise_dist</span><span class="op">,</span> <span class="nam">dist_args</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t35" class="pln"><span class="n"><a href="#t35">35</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t36" class="mis show_mis"><span class="n"><a href="#t36">36</a></span><span class="t">            <span class="key">raise</span> <span class="nam">Exception</span><span class="op">(</span><span class="str">"No distribution to sample noise from given"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t36" class="run"><span class="n"><a href="#t36">36</a></span><span class="t">            <span class="key">raise</span> <span class="nam">Exception</span><span class="op">(</span><span class="str">"No distribution to sample noise from given"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t37" class="pln"><span class="n"><a href="#t37">37</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t38" class="run"><span class="n"><a href="#t38">38</a></span><span class="t">    <span class="key">def</span> <span class="nam">__setattr__</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">name</span><span class="op">,</span> <span class="nam">value</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t39" class="pln"><span class="n"><a href="#t39">39</a></span><span class="t">        <span class="str">"""</span>&nbsp;</span><span class="r"></span></p>
@@ -159,23 +159,23 @@
     <p id="t106" class="pln"><span class="n"><a href="#t106">106</a></span><span class="t"><span class="str">        function</span>&nbsp;</span><span class="r"></span></p>
     <p id="t107" class="pln"><span class="n"><a href="#t107">107</a></span><span class="t"><span class="str">            Noise sampling function</span>&nbsp;</span><span class="r"></span></p>
     <p id="t108" class="pln"><span class="n"><a href="#t108">108</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t109" class="mis show_mis"><span class="n"><a href="#t109">109</a></span><span class="t">        <span class="nam">rng</span> <span class="op">=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">random</span><span class="op">.</span><span class="nam">default_rng</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t110" class="mis show_mis"><span class="n"><a href="#t110">110</a></span><span class="t">        <span class="nam">function</span> <span class="op">=</span> <span class="nam">getattr</span><span class="op">(</span><span class="nam">rng</span><span class="op">,</span> <span class="nam">dist</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t109" class="run"><span class="n"><a href="#t109">109</a></span><span class="t">        <span class="nam">rng</span> <span class="op">=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">random</span><span class="op">.</span><span class="nam">default_rng</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t110" class="run"><span class="n"><a href="#t110">110</a></span><span class="t">        <span class="nam">function</span> <span class="op">=</span> <span class="nam">getattr</span><span class="op">(</span><span class="nam">rng</span><span class="op">,</span> <span class="nam">dist</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t111" class="pln"><span class="n"><a href="#t111">111</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t112" class="mis show_mis"><span class="n"><a href="#t112">112</a></span><span class="t">        <span class="key">def</span> <span class="nam">sample_noise</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t113" class="mis show_mis"><span class="n"><a href="#t113">113</a></span><span class="t">            <span class="key">if</span> <span class="nam">args</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t114" class="mis show_mis"><span class="n"><a href="#t114">114</a></span><span class="t">                <span class="key">return</span> <span class="nam">function</span><span class="op">(</span><span class="op">*</span><span class="nam">args</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t112" class="run"><span class="n"><a href="#t112">112</a></span><span class="t">        <span class="key">def</span> <span class="nam">sample_noise</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t113" class="run"><span class="n"><a href="#t113">113</a></span><span class="t">            <span class="key">if</span> <span class="nam">args</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t114" class="run"><span class="n"><a href="#t114">114</a></span><span class="t">                <span class="key">return</span> <span class="nam">function</span><span class="op">(</span><span class="op">*</span><span class="nam">args</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t115" class="pln"><span class="n"><a href="#t115">115</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t116" class="pln"><span class="n"><a href="#t116">116</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t117" class="mis show_mis"><span class="n"><a href="#t117">117</a></span><span class="t">                <span class="key">return</span> <span class="nam">function</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t117" class="run"><span class="n"><a href="#t117">117</a></span><span class="t">                <span class="key">return</span> <span class="nam">function</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t118" class="pln"><span class="n"><a href="#t118">118</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t119" class="mis show_mis"><span class="n"><a href="#t119">119</a></span><span class="t">        <span class="key">return</span> <span class="nam">sample_noise</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t119" class="run"><span class="n"><a href="#t119">119</a></span><span class="t">        <span class="key">return</span> <span class="nam">sample_noise</span>&nbsp;</span><span class="r"></span></p>
 </div>
 <div id="footer">
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.3</a>,
-            created at 2020-11-03 17:04 +0100
+            created at 2020-12-07 16:19 +0100
         </p>
     </div>
 </div>
