@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 HEURISTICS = [
-    "pdb(pattern=manual_pattern([0,1])),weight(g(),-1)])",
+    "tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)])",
     "tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])",
 ]
 
@@ -37,6 +37,7 @@ FD_DEFAULTS = objdict(
         "fd_path": os.path.dirname(os.path.abspath(__file__))
         + "/../envs/fast-downward/fast-downward.py",
         "parallel": True,
+        "fd_logs": None,
     }
 )
 

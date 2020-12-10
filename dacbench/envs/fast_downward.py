@@ -82,6 +82,12 @@ class FastDownwardEnv(AbstractEnv):
         self.control_interval = config.control_interval
         self.argstring = f"rl_eager(rl([{''.join(f'{h},' for h in self.heuristics)[:-1]}],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})"
 
+        if config.fd_logs is None:
+            self.logpath_out = os.devnull
+            self.logpath_err = os.devnull
+        else:
+            self.logpath_out = os.path.join(config.fd_logs, "fdout.txt")
+            self.logpath_err = os.path.join(config.fd_logs, "fderr.txt")
         self.fd_path = config.fd_path
         self.fd = None
         if "domain_file" in config.keys():
@@ -326,31 +332,27 @@ class FastDownwardEnv(AbstractEnv):
 
         if self.fd:
             self.fd.terminate()
+
         if self.instance.endswith(".pddl"):
-            with open(os.devnull, "a") as fp:
-                self.fd = subprocess.Popen(
-                    [
-                        "python3",
-                        f"{self.fd_path}",
-                        self.domain_file,
-                        self.instance,
-                        "--search",
-                        self.argstring,
-                    ],
-                    stdout=fp,
-                )
+            command = [
+                "python3",
+                f"{self.fd_path}",
+                self.domain_file,
+                self.instance,
+                "--search",
+                self.argstring,
+            ]
         else:
-            with open(os.devnull, "a+") as fp:
-                self.fd = subprocess.Popen(
-                    [
-                        "python3",
-                        f"{self.fd_path}",
-                        self.instance,
-                        "--search",
-                        self.argstring,
-                    ],
-                    stdout=fp,
-                )
+            command = [
+                "python3",
+                f"{self.fd_path}",
+                self.instance,
+                "--search",
+                self.argstring,
+            ]
+        with open(self.logpath_out, "a+") as fout, open(self.logpath_err, "a+") as ferr:
+            self.fd = subprocess.Popen(command, stdout=fout, stderr=ferr)
+
         # write down port such that FD can potentially read where to connect to
         if self._port_file_id:
             fp = joinpath(self._config_dir, "port_{:d}.txt".format(self._port_file_id))
