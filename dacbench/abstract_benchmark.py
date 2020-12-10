@@ -73,7 +73,7 @@ class AbstractBenchmark:
         with open(path, "r") as fp:
             self.config = objdict(json.load(fp))
         if "observation_space_type" in self.config:
-            # Typwa have to be numpy dtype (for gym spaces)s
+            # Types have to be numpy dtype (for gym spaces)s
             if type(self.config["observation_space_type"]) == str:
                 typestring = self.config["observation_space_type"].split(" ")[1][:-2]
                 typestring = typestring.split(".")[1]

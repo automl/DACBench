@@ -23,6 +23,15 @@ class TestCMABenchmark(unittest.TestCase):
         self.assertTrue(bench.config.dummy == 0)
         os.remove("test_conf.json")
 
+    def test_save_conf(self):
+        bench = ModeaBenchmark()
+        bench.save_config("test_conf.json")
+        with open("test_conf.json", "r") as fp:
+            recovered = json.load(fp)
+        for k in bench.config.keys():
+            self.assertTrue(k in recovered.keys())
+        os.remove("test_conf.json")
+
     def test_read_instances(self):
         bench = ModeaBenchmark()
         bench.read_instance_set()

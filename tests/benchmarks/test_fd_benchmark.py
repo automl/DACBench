@@ -16,15 +16,32 @@ class TestFDBenchmark(unittest.TestCase):
         env = bench.get_environment()
         self.assertTrue(issubclass(type(env), FastDownwardEnv))
 
-    def test_setup(self):
-        bench = FastDownwardBenchmark()
-        self.assertTrue(bench.config is not None)
+    def test_scenarios(self):
+        scenarios = [
+            "fd_barman.json",
+            "fd_blocksworld.json",
+            "fd_visitall.json",
+            "fd_childsnack.json",
+            "fd_sokoban.json",
+            "fd_rovers.json",
+        ]
+        for s in scenarios:
+            path = os.path.join("dacbench/scenarios/fast_downward/", s)
+            bench = FastDownwardBenchmark(path)
+            self.assertTrue(bench.config is not None)
+            env = bench.get_environment()
+            state = env.reset()
+            self.assertTrue(state is not None)
+            state, _, _, _ = env.step(0)
+            self.assertTrue(state is not None)
 
-        config = {"dummy": 0}
-        with open("test_conf.json", "w+") as fp:
-            json.dump(config, fp)
-        bench = FastDownwardBenchmark("test_conf.json")
-        self.assertTrue(bench.config.dummy == 0)
+    def test_save_conf(self):
+        bench = FastDownwardBenchmark()
+        bench.save_config("test_conf.json")
+        with open("test_conf.json", "r") as fp:
+            recovered = json.load(fp)
+        for k in bench.config.keys():
+            self.assertTrue(k in recovered.keys())
         os.remove("test_conf.json")
 
     def test_read_instances(self):
