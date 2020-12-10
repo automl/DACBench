@@ -4,6 +4,7 @@ Its focus is on reproducibility and comparability of different DAC methods as we
 
 ## Installation
 We recommend to install DACBench in a virtual environment.
+Note that even if you choose to not use a virtual env, please make sure you run all experiments using python 3.6 as some benchmarks are not compatible with other python versions!
 To install DACBench including the dependencies to run examples:
 ```
 conda create -n dacbench python=3.6

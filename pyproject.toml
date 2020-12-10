@@ -50,6 +50,7 @@ pre-commit = "2.7.1"
 [example-dependencies]
 chainerrl = "0.7.0"
 ray = "1.0.0"
+tabulate = "0.8.7"
 tensorflow = "1.14"
 dm-tree = "0.1.5"
 opencv-python = "4.2.0.32"

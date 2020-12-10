@@ -28,14 +28,14 @@ class TestLubyBenchmark(unittest.TestCase):
     def test_read_instances(self):
         bench = LubyBenchmark()
         bench.read_instance_set()
-        self.assertTrue(len(bench.config.instance_set) == 100)
+        self.assertTrue(len(bench.config.instance_set) == 1)
         self.assertTrue(len(bench.config.instance_set[0]) == 2)
-        self.assertTrue(bench.config.instance_set[0] == [34, -0.07])
+        self.assertTrue(bench.config.instance_set[0] == [0, 0])
         bench2 = LubyBenchmark()
         env = bench2.get_environment()
         self.assertTrue(len(env.instance_set[0]) == 2)
-        self.assertTrue(env.instance_set[0] == [34, -0.07])
-        self.assertTrue(len(env.instance_set) == 100)
+        self.assertTrue(env.instance_set[0] == [0, 0])
+        self.assertTrue(len(env.instance_set) == 1)
 
     def test_benchmark_env(self):
         bench = LubyBenchmark()
