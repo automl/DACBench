@@ -58,7 +58,7 @@ class FastDownwardEnv(AbstractEnv):
             # "cg_num_eff_to_eff", "cg_num_eff_to_pre", "cg_num_pre_to_eff"
         ]
 
-        total_state_features = config.num_heuristics * len(
+        total_state_features = len(config.heuristics) * len(
             self._heuristic_state_features
         )
         self._use_gsi = config.use_general_state_info
@@ -72,7 +72,7 @@ class FastDownwardEnv(AbstractEnv):
             self.__skip_transform[8] = True
             self.__skip_transform[9] = True
 
-        self.__num_heuristics = config.num_heuristics
+        self.heuristics = config.heuristics
         self.host = config.host
         self.port = config.port
         if config["parallel"]:
@@ -80,10 +80,8 @@ class FastDownwardEnv(AbstractEnv):
 
         self.fd_seed = config.fd_seed
         self.control_interval = config.control_interval
-        if config["heuristic_mode"] == "toy":
-            self.argstring = f"rl_eager(rl([tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)]),tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])],random_seed={self.fd_seed},handle_empty_list=true),rl_control_interval={self.control_interval},rl_client_port={self.port})"
-        else:
-            self.argstring = f"rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})"
+        self.argstring = f"rl_eager(rl([{''.join(f'{h},' for h in self.heuristics)[:-1]}],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})"
+
         self.fd_path = config.fd_path
         self.fd = None
         if "domain_file" in config.keys():
@@ -237,7 +235,7 @@ class FastDownwardEnv(AbstractEnv):
         if self._use_gsi:
             for feature in self._general_state_features:
                 state.append(data[feature])
-        for heuristic_id in range(self.__num_heuristics):  # process heuristic data
+        for heuristic_id in range(len(self.heuristics)):  # process heuristic data
             for feature in self._heuristic_state_features:
                 state.append(data["%d" % heuristic_id][feature])
 
