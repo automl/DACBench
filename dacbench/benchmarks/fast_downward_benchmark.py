@@ -35,7 +35,7 @@ FD_DEFAULTS = objdict(
         "max_rand_steps": 0,
         "instance_set_path": "../instance_sets/fast_downward/train",
         "fd_path": os.path.dirname(os.path.abspath(__file__))
-        + "/../envs/fast-downward/fast-downward.py",
+        + "/../envs/rl-plan/fast-downward/fast-downward.py",
         "parallel": True,
         "fd_logs": None,
     }

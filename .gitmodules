@@ -1,0 +1,3 @@
+[submodule "dacbench/envs/rl-plan"]
+	path = dacbench/envs/rl-plan
+	url = https://github.com/speckdavid/rl-plan.git
