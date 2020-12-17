@@ -55,6 +55,7 @@ tensorflow = "1.14"
 dm-tree = "0.1.5"
 opencv-python = "4.2.0.32"
 stable-baselines = "2.10.1"
+jupyter = "1.0.0"
 
 [build-system]
 requires = [
