@@ -7,6 +7,8 @@ from dacbench.wrappers import PerformanceTrackingWrapper
 from dacbench.runner import run_benchmark, RandomAgent, StaticAgent, GenericAgent
 from dacbench.envs.policies.optimal_sigmoid import get_optimum as optimal_sigmoid
 from dacbench.envs.policies.optimal_luby import get_optimum as optimal_luby
+from dacbench.envs.policies.optimal_fd import get_optimum as optimal_fd
+from dacbench.envs.policies.csa_cma import csa
 import itertools
 
 modea_actions = [
@@ -81,6 +83,13 @@ def run_optimal(results_path, benchmark_name, num_episodes, seeds=np.arange(10))
         policy = optimal_luby
     elif benchmark_name == "SigmoidBenchmark":
         policy = optimal_sigmoid
+    elif benchmark_name == "FastDownwardBenchmark":
+        policy = optimal_fd
+    elif benchmark_name == "CMAESBenchmark":
+        policy = csa
+    else:
+        print("No comparison policy found for this benchmark")
+        return
 
     for s in seeds:
         env = bench.get_benchmark(seed=s)
@@ -169,10 +178,15 @@ def main():
             for a in actions:
                 run_static(args.outdir, b, a, args.num_episodes, args.seeds)
 
-    if args.optimal:
+    if args.optimal or args.dyna_baseline:
         for b in benchs:
-            if b not in ["LubyBenchmark", "SigmoidBenchmark", "FastDownwardBenchmark"]:
-                print("Optimal policy not available!")
+            if b not in [
+                "LubyBenchmark",
+                "SigmoidBenchmark",
+                "FastDownwardBenchmark",
+                "CMAESBenchmark",
+            ]:
+                print("Option not available!")
                 break
 
             run_optimal(args.outdir, b, args.num_episodes, args.seeds)

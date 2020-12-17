@@ -32,7 +32,7 @@ action_values = (3, 3, 3, 3, 3)
 env_config = {
     "seed": 0,
     "action_values": action_values,
-    "instance_set_path": "../instance_sets/sigmoid_5D3M_train.csv",
+    "instance_set_path": "../instance_sets/sigmoid/sigmoid_5D3M_train.csv",
 }
 
 # Make environment

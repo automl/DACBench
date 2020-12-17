@@ -1,16 +1,16 @@
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import ModeaEnv
-from gym import spaces
 import numpy as np
 import os
 import csv
 
 MODEA_DEFAULTS = objdict(
     {
-        "action_space": spaces.MultiDiscrete([2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3]),
-        "observation_space": spaces.Box(
-            low=-np.inf * np.ones(5), high=np.inf * np.ones(5)
-        ),
+        "action_space_class": "MultiDiscrete",
+        "action_space_args": [[2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3]],
+        "observation_space_class": "Box",
+        "observation_space_args": [-np.inf * np.ones(5), np.inf * np.ones(5)],
+        "observation_space_type": np.float32,
         "reward_range": (-(10 ** 12), 0),
         "budget": 100,
         "cutoff": 1e6,

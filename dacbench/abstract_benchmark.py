@@ -1,4 +1,5 @@
 import json
+import numpy as np
 
 
 class AbstractBenchmark:
@@ -41,8 +42,24 @@ class AbstractBenchmark:
         path : str
             File to save config to
         """
+        conf = self.config.copy()
+        if "observation_space_type" in self.config:
+            conf["observation_space_type"] = f"{self.config['observation_space_type']}"
+        for k in self.config.keys():
+            if isinstance(self.config[k], np.ndarray) or isinstance(
+                self.config[k], list
+            ):
+                if type(self.config[k][0]) == np.ndarray:
+                    conf[k] = list(map(list, conf[k]))
+                    for i in range(len(conf[k])):
+                        if (
+                            not type(conf[k][i][0]) == float
+                            and np.inf not in conf[k][i]
+                            and -np.inf not in conf[k][i]
+                        ):
+                            conf[k][i] = list(map(int, conf[k][i]))
         with open(path, "w") as fp:
-            json.dump(self.config, fp)
+            json.dump(conf, fp)
 
     def read_config_file(self, path):
         """
@@ -55,6 +72,17 @@ class AbstractBenchmark:
         """
         with open(path, "r") as fp:
             self.config = objdict(json.load(fp))
+        if "observation_space_type" in self.config:
+            # Types have to be numpy dtype (for gym spaces)s
+            if type(self.config["observation_space_type"]) == str:
+                typestring = self.config["observation_space_type"].split(" ")[1][:-2]
+                typestring = typestring.split(".")[1]
+                self.config["observation_space_type"] = getattr(np, typestring)
+        for k in self.config.keys():
+            if type(self.config[k]) == list:
+                if type(self.config[k][0]) == list:
+                    map(np.array, self.config[k])
+                self.config[k] = np.array(self.config[k])
 
     def get_environment(self):
         """

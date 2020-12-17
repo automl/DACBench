@@ -14,28 +14,38 @@ class TestLubyBenchmark(unittest.TestCase):
         env = bench.get_environment()
         self.assertTrue(issubclass(type(env), LubyEnv))
 
-    def test_setup(self):
-        bench = LubyBenchmark()
-        self.assertTrue(bench.config is not None)
+    def test_scenarios(self):
+        scenarios = ["luby_hard.json", "luby_harder.json", "luby_very_hard.json"]
+        for s in scenarios:
+            path = os.path.join("dacbench/scenarios/luby/", s)
+            bench = LubyBenchmark(path)
+            self.assertTrue(bench.config is not None)
+            env = bench.get_environment()
+            state = env.reset()
+            self.assertTrue(state is not None)
+            state, _, _, _ = env.step(0)
+            self.assertTrue(state is not None)
 
-        config = {"dummy": 0}
-        with open("test_conf.json", "w+") as fp:
-            json.dump(config, fp)
-        bench = LubyBenchmark("test_conf.json")
-        self.assertTrue(bench.config.dummy == 0)
+    def test_save_conf(self):
+        bench = LubyBenchmark()
+        bench.save_config("test_conf.json")
+        with open("test_conf.json", "r") as fp:
+            recovered = json.load(fp)
+        for k in bench.config.keys():
+            self.assertTrue(k in recovered.keys())
         os.remove("test_conf.json")
 
     def test_read_instances(self):
         bench = LubyBenchmark()
         bench.read_instance_set()
-        self.assertTrue(len(bench.config.instance_set) == 100)
+        self.assertTrue(len(bench.config.instance_set) == 1)
         self.assertTrue(len(bench.config.instance_set[0]) == 2)
-        self.assertTrue(bench.config.instance_set[0] == [34, -0.07])
+        self.assertTrue(bench.config.instance_set[0] == [0, 0])
         bench2 = LubyBenchmark()
         env = bench2.get_environment()
         self.assertTrue(len(env.instance_set[0]) == 2)
-        self.assertTrue(env.instance_set[0] == [34, -0.07])
-        self.assertTrue(len(env.instance_set) == 100)
+        self.assertTrue(env.instance_set[0] == [0, 0])
+        self.assertTrue(len(env.instance_set) == 1)
 
     def test_benchmark_env(self):
         bench = LubyBenchmark()

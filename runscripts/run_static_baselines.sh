@@ -5,4 +5,4 @@
 #SBATCH --time=72:00:00
 #SBATCH --mem-per-cpu=8000M
 
-python ../dacbench/run_baselines.py --outdir baselines --static --num_episodes 1000 --benchmarks $1
+python dacbench/run_baselines.py --outdir baselines --static --num_episodes 1000 --benchmarks $1

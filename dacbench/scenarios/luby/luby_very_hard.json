@@ -1,0 +1,1 @@
+{"action_space_class": "Discrete", "action_space_args": [6], "observation_space_class": "Box", "observation_space_type": "<class 'numpy.float32'>", "observation_space_args": [[-1, -1, -1, -1, -1, -1], [128, 128, 128, 128, 128, 128]], "reward_range": [-1, 0], "cutoff": 64, "hist_length": 5, "min_steps": 8, "seed": 0, "instance_set_path": "../instance_sets/luby/luby_train.csv"}

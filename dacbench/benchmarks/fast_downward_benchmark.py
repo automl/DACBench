@@ -4,18 +4,21 @@ from dacbench.envs import FastDownwardEnv
 import numpy as np
 import os
 
-NUM_HEURISTICS = 2
+HEURISTICS = [
+    "tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)])",
+    "tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])",
+]
 
 FD_DEFAULTS = objdict(
     {
-        "num_heuristics": NUM_HEURISTICS,
+        "heuristics": HEURISTICS,
         "action_space_class": "Discrete",
-        "action_space_args": [NUM_HEURISTICS],
+        "action_space_args": [len(HEURISTICS)],
         "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [
-            np.array([-np.inf for _ in range(5 * NUM_HEURISTICS)]),
-            np.array([np.inf for _ in range(5 * NUM_HEURISTICS)]),
+            np.array([-np.inf for _ in range(5 * len(HEURISTICS))]),
+            np.array([np.inf for _ in range(5 * len(HEURISTICS))]),
         ],
         "reward_range": (-np.inf, 0),
         "cutoff": 1e6,
@@ -34,7 +37,7 @@ FD_DEFAULTS = objdict(
         "fd_path": os.path.dirname(os.path.abspath(__file__))
         + "/../envs/fast-downward/fast-downward.py",
         "parallel": True,
-        "heuristic_mode": "toy",
+        "fd_logs": None,
     }
 )
 
@@ -86,15 +89,30 @@ class FastDownwardBenchmark(AbstractBenchmark):
             + self.config.instance_set_path
         )
         for root, dirs, files in os.walk(path):
-            for file in files:
-                if (
-                    file.endswith(".pddl") or file.endswith(".sas")
-                ) and not file.startswith("domain"):
-                    instances.append(os.path.join(root, file))
+            for f in files:
+                if (f.endswith(".pddl") or f.endswith(".sas")) and not f.startswith(
+                    "domain"
+                ):
+                    instances.append(os.path.join(root, f))
+        if len(instances) == 0:
+            for f in os.listdir(path):
+                f = f.strip()
+                if (f.endswith(".pddl") or f.endswith(".sas")) and not f.startswith(
+                    "domain"
+                ):
+                    instances.append(os.path.join(path, f))
         self.config["instance_set"] = instances
 
         if instances[0].endswith(".pddl"):
-            self.config.domain_file = self.config.instance_set_path + "/domain.pddl"
+            self.config.domain_file = os.path.join(path + "/domain.pddl")
+
+    def set_heuristics(self, heuristics):
+        self.config.heuristics = heuristics
+        self.config.action_space_args = [len(heuristics)]
+        self.config.observation_space_args = [
+            np.array([-np.inf for _ in range(5 * len(heuristics))]),
+            np.array([np.inf for _ in range(5 * len(heuristics))]),
+        ]
 
     def get_benchmark(self, seed=0):
         """
