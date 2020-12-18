@@ -4,7 +4,8 @@ from gym import spaces
 import os
 import numpy as np
 import shutil
-from dacbench.runner import AbstractDACBenchAgent, run_dacbench, plot_results
+from dacbench.runner import run_dacbench, plot_results
+from dacbench.abstract_agent import AbstractDACBenchAgent
 import matplotlib
 
 matplotlib.use("Agg")

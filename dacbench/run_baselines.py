@@ -4,7 +4,8 @@ import json
 import argparse
 from dacbench import benchmarks
 from dacbench.wrappers import PerformanceTrackingWrapper
-from dacbench.runner import run_benchmark, RandomAgent, StaticAgent, GenericAgent
+from dacbench.runner import run_benchmark
+from dacbench.agents.simple_agents import RandomAgent, StaticAgent, GenericAgent
 from dacbench.envs.policies.optimal_sigmoid import get_optimum as optimal_sigmoid
 from dacbench.envs.policies.optimal_luby import get_optimum as optimal_luby
 from dacbench.envs.policies.optimal_fd import get_optimum as optimal_fd

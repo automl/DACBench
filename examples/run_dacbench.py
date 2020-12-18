@@ -1,5 +1,6 @@
 import numpy as np
-from dacbench.runner import AbstractDACBenchAgent, run_dacbench, plot_results
+from dacbench.runner import run_dacbench, plot_results
+from dacbench.abstract_agent import AbstractDACBenchAgent
 from example_utils import QTable, make_tabular_policy
 from gym import spaces
 
