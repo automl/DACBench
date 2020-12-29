@@ -9,13 +9,18 @@ from dacbench.logger import ModuleLogger, Logger
 
 
 class TestLogger(unittest.TestCase):
-    def test_wrapper(self):
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
+    def test_env(self):
         episodes = 3
         # todo instances
-        temp_dir = tempfile.TemporaryDirectory()
-        experiment_name = "test_experiment"
+        experiment_name = "test_env"
         logger = Logger(
-            output_path=Path(temp_dir.name), experiment_name=experiment_name
+            output_path=Path(self.temp_dir.name), experiment_name=experiment_name
         )
 
         benchmark = SigmoidBenchmark()
@@ -54,23 +59,30 @@ class TestLogger(unittest.TestCase):
                 self.assertEqual(log["logged_step"]["values"][0], log["step"])
             if "logged_episode" in log:
                 self.assertEqual(log["logged_episode"]["values"][0], log["episode"])
-        temp_dir.cleanup()
 
 
 class TestModuleLogger(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
     def test_basic_logging(self):
-        temp_dir = tempfile.TemporaryDirectory()
-        experiment_name = "test_experiment"
+        experiment_name = "test_basic_logging"
         module_name = "module"
+        episodes = 10
+        steps = 3
+
         logger = ModuleLogger(
-            output_path=Path(temp_dir.name),
+            output_path=Path(self.temp_dir.name),
             experiment_name=experiment_name,
             module=module_name,
         )
 
-        for episode in range(10):
+        for episode in range(episodes):
             logger.log("episode_logged", episode)
-            for step in range(3):
+            for step in range(steps):
                 logger.log("step_logged", step)
                 logger.next_step()
             logger.next_episode()
@@ -78,25 +90,25 @@ class TestModuleLogger(unittest.TestCase):
 
         with open(logger.log_file.name, "r") as log_file:
             logs = list(map(json.loads, log_file))
-        self.assertEqual(
-            10 * 3, len(logs), "For each step with logging done in it one line exit"
-        )
-        for log in logs:
-            self.assertTrue(
-                all(
-                    log["episode"] == logged_episode
-                    for logged_episode in log.get("episode_logged", {"values": []})[
-                        "values"
-                    ]
-                )
-            )
-            self.assertTrue(
-                all(
-                    log["step"] == logged_episode
-                    for logged_episode in log.get("step_logged", {"values": []})[
-                        "values"
-                    ]
-                )
-            )
 
-        temp_dir.cleanup()
+        self.assertEqual(
+            episodes * steps,
+            len(logs),
+            "For each step with logging done in it one line exit",
+        )
+
+        for log in logs:
+            if "logged_step" in log:
+                self.assertTrue(
+                    all(
+                        log["step"] == logged_step
+                        for logged_step in log["logged_step"]["values"]
+                    ),
+                )
+            if "logged_episode" in log:
+                self.assertTrue(
+                    all(
+                        log["step"] == logged_episode
+                        for logged_episode in log["episode_logged"]["values"]
+                    ),
+                )
