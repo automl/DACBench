@@ -27,7 +27,8 @@ class TestLogger(unittest.TestCase):
         env = benchmark.get_benchmark()
         agent = RandomAgent(env)
 
-        env_logger = logger.add_env(env)
+        logger.add_env(env)
+        env_logger = logger.add_module(env)
 
         for episode in range(1, episodes + 1):
             state = env.reset()

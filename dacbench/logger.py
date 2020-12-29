@@ -292,16 +292,13 @@ class Logger(AbstractLogger):
             env = env.env
         return env
 
-    def add_env(self, env: Union[Wrapper, AbstractEnv]) -> AbstractLogger:
+    def add_env(self, env: Union[Wrapper, AbstractEnv]) -> None:
         """
-        Registers the env and if it is a wrapper recursively the other wrappers as well as the env.
-        From now on all log(...) calls of the on the env or the wrapper will write to the values to a jsonl file.
+        Registers the underlying env.
+        From now on the internal state of the logger (step, episode are automatically updated)
         :param env:
         :return:
         """
-        # todo for all wrappers recursively?
-
-        logger = self.add_module(env)
 
         # wrap step and reset of underling env
         real_env = self.__get_env(env)
@@ -322,8 +319,6 @@ class Logger(AbstractLogger):
 
         real_env.original_reset = real_env.reset
         real_env.reset = reset
-
-        return logger
 
     def add_agent(self, agent: AbstractDACBenchAgent):
         """
