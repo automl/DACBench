@@ -20,7 +20,10 @@ class TestLogger(unittest.TestCase):
         # todo instances
         experiment_name = "test_env"
         logger = Logger(
-            output_path=Path(self.temp_dir.name), experiment_name=experiment_name
+            output_path=Path(self.temp_dir.name),
+            experiment_name=experiment_name,
+            step_write_frequency=None,
+            episode_write_frequency=None,
         )
 
         benchmark = SigmoidBenchmark()
@@ -48,7 +51,6 @@ class TestLogger(unittest.TestCase):
                 step += 1
             agent.end_episode(state, reward)
             logger.next_episode()
-            logger.write()
 
         env.close()
         logger.close()
@@ -80,6 +82,8 @@ class TestModuleLogger(unittest.TestCase):
             output_path=Path(self.temp_dir.name),
             experiment_name=experiment_name,
             module=module_name,
+            step_write_frequency=None,
+            episode_write_frequency=None,
         )
 
         for episode in range(episodes):
@@ -88,7 +92,8 @@ class TestModuleLogger(unittest.TestCase):
                 logger.log("step_logged", step)
                 logger.next_step()
             logger.next_episode()
-        logger.write()
+
+        logger.close()  # or logger write
 
         with open(logger.log_file.name, "r") as log_file:
             logs = list(map(json.loads, log_file))

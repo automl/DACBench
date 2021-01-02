@@ -5,9 +5,11 @@ from datetime import datetime
 from functools import reduce
 from itertools import chain
 from pathlib import Path
-import pandas as pd
 from typing import Union, Dict, Any, Tuple, List
 
+import pandas as pd
+
+from dacbench import AbstractEnv
 from dacbench.abstract_agent import AbstractDACBenchAgent
 
 
@@ -91,10 +93,25 @@ class AbstractLogger(metaclass=ABCMeta):
         "primitive": [str, int, float, bool],
     }
 
-    def __init__(self, experiment_name: str, output_path: Path):
+    def __init__(
+        self,
+        experiment_name: str,
+        output_path: Path,
+        step_write_frequency: int = None,
+        episode_write_frequency: int = 1,
+    ):
+        """
+        :param experiment_name:
+        :param output_path:
+        :param step_write_frequency: number of steps after which the loggers writes to file.
+        If None only the data is only written to file if  write is called.
+        :param episode_write_frequency: see step_write_frequency
+        """
         self.experiment_name = experiment_name
         self.output_path = output_path
         self.log_dir = self._init_logging_dir(self.output_path / self.experiment_name)
+        self.step_write_frequency = step_write_frequency
+        self.episode_write_frequency = episode_write_frequency
 
     def _pretty_valid_types(self) -> str:
         valid_types = chain(
@@ -158,16 +175,21 @@ class ModuleLogger(AbstractLogger):
         output_path: Path,
         experiment_name: str,
         module: str,
+        step_write_frequency: int = None,
+        episode_write_frequency: int = 1,
     ) -> None:
         """
         All results are placed under 'output_path / experiment_name'
         :param output_path: the path where logged information should be stored
         :param experiment_name: name of the experiment.
         :param the module (mostly name of the wrapper), each wrapper get's its own file
+        :param step_write_frequency: number of steps after which the loggers writes to file.
+        If None only the data is only written to file if  write is called.
+        :param episode_write_frequency: see step_write_frequency
         """
-        super(ModuleLogger, self).__init__(experiment_name, output_path)
-        # todo write buffer every frequency
-        # todo add multi module support
+        super(ModuleLogger, self).__init__(
+            experiment_name, output_path, step_write_frequency, episode_write_frequency
+        )
         # todo add registration
 
         self.log_file = open(self.log_dir / f"{module}.jsonl", "a+")
@@ -178,10 +200,12 @@ class ModuleLogger(AbstractLogger):
         self.current_step = self.__init_dict()
 
     def close(self):
+        self.write()
         self.log_file.close()
 
     def __del__(self):
-        self.close()
+        if not self.log_file.closed:
+            self.close()
 
     def __end_step(self):
         if self.current_step:
@@ -205,10 +229,20 @@ class ModuleLogger(AbstractLogger):
 
     def next_step(self):
         self.__end_step()
+        if (
+            self.step_write_frequency is not None
+            and self.step % self.step_write_frequency == 0
+        ):
+            self.write()
         self.step += 1
 
     def next_episode(self):
         self.__reset_step()
+        if (
+            self.episode_write_frequency is not None
+            and self.episode % self.episode_write_frequency == 0
+        ):
+            self.write()
         self.episode += 1
 
     def write(self):
@@ -245,13 +279,23 @@ class ModuleLogger(AbstractLogger):
 
 
 class Logger(AbstractLogger):
-    def __init__(self, experiment_name: str, output_path: Path) -> None:
+    def __init__(
+        self,
+        experiment_name: str,
+        output_path: Path,
+        step_write_frequency: int = None,
+        episode_write_frequency: int = 1,
+    ) -> None:
         """
-
         :param experiment_name:
         :param output_path:
+        :param step_write_frequency: number of steps after which the loggers writes to file.
+        If None only the data is only written to file if  write is called.
+        :param episode_write_frequency: see step_write_frequency
         """
-        super(Logger, self).__init__(experiment_name, output_path)
+        super(Logger, self).__init__(
+            experiment_name, output_path, step_write_frequency, episode_write_frequency
+        )
         self.module_logger: Dict[str, ModuleLogger] = dict()
 
     def close(self):
@@ -278,7 +322,11 @@ class Logger(AbstractLogger):
             raise ValueError(f"Module {module} already registered")
         else:
             self.module_logger[module] = ModuleLogger(
-                self.output_path, self.experiment_name, module
+                self.output_path,
+                self.experiment_name,
+                module,
+                self.step_write_frequency,
+                self.episode_write_frequency,
             )
 
         return self.module_logger[module]
@@ -290,6 +338,14 @@ class Logger(AbstractLogger):
         :return:
         """
         # todo implement
+        raise NotImplementedError()
+
+    def add_env(self, env: AbstractEnv):
+        """
+        Writes information about the env
+        :param env:
+        :return:
+        """
         raise NotImplementedError()
 
     def log(self, key, value, module):
