@@ -27,10 +27,9 @@ class TestLogger(unittest.TestCase):
         env = benchmark.get_benchmark()
         agent = RandomAgent(env)
 
-        logger.add_env(env)
         env_logger = logger.add_module(env)
 
-        for episode in range(1, episodes + 1):
+        for episode in range(episodes):
             state = env.reset()
             done = False
             reward = 0
@@ -44,9 +43,11 @@ class TestLogger(unittest.TestCase):
                 env_logger.log("done", done)
                 agent.train(next_state, reward)
                 state = next_state
+                logger.next_step()
 
                 step += 1
             agent.end_episode(state, reward)
+            logger.next_episode()
             logger.write()
 
         env.close()

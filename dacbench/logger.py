@@ -8,9 +8,6 @@ from pathlib import Path
 import pandas as pd
 from typing import Union, Dict, Any, Tuple, List
 
-from gym import Wrapper
-
-from dacbench import AbstractEnv
 from dacbench.abstract_agent import AbstractDACBenchAgent
 
 
@@ -286,43 +283,9 @@ class Logger(AbstractLogger):
 
         return self.module_logger[module]
 
-    @staticmethod
-    def __get_env(env: Union[Wrapper, AbstractEnv]) -> AbstractEnv:
-        while hasattr(env, "env"):
-            env = env.env
-        return env
-
-    def add_env(self, env: Union[Wrapper, AbstractEnv]) -> None:
-        """
-        Registers the underlying env.
-        From now on the internal state of the logger (step, episode are automatically updated)
-        :param env:
-        :return:
-        """
-
-        # wrap step and reset of underling env
-        real_env = self.__get_env(env)
-
-        def step(*args, **kwargs):
-            self.next_step()
-            next_state, reward, done, info = real_env.original_step(*args, **kwargs)
-            # if done:
-            #    self.next_episode()
-            return next_state, reward, done, info
-
-        real_env.original_step = real_env.step
-        real_env.step = step
-
-        def reset(*args, **kwargs):
-            self.next_episode()
-            return real_env.original_reset(*args, **kwargs)
-
-        real_env.original_reset = real_env.reset
-        real_env.reset = reset
-
     def add_agent(self, agent: AbstractDACBenchAgent):
         """
-        Registries the agent
+        Writes information about the agent
         :param agent:
         :return:
         """
