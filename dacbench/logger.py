@@ -253,7 +253,7 @@ class ModuleLogger(AbstractLogger):
             experiment_name, output_path, step_write_frequency, episode_write_frequency
         )
 
-        self.log_file = open(self.log_dir / f"{module}.jsonl", "a+")
+        self.log_file = open(self.log_dir / f"{module}.jsonl", "w")
 
         self.step = 0
         self.episode = 0
@@ -408,7 +408,13 @@ class Logger(AbstractLogger):
         :param module:
         :return: sub-logger for the given module
         """
-        module = module if isinstance(module, str) else module.__class__
+        if isinstance(module, str):
+            pass
+        elif isinstance(module, type):
+            module = module.__name__
+        else:
+            module = module.__class__
+
         if module in self.module_logger:
             raise ValueError(f"Module {module} already registered")
         else:

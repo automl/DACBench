@@ -13,7 +13,13 @@ class PerformanceTrackingWrapper(Wrapper):
     Includes interval mode that returns performance in lists of len(interval) instead of one long list.
     """
 
-    def __init__(self, env, performance_interval=None, track_instance_performance=True):
+    def __init__(
+        self,
+        env,
+        performance_interval=None,
+        track_instance_performance=True,
+        logger=None,
+    ):
         """
         Initialize wrapper
 
@@ -25,6 +31,7 @@ class PerformanceTrackingWrapper(Wrapper):
             If not none, mean in given intervals is tracked, too
         track_instance_performance : bool
             Indicates whether to track per-instance performance
+        logger : dacbench.logger.ModuleLogger
         """
         super(PerformanceTrackingWrapper, self).__init__(env)
         self.performance_interval = performance_interval
@@ -36,6 +43,8 @@ class PerformanceTrackingWrapper(Wrapper):
         self.track_instances = track_instance_performance
         if self.track_instances:
             self.instance_performances = {}
+
+        self.logger = logger
 
     def __setattr__(self, name, value):
         """
@@ -61,6 +70,7 @@ class PerformanceTrackingWrapper(Wrapper):
             "episode_performance",
             "render_performance",
             "render_instance_performance",
+            "logger",
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -93,6 +103,7 @@ class PerformanceTrackingWrapper(Wrapper):
             "episode_performance",
             "render_performance",
             "render_instance_performance",
+            "logger",
         ]:
             return object.__getattribute__(self, name)
 
@@ -115,6 +126,7 @@ class PerformanceTrackingWrapper(Wrapper):
         """
         state, reward, done, info = self.env.step(action)
         self.episode_performance += reward
+        self.logger.log("episode_performance", self.episode_performance)
         if done:
             self.overall_performance.append(self.episode_performance)
             if self.performance_interval:
