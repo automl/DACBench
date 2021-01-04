@@ -2,6 +2,7 @@ import json
 import numpy as np
 from gym import spaces
 
+
 class AbstractBenchmark:
     """
     Abstract template for benchmark classes
@@ -46,9 +47,11 @@ class AbstractBenchmark:
         if "observation_space_type" in self.config:
             conf["observation_space_type"] = f"{self.config['observation_space_type']}"
             if isinstance(conf["observation_space_args"][0], dict):
-                conf["observation_space_args"] = jsonify_dict_space(conf["observation_space_args"])
+                conf["observation_space_args"] = self.jsonify_dict_space(
+                    conf["observation_space_args"][0]
+                )
         elif "observation_space" in self.config:
-            conf["observation_space"] = space_to_list(conf["observation_space"])
+            conf["observation_space"] = self.space_to_list(conf["observation_space"])
 
         for k in self.config.keys():
             if isinstance(self.config[k], np.ndarray) or isinstance(
@@ -67,7 +70,7 @@ class AbstractBenchmark:
             json.dump(conf, fp)
 
     def space_to_list(self, space):
-        res =  []
+        res = []
         if isinstance(space, spaces.Box):
             res.append("Box")
             res.append([space.low.tolist(), space.high.tolist()])
@@ -77,7 +80,7 @@ class AbstractBenchmark:
             res.append([space.n])
         elif isinstance(space, spaces.Dict):
             res.append("Dict")
-            res.append(jsonify_dict_space(space.spaces))
+            res.append(self.jsonify_dict_space(space.spaces))
         elif isinstance(space, spaces.MultiDiscrete):
             res.append("MultiDiscrete")
             res.append([space.nvec])
@@ -88,7 +91,7 @@ class AbstractBenchmark:
 
     def list_to_space(self, space_list):
         if space_list[0] == "Dict":
-            args = dictify_json(space_list[1])
+            args = self.dictify_json(space_list[1])
             space = getattr(spaces, space_list[0])(args)
         elif len(space_list) == 2:
             space = getattr(spaces, space_list[0])(*space_list[1])
@@ -115,7 +118,9 @@ class AbstractBenchmark:
     def dictify_json(self, dict_list):
         dict_space = {}
         for i in range(len(dict_list[0])):
-            dict_space[dict_list[0][i]] = spaces.Box(**dict_list[1][i], dtype=np.float32)
+            dict_space[dict_list[0][i]] = spaces.Box(
+                **dict_list[1][i], dtype=np.float32
+            )
         return dict_space
 
     def read_config_file(self, path):
@@ -135,10 +140,14 @@ class AbstractBenchmark:
                 typestring = self.config["observation_space_type"].split(" ")[1][:-2]
                 typestring = typestring.split(".")[1]
                 self.config["observation_space_type"] = getattr(np, typestring)
-        if "observation_space" is in self.config:
-            self.config["observation_space"] = list_to_space(self.config["observation_space"])
+        if "observation_space" in self.config:
+            self.config["observation_space"] = self.list_to_space(
+                self.config["observation_space"]
+            )
         elif "observation_space_class" == "Dict":
-            self.config["observation_space_args"] = dictify_json(self.config["observation_space_args"])
+            self.config["observation_space_args"] = self.dictify_json(
+                self.config["observation_space_args"]
+            )
 
         for k in self.config.keys():
             if type(self.config[k]) == list:
