@@ -1,3 +1,6 @@
+from dacbench.abstract_agent import AbstractDACBenchAgent
+
+
 class DynamicRandomAgent(AbstractDACBenchAgent):
     def __init__(self, env, switching_interval):
         self.sample_action = env.action_space.sample
