@@ -66,7 +66,7 @@ def flatten_log_entry(log_entry: Dict) -> List[Dict]:
     return rows
 
 
-def log2dataframe(logs: List[dict], wide=False) -> pd.DataFrame:
+def log2dataframe(logs: List[dict], wide=False, include_time=False) -> pd.DataFrame:
     """
     Converts a list of log entries to a pandas dataframe.
     :param logs:
@@ -74,19 +74,24 @@ def log2dataframe(logs: List[dict], wide=False) -> pd.DataFrame:
     wide=False (default) produces a dataframe with columns (episode, step, time, name, value)
     wide=True returns a dataframe (episode, step, time, name_1, name_2, ...) if the variable name_n has not been logged
     at (episode, step, time) name_n is NaN.
+    :param include_time: drops the time columns mostly used in combination with wide=True.
     :return:
     """
     flat_logs = map(flatten_log_entry, logs)
     rows = reduce(lambda l1, l2: l1 + l2, flat_logs)
 
     dataframe = pd.DataFrame(rows)
+    dataframe.time = pd.to_datetime(dataframe.time)
+
+    if not include_time:
+        dataframe = dataframe.drop(columns=["time"])
 
     if wide:
-        primary_index_columns = ["episode", "step", "time"]
+        primary_index_columns = ["episode", "step"]
         field_id_column = "name"
         additional_columns = list(
             set(dataframe.columns)
-            - set(primary_index_columns + ["value", field_id_column])
+            - set(primary_index_columns + ["time", "value", field_id_column])
         )
         index_columns = primary_index_columns + additional_columns + [field_id_column]
         dataframe = dataframe.set_index(index_columns)
@@ -287,7 +292,7 @@ class ModuleLogger(AbstractLogger):
                 f"value {type(value)} is not of valid type or a recursive composition of valid types ({valid_types})"
             )
         self.current_step[key]["times"].append(
-            datetime.now().strftime("%d-%m-%y %H:%M:%S")
+            datetime.now().strftime("%d-%m-%y %H:%M:%S.%f")
         )
         self.current_step[key]["values"].append(value)
 

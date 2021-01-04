@@ -77,20 +77,9 @@ class TestLogger(unittest.TestCase):
         with open(self.log_file, "r") as log_file:
             logs = list(map(json.loads, log_file))
 
-        dataframe = log2dataframe(logs, wide=True)
-        # todo check when nan occurs
-        self.assertTrue(
-            (
-                (dataframe.logged_step.isna())
-                | (dataframe.logged_step == dataframe.step)
-            ).all()
-        )
-        self.assertTrue(
-            (
-                (dataframe.logged_episode.isna())
-                | (dataframe.logged_episode == dataframe.episode)
-            ).all()
-        )
+        dataframe = log2dataframe(logs, wide=True, include_time=False)
+        self.assertTrue((dataframe.logged_step == dataframe.step).all())
+        self.assertTrue((dataframe.logged_episode == dataframe.episode).all())
 
 
 class TestModuleLogger(unittest.TestCase):
