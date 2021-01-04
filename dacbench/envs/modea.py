@@ -87,12 +87,12 @@ class ModeaEnv(AbstractEnv):
 
         elif parameter_opts["local_restart"] == "BIPOP":
             try:
-                self.es.budgets[self.es.regime] -= self.es.used_budget
+                self.budgets[self.es.regime] -= self.es.used_budget
                 self.es.determineRegime()
             except KeyError:  # Setup of the two regimes after running regularily for the first time
                 remaining_budget = self.total_budget - self.es.used_budget
-                self.es.budgets["small"] = remaining_budget // 2
-                self.es.budgets["large"] = remaining_budget - self.es.budgets["small"]
+                self.budgets["small"] = remaining_budget // 2
+                self.budgets["large"] = remaining_budget - self.budgets["small"]
                 self.es.regime = "large"
 
             if self.es.regime == "large":
@@ -109,7 +109,7 @@ class ModeaEnv(AbstractEnv):
                 )
                 parameter_opts["sigma"] = 2e-2 * np.random.random()
 
-            self.es.budget = self.es.budgets[self.es.regime]
+            self.es.budget = self.budgets[self.es.regime]
             self.es.used_budget = 0
             parameter_opts["budget"] = self.es.budget
             parameter_opts["lambda_"] = self.es.lambda_[self.es.regime]
