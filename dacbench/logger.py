@@ -9,7 +9,7 @@ from typing import Union, Dict, Any, Tuple, List
 
 import pandas as pd
 
-from dacbench import AbstractEnv
+from dacbench import AbstractEnv, AbstractBenchmark
 from dacbench.abstract_agent import AbstractDACBenchAgent
 
 
@@ -80,10 +80,20 @@ def log2dataframe(logs: List[dict], wide=False) -> pd.DataFrame:
     rows = reduce(lambda l1, l2: l1 + l2, flat_logs)
 
     dataframe = pd.DataFrame(rows)
+
     if wide:
-        index_columns = ["episode", "step", "time", "name"]
+        primary_index_columns = ["episode", "step", "time"]
+        field_id_column = "name"
+        additional_columns = list(
+            set(dataframe.columns)
+            - set(primary_index_columns + ["value", field_id_column])
+        )
+        index_columns = primary_index_columns + additional_columns + [field_id_column]
         dataframe = dataframe.set_index(index_columns)
         dataframe = dataframe.unstack()
+        dataframe.reset_index(inplace=True)
+        dataframe.columns = [a if b == "" else b for a, b in dataframe.columns]
+
     return dataframe
 
 
@@ -112,6 +122,7 @@ class AbstractLogger(metaclass=ABCMeta):
         self.log_dir = self._init_logging_dir(self.output_path / self.experiment_name)
         self.step_write_frequency = step_write_frequency
         self.episode_write_frequency = episode_write_frequency
+        self.additional_info = {"seed": None, "instance": None}
 
     def _pretty_valid_types(self) -> str:
         valid_types = chain(
@@ -190,7 +201,6 @@ class ModuleLogger(AbstractLogger):
         super(ModuleLogger, self).__init__(
             experiment_name, output_path, step_write_frequency, episode_write_frequency
         )
-        # todo add registration
 
         self.log_file = open(self.log_dir / f"{module}.jsonl", "a+")
 
@@ -200,8 +210,9 @@ class ModuleLogger(AbstractLogger):
         self.current_step = self.__init_dict()
 
     def close(self):
-        self.write()
-        self.log_file.close()
+        if not self.log_file.closed:
+            self.write()
+            self.log_file.close()
 
     def __del__(self):
         if not self.log_file.closed:
@@ -211,6 +222,7 @@ class ModuleLogger(AbstractLogger):
         if self.current_step:
             self.current_step["step"] = self.step
             self.current_step["episode"] = self.episode
+            self.current_step.update(self.additional_info)
             self.buffer.append(json.dumps(self.current_step))
         self.current_step = self.__init_dict()
 
@@ -218,7 +230,7 @@ class ModuleLogger(AbstractLogger):
     def __init_dict():
         return defaultdict(lambda: {"times": [], "values": []})
 
-    def __reset_episode(self):
+    def reset_episode(self):
         self.__end_step()
         self.episode = 0
         self.step = 0
@@ -254,6 +266,9 @@ class ModuleLogger(AbstractLogger):
         self.buffer.clear()
         self.log_file.flush()
 
+    def set_additional_info(self, **kwargs):
+        self.additional_info.update(kwargs)
+
     def log(
         self, key: str, value: Union[Dict, List, Tuple, str, int, float, bool]
     ) -> None:
@@ -266,7 +281,6 @@ class ModuleLogger(AbstractLogger):
         :return:
         """
         # TODO add numpy support
-        # TODO add instance and benchmark
         if not self.is_of_valid_type(value):
             valid_types = self._pretty_valid_types()
             raise ValueError(
@@ -313,11 +327,16 @@ class Logger(AbstractLogger):
         for _, module_logger in self.module_logger.items():
             module_logger.next_episode()
 
+    def reset_episode(self):
+        for _, module_logger in self.module_logger.items():
+            module_logger.reset_episode()
+
     def write(self):
         for _, module_logger in self.module_logger.items():
             module_logger.write()
 
-    def add_module(self, module: str) -> ModuleLogger:
+    def add_module(self, module: Union[str, type]) -> ModuleLogger:
+        module = module if isinstance(module, str) else module.__class__
         if module in self.module_logger:
             raise ValueError(f"Module {module} already registered")
         else:
@@ -337,16 +356,29 @@ class Logger(AbstractLogger):
         :param agent:
         :return:
         """
-        # todo implement
-        raise NotImplementedError()
+        agent_config = {"type": agent.__class__}
+        with open(self.output_path / "agent.json") as f:
+            json.dump(agent_config, f)
 
-    def add_env(self, env: AbstractEnv):
+    def set_env(self, env: AbstractEnv):
         """
         Writes information about the env
         :param env:
         :return:
         """
         raise NotImplementedError()
+
+    def add_benchmark(self, benchmark: AbstractBenchmark) -> None:
+        """
+        Writes the config to the experiment path
+        :param benchmark:
+        :return:
+        """
+        benchmark.save_config(self.output_path)
+
+    def set_additional_info(self, **kwargs):
+        for _, module_logger in self.module_logger.items():
+            module_logger.set_additional_info(**kwargs)
 
     def log(self, key, value, module):
         if module not in self.module_logger:

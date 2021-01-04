@@ -1,23 +1,21 @@
 import json
 import unittest
+from itertools import product
 from pathlib import Path
 import tempfile
 
 from dacbench.agents.simple_agents import RandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
-from dacbench.logger import ModuleLogger, Logger
+from dacbench.logger import ModuleLogger, Logger, log2dataframe
 
 
 class TestLogger(unittest.TestCase):
     def setUp(self) -> None:
         self.temp_dir = tempfile.TemporaryDirectory()
 
-    def tearDown(self) -> None:
-        self.temp_dir.cleanup()
-
-    def test_env(self):
-        episodes = 3
-        # todo instances
+        episodes = 80
+        instances = [0, 2, 4, 10]
+        seeds = [0, 1, 3, 4, 5]
         experiment_name = "test_env"
         logger = Logger(
             output_path=Path(self.temp_dir.name),
@@ -31,38 +29,68 @@ class TestLogger(unittest.TestCase):
         agent = RandomAgent(env)
 
         env_logger = logger.add_module(env)
+        for seed, instance in product(seeds, instances):
+            logger.set_additional_info(seed=seed, instance=instance)
+            logger.reset_episode()
 
-        for episode in range(episodes):
-            state = env.reset()
-            done = False
-            reward = 0
-            step = 0
-            while not done:
-                action = agent.act(state, reward)
-                env_logger.log("logged_step", step)
-                env_logger.log("logged_episode", episode)
-                next_state, reward, done, _ = env.step(action)
-                env_logger.log("reward", reward)
-                env_logger.log("done", done)
-                agent.train(next_state, reward)
-                state = next_state
-                logger.next_step()
+            for episode in range(episodes):
 
-                step += 1
-            agent.end_episode(state, reward)
-            logger.next_episode()
+                state = env.reset()
+                done = False
+                reward = 0
+                step = 0
+                while not done:
+                    action = agent.act(state, reward)
+                    env_logger.log("logged_step", step)
+                    env_logger.log("logged_episode", episode)
+                    next_state, reward, done, _ = env.step(action)
+                    env_logger.log("reward", reward)
+                    env_logger.log("done", done)
+                    agent.train(next_state, reward)
+                    state = next_state
+                    logger.next_step()
+
+                    step += 1
+                agent.end_episode(state, reward)
+                logger.next_episode()
 
         env.close()
         logger.close()
 
-        with open(env_logger.log_file.name, "r") as log_file:
+        self.log_file = env_logger.log_file.name
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
+    def test_env_logger(self):
+        with open(self.log_file, "r") as log_file:
             logs = list(map(json.loads, log_file))
 
         for log in logs:
+            # todo check when nan occurs
             if "logged_step" in log:
                 self.assertEqual(log["logged_step"]["values"][0], log["step"])
             if "logged_episode" in log:
                 self.assertEqual(log["logged_episode"]["values"][0], log["episode"])
+
+    def test_data_loading(self):
+        with open(self.log_file, "r") as log_file:
+            logs = list(map(json.loads, log_file))
+
+        dataframe = log2dataframe(logs, wide=True)
+        # todo check when nan occurs
+        self.assertTrue(
+            (
+                (dataframe.logged_step.isna())
+                | (dataframe.logged_step == dataframe.step)
+            ).all()
+        )
+        self.assertTrue(
+            (
+                (dataframe.logged_episode.isna())
+                | (dataframe.logged_episode == dataframe.episode)
+            ).all()
+        )
 
 
 class TestModuleLogger(unittest.TestCase):
