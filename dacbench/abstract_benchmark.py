@@ -1,6 +1,7 @@
 import json
 import numpy as np
 from gym import spaces
+from functools import partial
 
 
 class AbstractBenchmark:
@@ -22,6 +23,7 @@ class AbstractBenchmark:
             self.read_config_file(self.config_path)
         else:
             self.config = None
+        self.wrap_funcs = []
 
     def get_config(self):
         """
@@ -53,6 +55,9 @@ class AbstractBenchmark:
         elif "observation_space" in self.config:
             conf["observation_space"] = self.space_to_list(conf["observation_space"])
 
+        if "action_space" in self.config:
+            conf["action_space"] = self.space_to_list(conf["action_space"])
+
         for k in self.config.keys():
             if isinstance(self.config[k], np.ndarray) or isinstance(
                 self.config[k], list
@@ -66,8 +71,23 @@ class AbstractBenchmark:
                             and -np.inf not in conf[k][i]
                         ):
                             conf[k][i] = list(map(int, conf[k][i]))
+
+        conf["wrappers"] = self.jsonify_wrappers()
+
         with open(path, "w") as fp:
             json.dump(conf, fp)
+
+    def jsonify_wrappers(self):
+        wrappers = []
+        for func in self.wrap_funcs:
+            args = func.args
+            function = func.func.__name__
+            wrappers.append([function, args])
+        return wrappers
+
+    def dejson_wrappers(self, wrapper_list):
+        for i in range(len(wrapper_list)):
+            self.wrap_funcs.append(partial(**wrapper_list))
 
     def space_to_list(self, space):
         res = []
@@ -149,6 +169,14 @@ class AbstractBenchmark:
                 self.config["observation_space_args"]
             )
 
+        if "action_space" in self.config:
+            self.config["action_space"] = self.list_to_space(
+                self.config["action_space"]
+            )
+
+        self.dejson_wrappers(self.config["wrappers"])
+        del self.config["wrappers"]
+
         for k in self.config.keys():
             if type(self.config[k]) == list:
                 if type(self.config[k][0]) == list:
@@ -207,6 +235,13 @@ class AbstractBenchmark:
         self.config["observation_space"] = kind
         self.config["observation_space_args"] = args
         self.config["observation_space_type"] = data_type
+
+    def register_wrapper(self, wrap_func):
+        if isinstance(wrap_func, list):
+            self.wrap_funcs.append(**wrap_func)
+        else:
+            self.wrap_funcs.append(wrap_func)
+
 
 
 # This code is taken from https://goodcode.io/articles/python-dict-object/

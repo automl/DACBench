@@ -63,7 +63,11 @@ class SigmoidBenchmark(AbstractBenchmark):
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
-        return SigmoidEnv(self.config)
+        env = SigmoidEnv(self.config)
+        for func in self.wrap_funcs:
+            env = func(env)
+
+        return env
 
     def set_action_values(self, values):
         """
