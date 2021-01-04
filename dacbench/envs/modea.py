@@ -36,7 +36,6 @@ class ModeaEnv(AbstractEnv):
         self.es = CustomizedES(
             self.dim, self.function, self.budget, self.mu, self.lambda_, opts, values
         )
-        self.es.mutateParameters = self.es.parameters.adaptCovarianceMatrix
         self.update_parameters()
         return self.get_state()
 
@@ -66,8 +65,8 @@ class ModeaEnv(AbstractEnv):
         # Every local restart needs its own parameters, so parameter update/mutation must also be linked every time
         parameter_opts = self.es.parameters.getParameterOpts()
         self.es.parameters = Parameters(**parameter_opts)
-        self.es.seq_cutoff = self.parameters.mu_int * self.parameters.seq_cutoff
-        self.es.mutateParameters = self.parameters.adaptCovarianceMatrix
+        self.es.seq_cutoff = self.es.parameters.mu_int * self.es.parameters.seq_cutoff
+        self.es.mutateParameters = self.es.parameters.adaptCovarianceMatrix
 
         self.es.initializePopulation()
         parameter_opts["wcm"] = self.es.population[0].genotype
@@ -143,24 +142,24 @@ class ModeaEnv(AbstractEnv):
 
         # Pick the lowest-level sampler
         if opts["base-sampler"] == "quasi-sobol":
-            sampler = Sam.QuasiGaussianSobolSampling(self.n)
+            sampler = Sam.QuasiGaussianSobolSampling(self.es.n)
         elif opts["base-sampler"] == "quasi-halton" and Sam.halton_available:
-            sampler = Sam.QuasiGaussianHaltonSampling(self.n)
+            sampler = Sam.QuasiGaussianHaltonSampling(self.es.n)
         else:
-            sampler = Sam.GaussianSampling(self.n)
+            sampler = Sam.GaussianSampling(self.es.n)
 
         # Create an orthogonal sampler using the determined base_sampler
         if opts["orthogonal"]:
-            orth_lambda = self.parameters.eff_lambda
+            orth_lambda = self.es.parameters.eff_lambda
             if opts["mirrored"]:
                 orth_lambda = max(orth_lambda // 2, 1)
             sampler = Sam.OrthogonalSampling(
-                self.n, lambda_=orth_lambda, base_sampler=sampler
+                self.es.n, lambda_=orth_lambda, base_sampler=sampler
             )
 
         # Create a mirrored sampler using the sampler (structure) chosen so far
         if opts["mirrored"]:
-            sampler = Sam.MirroredSampling(self.n, base_sampler=sampler)
+            sampler = Sam.MirroredSampling(self.es.n, base_sampler=sampler)
 
         parameter_opts = {
             "weights_option": opts["weights_option"],
@@ -175,7 +174,7 @@ class ModeaEnv(AbstractEnv):
 
         if opts["sequential"] and opts["selection"] == "pairwise":
             parameter_opts["seq_cutoff"] = 2
-            self.parameters.seq_cutoff = 2
+            self.es.parameters.seq_cutoff = 2
 
         # Init all individuals of the first population at the same random point in the search space
 
@@ -192,33 +191,45 @@ class ModeaEnv(AbstractEnv):
             # 'mutateParameters': None
         }
         self.setConfigurationParameters(functions, parameter_opts)
-        lambda_, eff_lambda, mu = self.calculateDependencies(opts, None, None)
-        self.parameters.lambda_ = lambda_
-        self.parameters.eff_lambda = eff_lambda
-        self.parameters.mu = mu
-        self.parameters.weights = self.parameters.getWeights(
-            self.parameters.weights_option
+        lambda_, eff_lambda, mu = self.es.calculateDependencies(opts, None, None)
+        self.es.parameters.lambda_ = lambda_
+        self.es.parameters.eff_lambda = eff_lambda
+        self.es.parameters.mu = mu
+        self.es.parameters.weights = self.es.parameters.getWeights(
+            self.es.parameters.weights_option
         )
-        self.parameters.mu_eff = 1 / sum(np.square(self.parameters.weights))
-        mu_eff = self.parameters.mu_eff  # Local copy
-        n = self.parameters.n
-        self.parameters.c_sigma = (mu_eff + 2) / (mu_eff + n + 5)
-        self.parameters.c_c = (4 + mu_eff / n) / (n + 4 + 2 * mu_eff / n)
-        self.parameters.c_1 = 2 / ((n + 1.3) ** 2 + mu_eff)
-        self.parameters.c_mu = min(
-            1 - self.parameters.c_1,
-            self.parameters.alpha_mu
+        self.es.parameters.mu_eff = 1 / sum(np.square(self.es.parameters.weights))
+        mu_eff = self.es.parameters.mu_eff  # Local copy
+        n = self.es.parameters.n
+        self.es.parameters.c_sigma = (mu_eff + 2) / (mu_eff + n + 5)
+        self.es.parameters.c_c = (4 + mu_eff / n) / (n + 4 + 2 * mu_eff / n)
+        self.es.parameters.c_1 = 2 / ((n + 1.3) ** 2 + mu_eff)
+        self.es.parameters.c_mu = min(
+            1 - self.es.parameters.c_1,
+            self.es.parameters.alpha_mu
             * (
                 (mu_eff - 2 + 1 / mu_eff)
-                / ((n + 2) ** 2 + self.parameters.alpha_mu * mu_eff / 2)
+                / ((n + 2) ** 2 + self.es.parameters.alpha_mu * mu_eff / 2)
             ),
         )
-        self.parameters.damps = (
+        self.es.parameters.damps = (
             1
             + 2 * np.max([0, np.sqrt((mu_eff - 1) / (n + 1)) - 1])
-            + self.parameters.c_sigma
+            + self.es.parameters.c_sigma
         )
-        self.seq_cutoff = self.parameters.mu_int * self.parameters.seq_cutoff
+        self.es.seq_cutoff = self.es.parameters.mu_int * self.es.parameters.seq_cutoff
+
+    def setConfigurationParameters(self, functions, parameters):
+        self.es.recombine = functions["recombine"]
+        self.es.mutate = functions["mutate"]
+        self.es.select = functions["select"]
+        # self.mutateParameters = functions['mutateParameters']
+        self.es.parameters.weights_option = parameters["weights_option"]
+        self.es.parameters.active = parameters["active"]
+        self.es.parameters.elitist = parameters["elitist"]
+        self.es.parameters.sequential = parameters["sequential"]
+        self.es.parameters.tpa = parameters["tpa"]
+        self.es.parameters.local_restart = parameters["local_restart"]
 
     def ensureFullLengthRepresentation(self, representation):
         """
