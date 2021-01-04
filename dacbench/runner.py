@@ -29,6 +29,7 @@ def run_benchmark(env, agent, num_episodes):
         reward = 0
         while not done:
             action = agent.act(state, reward)
+            print(action)
             next_state, reward, done, _ = env.step(action)
             agent.train(next_state, reward)
             state = next_state

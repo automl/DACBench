@@ -24,7 +24,7 @@ class TestCMABenchmark(unittest.TestCase):
         os.remove("test_conf.json")
 
     def test_save_conf(self):
-        bench = SGDBenchmark()
+        bench = CMAESBenchmark()
         bench.save_config("test_conf.json")
         with open("test_conf.json", "r") as fp:
             recovered = json.load(fp)
