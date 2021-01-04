@@ -87,7 +87,7 @@ class AbstractBenchmark:
 
     def dejson_wrappers(self, wrapper_list):
         for i in range(len(wrapper_list)):
-            self.wrap_funcs.append(partial(**wrapper_list))
+            self.wrap_funcs.append(partial(*wrapper_list))
 
     def space_to_list(self, space):
         res = []
@@ -138,9 +138,7 @@ class AbstractBenchmark:
     def dictify_json(self, dict_list):
         dict_space = {}
         for i in range(len(dict_list[0])):
-            dict_space[dict_list[0][i]] = spaces.Box(
-                **dict_list[1][i], dtype=np.float32
-            )
+            dict_space[dict_list[0][i]] = spaces.Box(*dict_list[1][i], dtype=np.float32)
         return dict_space
 
     def read_config_file(self, path):
@@ -174,8 +172,9 @@ class AbstractBenchmark:
                 self.config["action_space"]
             )
 
-        self.dejson_wrappers(self.config["wrappers"])
-        del self.config["wrappers"]
+        if "wrappers" in self.config:
+            self.dejson_wrappers(self.config["wrappers"])
+            del self.config["wrappers"]
 
         for k in self.config.keys():
             if type(self.config[k]) == list:
@@ -238,10 +237,9 @@ class AbstractBenchmark:
 
     def register_wrapper(self, wrap_func):
         if isinstance(wrap_func, list):
-            self.wrap_funcs.append(**wrap_func)
+            self.wrap_funcs.append(*wrap_func)
         else:
             self.wrap_funcs.append(wrap_func)
-
 
 
 # This code is taken from https://goodcode.io/articles/python-dict-object/
