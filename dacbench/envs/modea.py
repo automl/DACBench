@@ -1,3 +1,6 @@
+# Most of this code is taken from the paper "Online CMA-ES Selection" by Vermetten et al.
+# Github: https://github.com/Dvermetten/Online_CMA-ES_Selection
+
 from modea.Algorithms import CustomizedES
 import modea.Sampling as Sam
 import modea.Mutation as Mut
@@ -33,18 +36,11 @@ class ModeaEnv(AbstractEnv):
             self.dim, self.function, self.budget, self.mu, self.lambda_, opts, values
         )
         self.es.mutateParameters = self.es.parameters.adaptCovarianceMatrix
-        self.adapt_es_opts(opts)
+        self.update_parameters()
         return self.get_state()
 
     def step(self, action):
         done = super(ModeaEnv, self).step_()
-        # Todo: currently this doesn't support targets
-        if (
-            self.budget <= self.es.used_budget
-            or self.es.parameters.checkLocalRestartConditions(self.es.used_budget)
-        ):
-            done = True
-
         self.representation = self.ensureFullLengthRepresentation(action)
         opts = getOpts(self.representation[: len(options)])
         self.switchConfiguration(opts)
@@ -53,7 +49,60 @@ class ModeaEnv(AbstractEnv):
         self.es.runOneGeneration()
         self.es.recordStatistics()
 
+        if (
+            self.es.budget <= self.es.used_budget
+            or self.es.parameters.checkLocalRestartConditions(self.es.used_budget)
+        ):
+            self.restart()
+            if self.es.total_used_budget < self.es.total_budget:
+                self.update_parameters()
+            else:
+                done = True
+
         return self.get_state(), self.get_reward(), done, {}
+
+    def update_parameters(self):
+        # Every local restart needs its own parameters, so parameter update/mutation must also be linked every time
+        self.es.parameters = Parameters(**parameter_opts)
+        self.es.seq_cutoff = self.parameters.mu_int * self.parameters.seq_cutoff
+        self.es.mutateParameters = self.parameters.adaptCovarianceMatrix
+
+        self.es.initializePopulation()
+        parameter_opts['wcm'] = self.es.population[0].genotype
+        self.es.new_population = self.es.recombine(self.es.population, self.es.parameters)
+
+
+    def restart(self):
+        self.es.total_used_budget += self.es.used_budget
+        if target is not None:
+            if self.es.best_individual.fitness - target <= threshold:
+                break
+        # Increasing Population Strategies
+        if parameter_opts['local_restart'] == 'IPOP':
+            parameter_opts['lambda_'] *= 2
+
+        elif parameter_opts['local_restart'] == 'BIPOP':
+            try:
+                self.es.budgets[self.es.regime] -= self.es.used_budget
+                self.es.determineRegime()
+            except KeyError:  # Setup of the two regimes after running regularily for the first time
+                remaining_budget = self.total_budget - self.es.used_budget
+                self.es.budgets['small'] = remaining_budget // 2
+                self.es.budgets['large'] = remaining_budget - self.es.budgets['small']
+                self.es.regime = 'large'
+
+            if self.es.regime == 'large':
+                self.es.lambda_['large'] *= 2
+                parameter_opts['sigma'] = 2
+            elif self.es.regime == 'small':
+                rand_val = np.random.random() ** 2
+                self.es.lambda_['small'] = int(floor(lambda_init * (.5 * self.es.lambda_['large'] / lambda_init) ** rand_val))
+                parameter_opts['sigma'] = 2e-2 * np.random.random()
+
+            self.es.budget = self.es.budgets[self.es.regime]
+            self.es.used_budget = 0
+            parameter_opts['budget'] = self.es.budget
+            parameter_opts['lambda_'] = self.es.lambda_[self.es.regime]
 
     def get_state(self):
         return [
@@ -72,63 +121,6 @@ class ModeaEnv(AbstractEnv):
 
     def close(self):
         return True
-
-    def adapt_es_opts(self, opts):
-        self.es.opts = opts
-        parameter_opts = self.es.parameters.getParameterOpts()
-
-        # __init__ of CustomizedES without new instance of ES
-        # not a great solution, if package gets updates we should change this
-        lambda_, eff_lambda, mu = self.es.calculateDependencies(
-            opts, self.lambda_, self.mu
-        )
-
-        selector = Sel.pairwise if opts["selection"] == "pairwise" else Sel.best
-        # This is done for safety reasons
-        # Else offset and all_offspring may be None
-        self.es.parameters.offset = np.column_stack(
-            [ind.mutation_vector for ind in self.es.new_population]
-        )
-        self.es.parameters.all_offspring = np.column_stack(
-            [ind.genotype for ind in self.es.new_population]
-        )
-        # Same here. Probably the representation space should be restricted
-        self.es.parameters.tpa_result = -1
-
-        def select(pop, new_pop, _, param):
-            return selector(pop, new_pop, param)
-
-        if opts["base-sampler"] == "quasi-sobol":
-            sampler = Sam.QuasiGaussianSobolSampling(self.dim)
-        elif opts["base-sampler"] == "quasi-halton" and Sam.halton_available:
-            sampler = Sam.QuasiGaussianHaltonSampling(self.dim)
-        else:
-            sampler = Sam.GaussianSampling(self.dim)
-
-        if opts["orthogonal"]:
-            orth_lambda = eff_lambda
-            if opts["mirrored"]:
-                orth_lambda = max(orth_lambda // 2, 1)
-            sampler = Sam.OrthogonalSampling(
-                self.dim, lambda_=orth_lambda, base_sampler=sampler
-            )
-
-        if opts["mirrored"]:
-            sampler = Sam.MirroredSampling(self.dim, base_sampler=sampler)
-
-        if opts["sequential"] and opts["selection"] == "pairwise":
-            parameter_opts["seq_cutoff"] = 2
-
-        mutate = partial(
-            Mut.CMAMutation, sampler=sampler, threshold_convergence=opts["threshold"]
-        )
-
-        self.es.mutate = mutate
-        self.es.parameters = self.es.instantiateParameters(parameter_opts)
-        self.es.seq_cutoff = self.es.parameters.mu_int * self.es.parameters.seq_cutoff
-
-    # Source: Online CMA-ES Selection
-    # Github: https://github.com/Dvermetten/Online_CMA-ES_Selection
 
     def switchConfiguration(self, opts):
         selector = Sel.pairwise if opts['selection'] == 'pairwise' else Sel.best
