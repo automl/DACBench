@@ -1,8 +1,10 @@
+from dacbench import benchmarks
+
 import numpy as np
 import os
 import json
 import argparse
-from dacbench import benchmarks
+
 from dacbench.wrappers import PerformanceTrackingWrapper
 from dacbench.runner import run_benchmark
 from dacbench.agents import StaticAgent, GenericAgent, DynamicRandomAgent
