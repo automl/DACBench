@@ -31,6 +31,7 @@ DISCRETE_ACTIONS = {
     "FastDownwardBenchmark": [0, 1],
     "CMAESBenchmark": [np.around(a, decimals=1) for a in np.linspace(0.2, 10, num=50)],
     "ModeaBenchmark": list(itertools.product(*modea_actions)),
+    "SGDBenchmark": [np.around(a, decimals=1) for a in np.linspace(0, 10, num=50)]
 }
 
 
