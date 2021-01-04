@@ -6,8 +6,10 @@ class DynamicRandomAgent(AbstractDACBenchAgent):
         self.action = self.sample_action()
 
     def act(self, state, reward):
+        self.count += 1
         if self.count >= self.switching_interval:
             self.action = self.sample_action()
+            self.count = 0
         return self.action
 
     def train(self, next_state, reward):
