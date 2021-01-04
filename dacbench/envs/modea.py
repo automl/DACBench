@@ -36,6 +36,20 @@ class ModeaEnv(AbstractEnv):
         self.es = CustomizedES(
             self.dim, self.function, self.budget, self.mu, self.lambda_, opts, values
         )
+        parameter_opts = self.es.parameters.getParameterOpts()
+        # print("Local restart on")
+        if parameter_opts['lambda_']:
+            self.lambda_init = parameter_opts['lambda_']
+        elif parameter_opts['local_restart'] in ['IPOP', 'BIPOP']:
+            self.lambda_init = int(4 + floor(3 * log(parameter_opts['n'])))
+        else:
+            self.lambda_init = None
+        parameter_opts['lambda_'] = self.lambda_init
+
+        # BIPOP Specific parameters
+        self.lambda_ = {'small': None, 'large': self.lambda_init}
+        self.budgets = {'small': None, 'large': None}
+        self.regime = 'first'
         self.update_parameters()
         return self.get_state()
 
@@ -102,8 +116,8 @@ class ModeaEnv(AbstractEnv):
                 rand_val = np.random.random() ** 2
                 self.es.lambda_["small"] = int(
                     np.floor(
-                        parameter_opts["lambda_"]
-                        * (0.5 * self.es.lambda_["large"] / parameter_opts["lambda_"])
+                        self.lambda_init
+                        * (0.5 * self.es.lambda_["large"] / self.lambda_init)
                         ** rand_val
                     )
                 )
