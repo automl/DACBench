@@ -45,7 +45,6 @@ class ModeaEnv(AbstractEnv):
         opts = getOpts(self.representation[: len(options)])
         self.switchConfiguration(opts)
 
-        # TODO: add ipop run (restarts)
         self.es.runOneGeneration()
         self.es.recordStatistics()
 
