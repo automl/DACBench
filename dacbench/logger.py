@@ -74,7 +74,7 @@ def log2dataframe(logs: List[dict], wide=False, include_time=False) -> pd.DataFr
     wide=False (default) produces a dataframe with columns (episode, step, time, name, value)
     wide=True returns a dataframe (episode, step, time, name_1, name_2, ...) if the variable name_n has not been logged
     at (episode, step, time) name_n is NaN.
-    :param include_time: drops the time columns mostly used in combination with wide=True.
+    :param include_time: drops the time columns mostly used in combination with wide=True to reduce NaN values
     :return:
     """
     flat_logs = map(flatten_log_entry, logs)
@@ -103,6 +103,15 @@ def log2dataframe(logs: List[dict], wide=False, include_time=False) -> pd.DataFr
 
 
 class AbstractLogger(metaclass=ABCMeta):
+    """
+    Logger interface.
+
+    The logger classes provide a way of writing structured logs as jsonl files and also help to track information like
+    current episode, step, time ...
+
+    In the jsonl log file each row corresponds to a step.
+    """
+
     valid_types = {
         "recursive": [dict, list, tuple],
         "primitive": [str, int, float, bool],
@@ -119,7 +128,8 @@ class AbstractLogger(metaclass=ABCMeta):
         :param experiment_name:
         :param output_path:
         :param step_write_frequency: number of steps after which the loggers writes to file.
-        If None only the data is only written to file if  write is called.
+        If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
+        or on close
         :param episode_write_frequency: see step_write_frequency
         """
         self.experiment_name = experiment_name
@@ -130,6 +140,10 @@ class AbstractLogger(metaclass=ABCMeta):
         self.additional_info = {"seed": None, "instance": None}
 
     def _pretty_valid_types(self) -> str:
+        """
+        Returns a string pretty string representation of the types that can be logged as values
+        :return:
+        """
         valid_types = chain(
             self.valid_types["recursive"], self.valid_types["primitive"]
         )
@@ -137,6 +151,11 @@ class AbstractLogger(metaclass=ABCMeta):
 
     @staticmethod
     def _init_logging_dir(log_dir: Path):
+        """
+        Prepares the logging directory
+        :param log_dir:
+        :return:
+        """
         log_dir.mkdir(parents=True, exist_ok=True)
         return log_dir
 
@@ -158,18 +177,37 @@ class AbstractLogger(metaclass=ABCMeta):
 
     @abstractmethod
     def close(self):
+        """
+        Makes sure, that all remaining entries in the are written to file and the file is closed
+        :return:
+        """
         pass
 
     @abstractmethod
     def next_step(self):
+        """
+        Call at the end of the step.
+        Updates the internal state and dumps the information of the last step into a json
+        :return:
+        """
         pass
 
     @abstractmethod
     def next_episode(self):
+        """
+        Call at the end of episode.
+
+        See next_step
+        :return:
+        """
         pass
 
     @abstractmethod
     def write(self):
+        """
+        Writes buffered logs to file
+        :return:
+        """
         pass
 
     @abstractmethod
@@ -186,6 +224,12 @@ class AbstractLogger(metaclass=ABCMeta):
 
 
 class ModuleLogger(AbstractLogger):
+    """
+    A logger for handling logging of one module. e.g. a wrapper or toplevel general logging.
+
+    Don't create manually use Logger to manage ModuleLoggers
+    """
+
     def __init__(
         self,
         output_path: Path,
@@ -200,9 +244,11 @@ class ModuleLogger(AbstractLogger):
         :param experiment_name: name of the experiment.
         :param the module (mostly name of the wrapper), each wrapper get's its own file
         :param step_write_frequency: number of steps after which the loggers writes to file.
-        If None only the data is only written to file if  write is called.
+         If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
+        or on close
         :param episode_write_frequency: see step_write_frequency
         """
+
         super(ModuleLogger, self).__init__(
             experiment_name, output_path, step_write_frequency, episode_write_frequency
         )
@@ -272,6 +318,11 @@ class ModuleLogger(AbstractLogger):
         self.log_file.flush()
 
     def set_additional_info(self, **kwargs):
+        """
+        Can be used to log additional infomation for each step e.g. for seed, and instance id.
+        :param kwargs:
+        :return:
+        """
         self.additional_info.update(kwargs)
 
     def log(
@@ -298,6 +349,16 @@ class ModuleLogger(AbstractLogger):
 
 
 class Logger(AbstractLogger):
+    """
+    A logger that manages the creation of the module loggers.
+
+    To get a ModuleLogger for you module (e.g. wrapper) call module_logger = Logger(...).add_module("my_wrapper").
+    From now on  module_logger.log(...) or logger.log(..., module="my_wrapper") can be used to log.
+
+    The logger module takes care of updating information like episode and step in the subloggers. To indicate to the loggers
+    the end of the episode or the next_step simple call logger.next_episode() or logger.next_step().
+    """
+
     def __init__(
         self,
         experiment_name: str,
@@ -309,7 +370,8 @@ class Logger(AbstractLogger):
         :param experiment_name:
         :param output_path:
         :param step_write_frequency: number of steps after which the loggers writes to file.
-        If None only the data is only written to file if  write is called.
+        If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
+        or on close
         :param episode_write_frequency: see step_write_frequency
         """
         super(Logger, self).__init__(
@@ -341,6 +403,11 @@ class Logger(AbstractLogger):
             module_logger.write()
 
     def add_module(self, module: Union[str, type]) -> ModuleLogger:
+        """
+        Creates a sub-logger. For more details see class level documentation
+        :param module:
+        :return: sub-logger for the given module
+        """
         module = module if isinstance(module, str) else module.__class__
         if module in self.module_logger:
             raise ValueError(f"Module {module} already registered")
