@@ -23,6 +23,8 @@ class AbstractEnv(gym.Env):
         self.inst_id = self.instance_id_list[self.instance_index]
         self.instance = self.instance_set[self.inst_id]
 
+        self.benchmark_info = config["benchmark_info"]
+
         self.np_random = None
 
         self.n_steps = config["cutoff"]

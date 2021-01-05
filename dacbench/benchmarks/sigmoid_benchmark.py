@@ -8,6 +8,15 @@ import csv
 
 ACTION_VALUES = (5, 10)
 
+INFO = {"name": "Sigmoid Function Approximation",
+        "reward": "Multiplied Differences between Function and Action in each Dimension",
+        "state_description": ["Remaining Budget",
+                              "Shift (dimension 1)",
+                              "Slope (dimension 1)",
+                              "Shift (dimension 2)",
+                              "Slope (dimension 2)",
+                              "Action"]}
+
 SIGMOID_DEFAULTS = objdict(
     {
         "action_space_class": "Discrete",
@@ -24,6 +33,7 @@ SIGMOID_DEFAULTS = objdict(
         "slope_multiplier": 2.0,
         "seed": 0,
         "instance_set_path": "../instance_sets/sigmoid/sigmoid_train.csv",
+        "benchmark_info": INFO
     }
 )
 

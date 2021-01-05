@@ -9,6 +9,15 @@ import csv
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
 
+INFO = {"name": "Step-size adaption in CMA-ES",
+        "reward": "Negative best function value",
+        "state_description": ["Loc",
+                              "Past Deltas",
+                              "Population Size",
+                              "Sigma",
+                              "History Deltas",
+                              "Past Sigma Deltas"]}
+
 CMAES_DEFAULTS = objdict(
     {
         "action_space_class": "Box",
@@ -39,6 +48,7 @@ CMAES_DEFAULTS = objdict(
         "popsize": 10,
         "seed": 0,
         "instance_set_path": "../instance_sets/cma/cma_train.csv",
+        "benchmark_info": INFO
     }
 )
 

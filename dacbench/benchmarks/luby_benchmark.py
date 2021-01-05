@@ -10,6 +10,15 @@ MAX_STEPS = 2 ** 6
 LUBY_SEQUENCE = np.log2([next(luby_gen(i)) for i in range(1, 2 * MAX_STEPS + 2)])
 HISTORY_LENGTH = 5
 
+INFO = {"name": "Luby Sequence Approximation",
+        "reward": "Boolean sucess indication",
+        "state_description": ["Action t-2",
+                              "Step t-2",
+                              "Action t-1",
+                              "Step t-1",
+                              "Action t (current)"
+                              "Step t (current)"]}
+
 LUBY_DEFAULTS = objdict(
     {
         "action_space_class": "Discrete",
@@ -26,6 +35,7 @@ LUBY_DEFAULTS = objdict(
         "min_steps": 2 ** 3,
         "seed": 0,
         "instance_set_path": "../instance_sets/luby/luby_default.csv",
+        "benchmark_info": INFO
     }
 )
 
