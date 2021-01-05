@@ -397,8 +397,11 @@ class Logger(AbstractLogger):
     def next_episode(self):
         for _, module_logger in self.module_logger.items():
             module_logger.next_episode()
-            if self.env is not None:
-                module_logger.set_additional_info(instance=self.env.get_inst_id())
+
+        self.__update_instance()
+
+    def __update_instance(self):
+        self.set_additional_info(instance=self.env.get_inst_id())
 
     def reset_episode(self):
         for _, module_logger in self.module_logger.items():
@@ -431,6 +434,10 @@ class Logger(AbstractLogger):
                 self.step_write_frequency,
                 self.episode_write_frequency,
             )
+            if self.env is not None:
+                self.module_logger[module].set_additional_info(
+                    instance=self.env.get_inst_id()
+                )
 
         return self.module_logger[module]
 
@@ -451,6 +458,7 @@ class Logger(AbstractLogger):
         :return:
         """
         self.env = env
+        self.__update_instance()
 
     def add_benchmark(self, benchmark: AbstractBenchmark) -> None:
         """

@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from gym import Wrapper
 import matplotlib.pyplot as plt
 import numpy as np
@@ -42,7 +44,7 @@ class PerformanceTrackingWrapper(Wrapper):
             self.current_performance = []
         self.track_instances = track_instance_performance
         if self.track_instances:
-            self.instance_performances = {}
+            self.instance_performances = defaultdict(lambda: [])
 
         self.logger = logger
 
@@ -126,10 +128,12 @@ class PerformanceTrackingWrapper(Wrapper):
         """
         state, reward, done, info = self.env.step(action)
         self.episode_performance += reward
-        if self.logger is not None:
-            self.logger.log("episode_performance", self.episode_performance)
+
         if done:
             self.overall_performance.append(self.episode_performance)
+            if self.logger is not None:
+                self.logger.log("overall_performance", self.episode_performance)
+
             if self.performance_interval:
                 if len(self.current_performance) < self.performance_interval:
                     self.current_performance.append(self.episode_performance)
@@ -137,17 +141,8 @@ class PerformanceTrackingWrapper(Wrapper):
                     self.performance_intervals.append(self.current_performance)
                     self.current_performance = [self.episode_performance]
             if self.track_instances:
-                if (
-                    "".join(str(e) for e in self.env.instance)
-                    in self.instance_performances.keys()
-                ):
-                    self.instance_performances[
-                        "".join(str(e) for e in self.env.instance)
-                    ].append(self.episode_performance)
-                else:
-                    self.instance_performances[
-                        "".join(str(e) for e in self.env.instance)
-                    ] = [self.episode_performance]
+                key = "".join(str(e) for e in self.env.instance)
+                self.instance_performances[key].append(self.episode_performance)
             self.episode_performance = 0
         return state, reward, done, info
 

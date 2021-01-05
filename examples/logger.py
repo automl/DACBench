@@ -4,26 +4,10 @@ import seaborn as sns
 from dacbench.logger import Logger, log2dataframe
 from dacbench.agents.simple_agents import RandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
+from dacbench.runner import run_benchmark
 from dacbench.wrappers import PerformanceTrackingWrapper
 
 import matplotlib.pyplot as plt
-
-
-def run_benchmark(env, agent, num_episodes, logger):
-
-    for _ in range(num_episodes):
-        state = env.reset()
-        done = False
-        reward = 0
-        while not done:
-            action = agent.act(state, reward)
-            next_state, reward, done, _ = env.step(action)
-            agent.train(next_state, reward)
-            state = next_state
-            logger.next_step()
-        agent.end_episode(state, reward)
-        logger.next_episode()
-    env.close()
 
 
 if __name__ == "__main__":
@@ -56,9 +40,8 @@ if __name__ == "__main__":
     dataframe = log2dataframe(logs, wide=True)
     sns.relplot(
         data=dataframe,
-        x="step",
-        y="episode_performance",
-        hue="episode",
+        x="episode",
+        y="overall_performance",
         kind="line",
         col="seed",
         row="instance",
