@@ -10,7 +10,7 @@ sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())
 
 
-def run_benchmark(env, agent, num_episodes):
+def run_benchmark(env, agent, num_episodes, logger=None):
     """
     Run single benchmark env for a given number of episodes with a given agent
 
@@ -22,7 +22,12 @@ def run_benchmark(env, agent, num_episodes):
         Any agent implementing the methods act, train and end_episode (see AbstractDACBenchAgent below)
     num_episodes : int
         Number of episodes to run
+    logger : dacbench.logger.Logger: logger to use for logging. Not closed automatically like env
     """
+    if logger is not None:
+        logger.reset_episode()
+        logger.set_env(env)
+
     for _ in range(num_episodes):
         state = env.reset()
         done = False
@@ -32,7 +37,12 @@ def run_benchmark(env, agent, num_episodes):
             next_state, reward, done, _ = env.step(action)
             agent.train(next_state, reward)
             state = next_state
+            if logger is not None:
+                logger.next_step()
         agent.end_episode(state, reward)
+
+        if logger is not None:
+            logger.next_episode()
     env.close()
 
 
