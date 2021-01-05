@@ -1,4 +1,5 @@
 from dacbench.abstract_agent import AbstractDACBenchAgent
+from gym import spaces
 
 
 class DynamicRandomAgent(AbstractDACBenchAgent):
@@ -7,13 +8,22 @@ class DynamicRandomAgent(AbstractDACBenchAgent):
         self.switching_interval = switching_interval
         self.count = 0
         self.action = self.sample_action()
+        self.shortbox = isinstance(env.action_space, spaces.Box)
+        if self.shortbox:
+            self.shortbox = self.shortbox and len(env.action_space.low) == 1
+        if self.shortbox:
+            self.action = self.action[0]
 
     def act(self, state, reward):
         self.count += 1
         if self.count >= self.switching_interval:
             self.action = self.sample_action()
             self.count = 0
-        return self.action
+
+        if self.shortbox:
+            return self.action[0]
+        else:
+            return self.action
 
     def train(self, next_state, reward):
         pass

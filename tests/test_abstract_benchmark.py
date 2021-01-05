@@ -32,7 +32,7 @@ class TestAbstractBenchmark(unittest.TestCase):
         with open("test_conf2.json", "r") as fp:
             recovered = json.load(fp)
         self.assertTrue(recovered["seed"] == 10)
-        self.assertTrue(len(recovered.keys()) == 1)
+        self.assertTrue(len(recovered.keys()) == 2)
         os.remove("test_conf2.json")
 
     def test_attributes(self):

@@ -56,6 +56,7 @@ class TestRunner(unittest.TestCase):
         self.assertFalse(os.stat("test_run/SigmoidBenchmark.json") == 0)
         self.assertFalse(os.stat("test_run/CMAESBenchmark.json") == 0)
         self.assertFalse(os.stat("test_run/FastDownwardBenchmark.json") == 0)
+        self.assertFalse(os.stat("test_run/SGDBenchmark.json") == 0)
 
     def test_plotting(self):
         plot_results("test_run")
