@@ -97,14 +97,14 @@ class InstanceSamplingWrapper(Wrapper):
         """
         dists = []
         for i in range(len(instances[0])):
-            component = [inst[i] for inst in instances]
+            component = [instances[k][i] for k in instances.keys()]
             dist = norm.fit(component)
             dists.append(dist)
 
         def sample():
-            instance = {}
-            for i in range(len(dists)):
-                instance[i] = np.random.normal(dists[i][0], dists[i][1])
+            instance = []
+            for d in dists:
+                instance.append(np.random.normal(d[0], d[1]))
             return instance
 
         return sample

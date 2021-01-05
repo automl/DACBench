@@ -10,7 +10,7 @@ from dacbench.benchmarks.luby_benchmark import LUBY_DEFAULTS
 class TestLubyEnv(unittest.TestCase):
     def make_env(self):
         config = LUBY_DEFAULTS
-        config["instance_set"] = [[1, 1]]
+        config["instance_set"] = {0: [1, 1]}
         env = LubyEnv(config)
         return env
 
@@ -50,7 +50,7 @@ class TestLubyEnv(unittest.TestCase):
         self.assertTrue(len(meta.keys()) == 0)
 
         config = LUBY_DEFAULTS
-        config["instance_set"] = [[-4, -4]]
+        config["instance_set"] = {1: [-4, -4]}
         env = LubyEnv(config)
         env.reset()
         state, reward, done, meta = env.step(1)

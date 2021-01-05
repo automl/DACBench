@@ -38,6 +38,7 @@ class TestLubyBenchmark(unittest.TestCase):
     def test_read_instances(self):
         bench = LubyBenchmark()
         bench.read_instance_set()
+        print(bench.config.instance_set)
         self.assertTrue(len(bench.config.instance_set.keys()) == 1)
         self.assertTrue(len(bench.config.instance_set[0]) == 2)
         self.assertTrue(bench.config.instance_set[0] == [0, 0])

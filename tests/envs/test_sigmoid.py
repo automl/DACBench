@@ -10,7 +10,7 @@ from dacbench.benchmarks.sigmoid_benchmark import SIGMOID_DEFAULTS
 class TestSigmoidEnv(unittest.TestCase):
     def make_env(self):
         config = SIGMOID_DEFAULTS
-        config["instance_set"] = [[0, 1, 2, 3]]
+        config["instance_set"] = {20: [0, 1, 2, 3]}
         env = SigmoidEnv(config)
         return env
 

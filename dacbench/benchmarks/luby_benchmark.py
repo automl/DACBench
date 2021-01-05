@@ -10,14 +10,17 @@ MAX_STEPS = 2 ** 6
 LUBY_SEQUENCE = np.log2([next(luby_gen(i)) for i in range(1, 2 * MAX_STEPS + 2)])
 HISTORY_LENGTH = 5
 
-INFO = {"name": "Luby Sequence Approximation",
-        "reward": "Boolean sucess indication",
-        "state_description": ["Action t-2",
-                              "Step t-2",
-                              "Action t-1",
-                              "Step t-1",
-                              "Action t (current)"
-                              "Step t (current)"]}
+INFO = {
+    "name": "Luby Sequence Approximation",
+    "reward": "Boolean sucess indication",
+    "state_description": [
+        "Action t-2",
+        "Step t-2",
+        "Action t-1",
+        "Step t-1",
+        "Action t (current)" "Step t (current)",
+    ],
+}
 
 LUBY_DEFAULTS = objdict(
     {
@@ -35,7 +38,7 @@ LUBY_DEFAULTS = objdict(
         "min_steps": 2 ** 3,
         "seed": 0,
         "instance_set_path": "../instance_sets/luby/luby_default.csv",
-        "benchmark_info": INFO
+        "benchmark_info": INFO,
     }
 )
 
@@ -131,7 +134,7 @@ class LubyBenchmark(AbstractBenchmark):
                 self.config["instance_set"][int(row["ID"])] = [
                     float(shift) for shift in row["start"].split(",")
                 ] + [float(slope) for slope in row["sticky"].split(",")]
-        self.config["instance_set"] = list(self.config["instance_set"].values())
+        self.config["instance_set"] = self.config["instance_set"]
 
     def get_benchmark(self, L=8, fuzziness=1.5, seed=0):
         """
@@ -154,7 +157,7 @@ class LubyBenchmark(AbstractBenchmark):
         self.config = objdict(LUBY_DEFAULTS.copy())
         self.config.min_steps = L
         self.config.seed = seed
-        self.config.instance_set = [[0, 0]]
+        self.config.instance_set = {0: [0, 0]}
         self.config.reward_range = (-10, 10)
         env = LubyEnv(self.config)
         rng = np.random.RandomState(self.config.seed)

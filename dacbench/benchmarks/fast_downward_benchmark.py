@@ -9,19 +9,22 @@ HEURISTICS = [
     "tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])",
 ]
 
-INFO = {"name": "Heuristic Selection for the FastDownward Planner",
-        "reward": "Negative Runtime (-1 per step)",
-        "state_description": ["Average Value (heuristic 1)",
-                              "Max Value (heuristic 1)",
-                              "Min Value (heuristic 1)",
-                              "Open List Entries (heuristic 1)",
-                              "Variance (heuristic 1)",
-                              "Average Value (heuristic 2)",
-                              "Max Value (heuristic 2)",
-                              "Min Value (heuristic 2)",
-                              "Open List Entries (heuristic 2)",
-                              "Variance (heuristic 2)"
-                              ]}
+INFO = {
+    "name": "Heuristic Selection for the FastDownward Planner",
+    "reward": "Negative Runtime (-1 per step)",
+    "state_description": [
+        "Average Value (heuristic 1)",
+        "Max Value (heuristic 1)",
+        "Min Value (heuristic 1)",
+        "Open List Entries (heuristic 1)",
+        "Variance (heuristic 1)",
+        "Average Value (heuristic 2)",
+        "Max Value (heuristic 2)",
+        "Min Value (heuristic 2)",
+        "Open List Entries (heuristic 2)",
+        "Variance (heuristic 2)",
+    ],
+}
 
 FD_DEFAULTS = objdict(
     {
@@ -52,7 +55,7 @@ FD_DEFAULTS = objdict(
         + "/../envs/rl-plan/fast-downward/fast-downward.py",
         "parallel": True,
         "fd_logs": None,
-        "benchmark_info": INFO
+        "benchmark_info": INFO,
     }
 )
 
@@ -108,28 +111,35 @@ class FastDownwardBenchmark(AbstractBenchmark):
             + self.config.instance_set_path
         )
         import re
+
         for root, dirs, files in os.walk(path):
             for f in files:
                 if (f.endswith(".pddl") or f.endswith(".sas")) and not f.startswith(
                     "domain"
                 ):
-                    path = os.path.join(root, f)
-                    index = path.split("/")[-1].split(".")[0]
-                    index = re.sub("[^0-9]", "", index)
-                    instances[index] = os.path.join(root, f)
+                    p = os.path.join(root, f)
+                    if f.endswith(".pddl"):
+                        index = p.split("/")[-1].split(".")[0]
+                    else:
+                        index = p.split("/")[-2]
+                    index = int(re.sub("[^0-9]", "", index))
+                    instances[index] = p
         if len(instances) == 0:
             for f in os.listdir(path):
                 f = f.strip()
                 if (f.endswith(".pddl") or f.endswith(".sas")) and not f.startswith(
                     "domain"
                 ):
-                    path = os.path.join(path, f)
-                    index = path.split("/")[-1].split(".")[0]
+                    p = os.path.join(path, f)
+                    if f.endswith(".pddl"):
+                        index = p.split("/")[-1].split(".")[0]
+                    else:
+                        index = p.split("/")[-2]
                     index = re.sub("[^0-9]", "", index)
-                    instances[index] = path
+                    instances[index] = p
         self.config["instance_set"] = instances
 
-        if instances[0].endswith(".pddl"):
+        if instances[list(instances.keys())[0]].endswith(".pddl"):
             self.config.domain_file = os.path.join(path + "/domain.pddl")
 
     def set_heuristics(self, heuristics):

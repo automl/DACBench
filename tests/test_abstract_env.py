@@ -27,7 +27,8 @@ class TestAbstractEnv(unittest.TestCase):
             ],
             "reward_range": (-1, 0),
             "cutoff": 30,
-            "instance_set": [[1], [1]],
+            "instance_set": {0: 1, 1: 1},
+            "benchmark_info": None,
         }
         with pytest.raises(TypeError):
             AbstractEnv(config)
@@ -39,7 +40,8 @@ class TestAbstractEnv(unittest.TestCase):
             "observation_space_type": np.float32,
             "reward_range": (-1, 0),
             "cutoff": 30,
-            "instance_set": [[1], [1]],
+            "benchmark_info": None,
+            "instance_set": {0: 1, 1: 1},
         }
         with pytest.raises(KeyError):
             AbstractEnv(config)
@@ -54,7 +56,8 @@ class TestAbstractEnv(unittest.TestCase):
             ],
             "reward_range": (-1, 0),
             "cutoff": 30,
-            "instance_set": [[1], [1]],
+            "benchmark_info": None,
+            "instance_set": {0: 1, 1: 1},
         }
         with pytest.raises(KeyError):
             AbstractEnv(config)
@@ -70,7 +73,8 @@ class TestAbstractEnv(unittest.TestCase):
             ],
             "reward_range": (-1, 0),
             "cutoff": 30,
-            "instance_set": [[1], [1]],
+            "benchmark_info": None,
+            "instance_set": {0: 1, 1: 1},
         }
         with pytest.raises(TypeError):
             AbstractEnv(config)
@@ -85,7 +89,8 @@ class TestAbstractEnv(unittest.TestCase):
             ],
             "reward_range": (-1, 0),
             "cutoff": 30,
-            "instance_set": [[1], [1]],
+            "benchmark_info": None,
+            "instance_set": {0: 1, 1: 1},
         }
         with pytest.raises(KeyError):
             AbstractEnv(config)
@@ -102,7 +107,8 @@ class TestAbstractEnv(unittest.TestCase):
             ],
             "reward_range": (-1, 0),
             "cutoff": 30,
-            "instance_set": [[1], [1]],
+            "benchmark_info": None,
+            "instance_set": {0: 1, 1: 1},
         }
         env = AbstractEnv(config)
         return env
@@ -120,7 +126,8 @@ class TestAbstractEnv(unittest.TestCase):
             "observation_space": spaces.Discrete(2),
             "reward_range": (-1, 0),
             "cutoff": 30,
-            "instance_set": [[1], [1]],
+            "benchmark_info": None,
+            "instance_set": {0: 1, 1: 1},
         }
         env = AbstractEnv(config)
         self.assertTrue(len(env.instance_set) >= 1)
