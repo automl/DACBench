@@ -380,6 +380,7 @@ class Logger(AbstractLogger):
         super(Logger, self).__init__(
             experiment_name, output_path, step_write_frequency, episode_write_frequency
         )
+        self.env: AbstractEnv = None
         self.module_logger: Dict[str, ModuleLogger] = dict()
 
     def close(self):
@@ -396,6 +397,8 @@ class Logger(AbstractLogger):
     def next_episode(self):
         for _, module_logger in self.module_logger.items():
             module_logger.next_episode()
+            if self.env is not None:
+                module_logger.set_additional_info(instance=self.env.get_inst_id())
 
     def reset_episode(self):
         for _, module_logger in self.module_logger.items():
@@ -447,7 +450,7 @@ class Logger(AbstractLogger):
         :param env:
         :return:
         """
-        raise NotImplementedError()
+        self.env = env
 
     def add_benchmark(self, benchmark: AbstractBenchmark) -> None:
         """

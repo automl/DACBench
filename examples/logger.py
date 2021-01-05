@@ -10,10 +10,8 @@ import matplotlib.pyplot as plt
 
 
 def run_benchmark(env, agent, num_episodes, logger):
-    # logger.reset_episode()
 
     for _ in range(num_episodes):
-        logger.set_additional_info(instance=env.get_inst_id())
         state = env.reset()
         done = False
         reward = 0
@@ -36,7 +34,7 @@ if __name__ == "__main__":
 
     logger = Logger(
         experiment_name="sigmoid_example",
-        output_path=Path("outputs"),
+        output_path=Path("output"),
         step_write_frequency=None,
         episode_write_frequency=None,
     )
@@ -46,6 +44,7 @@ if __name__ == "__main__":
         logger.set_additional_info(seed=s)
         env = bench.get_benchmark(seed=s)
         env = PerformanceTrackingWrapper(env, logger=performance_logger)
+        logger.set_env(env)
         agent = RandomAgent(env)
         run_benchmark(env, agent, num_episodes, logger)
 
