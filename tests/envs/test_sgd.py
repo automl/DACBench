@@ -30,7 +30,7 @@ class TestSGDEnv(unittest.TestCase):
     def test_step(self):
         env = self.make_env()
         env.reset()
-        state, reward, done, meta = env.step([1])
+        state, reward, done, meta = env.step(1)
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertFalse(done)
@@ -39,7 +39,7 @@ class TestSGDEnv(unittest.TestCase):
     def test_get_default_state(self):
         env = self.make_env()
         env.reset()
-        state, _, _, _ = env.step([0.5])
+        state, _, _, _ = env.step(0.5)
         self.assertTrue(issubclass(type(state), dict))
         self.assertTrue(
             np.array_equal(
