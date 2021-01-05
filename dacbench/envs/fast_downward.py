@@ -76,7 +76,7 @@ class FastDownwardEnv(AbstractEnv):
         self.host = config.host
         self.port = config.port
         if config["parallel"]:
-            self.port += np.random.randint(50)
+            self.port += np.random.randint(100)
 
         self.fd_seed = config.fd_seed
         self.control_interval = config.control_interval
