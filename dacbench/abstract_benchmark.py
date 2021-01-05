@@ -3,7 +3,9 @@ import numpy as np
 from gym import spaces
 from functools import partial
 from dacbench import wrappers
-#from dacbench import ModuleLogger
+
+# from dacbench import ModuleLogger
+
 
 class AbstractBenchmark:
     """
@@ -90,7 +92,7 @@ class AbstractBenchmark:
                     contains_func = True
                     func_dict[f"{args[i]}"] = [args[i].__module__, args[i].__name__]
                     arg_descriptions.append(["function", f"{args[i]}"])
-                #elif isinstance(args[i], ModuleLogger):
+                # elif isinstance(args[i], ModuleLogger):
                 #    pass
                 else:
                     arg_descriptions.append({args[i]})
@@ -104,16 +106,17 @@ class AbstractBenchmark:
     def dejson_wrappers(self, wrapper_list):
         for i in range(len(wrapper_list)):
             import importlib
-            func = getattr(wrappers, wrapper_list[0])
-            arg_descriptions = wrapper_list[1]
+
+            func = getattr(wrappers, wrapper_list[i][0])
+            arg_descriptions = wrapper_list[i][1]
             args = []
             for a in arg_descriptions:
                 if a[0] == "function":
-                    module = importlib.import_module(wrapper_list[2][a[1]][0])
-                    name = wrapper_list[2][a[1]][0]
+                    module = importlib.import_module(wrapper_list[i][2][a[1]][0])
+                    name = wrapper_list[i][2][a[1]][0]
                     func = getattr(module, name)
                     args.append(func)
-                #elif a[0] == "logger":
+                # elif a[0] == "logger":
                 #    pass
                 else:
                     args.append(a)
