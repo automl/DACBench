@@ -1,3 +1,6 @@
+from dacbench.abstract_agent import AbstractDACBenchAgent
+
+
 class GenericAgent(AbstractDACBenchAgent):
     def __init__(self, env, policy):
         self.policy = policy

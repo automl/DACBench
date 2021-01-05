@@ -126,7 +126,8 @@ class PerformanceTrackingWrapper(Wrapper):
         """
         state, reward, done, info = self.env.step(action)
         self.episode_performance += reward
-        self.logger.log("episode_performance", self.episode_performance)
+        if self.logger is not None:
+            self.logger.log("episode_performance", self.episode_performance)
         if done:
             self.overall_performance.append(self.episode_performance)
             if self.performance_interval:
