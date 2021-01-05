@@ -42,7 +42,7 @@ class TestSigmoidBenchmark(unittest.TestCase):
     def test_read_instances(self):
         bench = SigmoidBenchmark()
         bench.read_instance_set()
-        self.assertTrue(len(bench.config.instance_set) == 100)
+        self.assertTrue(len(bench.config.instance_set.keys()) == 100)
         self.assertTrue(len(bench.config.instance_set[0]) == 2)
         self.assertTrue(
             bench.config.instance_set[0] == [2.0004403531465558, 7.903476325943215]
@@ -51,7 +51,7 @@ class TestSigmoidBenchmark(unittest.TestCase):
         env = bench2.get_environment()
         self.assertTrue(len(env.instance_set[0]) == 2)
         self.assertTrue(env.instance_set[0] == [2.0004403531465558, 7.903476325943215])
-        self.assertTrue(len(env.instance_set) == 100)
+        self.assertTrue(len(env.instance_set.keys()) == 100)
 
     def test_benchmark_env(self):
         bench = SigmoidBenchmark()

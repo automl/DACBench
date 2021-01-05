@@ -77,7 +77,7 @@ class InstanceSamplingWrapper(Wrapper):
             state
         """
         instance = self.sampling_function()
-        self.env.set_instance_set([instance])
+        self.env.set_instance_set({0: instance})
         self.env.set_inst_id(0)
         return self.env.reset()
 
@@ -102,9 +102,9 @@ class InstanceSamplingWrapper(Wrapper):
             dists.append(dist)
 
         def sample():
-            instance = []
-            for d in dists:
-                instance.append(np.random.normal(d[0], d[1]))
+            instance = {}
+            for i in range(len(dists)):
+                instance[i] = np.random.normal(dists[i][0], dists[i][1])
             return instance
 
         return sample

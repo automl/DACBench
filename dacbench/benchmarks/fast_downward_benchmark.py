@@ -86,25 +86,32 @@ class FastDownwardBenchmark(AbstractBenchmark):
         """
         Read paths of instances from config into list
         """
-        instances = []
+        instances = {}
         path = (
             os.path.dirname(os.path.abspath(__file__))
             + "/"
             + self.config.instance_set_path
         )
+        import re
         for root, dirs, files in os.walk(path):
             for f in files:
                 if (f.endswith(".pddl") or f.endswith(".sas")) and not f.startswith(
                     "domain"
                 ):
-                    instances.append(os.path.join(root, f))
+                    path = os.path.join(root, f)
+                    index = path.split("/")[-1].split(".")[0]
+                    index = re.sub("[^0-9]", "", index)
+                    instances[index] = os.path.join(root, f)
         if len(instances) == 0:
             for f in os.listdir(path):
                 f = f.strip()
                 if (f.endswith(".pddl") or f.endswith(".sas")) and not f.startswith(
                     "domain"
                 ):
-                    instances.append(os.path.join(path, f))
+                    path = os.path.join(path, f)
+                    index = path.split("/")[-1].split(".")[0]
+                    index = re.sub("[^0-9]", "", index)
+                    instances[index] = path
         self.config["instance_set"] = instances
 
         if instances[0].endswith(".pddl"):

@@ -92,20 +92,23 @@ class SigmoidBenchmark(AbstractBenchmark):
             + "/"
             + self.config.instance_set_path
         )
-        self.config["instance_set"] = []
+        self.config["instance_set"] = {}
         with open(path, "r") as f:
             reader = csv.reader(f)
             for row in reader:
                 f = []
+                inst_id = None
                 for i in range(len(row)):
-                    if i != 0:
+                    if i == 0:
+                        inst_id = int(row[i])
+                    else:
                         try:
                             f.append(float(row[i]))
                         except Exception:
                             continue
 
                 if not len(f) == 0:
-                    self.config.instance_set.append(f)
+                    self.config.instance_set[inst_id] = f
 
     def get_benchmark(self, dimension=None, seed=0):
         """
