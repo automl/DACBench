@@ -2,7 +2,8 @@ import json
 import numpy as np
 from gym import spaces
 from functools import partial
-
+from dacbench import wrappers
+#from dacbench import ModuleLogger
 
 class AbstractBenchmark:
     """
@@ -81,13 +82,43 @@ class AbstractBenchmark:
         wrappers = []
         for func in self.wrap_funcs:
             args = func.args
+            arg_descriptions = []
+            contains_func = False
+            func_dict = {}
+            for i in range(len(args)):
+                if callable(args[i]):
+                    contains_func = True
+                    func_dict[f"{args[i]}"] = [args[i].__module__, args[i].__name__]
+                    arg_descriptions.append(["function", f"{args[i]}"])
+                #elif isinstance(args[i], ModuleLogger):
+                #    pass
+                else:
+                    arg_descriptions.append({args[i]})
             function = func.func.__name__
-            wrappers.append([function, args])
+            if contains_func:
+                wrappers.append([function, arg_descriptions, func_dict])
+            else:
+                wrappers.append([function, arg_descriptions])
         return wrappers
 
     def dejson_wrappers(self, wrapper_list):
         for i in range(len(wrapper_list)):
-            self.wrap_funcs.append(partial(*wrapper_list))
+            import importlib
+            func = getattr(wrappers, wrapper_list[0])
+            arg_descriptions = wrapper_list[1]
+            args = []
+            for a in arg_descriptions:
+                if a[0] == "function":
+                    module = importlib.import_module(wrapper_list[2][a[1]][0])
+                    name = wrapper_list[2][a[1]][0]
+                    func = getattr(module, name)
+                    args.append(func)
+                #elif a[0] == "logger":
+                #    pass
+                else:
+                    args.append(a)
+
+            self.wrap_funcs.append(partial(func, *args))
 
     def space_to_list(self, space):
         res = []

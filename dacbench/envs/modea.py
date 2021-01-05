@@ -54,7 +54,7 @@ class ModeaEnv(AbstractEnv):
         self.update_parameters()
         return self.get_state()
 
-    def step(self, action):
+    def step(self, action)
         done = super(ModeaEnv, self).step_()
         self.representation = self.ensureFullLengthRepresentation(action)
         opts = getOpts(self.representation[: len(options)])
