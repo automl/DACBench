@@ -350,6 +350,7 @@ class FastDownwardEnv(AbstractEnv):
                 "--search",
                 self.argstring,
             ]
+
         with open(self.logpath_out, "a+") as fout, open(self.logpath_err, "a+") as ferr:
             self.fd = subprocess.Popen(command, stdout=fout, stderr=ferr)
 
