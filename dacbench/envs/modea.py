@@ -1,7 +1,12 @@
+# Most of this code is taken from the paper "Online CMA-ES Selection" by Vermetten et al.
+# Github: https://github.com/Dvermetten/Online_CMA-ES_Selection
+
 from modea.Algorithms import CustomizedES
+from modea.Parameters import Parameters
 import modea.Sampling as Sam
 import modea.Mutation as Mut
 import modea.Selection as Sel
+import modea.Recombination as Rec
 from dacbench import AbstractEnv
 from modea.Utils import getOpts, getVals, options, initializable_parameters
 from cma import bbobbenchmarks as bn
@@ -27,32 +32,88 @@ class ModeaEnv(AbstractEnv):
         self.mu = self.representation[len(options) + 1]
         values = getVals(self.representation[len(options) + 2 :])
 
-        self.function = bn.instantiate(int(self.function_id))[0]
+        self.function, self.target = bn.instantiate(int(self.function_id))
         self.es = CustomizedES(
             self.dim, self.function, self.budget, self.mu, self.lambda_, opts, values
         )
-        self.es.mutateParameters = self.es.parameters.adaptCovarianceMatrix
-        self.adapt_es_opts(opts)
+        self.update_parameters()
         return self.get_state()
 
     def step(self, action):
         done = super(ModeaEnv, self).step_()
-        # Todo: currently this doesn't support targets
-        if (
-            self.budget <= self.es.used_budget
-            or self.es.parameters.checkLocalRestartConditions(self.es.used_budget)
-        ):
-            done = True
-
         self.representation = self.ensureFullLengthRepresentation(action)
         opts = getOpts(self.representation[: len(options)])
-        self.adapt_es_opts(opts)
+        self.switchConfiguration(opts)
 
-        # TODO: add ipop run (restarts)
         self.es.runOneGeneration()
         self.es.recordStatistics()
 
+        if (
+            self.es.budget <= self.es.used_budget
+            or self.es.parameters.checkLocalRestartConditions(self.es.used_budget)
+        ):
+            done = done or self.restart()
+            if self.es.total_used_budget < self.es.total_budget:
+                self.update_parameters()
+            else:
+                done = True
+
         return self.get_state(), self.get_reward(), done, {}
+
+    def update_parameters(self):
+        # Every local restart needs its own parameters, so parameter update/mutation must also be linked every time
+        parameter_opts = self.es.parameters.getParameterOpts()
+        self.es.parameters = Parameters(**parameter_opts)
+        self.es.seq_cutoff = self.es.parameters.mu_int * self.es.parameters.seq_cutoff
+        self.es.mutateParameters = self.es.parameters.adaptCovarianceMatrix
+
+        self.es.initializePopulation()
+        parameter_opts["wcm"] = self.es.population[0].genotype
+        self.es.new_population = self.es.recombine(
+            self.es.population, self.es.parameters
+        )
+
+    def restart(self):
+        done = False
+        parameter_opts = self.es.parameters.getParameterOpts()
+        self.es.total_used_budget += self.es.used_budget
+        if self.target is not None:
+            # TODO: make threshold an env parameter
+            if self.es.best_individual.fitness - self.target <= 1e-8:
+                done = True
+        # Increasing Population Strategies
+        if parameter_opts["local_restart"] == "IPOP":
+            parameter_opts["lambda_"] *= 2
+
+        elif parameter_opts["local_restart"] == "BIPOP":
+            try:
+                self.budgets[self.es.regime] -= self.es.used_budget
+                self.es.determineRegime()
+            except KeyError:  # Setup of the two regimes after running regularily for the first time
+                remaining_budget = self.total_budget - self.es.used_budget
+                self.budgets["small"] = remaining_budget // 2
+                self.budgets["large"] = remaining_budget - self.budgets["small"]
+                self.es.regime = "large"
+
+            if self.es.regime == "large":
+                self.es.lambda_["large"] *= 2
+                parameter_opts["sigma"] = 2
+            elif self.es.regime == "small":
+                rand_val = np.random.random() ** 2
+                self.es.lambda_["small"] = int(
+                    np.floor(
+                        parameter_opts["lambda_"]
+                        * (0.5 * self.es.lambda_["large"] / parameter_opts["lambda_"])
+                        ** rand_val
+                    )
+                )
+                parameter_opts["sigma"] = 2e-2 * np.random.random()
+
+            self.es.budget = self.budgets[self.es.regime]
+            self.es.used_budget = 0
+            parameter_opts["budget"] = self.es.budget
+            parameter_opts["lambda_"] = self.es.lambda_[self.es.regime]
+        return done
 
     def get_state(self):
         return [
@@ -72,61 +133,103 @@ class ModeaEnv(AbstractEnv):
     def close(self):
         return True
 
-    def adapt_es_opts(self, opts):
-        self.es.opts = opts
-        parameter_opts = self.es.parameters.getParameterOpts()
-
-        # __init__ of CustomizedES without new instance of ES
-        # not a great solution, if package gets updates we should change this
-        lambda_, eff_lambda, mu = self.es.calculateDependencies(
-            opts, self.lambda_, self.mu
-        )
-
+    def switchConfiguration(self, opts):
         selector = Sel.pairwise if opts["selection"] == "pairwise" else Sel.best
-        # This is done for safety reasons
-        # Else offset and all_offspring may be None
-        self.es.parameters.offset = np.column_stack(
-            [ind.mutation_vector for ind in self.es.new_population]
-        )
-        self.es.parameters.all_offspring = np.column_stack(
-            [ind.genotype for ind in self.es.new_population]
-        )
-        # Same here. Probably the representation space should be restricted
-        self.es.parameters.tpa_result = -1
 
         def select(pop, new_pop, _, param):
             return selector(pop, new_pop, param)
 
+        # Pick the lowest-level sampler
         if opts["base-sampler"] == "quasi-sobol":
-            sampler = Sam.QuasiGaussianSobolSampling(self.dim)
+            sampler = Sam.QuasiGaussianSobolSampling(self.es.n)
         elif opts["base-sampler"] == "quasi-halton" and Sam.halton_available:
-            sampler = Sam.QuasiGaussianHaltonSampling(self.dim)
+            sampler = Sam.QuasiGaussianHaltonSampling(self.es.n)
         else:
-            sampler = Sam.GaussianSampling(self.dim)
+            sampler = Sam.GaussianSampling(self.es.n)
 
+        # Create an orthogonal sampler using the determined base_sampler
         if opts["orthogonal"]:
-            orth_lambda = eff_lambda
+            orth_lambda = self.es.parameters.eff_lambda
             if opts["mirrored"]:
                 orth_lambda = max(orth_lambda // 2, 1)
             sampler = Sam.OrthogonalSampling(
-                self.dim, lambda_=orth_lambda, base_sampler=sampler
+                self.es.n, lambda_=orth_lambda, base_sampler=sampler
             )
 
+        # Create a mirrored sampler using the sampler (structure) chosen so far
         if opts["mirrored"]:
-            sampler = Sam.MirroredSampling(self.dim, base_sampler=sampler)
+            sampler = Sam.MirroredSampling(self.es.n, base_sampler=sampler)
+
+        parameter_opts = {
+            "weights_option": opts["weights_option"],
+            "active": opts["active"],
+            "elitist": opts["elitist"],
+            "sequential": opts["sequential"],
+            "tpa": opts["tpa"],
+            "local_restart": opts["ipop"],
+        }
+
+        # In case of pairwise selection, sequential evaluation may only stop after 2mu instead of mu individuals
 
         if opts["sequential"] and opts["selection"] == "pairwise":
             parameter_opts["seq_cutoff"] = 2
+            self.es.parameters.seq_cutoff = 2
 
+        # Init all individuals of the first population at the same random point in the search space
+
+        # We use functions/partials here to 'hide' the additional passing of parameters that are algorithm specific
+        recombine = Rec.weighted
         mutate = partial(
             Mut.CMAMutation, sampler=sampler, threshold_convergence=opts["threshold"]
         )
 
-        self.es.mutate = mutate
-        self.es.parameters = self.es.instantiateParameters(parameter_opts)
+        functions = {
+            "recombine": recombine,
+            "mutate": mutate,
+            "select": select,
+            # 'mutateParameters': None
+        }
+        self.setConfigurationParameters(functions, parameter_opts)
+        lambda_, eff_lambda, mu = self.es.calculateDependencies(opts, None, None)
+        self.es.parameters.lambda_ = lambda_
+        self.es.parameters.eff_lambda = eff_lambda
+        self.es.parameters.mu = mu
+        self.es.parameters.weights = self.es.parameters.getWeights(
+            self.es.parameters.weights_option
+        )
+        self.es.parameters.mu_eff = 1 / sum(np.square(self.es.parameters.weights))
+        mu_eff = self.es.parameters.mu_eff  # Local copy
+        n = self.es.parameters.n
+        self.es.parameters.c_sigma = (mu_eff + 2) / (mu_eff + n + 5)
+        self.es.parameters.c_c = (4 + mu_eff / n) / (n + 4 + 2 * mu_eff / n)
+        self.es.parameters.c_1 = 2 / ((n + 1.3) ** 2 + mu_eff)
+        self.es.parameters.c_mu = min(
+            1 - self.es.parameters.c_1,
+            self.es.parameters.alpha_mu
+            * (
+                (mu_eff - 2 + 1 / mu_eff)
+                / ((n + 2) ** 2 + self.es.parameters.alpha_mu * mu_eff / 2)
+            ),
+        )
+        self.es.parameters.damps = (
+            1
+            + 2 * np.max([0, np.sqrt((mu_eff - 1) / (n + 1)) - 1])
+            + self.es.parameters.c_sigma
+        )
         self.es.seq_cutoff = self.es.parameters.mu_int * self.es.parameters.seq_cutoff
 
-    # Source: https://github.com/sjvrijn/ConfiguringCMAES/blob/master/EvolvingES.py
+    def setConfigurationParameters(self, functions, parameters):
+        self.es.recombine = functions["recombine"]
+        self.es.mutate = functions["mutate"]
+        self.es.select = functions["select"]
+        # self.mutateParameters = functions['mutateParameters']
+        self.es.parameters.weights_option = parameters["weights_option"]
+        self.es.parameters.active = parameters["active"]
+        self.es.parameters.elitist = parameters["elitist"]
+        self.es.parameters.sequential = parameters["sequential"]
+        self.es.parameters.tpa = parameters["tpa"]
+        self.es.parameters.local_restart = parameters["local_restart"]
+
     def ensureFullLengthRepresentation(self, representation):
         """
         Given a (partial) representation, ensure that it is padded to become a full length customizedES representation,

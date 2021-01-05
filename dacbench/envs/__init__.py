@@ -3,6 +3,7 @@ from dacbench.envs.sigmoid import SigmoidEnv
 from dacbench.envs.fast_downward import FastDownwardEnv
 from dacbench.envs.cma_es import CMAESEnv
 from dacbench.envs.modea import ModeaEnv
+from dacbench.envs.sgd import SGDEnv
 
 __all__ = [
     "LubyEnv",
@@ -11,4 +12,5 @@ __all__ = [
     "FastDownwardEnv",
     "CMAESEnv",
     "ModeaEnv",
+    "SGDEnv",
 ]

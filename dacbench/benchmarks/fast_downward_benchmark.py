@@ -76,7 +76,11 @@ class FastDownwardBenchmark(AbstractBenchmark):
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
-        return FastDownwardEnv(self.config)
+        env = FastDownwardEnv(self.config)
+        for func in self.wrap_funcs:
+            env = func(env)
+
+        return env
 
     def read_instance_set(self):
         """

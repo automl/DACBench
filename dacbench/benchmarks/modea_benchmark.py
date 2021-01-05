@@ -54,7 +54,11 @@ class ModeaBenchmark(AbstractBenchmark):
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
-        return ModeaEnv(self.config)
+        env = ModeaEnv(self.config)
+        for func in self.wrap_funcs:
+            env = func(env)
+
+        return env
 
     def read_instance_set(self):
         """

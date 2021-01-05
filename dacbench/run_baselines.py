@@ -5,7 +5,7 @@ import argparse
 from dacbench import benchmarks
 from dacbench.wrappers import PerformanceTrackingWrapper
 from dacbench.runner import run_benchmark
-from dacbench.agents.simple_agents import RandomAgent, StaticAgent, GenericAgent
+from dacbench.agents import StaticAgent, GenericAgent, DynamicRandomAgent
 from dacbench.envs.policies.optimal_sigmoid import get_optimum as optimal_sigmoid
 from dacbench.envs.policies.optimal_luby import get_optimum as optimal_luby
 from dacbench.envs.policies.optimal_fd import get_optimum as optimal_fd
@@ -34,12 +34,12 @@ DISCRETE_ACTIONS = {
 }
 
 
-def run_random(results_path, benchmark_name, num_episodes, seeds=np.arange(10)):
+def run_random(results_path, benchmark_name, num_episodes, seeds, fixed):
     bench = getattr(benchmarks, benchmark_name)()
     for s in seeds:
         env = bench.get_benchmark(seed=s)
         env = PerformanceTrackingWrapper(env)
-        agent = RandomAgent(env)
+        agent = DynamicRandomAgent(env, fixed)
         run_benchmark(env, agent, num_episodes)
         performance = env.get_performance()[0]
         filedir = results_path + "/" + benchmark_name + "/random"
@@ -156,6 +156,12 @@ def main():
         default=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         help="Seeds for evaluation",
     )
+    parser.add_argument(
+        "--fixed_random",
+        type=int,
+        default=0,
+        help="Fixes random actions for n steps",
+    )
     args = parser.parse_args()
 
     if args.benchmarks is None:
@@ -165,7 +171,7 @@ def main():
 
     if args.random:
         for b in benchs:
-            run_random(args.outdir, b, args.num_episodes, args.seeds)
+            run_random(args.outdir, b, args.num_episodes, args.seeds, args.fixed_random)
 
     if args.static:
         for b in benchs:

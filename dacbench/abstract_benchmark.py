@@ -1,5 +1,7 @@
 import json
 import numpy as np
+from gym import spaces
+from functools import partial
 
 
 class AbstractBenchmark:
@@ -21,6 +23,7 @@ class AbstractBenchmark:
             self.read_config_file(self.config_path)
         else:
             self.config = None
+        self.wrap_funcs = []
 
     def get_config(self):
         """
@@ -45,6 +48,16 @@ class AbstractBenchmark:
         conf = self.config.copy()
         if "observation_space_type" in self.config:
             conf["observation_space_type"] = f"{self.config['observation_space_type']}"
+            if isinstance(conf["observation_space_args"][0], dict):
+                conf["observation_space_args"] = self.jsonify_dict_space(
+                    conf["observation_space_args"][0]
+                )
+        elif "observation_space" in self.config:
+            conf["observation_space"] = self.space_to_list(conf["observation_space"])
+
+        if "action_space" in self.config:
+            conf["action_space"] = self.space_to_list(conf["action_space"])
+
         for k in self.config.keys():
             if isinstance(self.config[k], np.ndarray) or isinstance(
                 self.config[k], list
@@ -58,8 +71,75 @@ class AbstractBenchmark:
                             and -np.inf not in conf[k][i]
                         ):
                             conf[k][i] = list(map(int, conf[k][i]))
+
+        conf["wrappers"] = self.jsonify_wrappers()
+
         with open(path, "w") as fp:
             json.dump(conf, fp)
+
+    def jsonify_wrappers(self):
+        wrappers = []
+        for func in self.wrap_funcs:
+            args = func.args
+            function = func.func.__name__
+            wrappers.append([function, args])
+        return wrappers
+
+    def dejson_wrappers(self, wrapper_list):
+        for i in range(len(wrapper_list)):
+            self.wrap_funcs.append(partial(*wrapper_list))
+
+    def space_to_list(self, space):
+        res = []
+        if isinstance(space, spaces.Box):
+            res.append("Box")
+            res.append([space.low.tolist(), space.high.tolist()])
+            res.append(np.float32)
+        elif isinstance(space, spaces.Discrete):
+            res.append("Discrete")
+            res.append([space.n])
+        elif isinstance(space, spaces.Dict):
+            res.append("Dict")
+            res.append(self.jsonify_dict_space(space.spaces))
+        elif isinstance(space, spaces.MultiDiscrete):
+            res.append("MultiDiscrete")
+            res.append([space.nvec])
+        elif isinstance(space, spaces.MultiBinary):
+            res.append("MultiBinary")
+            res.append([space.n])
+        return res
+
+    def list_to_space(self, space_list):
+        if space_list[0] == "Dict":
+            args = self.dictify_json(space_list[1])
+            space = getattr(spaces, space_list[0])(args)
+        elif len(space_list) == 2:
+            space = getattr(spaces, space_list[0])(*space_list[1])
+        else:
+            typestring = space_list[2].split(".")[1]
+            dt = getattr(np, typestring)
+            space = getattr(spaces, space_list[0])(*space_list[1], dtype=dt)
+        return space
+
+    def jsonify_dict_space(self, dict_space):
+        keys = []
+        arguments = []
+        for k in dict_space.keys():
+            keys.append(k)
+            value = dict_space[k]
+            if not isinstance(value, spaces.Box):
+                print("Only Dict spaces made up of Boxes are supported")
+                break
+            low = value.low.tolist()
+            high = value.high.tolist()
+            arguments.append([low, high])
+        return [keys, arguments]
+
+    def dictify_json(self, dict_list):
+        dict_space = {}
+        for i in range(len(dict_list[0])):
+            dict_space[dict_list[0][i]] = spaces.Box(*dict_list[1][i], dtype=np.float32)
+        return dict_space
 
     def read_config_file(self, path):
         """
@@ -78,6 +158,24 @@ class AbstractBenchmark:
                 typestring = self.config["observation_space_type"].split(" ")[1][:-2]
                 typestring = typestring.split(".")[1]
                 self.config["observation_space_type"] = getattr(np, typestring)
+        if "observation_space" in self.config:
+            self.config["observation_space"] = self.list_to_space(
+                self.config["observation_space"]
+            )
+        elif "observation_space_class" == "Dict":
+            self.config["observation_space_args"] = self.dictify_json(
+                self.config["observation_space_args"]
+            )
+
+        if "action_space" in self.config:
+            self.config["action_space"] = self.list_to_space(
+                self.config["action_space"]
+            )
+
+        if "wrappers" in self.config:
+            self.dejson_wrappers(self.config["wrappers"])
+            del self.config["wrappers"]
+
         for k in self.config.keys():
             if type(self.config[k]) == list:
                 if type(self.config[k][0]) == list:
@@ -126,7 +224,7 @@ class AbstractBenchmark:
 
         Parameters
         ----------
-        config : str
+        kind : str
             Name of observation space class
         args : list
             List of arguments to pass to observation space class
@@ -136,6 +234,12 @@ class AbstractBenchmark:
         self.config["observation_space"] = kind
         self.config["observation_space_args"] = args
         self.config["observation_space_type"] = data_type
+
+    def register_wrapper(self, wrap_func):
+        if isinstance(wrap_func, list):
+            self.wrap_funcs.append(*wrap_func)
+        else:
+            self.wrap_funcs.append(wrap_func)
 
 
 # This code is taken from https://goodcode.io/articles/python-dict-object/

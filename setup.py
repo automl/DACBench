@@ -10,7 +10,7 @@ examples = requirements["example-dependencies"]
 print({"dev": [x + " " + dev[x] for x in dev]})
 
 setup(
-    name="DAClib",
+    name="DACBench",
     install_requires=[x + "==" + prod[x] for x in prod],
     extras_require={
         "dev": [x + "==" + dev[x] for x in dev],
