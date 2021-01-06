@@ -1,9 +1,10 @@
 import json
 from abc import ABCMeta, abstractmethod
-from collections import defaultdict
+from collections import defaultdict, ChainMap
 from datetime import datetime
 from functools import reduce
 from itertools import chain
+from numbers import Number
 from pathlib import Path
 import numpy as np
 from typing import Union, Dict, Any, Tuple, List
@@ -212,13 +213,36 @@ class AbstractLogger(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def log(self, key, value):
+    def log(self, key, value, **kwargs):
         f"""
-        Write value to list of values for key.
+        Writes value to list of values for key.
         :param key:
         :param value: the value must of of a type that is
         json serializable. Currently only {self._pretty_valid_types()} and recursive types of these are
         valid
+        :return:
+        """
+        pass
+
+    @abstractmethod
+    def log_dict(self, data):
+        """
+        Alternative to log if more the one value should be logged
+        :param data: a dict with key-value so that each value is a valid value for log
+        :return:
+        """
+        pass
+
+    @abstractmethod
+    def log_space(self, key, value):
+        """
+        Special for logging gym.spaces.
+        Currently three types are supported:
+        * Numbers: e.g. samples from Discrete
+        * Fixed length arrays like MultiDiscrete or Box
+        * Dict: assuming each key has fixed length array
+        :param key:
+        :param value:
         :return:
         """
         pass
@@ -277,13 +301,17 @@ class ModuleLogger(AbstractLogger):
     def __json_default(object):
         if isinstance(object, np.ndarray):
             return object.tolist()
-        return object
+        elif isinstance(object, np.number):
+            return object.item()
+        else:
+            raise ValueError(f"Type {type(object)} not supported")
 
     def __end_step(self):
         if self.current_step:
             self.current_step["step"] = self.step
             self.current_step["episode"] = self.episode
             self.current_step.update(self.additional_info)
+            print(self.current_step)
             self.buffer.append(
                 json.dumps(self.current_step, default=self.__json_default)
             )
@@ -339,27 +367,53 @@ class ModuleLogger(AbstractLogger):
         self.additional_info.update(kwargs)
 
     def log(
-        self, key: str, value: Union[Dict, List, Tuple, str, int, float, bool]
+        self, key: str, value: Union[Dict, List, Tuple, str, int, float, bool], **kwargs
     ) -> None:
         f"""
         Write value to list of values for key.
+        :param **kwargs:
         :param key:
         :param value: the value must of of a type that is
         json serializable. Currently only {self._pretty_valid_types()} and recursive types of these are
         valid
         :return:
         """
+        self.__log(key, value, datetime.now().strftime("%d-%m-%y %H:%M:%S.%f"))
 
+    def __log(self, key, value, time):
         if not self.is_of_valid_type(value):
             valid_types = self._pretty_valid_types()
             raise ValueError(
                 f"value {type(value)} is not of valid type or a recursive composition of valid types ({valid_types})"
             )
-
-        self.current_step[key]["times"].append(
-            datetime.now().strftime("%d-%m-%y %H:%M:%S.%f")
-        )
+        self.current_step[key]["times"].append(time)
         self.current_step[key]["values"].append(value)
+
+    def log_dict(self, data):
+        time = datetime.now().strftime("%d-%m-%y %H:%M:%S.%f")
+        for key, value in data.items():
+            self.__log(key, value, time)
+
+    @staticmethod
+    def __space_dict(key, value):
+        if isinstance(value, Number):
+            data = {key: value}
+        elif isinstance(value, np.ndarray):
+            data = {f"{key}_{i}": x for i, x in enumerate(value)}
+        elif isinstance(value, dict):
+            dicts = (
+                ModuleLogger.__space_dict(f"{key}_{sub_key}", sub_value)
+                for sub_key, sub_value in value.items()
+            )
+            data = dict(ChainMap(*dicts))
+        else:
+            raise ValueError("Space does not seem be supported")
+
+        return data
+
+    def log_space(self, key, value):
+        data = self.__space_dict(key, value)
+        self.log_dict(data)
 
 
 class Logger(AbstractLogger):
@@ -488,3 +542,13 @@ class Logger(AbstractLogger):
         if module not in self.module_logger:
             raise ValueError(f"Module {module} not registered yet")
         self.module_logger.log(key, value)
+
+    def log_space(self, key, value, module):
+        if module not in self.module_logger:
+            raise ValueError(f"Module {module} not registered yet")
+        self.module_logger.log_space(key, value)
+
+    def log_dict(self, data, module):
+        if module not in self.module_logger:
+            raise ValueError(f"Module {module} not registered yet")
+        self.module_logger.log_space(data)

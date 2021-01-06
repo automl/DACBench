@@ -132,7 +132,10 @@ class PerformanceTrackingWrapper(Wrapper):
         if done:
             self.overall_performance.append(self.episode_performance)
             if self.logger is not None:
-                self.logger.log("overall_performance", self.episode_performance)
+                self.logger.log(
+                    "overall_performance",
+                    self.episode_performance,
+                )
 
             if self.performance_interval:
                 if len(self.current_performance) < self.performance_interval:

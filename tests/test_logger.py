@@ -3,6 +3,9 @@ import tempfile
 import unittest
 from pathlib import Path
 import numpy as np
+from gym import spaces
+from gym.spaces import Discrete, MultiDiscrete, Dict, Box
+
 from dacbench.agents.simple_agents import RandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
 from dacbench.logger import ModuleLogger, Logger, log2dataframe
@@ -40,11 +43,23 @@ class TestLogger(unittest.TestCase):
                 step = 0
                 while not done:
                     action = agent.act(state, reward)
-                    env_logger.log("logged_step", step)
-                    env_logger.log("logged_episode", episode)
+                    env_logger.log(
+                        "logged_step",
+                        step,
+                    )
+                    env_logger.log(
+                        "logged_episode",
+                        episode,
+                    )
                     next_state, reward, done, _ = env.step(action)
-                    env_logger.log("reward", reward)
-                    env_logger.log("done", done)
+                    env_logger.log(
+                        "reward",
+                        reward,
+                    )
+                    env_logger.log(
+                        "done",
+                        done,
+                    )
                     agent.train(next_state, reward)
                     state = next_state
                     logger.next_step()
@@ -88,8 +103,100 @@ class TestModuleLogger(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
 
+    def test_spaces(self):
+        experiment_name = "test_spaces"
+        module_name = "module"
+
+        logger = ModuleLogger(
+            output_path=Path(self.temp_dir.name),
+            experiment_name=experiment_name,
+            module=module_name,
+            step_write_frequency=None,
+            episode_write_frequency=None,
+        )
+        seed = 3
+
+        # Discrete
+        space = Discrete(n=3)
+        space.seed(seed)
+        logger.log_space("Discrete", space.sample())
+
+        # MultiDiscrete
+        space = MultiDiscrete(np.array([3, 2]))
+        space.seed(seed)
+        logger.log_space("MultiDiscrete", space.sample())
+
+        # Dict
+        space = Dict(
+            {
+                "predictiveChangeVarDiscountedAverage": spaces.Box(
+                    low=-np.inf, high=np.inf, shape=(1,)
+                ),
+                "predictiveChangeVarUncertainty": spaces.Box(
+                    low=0, high=np.inf, shape=(1,)
+                ),
+                "lossVarDiscountedAverage": spaces.Box(
+                    low=-np.inf, high=np.inf, shape=(1,)
+                ),
+                "lossVarUncertainty": spaces.Box(low=0, high=np.inf, shape=(1,)),
+                "currentLR": spaces.Box(low=0, high=1, shape=(1,)),
+                "trainingLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
+                "validationLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
+            }
+        )
+        space.seed(seed)
+        logger.log_space("Dict", space.sample())
+
+        space = Box(np.array([0, 0]), np.array([2, 2]))
+        space.seed(seed)
+        logger.log_space("Box", space.sample())
+        logger.close()
+
+        with open(logger.get_logfile(), "r") as log_file:
+            logs = list(map(json.loads, log_file))
+
+        wide = log2dataframe(logs, wide=True)
+        long = log2dataframe(logs, include_time=True)
+
+        self.assertEqual(len(wide), 1)
+        first_row = wide.iloc[0]
+
+        # Discrete
+        self.assertTrue(not np.isnan(first_row.Discrete))
+
+        # MultiDiscrete
+        self.assertTrue(not np.isnan(first_row.MultiDiscrete_0))
+        self.assertTrue(not np.isnan(first_row.MultiDiscrete_1))
+        simultaneous_logged = long[
+            (long.name == "MultiDiscrete_0") | (long.name == "MultiDiscrete_1")
+        ]
+        self.assertEqual(len(simultaneous_logged.time.unique()), 1)
+
+        # Dict
+        expected_columns = [
+            "Dict_currentLR_0",
+            "Dict_lossVarDiscountedAverage_0",
+            "Dict_lossVarUncertainty_0",
+            "Dict_predictiveChangeVarDiscountedAverage_0",
+            "Dict_predictiveChangeVarUncertainty_0",
+            "Dict_trainingLoss_0",
+        ]
+
+        for expected_column in expected_columns:
+            self.assertTrue(not np.isnan(first_row[expected_column]))
+
+        simultaneous_logged = long[long.name.isin(expected_columns)]
+        self.assertEqual(len(simultaneous_logged.time.unique()), 1)
+
+        # Box
+        self.assertTrue(not np.isnan(first_row.Box_0))
+        self.assertTrue(not np.isnan(first_row.Box_1))
+
+        simultaneous_logged = long[(long.name == "Box_0") | (long.name == "Box_1")]
+        self.assertEqual(len(simultaneous_logged.time.unique()), 1)
+
     def test_log_numpy(self):
-        experiment_name = "test_basic_logging"
+        experiment_name = "test_log_numpy"
         module_name = "module"
 
         logger = ModuleLogger(
@@ -100,7 +207,10 @@ class TestModuleLogger(unittest.TestCase):
             episode_write_frequency=None,
         )
 
-        logger.log("state", np.array([1, 2, 3]))
+        logger.log(
+            "state",
+            np.array([1, 2, 3]),
+        )
         logger.close()
 
         with open(logger.get_logfile(), "r") as log_file:
@@ -124,9 +234,15 @@ class TestModuleLogger(unittest.TestCase):
         )
 
         for episode in range(episodes):
-            logger.log("episode_logged", episode)
+            logger.log(
+                "episode_logged",
+                episode,
+            )
             for step in range(steps):
-                logger.log("step_logged", step)
+                logger.log(
+                    "step_logged",
+                    step,
+                )
                 logger.next_step()
             logger.next_episode()
 
