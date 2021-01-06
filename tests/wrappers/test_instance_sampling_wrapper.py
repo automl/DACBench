@@ -26,17 +26,20 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
         env = bench.get_environment()
 
         def sample():
-            return [0, 0]
+            return [1, 1]
 
         wrapped = InstanceSamplingWrapper(env, sampling_function=sample)
 
         self.assertFalse(np.array_equal(wrapped.instance, sample()))
-        self.assertFalse(np.array_equal(wrapped.instance_set, [sample()]))
-        self.assertTrue(wrapped.inst_id == 0)
+        self.assertFalse(
+            np.array_equal(list(wrapped.instance_set.values())[0], sample())
+        )
 
         wrapped.reset()
         self.assertTrue(np.array_equal(wrapped.instance, sample()))
-        self.assertTrue(np.array_equal(wrapped.instance_set, [sample()]))
+        self.assertTrue(
+            np.array_equal(list(wrapped.instance_set.values())[0], sample())
+        )
         self.assertTrue(wrapped.inst_id == 0)
 
     def test_fit(self):
@@ -50,8 +53,12 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
         samples = []
         for _ in range(100):
             samples.append(wrapped.sampling_function())
-        mi1 = mutual_info_score(np.array(instances)[:, 0], np.array(samples)[:, 0])
-        mi2 = mutual_info_score(np.array(instances)[:, 1], np.array(samples)[:, 1])
+        mi1 = mutual_info_score(
+            np.array(list(instances.values()))[:, 0], np.array(samples)[:, 0]
+        )
+        mi2 = mutual_info_score(
+            np.array(list(instances.values()))[:, 1], np.array(samples)[:, 1]
+        )
 
         self.assertTrue(mi1 > 0.99)
         self.assertTrue(mi1 != 1)

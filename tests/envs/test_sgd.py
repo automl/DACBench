@@ -30,9 +30,8 @@ class TestSGDEnv(unittest.TestCase):
     def test_step(self):
         env = self.make_env()
         env.reset()
-        state, reward, done, meta = env.step([1])
+        state, reward, done, meta = env.step(1)
         self.assertTrue(reward >= env.reward_range[0])
-        print(reward)
         self.assertTrue(reward <= env.reward_range[1])
         self.assertFalse(done)
         self.assertTrue(len(meta.keys()) == 0)
@@ -40,7 +39,7 @@ class TestSGDEnv(unittest.TestCase):
     def test_get_default_state(self):
         env = self.make_env()
         env.reset()
-        state, _, _, _ = env.step([0.5])
+        state, _, _, _ = env.step(0.5)
         self.assertTrue(issubclass(type(state), dict))
         self.assertTrue(
             np.array_equal(
@@ -52,13 +51,13 @@ class TestSGDEnv(unittest.TestCase):
                     "lossVarUncertainty",
                     "currentLR",
                     "trainingLoss",
-                    "validationLoss"
+                    "validationLoss",
                 ],
             )
         )
-        self.assertTrue(len(state["currentLR"]) == 0.5)
-        self.assertTrue(len(state["trainingLoss"]) < 0)
-        self.assertTrue(len(state["validationLoss"]) < 0)
+        self.assertTrue(state["currentLR"] == 10 ** -0.5)
+        self.assertTrue(state["trainingLoss"] > 0)
+        self.assertTrue(state["validationLoss"] > 0)
 
     def test_close(self):
         env = self.make_env()

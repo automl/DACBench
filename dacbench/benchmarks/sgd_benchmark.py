@@ -8,6 +8,17 @@ import csv
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
 
+INFO = {"identifier": "LR",
+        "name": "Learning Rate Adaption for Neural Networks",
+        "reward": "Validation Loss",
+        "state_description": ["Predictive Change Variance (Discounted Average)",
+                              "Predictive Change Variance (Uncertainty)",
+                              "Loss Variance (Discounted Average)",
+                              "Loss Variance (Uncertainty)",
+                              "Current Learning Rate",
+                              "Training Loss",
+                              "Validation Loss"]}
+
 SGD_DEFAULTS = objdict(
     {
         "action_space_class": "Box",
@@ -39,6 +50,7 @@ SGD_DEFAULTS = objdict(
         "beta2": 0.999,
         "seed": 0,
         "instance_set_path": "../instance_sets/sgd/sgd_train.csv",
+        "benchmark_info": INFO
     }
 )
 

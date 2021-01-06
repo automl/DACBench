@@ -137,7 +137,7 @@ class AbstractLogger(metaclass=ABCMeta):
         self.log_dir = self._init_logging_dir(self.output_path / self.experiment_name)
         self.step_write_frequency = step_write_frequency
         self.episode_write_frequency = episode_write_frequency
-        self.additional_info = {"seed": None, "instance": None}
+        self.additional_info = {"instance": None}
 
     def _pretty_valid_types(self) -> str:
         """
@@ -398,9 +398,10 @@ class Logger(AbstractLogger):
         for _, module_logger in self.module_logger.items():
             module_logger.next_episode()
 
-        self.__update_instance()
+        self.__update_auto_additional_info()
 
-    def __update_instance(self):
+    def __update_auto_additional_info(self):
+        # TODO add seed too if av?
         self.set_additional_info(instance=self.env.get_inst_id())
 
     def reset_episode(self):
@@ -458,7 +459,7 @@ class Logger(AbstractLogger):
         :return:
         """
         self.env = env
-        self.__update_instance()
+        self.__update_auto_additional_info()
 
     def add_benchmark(self, benchmark: AbstractBenchmark) -> None:
         """

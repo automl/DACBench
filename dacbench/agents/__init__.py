@@ -5,5 +5,6 @@ from dacbench.agents.dynamic_random_agent import DynamicRandomAgent
 __all__ = [
     "StaticAgent",
     "RandomAgent",
-    "GenericAgent"
+    "GenericAgent",
+    "DynamicRandomAgent"
 ]

@@ -1,8 +1,7 @@
 import json
-import unittest
-from itertools import product
-from pathlib import Path
 import tempfile
+import unittest
+from pathlib import Path
 
 from dacbench.agents.simple_agents import RandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
@@ -14,7 +13,6 @@ class TestLogger(unittest.TestCase):
         self.temp_dir = tempfile.TemporaryDirectory()
 
         episodes = 80
-        instances = [0, 2, 4, 10]
         seeds = [0, 1, 3, 4, 5]
         experiment_name = "test_env"
         logger = Logger(
@@ -27,14 +25,15 @@ class TestLogger(unittest.TestCase):
         benchmark = SigmoidBenchmark()
         env = benchmark.get_benchmark()
         agent = RandomAgent(env)
+        logger.set_env(env)
 
         env_logger = logger.add_module(env)
-        for seed, instance in product(seeds, instances):
-            logger.set_additional_info(seed=seed, instance=instance)
+        for seed in seeds:
+            env.seed(seed)
+            logger.set_additional_info(seed=seed)
             logger.reset_episode()
 
             for episode in range(episodes):
-
                 state = env.reset()
                 done = False
                 reward = 0

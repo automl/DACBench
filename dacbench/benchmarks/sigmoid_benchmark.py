@@ -8,6 +8,19 @@ import csv
 
 ACTION_VALUES = (5, 10)
 
+INFO = {"identifier": "Sigmoid",
+        "name": "Sigmoid Function Approximation",
+        "reward": "Multiplied Differences between Function and Action in each Dimension",
+        "state_description": [
+            "Remaining Budget",
+            "Shift (dimension 1)",
+            "Slope (dimension 1)",
+            "Shift (dimension 2)",
+            "Slope (dimension 2)",
+            "Action",
+    ],
+}
+
 SIGMOID_DEFAULTS = objdict(
     {
         "action_space_class": "Discrete",
@@ -24,6 +37,7 @@ SIGMOID_DEFAULTS = objdict(
         "slope_multiplier": 2.0,
         "seed": 0,
         "instance_set_path": "../instance_sets/sigmoid/sigmoid_train.csv",
+        "benchmark_info": INFO,
     }
 )
 
@@ -92,20 +106,26 @@ class SigmoidBenchmark(AbstractBenchmark):
             + "/"
             + self.config.instance_set_path
         )
-        self.config["instance_set"] = []
+        self.config["instance_set"] = {}
         with open(path, "r") as f:
             reader = csv.reader(f)
             for row in reader:
                 f = []
+                inst_id = None
                 for i in range(len(row)):
-                    if i != 0:
+                    if i == 0:
+                        try:
+                            inst_id = int(row[i])
+                        except Exception:
+                            continue
+                    else:
                         try:
                             f.append(float(row[i]))
                         except Exception:
                             continue
 
                 if not len(f) == 0:
-                    self.config.instance_set.append(f)
+                    self.config.instance_set[inst_id] = f
 
     def get_benchmark(self, dimension=None, seed=0):
         """
@@ -133,7 +153,7 @@ class SigmoidBenchmark(AbstractBenchmark):
         if dimension == 5:
             self.set_action_values((3, 3, 3, 3, 3))
         self.config.seed = seed
-        self.config.instance_set = [0]
+        self.config.instance_set = {0: 0}
         env = SigmoidEnv(self.config)
 
         def sample_sigmoid():

@@ -23,7 +23,7 @@ class Net(nn.Module):
             nn.Linear(16, 16),
             nn.Sigmoid(),
             nn.Linear(16, 10),
-            nn.LogSoftmax(dim=1)
+            nn.LogSoftmax(dim=1),
         )
 
     def forward(self, x):
@@ -79,11 +79,15 @@ class SGDEnv(AbstractEnv):
         self.parameter_count = 0
         self.layer_sizes = []
 
-        self.loss_function = torch.nn.NLLLoss(reduction='none')
+        self.loss_function = torch.nn.NLLLoss(reduction="none")
         self.loss_function = extend(self.loss_function)
 
-        self.initial_lr = config.lr * torch.ones(1, device=self.device, requires_grad=False)
-        self.current_lr = config.lr * torch.ones(1, device=self.device, requires_grad=False)
+        self.initial_lr = config.lr * torch.ones(
+            1, device=self.device, requires_grad=False
+        )
+        self.current_lr = config.lr * torch.ones(
+            1, device=self.device, requires_grad=False
+        )
 
         # Adam parameters
         self.beta1 = config.beta1
@@ -97,13 +101,25 @@ class SGDEnv(AbstractEnv):
         self.prev_descent = None
 
         self.learning_rate = 0.001
-        self.predictiveChangeVarDiscountedAverage = torch.zeros(1, device=self.device, requires_grad=False)
-        self.predictiveChangeVarUncertainty = torch.zeros(1, device=self.device, requires_grad=False)
-        self.lossVarDiscountedAverage = torch.zeros(1, device=self.device, requires_grad=False)
-        self.lossVarUncertainty = torch.zeros(1, device=self.device, requires_grad=False)
+        self.predictiveChangeVarDiscountedAverage = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.predictiveChangeVarUncertainty = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.lossVarDiscountedAverage = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.lossVarUncertainty = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
         self.discount_factor = 0.9
-        self.firstOrderMomentum = torch.zeros(1, device=self.device, requires_grad=False)
-        self.secondOrderMomentum = torch.zeros(1, device=self.device, requires_grad=False)
+        self.firstOrderMomentum = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.secondOrderMomentum = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
 
         self.writer = None
 
@@ -148,10 +164,16 @@ class SGDEnv(AbstractEnv):
         action = torch.Tensor([action]).to(self.device)
         new_lr = 10 ** (-action)
         self.current_lr = new_lr
-        delta_w = torch.mul(new_lr, self.firstOrderMomentum / (torch.sqrt(self.secondOrderMomentum) + self.epsilon))
+        delta_w = torch.mul(
+            new_lr,
+            self.firstOrderMomentum
+            / (torch.sqrt(self.secondOrderMomentum) + self.epsilon),
+        )
         for i, p in enumerate(self.model.parameters()):
             layer_size = self.layer_sizes[i]
-            p.data = p.data - delta_w[index: index + layer_size].reshape(shape=p.data.shape)
+            p.data = p.data - delta_w[index : index + layer_size].reshape(
+                shape=p.data.shape
+            )
             index += layer_size
 
         self._set_zero_grad()
@@ -179,36 +201,44 @@ class SGDEnv(AbstractEnv):
 
         self.training_validation_ratio = 0.8
 
-        train_dataloader_args = {'batch_size': self.batch_size}
-        validation_dataloader_args = {'batch_size': self.validation_batch_size}
+        train_dataloader_args = {"batch_size": self.batch_size}
+        validation_dataloader_args = {"batch_size": self.validation_batch_size}
         if self.use_cuda:
-            param = {'num_workers': 1,
-                     'pin_memory': True,
-                     'shuffle': True}
+            param = {"num_workers": 1, "pin_memory": True, "shuffle": True}
             train_dataloader_args.update(param)
             validation_dataloader_args.update(param)
 
         if dataset == "MNIST":
-            transform = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize((0.1307,), (0.3081,))
-            ])
+            transform = transforms.Compose(
+                [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
+            )
 
-            train_dataset = datasets.MNIST('../data', train=True, download=True, transform=transform)
+            train_dataset = datasets.MNIST(
+                "../data", train=True, download=True, transform=transform
+            )
             # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
         else:
             raise NotImplementedError
 
-        training_dataset_limit = math.floor(len(train_dataset) * self.training_validation_ratio)
+        training_dataset_limit = math.floor(
+            len(train_dataset) * self.training_validation_ratio
+        )
         validation_dataset_limit = len(train_dataset)
 
-        self.train_dataset = torch.utils.data.Subset(train_dataset, range(0, training_dataset_limit - 1))
-        self.validation_dataset = torch.utils.data.Subset(train_dataset,
-                                                          range(training_dataset_limit, validation_dataset_limit))
+        self.train_dataset = torch.utils.data.Subset(
+            train_dataset, range(0, training_dataset_limit - 1)
+        )
+        self.validation_dataset = torch.utils.data.Subset(
+            train_dataset, range(training_dataset_limit, validation_dataset_limit)
+        )
 
-        self.train_loader = torch.utils.data.DataLoader(self.train_dataset, **train_dataloader_args)
+        self.train_loader = torch.utils.data.DataLoader(
+            self.train_dataset, **train_dataloader_args
+        )
         # self.test_loader = torch.utils.data.DataLoader(self.test_dataset, **train_dataloader_args)
-        self.validation_loader = torch.utils.data.DataLoader(self.validation_dataset, **validation_dataloader_args)
+        self.validation_loader = torch.utils.data.DataLoader(
+            self.validation_dataset, **validation_dataloader_args
+        )
 
         self.train_batch_index = 0
         self.epoch_index = 0
@@ -237,9 +267,10 @@ class SGDEnv(AbstractEnv):
         self.step_count = torch.zeros(1, device=self.device, requires_grad=False)
 
         self.current_lr = self.initial_lr
-        self.prev_descent = torch.zeros((self.parameter_count,), device=self.device, requires_grad=False)
-
-        reward = self._train_batch()
+        self.prev_descent = torch.zeros(
+            (self.parameter_count,), device=self.device, requires_grad=False
+        )
+        self._train_batch()
 
         return self.get_state()
 
@@ -282,9 +313,15 @@ class SGDEnv(AbstractEnv):
 
         """
         gradients = self._get_gradients()
-        self.firstOrderMomentum, self.secondOrderMomentum = self._get_momentum(gradients)
-        predictiveChangeVarDiscountedAverage, predictiveChangeVarUncertainty = \
-            self._get_predictive_change_features(self.current_lr, self.firstOrderMomentum, self.secondOrderMomentum)
+        self.firstOrderMomentum, self.secondOrderMomentum = self._get_momentum(
+            gradients
+        )
+        (
+            predictiveChangeVarDiscountedAverage,
+            predictiveChangeVarUncertainty,
+        ) = self._get_predictive_change_features(
+            self.current_lr, self.firstOrderMomentum, self.secondOrderMomentum
+        )
         lossVarDiscountedAverage, lossVarUncertainty = self._get_loss_features()
 
         state = {
@@ -363,7 +400,7 @@ class SGDEnv(AbstractEnv):
         self.current_validation_loss = validation_loss
         self.model.train()
 
-        return -validation_loss.item()     # negative because it is the reward
+        return -validation_loss.item()  # negative because it is the reward
 
     def _get_validation_loss(self):
         try:
@@ -402,23 +439,44 @@ class SGDEnv(AbstractEnv):
         with torch.no_grad():
             loss_var = torch.log(torch.var(self.loss_batch))
 
-            self.lossVarDiscountedAverage = self.discount_factor * self.lossVarDiscountedAverage + (1 - self.discount_factor) * loss_var
-            self.lossVarUncertainty = self.discount_factor * self.lossVarUncertainty + (1 - self.discount_factor) * (loss_var - self.lossVarDiscountedAverage) ** 2
+            self.lossVarDiscountedAverage = (
+                self.discount_factor * self.lossVarDiscountedAverage
+                + (1 - self.discount_factor) * loss_var
+            )
+            self.lossVarUncertainty = (
+                self.discount_factor * self.lossVarUncertainty
+                + (1 - self.discount_factor)
+                * (loss_var - self.lossVarDiscountedAverage) ** 2
+            )
 
         return self.lossVarDiscountedAverage, self.lossVarUncertainty
 
     def _get_predictive_change_features(self, lr, m, v):
         batch_gradients = []
         for i, (name, param) in enumerate(self.model.named_parameters()):
-            grad_batch = param.grad_batch.reshape(self.current_batch_size, self.layer_sizes[i])
+            grad_batch = param.grad_batch.reshape(
+                self.current_batch_size, self.layer_sizes[i]
+            )
             batch_gradients.append(grad_batch)
 
         batch_gradients = torch.cat(batch_gradients, dim=1)
 
         update_value = self._get_adam_feature(lr, m, v)
-        predictive_change = torch.log(torch.var(-1 * torch.matmul(batch_gradients, update_value)))
+        predictive_change = torch.log(
+            torch.var(-1 * torch.matmul(batch_gradients, update_value))
+        )
 
-        self.predictiveChangeVarDiscountedAverage = self.discount_factor * self.predictiveChangeVarDiscountedAverage + (1 - self.discount_factor) * predictive_change
-        self.predictiveChangeVarUncertainty = self.discount_factor * self.predictiveChangeVarUncertainty + (1 - self.discount_factor) * (predictive_change - self.predictiveChangeVarDiscountedAverage) ** 2
+        self.predictiveChangeVarDiscountedAverage = (
+            self.discount_factor * self.predictiveChangeVarDiscountedAverage
+            + (1 - self.discount_factor) * predictive_change
+        )
+        self.predictiveChangeVarUncertainty = (
+            self.discount_factor * self.predictiveChangeVarUncertainty
+            + (1 - self.discount_factor)
+            * (predictive_change - self.predictiveChangeVarDiscountedAverage) ** 2
+        )
 
-        return self.predictiveChangeVarDiscountedAverage, self.predictiveChangeVarUncertainty
+        return (
+            self.predictiveChangeVarDiscountedAverage,
+            self.predictiveChangeVarUncertainty,
+        )

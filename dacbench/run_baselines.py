@@ -1,8 +1,10 @@
+from dacbench import benchmarks
+
 import numpy as np
 import os
 import json
 import argparse
-from dacbench import benchmarks
+
 from dacbench.wrappers import PerformanceTrackingWrapper
 from dacbench.runner import run_benchmark
 from dacbench.agents import StaticAgent, GenericAgent, DynamicRandomAgent
@@ -31,6 +33,7 @@ DISCRETE_ACTIONS = {
     "FastDownwardBenchmark": [0, 1],
     "CMAESBenchmark": [np.around(a, decimals=1) for a in np.linspace(0.2, 10, num=50)],
     "ModeaBenchmark": list(itertools.product(*modea_actions)),
+    "SGDBenchmark": [np.around(a, decimals=1) for a in np.linspace(0, 10, num=50)],
 }
 
 
@@ -157,10 +160,7 @@ def main():
         help="Seeds for evaluation",
     )
     parser.add_argument(
-        "--fixed_random",
-        type=int,
-        default=0,
-        help="Fixes random actions for n steps",
+        "--fixed_random", type=int, default=0, help="Fixes random actions for n steps",
     )
     args = parser.parse_args()
 

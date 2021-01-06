@@ -24,7 +24,7 @@ class TestPerformanceWrapper(unittest.TestCase):
 
     def test_step(self):
         bench = LubyBenchmark()
-        bench.config.instance_set = [[0, 0], [1, 1], [3, 4], [5, 6]]
+        bench.config.instance_set = {0: [0, 0], 1: [1, 1], 2: [3, 4], 3: [5, 6]}
         env = bench.get_environment()
         wrapped = PerformanceTrackingWrapper(env, 2)
 

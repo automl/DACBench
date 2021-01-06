@@ -19,6 +19,7 @@ class ModeaEnv(AbstractEnv):
         super(ModeaEnv, self).__init__(config)
         self.es = None
         self.budget = config.budget
+        self.total_budget = self.budget
 
     def reset(self):
         super(ModeaEnv, self).reset_()
@@ -36,6 +37,20 @@ class ModeaEnv(AbstractEnv):
         self.es = CustomizedES(
             self.dim, self.function, self.budget, self.mu, self.lambda_, opts, values
         )
+        parameter_opts = self.es.parameters.getParameterOpts()
+        # print("Local restart on")
+        if parameter_opts["lambda_"]:
+            self.lambda_init = parameter_opts["lambda_"]
+        elif parameter_opts["local_restart"] in ["IPOP", "BIPOP"]:
+            self.lambda_init = int(4 + np.floor(3 * np.log(parameter_opts["n"])))
+        else:
+            self.lambda_init = None
+        parameter_opts["lambda_"] = self.lambda_init
+
+        # BIPOP Specific parameters
+        self.lambda_ = {"small": None, "large": self.lambda_init}
+        self.budgets = {"small": None, "large": None}
+        self.regime = "first"
         self.update_parameters()
         return self.get_state()
 
@@ -87,33 +102,45 @@ class ModeaEnv(AbstractEnv):
 
         elif parameter_opts["local_restart"] == "BIPOP":
             try:
-                self.budgets[self.es.regime] -= self.es.used_budget
-                self.es.determineRegime()
+                self.budgets[self.regime] -= self.es.used_budget
+                self.determineRegime()
             except KeyError:  # Setup of the two regimes after running regularily for the first time
                 remaining_budget = self.total_budget - self.es.used_budget
                 self.budgets["small"] = remaining_budget // 2
                 self.budgets["large"] = remaining_budget - self.budgets["small"]
-                self.es.regime = "large"
+                self.regime = "large"
 
-            if self.es.regime == "large":
-                self.es.lambda_["large"] *= 2
+            if self.regime == "large":
+                self.lambda_["large"] *= 2
                 parameter_opts["sigma"] = 2
-            elif self.es.regime == "small":
+            elif self.regime == "small":
                 rand_val = np.random.random() ** 2
-                self.es.lambda_["small"] = int(
+                self.lambda_["small"] = int(
                     np.floor(
-                        parameter_opts["lambda_"]
-                        * (0.5 * self.es.lambda_["large"] / parameter_opts["lambda_"])
+                        self.lambda_init
+                        * (0.5 * self.es.lambda_["large"] / self.lambda_init)
                         ** rand_val
                     )
                 )
                 parameter_opts["sigma"] = 2e-2 * np.random.random()
 
-            self.es.budget = self.budgets[self.es.regime]
+            self.es.budget = self.budgets[self.regime]
             self.es.used_budget = 0
-            parameter_opts["budget"] = self.es.budget
-            parameter_opts["lambda_"] = self.es.lambda_[self.es.regime]
+            parameter_opts["budget"] = self.budget
+            parameter_opts["lambda_"] = self.lambda_[self.regime]
         return done
+
+    def determineRegime(self):
+        large = self.budgets["large"]
+        small = self.budgets["small"]
+        if large <= 0:
+            self.regime = "small"
+        elif small <= 0:
+            self.regime = "large"
+        elif large > small:
+            self.regime = "large"
+        else:
+            self.regime = "small"
 
     def get_state(self):
         return [

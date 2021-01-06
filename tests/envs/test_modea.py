@@ -12,8 +12,9 @@ class TestModeaEnv(unittest.TestCase):
         config.budget = 20
         config.datapath = "."
         config.threshold = 1e-8
-        config.instance_set = [[10, 12, 0, np.ones(11)]]
+        config.instance_set = {2: [10, 12, 0, np.ones(11)]}
         config.cutoff = 10
+        config.benchmark_info = None
         config.action_space = spaces.MultiDiscrete([2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3])
         config.observation_space = spaces.Box(
             low=-np.inf * np.ones(5), high=np.inf * np.ones(5)

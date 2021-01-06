@@ -18,8 +18,12 @@ class AbstractEnv(gym.Env):
         """
         super(AbstractEnv, self).__init__()
         self.instance_set = config["instance_set"]
-        self.inst_id = 0
+        self.instance_id_list = sorted(list(self.instance_set.keys()))
+        self.instance_index = 0
+        self.inst_id = self.instance_id_list[self.instance_index]
         self.instance = self.instance_set[self.inst_id]
+
+        self.benchmark_info = config["benchmark_info"]
 
         self.np_random = None
 
@@ -93,7 +97,8 @@ class AbstractEnv(gym.Env):
         """
         Pre-reset function for round robin schedule through instance set
         """
-        self.inst_id = (self.inst_id + 1) % len(self.instance_set)
+        self.instance_index = (self.instance_index + 1) % len(self.instance_id_list)
+        self.inst_id = self.instance_id_list[self.instance_index]
         self.instance = self.instance_set[self.inst_id]
         self.c_step = 0
 
@@ -174,6 +179,7 @@ class AbstractEnv(gym.Env):
             New instance index
         """
         self.inst_id = inst_id
+        self.instance_index = self.instance_id_list.index(self.inst_id)
 
     def set_instance_set(self, inst_set):
         """
@@ -185,6 +191,7 @@ class AbstractEnv(gym.Env):
             New instance set
         """
         self.instance_set = inst_set
+        self.instance_id_list = sorted(list(self.instance_set.keys()))
 
     def set_instance(self, instance):
         """

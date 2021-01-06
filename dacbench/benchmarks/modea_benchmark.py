@@ -4,6 +4,15 @@ import numpy as np
 import os
 import csv
 
+INFO = {"identifier": "ModEA",
+        "name": "Online Selection of CMA-ES Variants",
+        "reward": "Negative best function value",
+        "state_description": ["Generation Size",
+                              "Sigma",
+                              "Remaining Budget",
+                              "Function ID",
+                              "Instance ID"]}
+
 MODEA_DEFAULTS = objdict(
     {
         "action_space_class": "MultiDiscrete",
@@ -16,6 +25,7 @@ MODEA_DEFAULTS = objdict(
         "cutoff": 1e6,
         "seed": 0,
         "instance_set_path": "../instance_sets/modea/modea_train.csv",
+        "benchmark_info": INFO
     }
 )
 

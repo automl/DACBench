@@ -76,7 +76,7 @@ class FastDownwardEnv(AbstractEnv):
         self.host = config.host
         self.port = config.port
         if config["parallel"]:
-            self.port += np.random.randint(50)
+            self.port += np.random.randint(200)
 
         self.fd_seed = config.fd_seed
         self.control_interval = config.control_interval
@@ -350,6 +350,8 @@ class FastDownwardEnv(AbstractEnv):
                 "--search",
                 self.argstring,
             ]
+
+        print(command)
         with open(self.logpath_out, "a+") as fout, open(self.logpath_err, "a+") as ferr:
             self.fd = subprocess.Popen(command, stdout=fout, stderr=ferr)
 
