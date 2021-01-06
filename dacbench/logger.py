@@ -5,6 +5,7 @@ from datetime import datetime
 from functools import reduce
 from itertools import chain
 from pathlib import Path
+import numpy as np
 from typing import Union, Dict, Any, Tuple, List
 
 import pandas as pd
@@ -113,8 +114,8 @@ class AbstractLogger(metaclass=ABCMeta):
     """
 
     valid_types = {
-        "recursive": [dict, list, tuple],
-        "primitive": [str, int, float, bool],
+        "recursive": [dict, list, tuple, np.ndarray],
+        "primitive": [str, int, float, bool, np.number],
     }
 
     def __init__(
@@ -169,7 +170,7 @@ class AbstractLogger(metaclass=ABCMeta):
             return True
 
         elif any(isinstance(value, type) for type in self.valid_types["recursive"]):
-            value = value.keys() if isinstance(value, dict) else value
+            value = value.vlaues() if isinstance(value, dict) else value
             return all(self.is_of_valid_type(sub_value) for sub_value in value)
 
         else:
@@ -272,12 +273,20 @@ class ModuleLogger(AbstractLogger):
         if not self.log_file.closed:
             self.close()
 
+    @staticmethod
+    def __json_default(object):
+        if isinstance(object, np.ndarray):
+            return object.tolist()
+        return object
+
     def __end_step(self):
         if self.current_step:
             self.current_step["step"] = self.step
             self.current_step["episode"] = self.episode
             self.current_step.update(self.additional_info)
-            self.buffer.append(json.dumps(self.current_step))
+            self.buffer.append(
+                json.dumps(self.current_step, default=self.__json_default)
+            )
         self.current_step = self.__init_dict()
 
     @staticmethod
@@ -312,6 +321,7 @@ class ModuleLogger(AbstractLogger):
         self.episode += 1
 
     def write(self):
+        self.__end_step()
         self.__buffer_to_file()
 
     def __buffer_to_file(self):
@@ -339,12 +349,13 @@ class ModuleLogger(AbstractLogger):
         valid
         :return:
         """
-        # TODO add numpy support
+
         if not self.is_of_valid_type(value):
             valid_types = self._pretty_valid_types()
             raise ValueError(
                 f"value {type(value)} is not of valid type or a recursive composition of valid types ({valid_types})"
             )
+
         self.current_step[key]["times"].append(
             datetime.now().strftime("%d-%m-%y %H:%M:%S.%f")
         )

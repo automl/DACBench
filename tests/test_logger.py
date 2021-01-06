@@ -2,7 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-
+import numpy as np
 from dacbench.agents.simple_agents import RandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
 from dacbench.logger import ModuleLogger, Logger, log2dataframe
@@ -87,6 +87,27 @@ class TestModuleLogger(unittest.TestCase):
 
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
+
+    def test_log_numpy(self):
+        experiment_name = "test_basic_logging"
+        module_name = "module"
+
+        logger = ModuleLogger(
+            output_path=Path(self.temp_dir.name),
+            experiment_name=experiment_name,
+            module=module_name,
+            step_write_frequency=None,
+            episode_write_frequency=None,
+        )
+
+        logger.log("state", np.array([1, 2, 3]))
+        logger.close()
+
+        with open(logger.get_logfile(), "r") as log_file:
+            logs = list(map(json.loads, log_file))
+
+        dataframe = log2dataframe(logs, wide=True)
+        self.assertEqual(dataframe.iloc[0].state, [1, 2, 3])
 
     def test_basic_logging(self):
         experiment_name = "test_basic_logging"
