@@ -8,7 +8,8 @@ import csv
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
 
-INFO = {"name": "Learning Rate Adaption for Neural Networks",
+INFO = {"identifier": "LR",
+        "name": "Learning Rate Adaption for Neural Networks",
         "reward": "Validation Loss",
         "state_description": ["Predictive Change Variance (Discounted Average)",
                               "Predictive Change Variance (Uncertainty)",

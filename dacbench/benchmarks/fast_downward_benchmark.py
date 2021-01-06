@@ -9,20 +9,20 @@ HEURISTICS = [
     "tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])",
 ]
 
-INFO = {
-    "name": "Heuristic Selection for the FastDownward Planner",
-    "reward": "Negative Runtime (-1 per step)",
-    "state_description": [
-        "Average Value (heuristic 1)",
-        "Max Value (heuristic 1)",
-        "Min Value (heuristic 1)",
-        "Open List Entries (heuristic 1)",
-        "Variance (heuristic 1)",
-        "Average Value (heuristic 2)",
-        "Max Value (heuristic 2)",
-        "Min Value (heuristic 2)",
-        "Open List Entries (heuristic 2)",
-        "Variance (heuristic 2)",
+INFO = {"identifier": "FastDownward",
+        "name": "Heuristic Selection for the FastDownward Planner",
+        "reward": "Negative Runtime (-1 per step)",
+        "state_description": [
+            "Average Value (heuristic 1)",
+            "Max Value (heuristic 1)",
+            "Min Value (heuristic 1)",
+            "Open List Entries (heuristic 1)",
+            "Variance (heuristic 1)",
+            "Average Value (heuristic 2)",
+            "Max Value (heuristic 2)",
+            "Min Value (heuristic 2)",
+            "Open List Entries (heuristic 2)",
+            "Variance (heuristic 2)",
     ],
 }
 

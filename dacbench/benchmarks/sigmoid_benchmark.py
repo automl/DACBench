@@ -8,16 +8,16 @@ import csv
 
 ACTION_VALUES = (5, 10)
 
-INFO = {
-    "name": "Sigmoid Function Approximation",
-    "reward": "Multiplied Differences between Function and Action in each Dimension",
-    "state_description": [
-        "Remaining Budget",
-        "Shift (dimension 1)",
-        "Slope (dimension 1)",
-        "Shift (dimension 2)",
-        "Slope (dimension 2)",
-        "Action",
+INFO = {"identifier": "Sigmoid",
+        "name": "Sigmoid Function Approximation",
+        "reward": "Multiplied Differences between Function and Action in each Dimension",
+        "state_description": [
+            "Remaining Budget",
+            "Shift (dimension 1)",
+            "Slope (dimension 1)",
+            "Shift (dimension 2)",
+            "Slope (dimension 2)",
+            "Action",
     ],
 }
 

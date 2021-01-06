@@ -4,7 +4,8 @@ import numpy as np
 import os
 import csv
 
-INFO = {"name": "Online Selection of CMA-ES Variants",
+INFO = {"identifier": "ModEA",
+        "name": "Online Selection of CMA-ES Variants",
         "reward": "Negative best function value",
         "state_description": ["Generation Size",
                               "Sigma",

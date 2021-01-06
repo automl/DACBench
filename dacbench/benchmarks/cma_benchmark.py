@@ -9,7 +9,8 @@ import csv
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
 
-INFO = {"name": "Step-size adaption in CMA-ES",
+INFO = {"identifier": "CMA-ES",
+        "name": "Step-size adaption in CMA-ES",
         "reward": "Negative best function value",
         "state_description": ["Loc",
                               "Past Deltas",
