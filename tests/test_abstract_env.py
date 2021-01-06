@@ -153,8 +153,8 @@ class TestAbstractEnv(unittest.TestCase):
         env = self.make_env()
 
         self.assertTrue(env.inst_id == env.get_inst_id())
-        env.set_inst_id(100)
-        self.assertTrue(100 == env.get_inst_id())
+        env.set_inst_id(1)
+        self.assertTrue(1 == env.get_inst_id())
 
         self.assertTrue(env.instance == env.get_instance())
         env.set_instance(100)
@@ -168,8 +168,8 @@ class TestAbstractEnv(unittest.TestCase):
                 ]
             )
         )
-        env.set_instance_set(100)
-        self.assertTrue(100 == env.get_instance_set())
+        env.set_instance_set({0: 100})
+        self.assertTrue(100 == env.get_instance_set()[0])
 
     def test_seed(self):
         env = self.make_env()

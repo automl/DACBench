@@ -179,6 +179,7 @@ class AbstractEnv(gym.Env):
             New instance index
         """
         self.inst_id = inst_id
+        self.instance_index = self.instance_id_list.index(self.inst_id)
 
     def set_instance_set(self, inst_set):
         """
@@ -190,6 +191,7 @@ class AbstractEnv(gym.Env):
             New instance set
         """
         self.instance_set = inst_set
+        self.instance_id_list = sorted(list(self.instance_set.keys()))
 
     def set_instance(self, instance):
         """
