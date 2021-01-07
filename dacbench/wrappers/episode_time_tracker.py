@@ -15,7 +15,7 @@ class EpisodeTimeWrapper(Wrapper):
     Includes interval mode that returns times in lists of len(interval) instead of one long list.
     """
 
-    def __init__(self, env, time_interval=None):
+    def __init__(self, env, time_interval=None, logger=None):
         """
         Initialize wrapper
 
@@ -25,6 +25,7 @@ class EpisodeTimeWrapper(Wrapper):
             Environment to wrap
         time_interval : int
             If not none, mean in given intervals is tracked, too
+        logger : dacbench.logger.ModuleLogger
         """
         super(EpisodeTimeWrapper, self).__init__(env)
         self.time_interval = time_interval
@@ -37,6 +38,8 @@ class EpisodeTimeWrapper(Wrapper):
         if self.time_interval:
             self.time_intervals = []
             self.current_times = []
+
+        self.logger = logger
 
     def __setattr__(self, name, value):
         """
@@ -64,6 +67,7 @@ class EpisodeTimeWrapper(Wrapper):
             "all_steps",
             "current_step_interval",
             "step_intervals",
+            "logger",
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -98,6 +102,7 @@ class EpisodeTimeWrapper(Wrapper):
             "all_steps",
             "current_step_interval",
             "step_intervals",
+            "logger",
         ]:
             return object.__getattribute__(self, name)
 
@@ -124,6 +129,10 @@ class EpisodeTimeWrapper(Wrapper):
         duration = stop - start
         self.episode.append(duration)
         self.all_steps.append(duration)
+
+        if self.logger is not None:
+            self.logger.log("step_duration", duration)
+
         if self.time_interval:
             if len(self.current_step_interval) < self.time_interval:
                 self.current_step_interval.append(duration)
@@ -132,6 +141,9 @@ class EpisodeTimeWrapper(Wrapper):
                 self.current_step_interval = [duration]
         if done:
             self.overall_times.append(self.episode)
+            if self.logger is not None:
+                self.logger.log("episode_duration", sum(self.episode))
+
             if self.time_interval:
                 if len(self.current_times) < self.time_interval:
                     self.current_times.append(self.episode)

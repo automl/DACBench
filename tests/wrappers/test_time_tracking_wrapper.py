@@ -1,11 +1,54 @@
+import tempfile
 import unittest
+from pathlib import Path
 
 import numpy as np
+
+from dacbench.agents import StaticAgent
 from dacbench.benchmarks import LubyBenchmark
+from dacbench.logger import Logger, load_logs, log2dataframe
+from dacbench.runner import run_benchmark
 from dacbench.wrappers import EpisodeTimeWrapper
 
 
 class TestTimeTrackingWrapper(unittest.TestCase):
+    def test_logging(self):
+        temp_dir = tempfile.TemporaryDirectory()
+
+        episodes = 5
+        logger = Logger(
+            output_path=Path(temp_dir.name),
+            experiment_name="test_logging",
+        )
+        bench = LubyBenchmark()
+        env = bench.get_environment()
+        time_logger = logger.add_module(EpisodeTimeWrapper)
+        wrapped = EpisodeTimeWrapper(env, logger=time_logger)
+        agent = StaticAgent(env=env, action=1)
+        run_benchmark(wrapped, agent, episodes, logger)
+
+        logger.close()
+
+        logs = load_logs(time_logger.get_logfile())
+        dataframe = log2dataframe(logs, wide=True)
+
+        # all steps must have logged time
+        self.assertTrue((~dataframe.step_duration.isna()).all())
+
+        # each episode has a recored time
+        episodes = dataframe.groupby("episode")
+        last_steps_per_episode = dataframe.iloc[episodes.step.idxmax()]
+        self.assertTrue((~last_steps_per_episode.episode_duration.isna()).all())
+
+        # episode time equals the sum of the steps in episode
+        calculated_episode_times = episodes.step_duration.sum()
+        recorded_episode_times = last_steps_per_episode.episode_duration
+        self.assertListEqual(
+            calculated_episode_times.tolist(), recorded_episode_times.tolist()
+        )
+
+        temp_dir.cleanup()
+
     def test_init(self):
         bench = LubyBenchmark()
         env = bench.get_environment()
