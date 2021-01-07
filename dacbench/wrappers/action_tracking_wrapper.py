@@ -1,9 +1,9 @@
-from gym import Wrapper
-import numpy as np
-from gym import spaces
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+import numpy as np
 import seaborn as sb
+from gym import Wrapper
+from gym import spaces
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())
@@ -15,7 +15,7 @@ class ActionFrequencyWrapper(Wrapper):
     Includes interval mode that returns frequencies in lists of len(interval) instead of one long list.
     """
 
-    def __init__(self, env, action_interval=None):
+    def __init__(self, env, action_interval=None, logger=None):
         """
         Initialize wrapper
 
@@ -25,6 +25,7 @@ class ActionFrequencyWrapper(Wrapper):
             Environment to wrap
         action_interval : int
             If not none, mean in given intervals is tracked, too
+        logger: logger.ModuleLogger
         """
         super(ActionFrequencyWrapper, self).__init__(env)
         self.action_interval = action_interval
@@ -33,6 +34,7 @@ class ActionFrequencyWrapper(Wrapper):
             self.action_intervals = []
             self.current_actions = []
         self.action_space_type = type(self.env.action_space)
+        self.logger = logger
 
     def __setattr__(self, name, value):
         """
@@ -54,6 +56,7 @@ class ActionFrequencyWrapper(Wrapper):
             "get_actions",
             "step",
             "render_action_tracking",
+            "logger",
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -82,6 +85,7 @@ class ActionFrequencyWrapper(Wrapper):
             "get_actions",
             "step",
             "render_action_tracking",
+            "logger",
         ]:
             return object.__getattribute__(self, name)
 
@@ -104,6 +108,9 @@ class ActionFrequencyWrapper(Wrapper):
         """
         state, reward, done, info = self.env.step(action)
         self.overall_actions.append(action)
+        if self.logger is not None:
+            self.logger.log_space("action", action)
+
         if self.action_interval:
             if len(self.current_actions) < self.action_interval:
                 self.current_actions.append(action)

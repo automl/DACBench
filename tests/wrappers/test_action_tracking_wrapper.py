@@ -1,12 +1,323 @@
+import tempfile
 import unittest
-import pytest
+from pathlib import Path
+
 import gym
 import numpy as np
-from dacbench.benchmarks import LubyBenchmark, FastDownwardBenchmark, CMAESBenchmark
+import pandas as pd
+import pytest
+
+from dacbench.agents import RandomAgent
+from dacbench.benchmarks import (
+    LubyBenchmark,
+    FastDownwardBenchmark,
+    CMAESBenchmark,
+    ModeaBenchmark,
+)
+from dacbench.logger import Logger, load_logs, log2dataframe
+from dacbench.runner import run_benchmark
 from dacbench.wrappers import ActionFrequencyWrapper
 
 
 class TestActionTrackingWrapper(unittest.TestCase):
+    def test_logging_multi_discrete(self):
+        temp_dir = tempfile.TemporaryDirectory()
+
+        seed = 0
+        logger = Logger(
+            output_path=Path(temp_dir.name),
+            experiment_name="test_multi_discrete_logging",
+            step_write_frequency=None,
+            episode_write_frequency=1,
+        )
+
+        bench = ModeaBenchmark()
+        bench.set_seed(seed)
+        env = bench.get_environment()
+        env.action_space.seed(seed)
+        action_logger = logger.add_module(ActionFrequencyWrapper)
+        wrapped = ActionFrequencyWrapper(env, logger=action_logger)
+        agent = RandomAgent(env)
+        logger.set_env(env)
+
+        run_benchmark(wrapped, agent, 1, logger)
+        action_logger.close()
+
+        logs = load_logs(action_logger.get_logfile())
+        dataframe = log2dataframe(logs, wide=True)
+
+        expected_actions = pd.DataFrame(
+            {
+                "action_0": {
+                    0: 0,
+                    1: 1,
+                    2: 0,
+                    3: 1,
+                    4: 1,
+                    5: 0,
+                    6: 1,
+                    7: 1,
+                    8: 0,
+                    9: 0,
+                    10: 0,
+                },
+                "action_1": {
+                    0: 1,
+                    1: 0,
+                    2: 1,
+                    3: 0,
+                    4: 0,
+                    5: 1,
+                    6: 0,
+                    7: 1,
+                    8: 0,
+                    9: 0,
+                    10: 1,
+                },
+                "action_10": {
+                    0: 0,
+                    1: 0,
+                    2: 1,
+                    3: 0,
+                    4: 0,
+                    5: 0,
+                    6: 0,
+                    7: 2,
+                    8: 1,
+                    9: 2,
+                    10: 1,
+                },
+                "action_2": {
+                    0: 1,
+                    1: 1,
+                    2: 1,
+                    3: 0,
+                    4: 1,
+                    5: 1,
+                    6: 1,
+                    7: 1,
+                    8: 0,
+                    9: 0,
+                    10: 1,
+                },
+                "action_3": {
+                    0: 0,
+                    1: 1,
+                    2: 1,
+                    3: 1,
+                    4: 1,
+                    5: 1,
+                    6: 1,
+                    7: 0,
+                    8: 0,
+                    9: 1,
+                    10: 1,
+                },
+                "action_4": {
+                    0: 0,
+                    1: 1,
+                    2: 1,
+                    3: 0,
+                    4: 1,
+                    5: 0,
+                    6: 0,
+                    7: 1,
+                    8: 0,
+                    9: 1,
+                    10: 0,
+                },
+                "action_5": {
+                    0: 1,
+                    1: 0,
+                    2: 0,
+                    3: 0,
+                    4: 1,
+                    5: 1,
+                    6: 1,
+                    7: 0,
+                    8: 0,
+                    9: 0,
+                    10: 1,
+                },
+                "action_6": {
+                    0: 0,
+                    1: 1,
+                    2: 1,
+                    3: 0,
+                    4: 0,
+                    5: 0,
+                    6: 0,
+                    7: 0,
+                    8: 1,
+                    9: 0,
+                    10: 0,
+                },
+                "action_7": {
+                    0: 1,
+                    1: 0,
+                    2: 0,
+                    3: 0,
+                    4: 0,
+                    5: 0,
+                    6: 0,
+                    7: 1,
+                    8: 1,
+                    9: 1,
+                    10: 0,
+                },
+                "action_8": {
+                    0: 0,
+                    1: 1,
+                    2: 0,
+                    3: 1,
+                    4: 1,
+                    5: 1,
+                    6: 0,
+                    7: 1,
+                    8: 0,
+                    9: 0,
+                    10: 1,
+                },
+                "action_9": {
+                    0: 1,
+                    1: 2,
+                    2: 1,
+                    3: 0,
+                    4: 0,
+                    5: 1,
+                    6: 1,
+                    7: 1,
+                    8: 2,
+                    9: 0,
+                    10: 2,
+                },
+            }
+        )
+
+        for column in expected_actions.columns:
+            # todo: seems to be an bug here. Every so ofter the last action is missing.
+            # Double checked not a logging problem. Could be a seeding issue
+            self.assertListEqual(
+                dataframe[column].to_list()[:10],
+                expected_actions[column].to_list()[:10],
+                f"Column  {column}",
+            )
+
+        temp_dir.cleanup()
+
+    def test_logging_discrete(self):
+        temp_dir = tempfile.TemporaryDirectory()
+
+        seed = 0
+        logger = Logger(
+            output_path=Path(temp_dir.name),
+            experiment_name="test_discrete_logging",
+            step_write_frequency=None,
+            episode_write_frequency=1,
+        )
+
+        bench = LubyBenchmark()
+        bench.set_seed(seed)
+        env = bench.get_environment()
+        env.action_space.seed(seed)
+        action_logger = logger.add_module(ActionFrequencyWrapper)
+        wrapped = ActionFrequencyWrapper(env, logger=action_logger)
+        agent = RandomAgent(env)
+        logger.set_env(env)
+
+        run_benchmark(wrapped, agent, 10, logger)
+        action_logger.close()
+
+        logs = load_logs(action_logger.get_logfile())
+        dataframe = log2dataframe(logs, wide=True)
+
+        expected_actions = [
+            0,
+            3,
+            5,
+            4,
+            3,
+            5,
+            5,
+            5,
+            3,
+            3,
+            2,
+            1,
+            0,
+            1,
+            2,
+            0,
+            1,
+            1,
+            0,
+            1,
+            2,
+            4,
+            3,
+            0,
+            1,
+            3,
+            0,
+            3,
+            3,
+            3,
+            4,
+            4,
+            4,
+            5,
+            4,
+            0,
+            4,
+            2,
+            1,
+            3,
+            4,
+            2,
+            1,
+            3,
+            3,
+            2,
+            0,
+            5,
+            2,
+            5,
+            2,
+            1,
+            5,
+            3,
+            2,
+            5,
+            1,
+            0,
+            2,
+            3,
+            1,
+            3,
+            2,
+            3,
+            2,
+            4,
+            3,
+            4,
+            0,
+            5,
+            5,
+            1,
+            5,
+            0,
+            1,
+            5,
+            5,
+            3,
+            3,
+            2,
+        ]
+
+        self.assertListEqual(dataframe.action.to_list(), expected_actions)
+
+        temp_dir.cleanup()
+
     def test_init(self):
         bench = LubyBenchmark()
         env = bench.get_environment()

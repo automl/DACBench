@@ -6,13 +6,20 @@ from functools import reduce
 from itertools import chain
 from numbers import Number
 from pathlib import Path
-import numpy as np
 from typing import Union, Dict, Any, Tuple, List
 
+import numpy as np
 import pandas as pd
 
 from dacbench import AbstractEnv, AbstractBenchmark
 from dacbench.abstract_agent import AbstractDACBenchAgent
+
+
+def load_logs(log_file: Path):
+    with open(log_file, "r") as log_file:
+        logs = list(map(json.loads, log_file))
+
+    return logs
 
 
 def split(predicate, iterable) -> Tuple[List, List]:
@@ -311,7 +318,6 @@ class ModuleLogger(AbstractLogger):
             self.current_step["step"] = self.step
             self.current_step["episode"] = self.episode
             self.current_step.update(self.additional_info)
-            print(self.current_step)
             self.buffer.append(
                 json.dumps(self.current_step, default=self.__json_default)
             )
@@ -353,10 +359,11 @@ class ModuleLogger(AbstractLogger):
         self.__buffer_to_file()
 
     def __buffer_to_file(self):
-        self.log_file.write("\n".join(self.buffer))
-        self.log_file.write("\n")
-        self.buffer.clear()
-        self.log_file.flush()
+        if len(self.buffer) > 0:
+            self.log_file.write("\n".join(self.buffer))
+            self.log_file.write("\n")
+            self.buffer.clear()
+            self.log_file.flush()
 
     def set_additional_info(self, **kwargs):
         """
