@@ -15,7 +15,7 @@ class StateTrackingWrapper(Wrapper):
     Includes interval mode that returns states in lists of len(interval) instead of one long list.
     """
 
-    def __init__(self, env, state_interval=None):
+    def __init__(self, env, state_interval=None, logger=None):
         """
         Initialize wrapper
 
@@ -25,6 +25,7 @@ class StateTrackingWrapper(Wrapper):
             Environment to wrap
         state_interval : int
             If not none, mean in given intervals is tracked, too
+        logger : dacbench.logger.ModuleLogger
         """
         super(StateTrackingWrapper, self).__init__(env)
         self.state_interval = state_interval
@@ -34,6 +35,14 @@ class StateTrackingWrapper(Wrapper):
             self.current_states = []
         self.episode_states = None
         self.state_type = type(env.observation_space)
+        self.logger = logger
+        if self.logger is not None:
+            benchmark_info = getattr(env, "benchmark_info", None)
+            self.state_description = (
+                benchmark_info.get("state_description", None)
+                if benchmark_info is not None
+                else None
+            )
 
     def __setattr__(self, name, value):
         """
@@ -58,6 +67,7 @@ class StateTrackingWrapper(Wrapper):
             "step",
             "reset",
             "render_state_tracking",
+            "logger",
         ]:
             object.__setattr__(self, name, value)
         else:
@@ -89,6 +99,7 @@ class StateTrackingWrapper(Wrapper):
             "step",
             "reset",
             "render_state_tracking",
+            "logger",
         ]:
             return object.__getattribute__(self, name)
 
@@ -130,6 +141,7 @@ class StateTrackingWrapper(Wrapper):
         """
         state, reward, done, info = self.env.step(action)
         self.overall_states.append(state)
+        self.logger.log_space("state", state, self.state_description)
         if self.state_interval:
             if len(self.current_states) < self.state_interval:
                 self.current_states.append(state)

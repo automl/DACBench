@@ -1,13 +1,110 @@
+import tempfile
 import unittest
-import pytest
+from itertools import groupby
+from pathlib import Path
 
 import gym
 import numpy as np
+import pytest
+
+from dacbench.agents import StaticAgent
 from dacbench.benchmarks import LubyBenchmark, CMAESBenchmark
+from dacbench.logger import Logger, load_logs, log2dataframe
+from dacbench.runner import run_benchmark
 from dacbench.wrappers import StateTrackingWrapper
 
 
 class TestStateTrackingWrapper(unittest.TestCase):
+    def test_box_logging(self):
+        temp_dir = tempfile.TemporaryDirectory()
+
+        seed = 0
+        episodes = 10
+        logger = Logger(
+            output_path=Path(temp_dir.name),
+            experiment_name="test_box_logging",
+            step_write_frequency=None,
+            episode_write_frequency=1,
+        )
+
+        bench = LubyBenchmark()
+        bench.set_seed(seed)
+        env = bench.get_environment()
+        state_logger = logger.add_module(StateTrackingWrapper)
+        wrapped = StateTrackingWrapper(env, logger=state_logger)
+        agent = StaticAgent(env, 1)
+        logger.set_env(env)
+
+        run_benchmark(wrapped, agent, episodes, logger)
+        state_logger.close()
+
+        logs = load_logs(state_logger.get_logfile())
+        dataframe = log2dataframe(logs, wide=True)
+
+        sate_columns = [
+            "state_Action t (current)Step t (current)",
+            "state_Action t-1",
+            "state_Action t-2",
+            "state_Step t-1",
+            "state_Step t-2",
+        ]
+
+        for state_column in sate_columns:
+            self.assertTrue(state_column in dataframe.columns)
+            self.assertTrue((~dataframe[state_column].isna()).all())
+
+        temp_dir.cleanup()
+
+    def test_dict_logging(self):
+        temp_dir = tempfile.TemporaryDirectory()
+
+        seed = 0
+        episodes = 2
+        logger = Logger(
+            output_path=Path(temp_dir.name),
+            experiment_name="test_dict_logging",
+            step_write_frequency=None,
+            episode_write_frequency=1,
+        )
+
+        bench = CMAESBenchmark()
+        bench.set_seed(seed)
+        env = bench.get_environment()
+        state_logger = logger.add_module(StateTrackingWrapper)
+        wrapped = StateTrackingWrapper(env, logger=state_logger)
+        agent = StaticAgent(env, 3.5)
+        logger.set_env(env)
+
+        run_benchmark(wrapped, agent, episodes, logger)
+        state_logger.close()
+
+        logs = load_logs(state_logger.get_logfile())
+        dataframe = log2dataframe(logs, wide=False)
+        state_parts = {
+            "Loc": 10,
+            "Past Deltas": 40,
+            "Population Size": 1,
+            "Sigma": 1,
+            "History Deltas": 80,
+            "Past Sigma Deltas": 40,
+        }
+
+        names = dataframe.name.unique()
+
+        def field(name: str):
+            state, field_, *idx = name.split("_")
+            return field_
+
+        parts = groupby(sorted(names), key=field)
+
+        for part, group_members in parts:
+            expected_number = state_parts[part]
+            actual_number = len(list(group_members))
+
+            self.assertEqual(expected_number, actual_number)
+
+        temp_dir.cleanup()
+
     def test_init(self):
         bench = LubyBenchmark()
         env = bench.get_environment()

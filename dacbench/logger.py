@@ -241,13 +241,14 @@ class AbstractLogger(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def log_space(self, key, value):
+    def log_space(self, key, value, space_info=None):
         """
         Special for logging gym.spaces.
         Currently three types are supported:
         * Numbers: e.g. samples from Discrete
         * Fixed length arrays like MultiDiscrete or Box
         * Dict: assuming each key has fixed length array
+        :param space_info: a list of column names. The length of this list must equal the resulting number of columns.
         :param key:
         :param value:
         :return:
@@ -402,15 +403,38 @@ class ModuleLogger(AbstractLogger):
             self.__log(key, value, time)
 
     @staticmethod
-    def __space_dict(key, value):
+    def __space_dict(key, value, space_info):
+        if isinstance(value, np.ndarray) and len(value.shape) == 0:
+            value = value.item()
+
         if isinstance(value, Number):
-            data = {key: value}
+            if space_info is None:
+                data = {key: value}
+            else:
+                if len(space_info) != 1:
+                    raise ValueError(
+                        f"Space info must match length (expect 1 != got{len(space_info)}"
+                    )
+
+                data = {f"{key}_{space_info[0]}": value}
+
         elif isinstance(value, np.ndarray):
-            data = {f"{key}_{i}": x for i, x in enumerate(value)}
+            if space_info is not None and len(space_info) != len(value):
+                raise ValueError(
+                    f"Space info must match length (expect {len(value)} != got{len(space_info)}"
+                )
+            key_suffix = (
+                enumerate(value) if space_info is None else zip(space_info, value)
+            )
+            data = {f"{key}_{suffix}": x for suffix, x in key_suffix}
+
         elif isinstance(value, dict):
+            key_suffix = (
+                value.items() if space_info is None else zip(space_info, value.values())
+            )
             dicts = (
-                ModuleLogger.__space_dict(f"{key}_{sub_key}", sub_value)
-                for sub_key, sub_value in value.items()
+                ModuleLogger.__space_dict(f"{key}_{sub_key}", sub_value, None)
+                for sub_key, sub_value in key_suffix
             )
             data = dict(ChainMap(*dicts))
         else:
@@ -418,8 +442,8 @@ class ModuleLogger(AbstractLogger):
 
         return data
 
-    def log_space(self, key, value):
-        data = self.__space_dict(key, value)
+    def log_space(self, key, value, space_info=None):
+        data = self.__space_dict(key, value, space_info)
         self.log_dict(data)
 
 
@@ -550,10 +574,10 @@ class Logger(AbstractLogger):
             raise ValueError(f"Module {module} not registered yet")
         self.module_logger.log(key, value)
 
-    def log_space(self, key, value, module):
+    def log_space(self, key, value, module, space_info=None):
         if module not in self.module_logger:
             raise ValueError(f"Module {module} not registered yet")
-        self.module_logger.log_space(key, value)
+        self.module_logger.log_space(key, value, space_info)
 
     def log_dict(self, data, module):
         if module not in self.module_logger:
