@@ -206,6 +206,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
         temp_dir.cleanup()
 
     def test_logging_discrete(self):
+
         temp_dir = tempfile.TemporaryDirectory()
 
         seed = 0

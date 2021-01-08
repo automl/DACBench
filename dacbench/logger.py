@@ -544,8 +544,8 @@ class Logger(AbstractLogger):
         :param agent:
         :return:
         """
-        agent_config = {"type": agent.__class__}
-        with open(self.output_path / "agent.json") as f:
+        agent_config = {"type": str(agent.__class__)}
+        with open(self.log_dir / "agent.json", "w") as f:
             json.dump(agent_config, f)
 
     def set_env(self, env: AbstractEnv):
@@ -563,7 +563,7 @@ class Logger(AbstractLogger):
         :param benchmark:
         :return:
         """
-        benchmark.save_config(self.output_path)
+        benchmark.save_config(self.log_dir / "benchmark.json")
 
     def set_additional_info(self, **kwargs):
         for _, module_logger in self.module_logger.items():

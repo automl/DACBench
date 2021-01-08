@@ -1,10 +1,11 @@
+from pathlib import Path
+
 from dacbench import benchmarks
 
 import numpy as np
-import os
-import json
 import argparse
 
+from dacbench.logger import Logger
 from dacbench.wrappers import PerformanceTrackingWrapper
 from dacbench.runner import run_benchmark
 from dacbench.agents import StaticAgent, GenericAgent, DynamicRandomAgent
@@ -40,45 +41,46 @@ DISCRETE_ACTIONS = {
 def run_random(results_path, benchmark_name, num_episodes, seeds, fixed):
     bench = getattr(benchmarks, benchmark_name)()
     for s in seeds:
+        logger = Logger(
+            experiment_name=f"random_{s}", output_path=results_path / benchmark_name
+        )
         env = bench.get_benchmark(seed=s)
-        env = PerformanceTrackingWrapper(env)
+        env = PerformanceTrackingWrapper(
+            env, logger=logger.add_module(PerformanceTrackingWrapper)
+        )
         agent = DynamicRandomAgent(env, fixed)
-        run_benchmark(env, agent, num_episodes)
-        performance = env.get_performance()[0]
-        filedir = results_path + "/" + benchmark_name + "/random"
-        filename = f"{filedir}/seed_{s}.json"
 
-        if not os.path.exists(results_path):
-            os.makedirs(results_path)
-        if not os.path.exists(results_path + "/" + benchmark_name):
-            os.makedirs(results_path + "/" + benchmark_name)
-        if not os.path.exists(filedir):
-            os.makedirs(filedir)
+        logger.add_agent(agent)
+        logger.add_benchmark(bench)
+        logger.set_env(env)
+        logger.set_additional_info(seed=s)
 
-        with open(filename, "w+") as fp:
-            json.dump(performance, fp)
+        run_benchmark(env, agent, num_episodes, logger)
+
+        logger.close()
 
 
 def run_static(results_path, benchmark_name, action, num_episodes, seeds=np.arange(10)):
     bench = getattr(benchmarks, benchmark_name)()
     for s in seeds:
+        logger = Logger(
+            experiment_name=f"static_{action}_{s}",
+            output_path=results_path / benchmark_name,
+        )
         env = bench.get_benchmark(seed=s)
-        env = PerformanceTrackingWrapper(env)
+        env = PerformanceTrackingWrapper(
+            env, logger=logger.add_module(PerformanceTrackingWrapper)
+        )
         agent = StaticAgent(env, action)
-        run_benchmark(env, agent, num_episodes)
-        performance = env.get_performance()[0]
-        filedir = results_path + "/" + benchmark_name + "/static_" + str(action)
-        filename = f"{filedir}/seed_{s}.json"
 
-        if not os.path.exists(results_path):
-            os.makedirs(results_path)
-        if not os.path.exists(results_path + "/" + benchmark_name):
-            os.makedirs(results_path + "/" + benchmark_name)
-        if not os.path.exists(filedir):
-            os.makedirs(filedir)
+        logger.add_agent(agent)
+        logger.add_benchmark(bench)
+        logger.set_env(env)
+        logger.set_additional_info(seed=s, action=action)
 
-        with open(filename, "w+") as fp:
-            json.dump(performance, fp)
+        run_benchmark(env, agent, num_episodes, logger)
+
+        logger.close()
 
 
 def run_optimal(results_path, benchmark_name, num_episodes, seeds=np.arange(10)):
@@ -96,30 +98,31 @@ def run_optimal(results_path, benchmark_name, num_episodes, seeds=np.arange(10))
         return
 
     for s in seeds:
+        logger = Logger(
+            experiment_name=f"optimal_{s}", output_path=results_path / benchmark_name
+        )
+
         env = bench.get_benchmark(seed=s)
-        env = PerformanceTrackingWrapper(env)
+        env = PerformanceTrackingWrapper(
+            env, logger=logger.add_module(PerformanceTrackingWrapper)
+        )
         agent = GenericAgent(env, policy)
-        run_benchmark(env, agent, num_episodes)
-        performance = env.get_performance()[0]
-        filedir = results_path + "/" + benchmark_name + "/optimal"
-        filename = f"{filedir}/seed_{s}.json"
 
-        if not os.path.exists(results_path):
-            os.makedirs(results_path)
-        if not os.path.exists(results_path + "/" + benchmark_name):
-            os.makedirs(results_path + "/" + benchmark_name)
-        if not os.path.exists(filedir):
-            os.makedirs(filedir)
+        logger.add_agent(agent)
+        logger.add_benchmark(bench)
+        logger.set_env(env)
+        logger.set_additional_info(seed=s)
 
-        with open(filename, "w+") as fp:
-            json.dump(performance, fp)
+        run_benchmark(env, agent, num_episodes, logger)
+
+        logger.close()
 
 
 def main():
     parser = argparse.ArgumentParser(
         description="Run simple baselines for DAC benchmarks"
     )
-    parser.add_argument("--outdir", type=str, help="Output directory")
+    parser.add_argument("--outdir", type=str, default="output", help="Output directory")
     parser.add_argument(
         "--benchmarks",
         nargs="+",
@@ -160,7 +163,10 @@ def main():
         help="Seeds for evaluation",
     )
     parser.add_argument(
-        "--fixed_random", type=int, default=0, help="Fixes random actions for n steps",
+        "--fixed_random",
+        type=int,
+        default=0,
+        help="Fixes random actions for n steps",
     )
     args = parser.parse_args()
 
@@ -168,6 +174,8 @@ def main():
         benchs = benchmarks.__all__
     else:
         benchs = args.benchmarks
+
+    args.outdir = Path(args.outdir)
 
     if args.random:
         for b in benchs:
