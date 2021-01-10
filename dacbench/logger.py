@@ -75,7 +75,7 @@ def flatten_log_entry(log_entry: Dict) -> List[Dict]:
     return rows
 
 
-def log2dataframe(logs: List[dict], wide=False, include_time=False) -> pd.DataFrame:
+def log2dataframe(logs: List[dict], wide=False, drop_columns=["time"]) -> pd.DataFrame:
     """
     Converts a list of log entries to a pandas dataframe.
     :param logs:
@@ -83,7 +83,7 @@ def log2dataframe(logs: List[dict], wide=False, include_time=False) -> pd.DataFr
     wide=False (default) produces a dataframe with columns (episode, step, time, name, value)
     wide=True returns a dataframe (episode, step, time, name_1, name_2, ...) if the variable name_n has not been logged
     at (episode, step, time) name_n is NaN.
-    :param include_time: drops the time columns mostly used in combination with wide=True to reduce NaN values
+    :param drop_columns: drops the time columns mostly used in combination with wide=True to reduce NaN values
     :return:
     """
     flat_logs = map(flatten_log_entry, logs)
@@ -92,8 +92,8 @@ def log2dataframe(logs: List[dict], wide=False, include_time=False) -> pd.DataFr
     dataframe = pd.DataFrame(rows)
     dataframe.time = pd.to_datetime(dataframe.time)
 
-    if not include_time:
-        dataframe = dataframe.drop(columns=["time"])
+    if drop_columns is not None:
+        dataframe = dataframe.drop(columns=drop_columns)
 
     if wide:
         primary_index_columns = ["episode", "step"]

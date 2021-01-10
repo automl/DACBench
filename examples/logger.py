@@ -43,7 +43,6 @@ if __name__ == "__main__":
         x="episode",
         y="overall_performance",
         kind="line",
-        col="seed",
         row="instance",
     )
     plt.show()
