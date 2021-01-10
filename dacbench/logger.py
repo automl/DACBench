@@ -498,7 +498,8 @@ class Logger(AbstractLogger):
 
     def __update_auto_additional_info(self):
         # TODO add seed too if av?
-        self.set_additional_info(instance=self.env.get_inst_id())
+        if self.env is not None:
+            self.set_additional_info(instance=self.env.get_inst_id())
 
     def reset_episode(self):
         for _, module_logger in self.module_logger.items():

@@ -1,4 +1,9 @@
+from pathlib import Path
+
 import numpy as np
+
+from dacbench.logger import Logger
+from dacbench.wrappers import PerformanceTrackingWrapper
 from examples.example_utils import make_chainer_a3c
 from dacbench.benchmarks import CMAESBenchmark
 
@@ -10,11 +15,18 @@ def flatten(li):
     return [value for sublist in li for value in sublist]
 
 
+# logger
+logger = Logger(experiment_name="chainererrl_cma", output_path=Path("../plotting/data"))
+
 # Make CMA-ES environment
 # We use the configuration from the "Learning to Optimize Step-size Adaption in CMA-ES" Paper by Shala et al.
 bench = CMAESBenchmark()
 env = bench.get_benchmark()
+logger.set_env(env)
 
+# Make an performance wrapper to track performance
+performance_logger = logger.add_module(PerformanceTrackingWrapper)
+env = PerformanceTrackingWrapper(env=env, logger=performance_logger)
 # Make chainer agent
 space_array = [
     env.observation_space[k].low for k in list(env.observation_space.spaces.keys())
@@ -45,6 +57,8 @@ for i in range(num_episodes):
         r += reward
         state = np.array(flatten([next_state[k] for k in next_state.keys()]))
         state = state.astype(np.float32)
+        logger.next_step()
+    logger.next_episode()
     # Train agent after episode has ended
     agent.stop_episode_and_train(state, reward, done=done)
     # Log episode

@@ -1,0 +1,3 @@
+{"overall_performance": {"times": ["10-01-21 14:07:25.772328"], "values": [-5148819.660459454]}, "step": 4993, "episode": 0, "instance": 0}
+{"overall_performance": {"times": ["10-01-21 14:08:03.587006"], "values": [-96430505.73576385]}, "step": 1005, "episode": 1, "instance": 1}
+{"overall_performance": {"times": ["10-01-21 14:08:12.347407"], "values": [-107570.07922569202]}, "step": 505, "episode": 2, "instance": 2}
