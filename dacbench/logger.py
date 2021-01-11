@@ -75,6 +75,12 @@ def flatten_log_entry(log_entry: Dict) -> List[Dict]:
     return rows
 
 
+def list_to_tuple(list_):
+    return tuple(
+        list_to_tuple(item) if isinstance(item, list) else item for item in list_
+    )
+
+
 def log2dataframe(logs: List[dict], wide=False, include_time=False) -> pd.DataFrame:
     """
     Converts a list of log entries to a pandas dataframe.
@@ -91,6 +97,15 @@ def log2dataframe(logs: List[dict], wide=False, include_time=False) -> pd.DataFr
 
     dataframe = pd.DataFrame(rows)
     dataframe.time = pd.to_datetime(dataframe.time)
+
+    dataframe = dataframe.infer_objects()
+    list_column_candidates = dataframe.dtypes == object
+
+    for i, candidate in enumerate(list_column_candidates):
+        if candidate:
+            dataframe.iloc[:, i] = dataframe.iloc[:, i].apply(
+                lambda x: list_to_tuple(x) if isinstance(x, list) else x
+            )
 
     if not include_time:
         dataframe = dataframe.drop(columns=["time"])
