@@ -83,10 +83,12 @@ def plot_performance(
 def plot_performance_per_instance(
     data, title=None, x_label=None, y_label=None, **args
 ) -> sns.FacetGrid:
+    order = data.groupby("instance").mean().sort_values("overall_performance").index
     settings = {
         "data": data,
         "x": "instance",
         "y": "overall_performance",
+        "order": order,
         "kind": "bar",
     }
     grid = plot(sns.catplot, settings, title, x_label, y_label, **args)
