@@ -11,6 +11,8 @@ from chainerrl import q_functions, replay_buffer, explorers, policies, links, v_
 from chainerrl.agents import DQN, a3c
 from chainerrl.recurrent import RecurrentChainMixin
 
+from dacbench.logger import Logger
+
 
 class DummyEnv(gym.Env):
     def __init__(self):
@@ -347,7 +349,9 @@ def flatten(li):
     return [value for sublist in li for value in sublist]
 
 
-def train_chainer(agent, env, num_episodes=10, flatten_state=False):
+def train_chainer(
+    agent, env, num_episodes=10, flatten_state=False, logger: Logger = None
+):
     for i in range(num_episodes):
         state = env.reset()
         if flatten_state:
@@ -365,7 +369,10 @@ def train_chainer(agent, env, num_episodes=10, flatten_state=False):
                 state = state.astype(np.float32)
             else:
                 state = next_state
+            if logger is None:
+                logger.next_step()
         agent.stop_episode_and_train(state, reward, done=done)
+        logger.next_episode()
         print(
             f"Episode {i}/{num_episodes}...........................................Reward: {r}"
         )

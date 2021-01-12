@@ -5,11 +5,14 @@ import numpy as np
 from dacbench.logger import load_logs, log2dataframe
 import seaborn as sns
 import matplotlib.pyplot as plt
+import pandas as pd
 
 sns.set_style("darkgrid")
 
 
 def space_sep_upper(column_name):
+    if column_name is None:
+        return None
     return column_name.title().replace("_", " ")
 
 
@@ -65,7 +68,6 @@ def plot(
 def plot_performance(
     data, title=None, x_label=None, y_label=None, **args
 ) -> sns.FacetGrid:
-
     settings = {
         "data": data,
         "x": "episode",
@@ -131,8 +133,52 @@ def plot_episode_time(
     return grid
 
 
-if __name__ == "__main__":
+def plot_action(
+    data, interval=1, title=None, x_label="Epoch:Step", y_label=None, **args
+) -> sns.FacetGrid:
+    number_of_actions = len(
+        list(filter(lambda col: col.startswith("action"), data.columns))
+    )
+    if number_of_actions > 1:
+        data = pd.wide_to_long(
+            data,
+            stubnames=["action"],
+            sep="_",
+            i=["episode", "step", "instance"],
+            j="i",
+        ).reset_index()
 
+    data, plot_index, x_column, x_label_columns = generate_global_step(data)
+
+    if interval > 1:
+        data["interval"] = data[x_column] // interval
+        group_columns = list(data.columns.drop(x_label_columns + [x_column, "action"]))
+        data = data.groupby(group_columns).agg({x_column: "min", "action": "mean"})
+        y_label = (
+            f"Mean per duration per {interval} steps" if y_label is None else y_label
+        )
+        data = data.reset_index()
+
+    settings = {
+        "data": data,
+        "x": x_column,
+        "y": "action",
+        "kind": "line",
+    }
+
+    settings["col"] = "i" if number_of_actions > 1 else None
+    settings["col_wrap"] = 3 if number_of_actions > 3 else None
+
+    if "seed" in data.columns:
+        settings["hue"] = "instance"
+
+    grid = plot(sns.relplot, settings, title, x_label, y_label, **args)
+    add_multi_level_ticks(grid, plot_index, x_column, x_label_columns)
+
+    return grid
+
+
+if __name__ == "__main__":
     path = Path("output/LubyBenchmark/optimal_1/PerformanceTrackingWrapper.jsonl")
     logs = load_logs(path)
     data = log2dataframe(logs, wide=True, drop_columns=["time"])
