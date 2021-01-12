@@ -1,10 +1,5 @@
-from pathlib import Path
-
 import numpy as np
-
-from dacbench.logger import load_logs, log2dataframe
 import seaborn as sns
-import matplotlib.pyplot as plt
 import pandas as pd
 
 sns.set_style("darkgrid")
@@ -136,55 +131,99 @@ def plot_episode_time(
 
 
 def plot_action(
-    data, interval=1, title=None, x_label="Epoch:Step", y_label=None, **args
-) -> sns.FacetGrid:
-    number_of_actions = len(
-        list(filter(lambda col: col.startswith("action"), data.columns))
+    data,
+    show_global_step=False,
+    interval=1,
+    title=None,
+    x_label=None,
+    y_label=None,
+    **args,
+):
+    return plot_space(
+        data, "action", show_global_step, interval, title, x_label, y_label, **args
     )
-    if number_of_actions > 1:
+
+
+def plot_state(
+    data,
+    show_global_step=False,
+    interval=1,
+    title=None,
+    x_label=None,
+    y_label=None,
+    **args,
+):
+    return plot_space(
+        data, "state", show_global_step, interval, title, x_label, y_label, **args
+    )
+
+
+def plot_space(
+    data,
+    space_column_name,
+    show_global_step,
+    interval=1,
+    title=None,
+    x_label=None,
+    y_label=None,
+    **args,
+) -> sns.FacetGrid:
+
+    space_entries = list(
+        filter(lambda col: col.startswith(space_column_name), data.columns)
+    )
+    number_of_space_entries = len(space_entries)
+    y_label_name = space_column_name
+    if number_of_space_entries > 1:
         data = pd.wide_to_long(
             data,
-            stubnames=["action"],
+            stubnames=[space_column_name],
             sep="_",
-            i=["episode", "step", "instance"],
+            i=["episode", "step", "instance"]
+            + (["seed"] if "seed" in data.columns else []),
             j="i",
+            suffix=".*",
         ).reset_index()
+    elif number_of_space_entries == 1 and space_column_name not in data.columns:
+
+        space_column_name, *_ = space_entries
 
     data, plot_index, x_column, x_label_columns = generate_global_step(data)
 
     if interval > 1:
         data["interval"] = data[x_column] // interval
-        group_columns = list(data.columns.drop(x_label_columns + [x_column, "action"]))
-        data = data.groupby(group_columns).agg({x_column: "min", "action": "mean"})
+        group_columns = list(
+            data.columns.drop(x_label_columns + [x_column, space_column_name])
+        )
+        data = data.groupby(group_columns).agg(
+            {x_column: "min", space_column_name: "mean"}
+        )
         y_label = (
-            f"Mean per duration per {interval} steps" if y_label is None else y_label
+            f"Mean {y_label_name} per {interval} steps" if y_label is None else y_label
         )
         data = data.reset_index()
 
     settings = {
         "data": data,
         "x": x_column,
-        "y": "action",
+        "y": space_column_name,
         "kind": "line",
     }
-
-    settings["col"] = "i" if number_of_actions > 1 else None
-    settings["col_wrap"] = 3 if number_of_actions > 3 else None
+    if number_of_space_entries > 1:
+        settings["col"] = "i"
+    if number_of_space_entries > 3:
+        settings["col_wrap"] = 3
 
     if "seed" in data.columns:
         settings["hue"] = "instance"
 
+    if x_label is None:
+        x_label = None if show_global_step else "Epoch:Step"
+
+    if y_label is None:
+        y_label = y_label_name
     grid = plot(sns.relplot, settings, title, x_label, y_label, **args)
-    add_multi_level_ticks(grid, plot_index, x_column, x_label_columns)
+    if not show_global_step:
+        add_multi_level_ticks(grid, plot_index, x_column, x_label_columns)
 
     return grid
-
-
-if __name__ == "__main__":
-    path = Path("output/LubyBenchmark/optimal_1/PerformanceTrackingWrapper.jsonl")
-    logs = load_logs(path)
-    data = log2dataframe(logs, wide=True, drop_columns=["time"])
-    grid = plot_performance_per_instance(data)
-
-    grid.savefig("fig.pdf")
-    plt.show()
