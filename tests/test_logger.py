@@ -217,7 +217,7 @@ class TestModuleLogger(unittest.TestCase):
             logs = list(map(json.loads, log_file))
 
         dataframe = log2dataframe(logs, wide=True)
-        self.assertEqual(dataframe.iloc[0].state, [1, 2, 3])
+        self.assertEqual(dataframe.iloc[0].state, (1, 2, 3))
 
     def test_numpy_logging(self):
         experiment_name = "test_numpy_logging"
