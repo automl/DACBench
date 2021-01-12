@@ -13,6 +13,7 @@ builds/
 output/
 port_*.txt
 tests/data/
+test/*.json
 
 # pycharm specific stuff
 .idea

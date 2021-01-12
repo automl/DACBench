@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 def step_time_example(data):
     grid = plot_step_time(data, y_label="Step Duration [s]")
-    grid.savefig("step_duration.pdf")
+    grid.savefig("output/step_duration.pdf")
     plt.show()
 
     grid = plot_step_time(data, y_label="Step Duration [s]", hue="seed")
@@ -35,7 +35,7 @@ def step_time_interval_example(data: pd.DataFrame, interval: int = 10):
         Number of steps to average over
 
     """
-    grid = plot_step_time(data, interval)
+    grid = plot_step_time(data, interval, title="Mean Step Duration")
     grid.savefig("output/step_duration.pdf")
     plt.show()
 

@@ -44,7 +44,9 @@ def add_multi_level_ticks(grid, plot_index, x_column, x_label_columns):
         ax.set_xticklabels(new_labels, minor=False)
 
 
-def plot(plot_function, settings, x_label=None, y_label=None, **args) -> sns.FacetGrid:
+def plot(
+    plot_function, settings, title=None, x_label=None, y_label=None, **args
+) -> sns.FacetGrid:
     settings.update(args.items())
     grid = plot_function(**settings)
 
@@ -53,11 +55,16 @@ def plot(plot_function, settings, x_label=None, y_label=None, **args) -> sns.Fac
     grid.set_xlabels(x_label)
     grid.set_ylabels(y_label)
     grid.tight_layout()
+    if title is not None:
+        grid.fig.suptitle(title, y=0.97)
+        grid.fig.subplots_adjust(top=0.9)
 
     return grid
 
 
-def plot_performance(data, x_label=None, y_label=None, **args) -> sns.FacetGrid:
+def plot_performance(
+    data, title=None, x_label=None, y_label=None, **args
+) -> sns.FacetGrid:
 
     settings = {
         "data": data,
@@ -66,13 +73,13 @@ def plot_performance(data, x_label=None, y_label=None, **args) -> sns.FacetGrid:
         "kind": "line",
     }
 
-    grid = plot(sns.relplot, settings, x_label, y_label, **args)
+    grid = plot(sns.relplot, settings, title, x_label, y_label, **args)
 
     return grid
 
 
 def plot_performance_per_instance(
-    data, x_label=None, y_label=None, **args
+    data, title=None, x_label=None, y_label=None, **args
 ) -> sns.FacetGrid:
     settings = {
         "data": data,
@@ -80,13 +87,13 @@ def plot_performance_per_instance(
         "y": "overall_performance",
         "kind": "bar",
     }
-    grid = plot(sns.catplot, settings, x_label, y_label, **args)
+    grid = plot(sns.catplot, settings, title, x_label, y_label, **args)
     grid.set_titles("Mean Performance per Instance")
     return grid
 
 
 def plot_step_time(
-    data, interval=1, x_label="Epoch:Step", y_label=None, **args
+    data, interval=1, title=None, x_label="Epoch:Step", y_label=None, **args
 ) -> sns.FacetGrid:
     data, plot_index, x_column, x_label_columns = generate_global_step(data)
     if interval > 1:
@@ -103,13 +110,15 @@ def plot_step_time(
         "kind": "line",
     }
 
-    grid = plot(sns.relplot, settings, x_label, y_label, **args)
+    grid = plot(sns.relplot, settings, title, x_label, y_label, **args)
     add_multi_level_ticks(grid, plot_index, x_column, x_label_columns)
 
     return grid
 
 
-def plot_episode_time(data, x_label=None, y_label=None, **args) -> sns.FacetGrid:
+def plot_episode_time(
+    data, title=None, x_label=None, y_label=None, **args
+) -> sns.FacetGrid:
     settings = {
         "data": data,
         "x": "episode",
@@ -117,7 +126,7 @@ def plot_episode_time(data, x_label=None, y_label=None, **args) -> sns.FacetGrid
         "kind": "line",
     }
 
-    grid = plot(sns.relplot, settings, x_label, y_label, **args)
+    grid = plot(sns.relplot, settings, title, x_label, y_label, **args)
 
     return grid
 

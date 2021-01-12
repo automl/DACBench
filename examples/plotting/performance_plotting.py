@@ -10,7 +10,9 @@ def per_instance_example():
     file = Path("data/chainererrl_cma/PerformanceTrackingWrapper.jsonl")
     logs = load_logs(file)
     data = log2dataframe(logs, wide=True, drop_columns=["time"])
-    grid = plot_performance_per_instance(data)
+    grid = plot_performance_per_instance(
+        data, title="CMA Mean Performance per Instance"
+    )
 
     grid.savefig("output/performance_per_instance.pdf")
     plt.show()
@@ -22,17 +24,18 @@ def performance_example():
     data = log2dataframe(logs, wide=True, drop_columns=["time"])
 
     # overall
-    grid = plot_performance(data)
+    grid = plot_performance(data, title="Overall Performance")
     grid.savefig("output/overall_performance.pdf")
     plt.show()
 
     # per instance seed (hue)
-    grid = plot_performance(data, hue="seed")
+    grid = plot_performance(data, title="Overall Performance", hue="seed")
     grid.savefig("output/overall_performance_per_seed_hue.pdf")
     plt.show()
 
     # per instance seed (col)
-    grid = plot_performance(data, col="seed", col_wrap=3)
+    grid = plot_performance(data, title="Overall Performance", col="seed", col_wrap=3)
+    grid.fig.subplots_adjust(top=0.92)
     grid.savefig("output/overall_performance_per_seed.pdf")
     plt.show()
 
