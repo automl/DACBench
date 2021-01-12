@@ -1,0 +1,1000 @@
+{"step_duration": {"times": ["10-01-21 14:35:15.494763"], "values": [0.0001671314239501953]}, "step": 0, "episode": 0, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.494940"], "values": [8.273124694824219e-05]}, "step": 1, "episode": 0, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.495079"], "values": [7.486343383789062e-05]}, "step": 2, "episode": 0, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.495217"], "values": [7.343292236328125e-05]}, "step": 3, "episode": 0, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.495346"], "values": [7.224082946777344e-05]}, "step": 4, "episode": 0, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.495475"], "values": [7.200241088867188e-05]}, "step": 5, "episode": 0, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.495602"], "values": [7.152557373046875e-05]}, "step": 6, "episode": 0, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.495728"], "values": [7.104873657226562e-05]}, "step": 7, "episode": 0, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.495855"], "values": [7.081031799316406e-05]}, "step": 8, "episode": 0, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.496096"], "values": [0.00018668174743652344]}, "episode_duration": {"times": ["10-01-21 14:35:15.496109"], "values": [0.0009424686431884766]}, "step": 9, "episode": 0, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.496477"], "values": [9.965896606445312e-05]}, "step": 0, "episode": 1, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.496654"], "values": [7.891654968261719e-05]}, "step": 1, "episode": 1, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.496793"], "values": [7.486343383789062e-05]}, "step": 2, "episode": 1, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.496922"], "values": [7.2479248046875e-05]}, "step": 3, "episode": 1, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.497049"], "values": [7.081031799316406e-05]}, "step": 4, "episode": 1, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.497175"], "values": [7.081031799316406e-05]}, "step": 5, "episode": 1, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.497300"], "values": [7.009506225585938e-05]}, "step": 6, "episode": 1, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.497425"], "values": [7.05718994140625e-05]}, "step": 7, "episode": 1, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.497590"], "values": [7.200241088867188e-05]}, "step": 8, "episode": 1, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.497856"], "values": [0.00021028518676757812]}, "episode_duration": {"times": ["10-01-21 14:35:15.497869"], "values": [0.0008904933929443359]}, "step": 9, "episode": 1, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.498187"], "values": [7.534027099609375e-05]}, "step": 0, "episode": 2, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.498326"], "values": [7.62939453125e-05]}, "step": 1, "episode": 2, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.498458"], "values": [7.343292236328125e-05]}, "step": 2, "episode": 2, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.498588"], "values": [7.2479248046875e-05]}, "step": 3, "episode": 2, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.498716"], "values": [7.200241088867188e-05]}, "step": 4, "episode": 2, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.498844"], "values": [7.200241088867188e-05]}, "step": 5, "episode": 2, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.498970"], "values": [7.152557373046875e-05]}, "step": 6, "episode": 2, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.499098"], "values": [7.271766662597656e-05]}, "step": 7, "episode": 2, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.499223"], "values": [7.081031799316406e-05]}, "step": 8, "episode": 2, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.499463"], "values": [0.0001850128173828125]}, "episode_duration": {"times": ["10-01-21 14:35:15.499476"], "values": [0.0008416175842285156]}, "step": 9, "episode": 2, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.499792"], "values": [7.462501525878906e-05]}, "step": 0, "episode": 3, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.499968"], "values": [0.00011301040649414062]}, "step": 1, "episode": 3, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.500101"], "values": [7.367134094238281e-05]}, "step": 2, "episode": 3, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.500232"], "values": [7.295608520507812e-05]}, "step": 3, "episode": 3, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.500360"], "values": [7.176399230957031e-05]}, "step": 4, "episode": 3, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.500488"], "values": [7.104873657226562e-05]}, "step": 5, "episode": 3, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.500613"], "values": [7.009506225585938e-05]}, "step": 6, "episode": 3, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.500739"], "values": [7.104873657226562e-05]}, "step": 7, "episode": 3, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.500863"], "values": [6.937980651855469e-05]}, "step": 8, "episode": 3, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.501098"], "values": [0.0001811981201171875]}, "episode_duration": {"times": ["10-01-21 14:35:15.501111"], "values": [0.0008687973022460938]}, "step": 9, "episode": 3, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.501425"], "values": [7.43865966796875e-05]}, "step": 0, "episode": 4, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.501597"], "values": [0.00010967254638671875]}, "step": 1, "episode": 4, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.501728"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 4, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.501856"], "values": [7.152557373046875e-05]}, "step": 3, "episode": 4, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.501981"], "values": [7.104873657226562e-05]}, "step": 4, "episode": 4, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.502107"], "values": [7.009506225585938e-05]}, "step": 5, "episode": 4, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.502233"], "values": [7.033348083496094e-05]}, "step": 6, "episode": 4, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.502359"], "values": [7.05718994140625e-05]}, "step": 7, "episode": 4, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.502485"], "values": [7.05718994140625e-05]}, "step": 8, "episode": 4, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.502722"], "values": [0.00018215179443359375]}, "episode_duration": {"times": ["10-01-21 14:35:15.502734"], "values": [0.0008633136749267578]}, "step": 9, "episode": 4, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.503058"], "values": [7.915496826171875e-05]}, "step": 0, "episode": 5, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.503205"], "values": [7.748603820800781e-05]}, "step": 1, "episode": 5, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.503370"], "values": [7.534027099609375e-05]}, "step": 2, "episode": 5, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.503501"], "values": [7.367134094238281e-05]}, "step": 3, "episode": 5, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.503630"], "values": [7.2479248046875e-05]}, "step": 4, "episode": 5, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.503773"], "values": [7.295608520507812e-05]}, "step": 5, "episode": 5, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.503929"], "values": [9.918212890625e-05]}, "step": 6, "episode": 5, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.504078"], "values": [9.226799011230469e-05]}, "step": 7, "episode": 5, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.504206"], "values": [7.104873657226562e-05]}, "step": 8, "episode": 5, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.504445"], "values": [0.00018262863159179688]}, "episode_duration": {"times": ["10-01-21 14:35:15.504458"], "values": [0.0008962154388427734]}, "step": 9, "episode": 5, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.504855"], "values": [7.891654968261719e-05]}, "step": 0, "episode": 6, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.504997"], "values": [7.748603820800781e-05]}, "step": 1, "episode": 6, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.505132"], "values": [7.462501525878906e-05]}, "step": 2, "episode": 6, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.505263"], "values": [7.295608520507812e-05]}, "step": 3, "episode": 6, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.505394"], "values": [7.271766662597656e-05]}, "step": 4, "episode": 6, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.505522"], "values": [7.200241088867188e-05]}, "step": 5, "episode": 6, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.505651"], "values": [7.200241088867188e-05]}, "step": 6, "episode": 6, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.505795"], "values": [7.390975952148438e-05]}, "step": 7, "episode": 6, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.505926"], "values": [7.343292236328125e-05]}, "step": 8, "episode": 6, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.506189"], "values": [0.00020503997802734375]}, "episode_duration": {"times": ["10-01-21 14:35:15.506202"], "values": [0.0008730888366699219]}, "step": 9, "episode": 6, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.506614"], "values": [0.0001232624053955078]}, "step": 0, "episode": 7, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.506759"], "values": [7.915496826171875e-05]}, "step": 1, "episode": 7, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.506895"], "values": [7.510185241699219e-05]}, "step": 2, "episode": 7, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.507045"], "values": [7.605552673339844e-05]}, "step": 3, "episode": 7, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.507179"], "values": [7.534027099609375e-05]}, "step": 4, "episode": 7, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.507314"], "values": [7.486343383789062e-05]}, "step": 5, "episode": 7, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.507457"], "values": [8.487701416015625e-05]}, "step": 6, "episode": 7, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.507586"], "values": [7.200241088867188e-05]}, "step": 7, "episode": 7, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.507714"], "values": [7.200241088867188e-05]}, "step": 8, "episode": 7, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.507957"], "values": [0.0001876354217529297]}, "episode_duration": {"times": ["10-01-21 14:35:15.507970"], "values": [0.0009202957153320312]}, "step": 9, "episode": 7, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.508330"], "values": [7.772445678710938e-05]}, "step": 0, "episode": 8, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.508471"], "values": [7.677078247070312e-05]}, "step": 1, "episode": 8, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.508605"], "values": [7.486343383789062e-05]}, "step": 2, "episode": 8, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.508737"], "values": [7.295608520507812e-05]}, "step": 3, "episode": 8, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.508867"], "values": [7.343292236328125e-05]}, "step": 4, "episode": 8, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.508996"], "values": [7.200241088867188e-05]}, "step": 5, "episode": 8, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.509123"], "values": [7.176399230957031e-05]}, "step": 6, "episode": 8, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.509251"], "values": [7.128715515136719e-05]}, "step": 7, "episode": 8, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.509379"], "values": [7.2479248046875e-05]}, "step": 8, "episode": 8, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.509622"], "values": [0.00018715858459472656]}, "episode_duration": {"times": ["10-01-21 14:35:15.509635"], "values": [0.0008504390716552734]}, "step": 9, "episode": 8, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.510001"], "values": [9.012222290039062e-05]}, "step": 0, "episode": 9, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.510142"], "values": [7.653236389160156e-05]}, "step": 1, "episode": 9, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.510276"], "values": [7.486343383789062e-05]}, "step": 2, "episode": 9, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.510407"], "values": [7.295608520507812e-05]}, "step": 3, "episode": 9, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.510536"], "values": [7.2479248046875e-05]}, "step": 4, "episode": 9, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.510666"], "values": [7.319450378417969e-05]}, "step": 5, "episode": 9, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.510793"], "values": [7.176399230957031e-05]}, "step": 6, "episode": 9, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.510920"], "values": [7.104873657226562e-05]}, "step": 7, "episode": 9, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.511045"], "values": [6.985664367675781e-05]}, "step": 8, "episode": 9, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.511283"], "values": [0.0001842975616455078]}, "episode_duration": {"times": ["10-01-21 14:35:15.511296"], "values": [0.0008571147918701172]}, "step": 9, "episode": 9, "instance": 0, "seed": 0}
+{"step_duration": {"times": ["10-01-21 14:35:15.512400"], "values": [7.82012939453125e-05]}, "step": 0, "episode": 0, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.512543"], "values": [7.677078247070312e-05]}, "step": 1, "episode": 0, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.512678"], "values": [7.462501525878906e-05]}, "step": 2, "episode": 0, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.512809"], "values": [7.343292236328125e-05]}, "step": 3, "episode": 0, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.512940"], "values": [7.295608520507812e-05]}, "step": 4, "episode": 0, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.513070"], "values": [7.295608520507812e-05]}, "step": 5, "episode": 0, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.513211"], "values": [7.200241088867188e-05]}, "step": 6, "episode": 0, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.513375"], "values": [7.2479248046875e-05]}, "step": 7, "episode": 0, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.513504"], "values": [7.176399230957031e-05]}, "step": 8, "episode": 0, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.513742"], "values": [0.00018286705017089844]}, "episode_duration": {"times": ["10-01-21 14:35:15.513754"], "values": [0.0008480548858642578]}, "step": 9, "episode": 0, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.514071"], "values": [7.486343383789062e-05]}, "step": 0, "episode": 1, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.514208"], "values": [7.510185241699219e-05]}, "step": 1, "episode": 1, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.514339"], "values": [7.2479248046875e-05]}, "step": 2, "episode": 1, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.514467"], "values": [7.176399230957031e-05]}, "step": 3, "episode": 1, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.514594"], "values": [7.128715515136719e-05]}, "step": 4, "episode": 1, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.514720"], "values": [7.05718994140625e-05]}, "step": 5, "episode": 1, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.514846"], "values": [7.033348083496094e-05]}, "step": 6, "episode": 1, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.514971"], "values": [6.961822509765625e-05]}, "step": 7, "episode": 1, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.515097"], "values": [7.104873657226562e-05]}, "step": 8, "episode": 1, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.515335"], "values": [0.0001823902130126953]}, "episode_duration": {"times": ["10-01-21 14:35:15.515347"], "values": [0.0008294582366943359]}, "step": 9, "episode": 1, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.515662"], "values": [7.534027099609375e-05]}, "step": 0, "episode": 2, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.515800"], "values": [7.510185241699219e-05]}, "step": 1, "episode": 2, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.515932"], "values": [7.343292236328125e-05]}, "step": 2, "episode": 2, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.516060"], "values": [7.152557373046875e-05]}, "step": 3, "episode": 2, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.516197"], "values": [8.082389831542969e-05]}, "step": 4, "episode": 2, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.516320"], "values": [6.866455078125e-05]}, "step": 5, "episode": 2, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.516444"], "values": [6.937980651855469e-05]}, "step": 6, "episode": 2, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.516609"], "values": [9.560585021972656e-05]}, "step": 7, "episode": 2, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.516739"], "values": [7.224082946777344e-05]}, "step": 8, "episode": 2, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.516990"], "values": [0.00017213821411132812]}, "episode_duration": {"times": ["10-01-21 14:35:15.517002"], "values": [0.0008542537689208984]}, "step": 9, "episode": 2, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.517310"], "values": [7.414817810058594e-05]}, "step": 0, "episode": 3, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.517446"], "values": [7.43865966796875e-05]}, "step": 1, "episode": 3, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.517575"], "values": [7.128715515136719e-05]}, "step": 2, "episode": 3, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.517700"], "values": [7.033348083496094e-05]}, "step": 3, "episode": 3, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.517825"], "values": [6.985664367675781e-05]}, "step": 4, "episode": 3, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.517948"], "values": [6.961822509765625e-05]}, "step": 5, "episode": 3, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.518071"], "values": [6.961822509765625e-05]}, "step": 6, "episode": 3, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.518194"], "values": [6.890296936035156e-05]}, "step": 7, "episode": 3, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.518319"], "values": [7.200241088867188e-05]}, "step": 8, "episode": 3, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.518555"], "values": [0.00018167495727539062]}, "episode_duration": {"times": ["10-01-21 14:35:15.518568"], "values": [0.0008218288421630859]}, "step": 9, "episode": 3, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.518873"], "values": [7.2479248046875e-05]}, "step": 0, "episode": 4, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.519007"], "values": [7.319450378417969e-05]}, "step": 1, "episode": 4, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.519134"], "values": [7.009506225585938e-05]}, "step": 2, "episode": 4, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.519259"], "values": [6.985664367675781e-05]}, "step": 3, "episode": 4, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.519382"], "values": [6.890296936035156e-05]}, "step": 4, "episode": 4, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.519505"], "values": [6.890296936035156e-05]}, "step": 5, "episode": 4, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.519628"], "values": [6.890296936035156e-05]}, "step": 6, "episode": 4, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.519749"], "values": [6.794929504394531e-05]}, "step": 7, "episode": 4, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.519875"], "values": [7.271766662597656e-05]}, "step": 8, "episode": 4, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.520148"], "values": [0.00017404556274414062]}, "episode_duration": {"times": ["10-01-21 14:35:15.520160"], "values": [0.0008070468902587891]}, "step": 9, "episode": 4, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.520504"], "values": [7.915496826171875e-05]}, "step": 0, "episode": 5, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.520649"], "values": [7.987022399902344e-05]}, "step": 1, "episode": 5, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.520790"], "values": [7.82012939453125e-05]}, "step": 2, "episode": 5, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.520947"], "values": [7.271766662597656e-05]}, "step": 3, "episode": 5, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.521074"], "values": [7.081031799316406e-05]}, "step": 4, "episode": 5, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.521202"], "values": [7.176399230957031e-05]}, "step": 5, "episode": 5, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.521328"], "values": [7.104873657226562e-05]}, "step": 6, "episode": 5, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.521454"], "values": [7.05718994140625e-05]}, "step": 7, "episode": 5, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.521580"], "values": [7.104873657226562e-05]}, "step": 8, "episode": 5, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.521815"], "values": [0.0001804828643798828]}, "episode_duration": {"times": ["10-01-21 14:35:15.521856"], "values": [0.0008456707000732422]}, "step": 9, "episode": 5, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.522259"], "values": [7.43865966796875e-05]}, "step": 0, "episode": 6, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.522462"], "values": [0.00011515617370605469]}, "step": 1, "episode": 6, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.522595"], "values": [7.390975952148438e-05]}, "step": 2, "episode": 6, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.522725"], "values": [7.295608520507812e-05]}, "step": 3, "episode": 6, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.522855"], "values": [7.295608520507812e-05]}, "step": 4, "episode": 6, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.522986"], "values": [7.295608520507812e-05]}, "step": 5, "episode": 6, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.523114"], "values": [7.200241088867188e-05]}, "step": 6, "episode": 6, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.523277"], "values": [0.00010704994201660156]}, "step": 7, "episode": 6, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.523407"], "values": [7.200241088867188e-05]}, "step": 8, "episode": 6, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.523648"], "values": [0.00018644332885742188]}, "episode_duration": {"times": ["10-01-21 14:35:15.523661"], "values": [0.0009198188781738281]}, "step": 9, "episode": 6, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.524001"], "values": [7.796287536621094e-05]}, "step": 0, "episode": 7, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.524142"], "values": [7.653236389160156e-05]}, "step": 1, "episode": 7, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.524278"], "values": [7.581710815429688e-05]}, "step": 2, "episode": 7, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.524410"], "values": [7.367134094238281e-05]}, "step": 3, "episode": 7, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.524543"], "values": [7.343292236328125e-05]}, "step": 4, "episode": 7, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.524672"], "values": [7.224082946777344e-05]}, "step": 5, "episode": 7, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.524801"], "values": [7.224082946777344e-05]}, "step": 6, "episode": 7, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.524930"], "values": [7.224082946777344e-05]}, "step": 7, "episode": 7, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.525058"], "values": [7.128715515136719e-05]}, "step": 8, "episode": 7, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.525295"], "values": [0.00018095970153808594]}, "episode_duration": {"times": ["10-01-21 14:35:15.525308"], "values": [0.0008463859558105469]}, "step": 9, "episode": 7, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.525643"], "values": [7.581710815429688e-05]}, "step": 0, "episode": 8, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.525788"], "values": [8.034706115722656e-05]}, "step": 1, "episode": 8, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.526003"], "values": [0.0001404285430908203]}, "step": 2, "episode": 8, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.526215"], "values": [0.00010037422180175781]}, "step": 3, "episode": 8, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.526406"], "values": [0.00011968612670898438]}, "step": 4, "episode": 8, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.526541"], "values": [7.915496826171875e-05]}, "step": 5, "episode": 8, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.526708"], "values": [7.128715515136719e-05]}, "step": 6, "episode": 8, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.526832"], "values": [7.009506225585938e-05]}, "step": 7, "episode": 8, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.526983"], "values": [9.560585021972656e-05]}, "step": 8, "episode": 8, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.527243"], "values": [0.00018167495727539062]}, "episode_duration": {"times": ["10-01-21 14:35:15.527256"], "values": [0.0010144710540771484]}, "step": 9, "episode": 8, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.527580"], "values": [7.486343383789062e-05]}, "step": 0, "episode": 9, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.527717"], "values": [7.462501525878906e-05]}, "step": 1, "episode": 9, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.527848"], "values": [7.367134094238281e-05]}, "step": 2, "episode": 9, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.527975"], "values": [7.05718994140625e-05]}, "step": 3, "episode": 9, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.528102"], "values": [7.152557373046875e-05]}, "step": 4, "episode": 9, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.528227"], "values": [7.009506225585938e-05]}, "step": 5, "episode": 9, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.528351"], "values": [6.914138793945312e-05]}, "step": 6, "episode": 9, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.528475"], "values": [6.937980651855469e-05]}, "step": 7, "episode": 9, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.528598"], "values": [6.890296936035156e-05]}, "step": 8, "episode": 9, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.528828"], "values": [0.00017595291137695312]}, "episode_duration": {"times": ["10-01-21 14:35:15.528840"], "values": [0.0008187294006347656]}, "step": 9, "episode": 9, "instance": 0, "seed": 1}
+{"step_duration": {"times": ["10-01-21 14:35:15.529985"], "values": [0.00011754035949707031]}, "step": 0, "episode": 0, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.530130"], "values": [7.724761962890625e-05]}, "step": 1, "episode": 0, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.530270"], "values": [7.581710815429688e-05]}, "step": 2, "episode": 0, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.530404"], "values": [7.486343383789062e-05]}, "step": 3, "episode": 0, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.530536"], "values": [7.343292236328125e-05]}, "step": 4, "episode": 0, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.530668"], "values": [7.343292236328125e-05]}, "step": 5, "episode": 0, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.530799"], "values": [7.319450378417969e-05]}, "step": 6, "episode": 0, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.530928"], "values": [7.224082946777344e-05]}, "step": 7, "episode": 0, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.531057"], "values": [7.271766662597656e-05]}, "step": 8, "episode": 0, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.531300"], "values": [0.00018668174743652344]}, "episode_duration": {"times": ["10-01-21 14:35:15.531314"], "values": [0.0008971691131591797]}, "step": 9, "episode": 0, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.531651"], "values": [7.748603820800781e-05]}, "step": 0, "episode": 1, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.531791"], "values": [7.605552673339844e-05]}, "step": 1, "episode": 1, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.531925"], "values": [7.343292236328125e-05]}, "step": 2, "episode": 1, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.532069"], "values": [8.702278137207031e-05]}, "step": 3, "episode": 1, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.532210"], "values": [7.152557373046875e-05]}, "step": 4, "episode": 1, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.532337"], "values": [7.176399230957031e-05]}, "step": 5, "episode": 1, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.532464"], "values": [7.05718994140625e-05]}, "step": 6, "episode": 1, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.532591"], "values": [7.176399230957031e-05]}, "step": 7, "episode": 1, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.532718"], "values": [7.152557373046875e-05]}, "step": 8, "episode": 1, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.532952"], "values": [0.000179290771484375]}, "episode_duration": {"times": ["10-01-21 14:35:15.532965"], "values": [0.0008504390716552734]}, "step": 9, "episode": 1, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.533350"], "values": [7.510185241699219e-05]}, "step": 0, "episode": 2, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.533489"], "values": [7.581710815429688e-05]}, "step": 1, "episode": 2, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.533621"], "values": [7.271766662597656e-05]}, "step": 2, "episode": 2, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.533748"], "values": [7.081031799316406e-05]}, "step": 3, "episode": 2, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.533875"], "values": [7.128715515136719e-05]}, "step": 4, "episode": 2, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.534000"], "values": [7.009506225585938e-05]}, "step": 5, "episode": 2, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.534125"], "values": [7.033348083496094e-05]}, "step": 6, "episode": 2, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.534249"], "values": [6.937980651855469e-05]}, "step": 7, "episode": 2, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.534373"], "values": [6.961822509765625e-05]}, "step": 8, "episode": 2, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.534626"], "values": [0.0002002716064453125]}, "episode_duration": {"times": ["10-01-21 14:35:15.534638"], "values": [0.0008454322814941406]}, "step": 9, "episode": 2, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.534953"], "values": [7.43865966796875e-05]}, "step": 0, "episode": 3, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.535087"], "values": [7.414817810058594e-05]}, "step": 1, "episode": 3, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.535217"], "values": [7.224082946777344e-05]}, "step": 2, "episode": 3, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.535344"], "values": [7.152557373046875e-05]}, "step": 3, "episode": 3, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.535473"], "values": [7.05718994140625e-05]}, "step": 4, "episode": 3, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.535599"], "values": [7.033348083496094e-05]}, "step": 5, "episode": 3, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.535724"], "values": [6.961822509765625e-05]}, "step": 6, "episode": 3, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.535847"], "values": [6.937980651855469e-05]}, "step": 7, "episode": 3, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.535971"], "values": [6.914138793945312e-05]}, "step": 8, "episode": 3, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.536213"], "values": [0.0001888275146484375]}, "episode_duration": {"times": ["10-01-21 14:35:15.536226"], "values": [0.0008301734924316406]}, "step": 9, "episode": 3, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.536541"], "values": [7.963180541992188e-05]}, "step": 0, "episode": 4, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.536711"], "values": [7.581710815429688e-05]}, "step": 1, "episode": 4, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.536842"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 4, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.536970"], "values": [7.224082946777344e-05]}, "step": 3, "episode": 4, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.537097"], "values": [7.152557373046875e-05]}, "step": 4, "episode": 4, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.537303"], "values": [0.00010991096496582031]}, "step": 5, "episode": 4, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.537497"], "values": [7.367134094238281e-05]}, "step": 6, "episode": 4, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.537623"], "values": [7.033348083496094e-05]}, "step": 7, "episode": 4, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.537748"], "values": [7.009506225585938e-05]}, "step": 8, "episode": 4, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.537981"], "values": [0.000179290771484375]}, "episode_duration": {"times": ["10-01-21 14:35:15.537994"], "values": [0.0008754730224609375]}, "step": 9, "episode": 4, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.538306"], "values": [7.390975952148438e-05]}, "step": 0, "episode": 5, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.538444"], "values": [7.534027099609375e-05]}, "step": 1, "episode": 5, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.538617"], "values": [0.00011420249938964844]}, "step": 2, "episode": 5, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.538765"], "values": [7.581710815429688e-05]}, "step": 3, "episode": 5, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.538900"], "values": [7.557868957519531e-05]}, "step": 4, "episode": 5, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.539042"], "values": [7.224082946777344e-05]}, "step": 5, "episode": 5, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.539169"], "values": [7.200241088867188e-05]}, "step": 6, "episode": 5, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.539382"], "values": [0.00011682510375976562]}, "step": 7, "episode": 5, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.539521"], "values": [7.033348083496094e-05]}, "step": 8, "episode": 5, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.539756"], "values": [0.00018024444580078125]}, "episode_duration": {"times": ["10-01-21 14:35:15.539768"], "values": [0.0009264945983886719]}, "step": 9, "episode": 5, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.540141"], "values": [7.605552673339844e-05]}, "step": 0, "episode": 6, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.540280"], "values": [7.62939453125e-05]}, "step": 1, "episode": 6, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.540413"], "values": [7.367134094238281e-05]}, "step": 2, "episode": 6, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.540543"], "values": [7.224082946777344e-05]}, "step": 3, "episode": 6, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.540670"], "values": [7.200241088867188e-05]}, "step": 4, "episode": 6, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.540799"], "values": [7.176399230957031e-05]}, "step": 5, "episode": 6, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.540925"], "values": [7.128715515136719e-05]}, "step": 6, "episode": 6, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.541051"], "values": [7.104873657226562e-05]}, "step": 7, "episode": 6, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.541178"], "values": [7.152557373046875e-05]}, "step": 8, "episode": 6, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.541419"], "values": [0.00018143653869628906]}, "episode_duration": {"times": ["10-01-21 14:35:15.541431"], "values": [0.0008373260498046875]}, "step": 9, "episode": 6, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.541745"], "values": [7.486343383789062e-05]}, "step": 0, "episode": 7, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.541882"], "values": [7.510185241699219e-05]}, "step": 1, "episode": 7, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.542015"], "values": [7.43865966796875e-05]}, "step": 2, "episode": 7, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.542145"], "values": [7.271766662597656e-05]}, "step": 3, "episode": 7, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.542327"], "values": [0.00011134147644042969]}, "step": 4, "episode": 7, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.542453"], "values": [7.152557373046875e-05]}, "step": 5, "episode": 7, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.542580"], "values": [7.081031799316406e-05]}, "step": 6, "episode": 7, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.542706"], "values": [7.081031799316406e-05]}, "step": 7, "episode": 7, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.542832"], "values": [7.05718994140625e-05]}, "step": 8, "episode": 7, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.543068"], "values": [0.00018167495727539062]}, "episode_duration": {"times": ["10-01-21 14:35:15.543081"], "values": [0.0008738040924072266]}, "step": 9, "episode": 7, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.543455"], "values": [7.534027099609375e-05]}, "step": 0, "episode": 8, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.543593"], "values": [7.557868957519531e-05]}, "step": 1, "episode": 8, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.543724"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 8, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.543935"], "values": [9.942054748535156e-05]}, "step": 3, "episode": 8, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.544062"], "values": [7.128715515136719e-05]}, "step": 4, "episode": 8, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.544189"], "values": [7.128715515136719e-05]}, "step": 5, "episode": 8, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.544315"], "values": [7.009506225585938e-05]}, "step": 6, "episode": 8, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.544440"], "values": [7.009506225585938e-05]}, "step": 7, "episode": 8, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.544565"], "values": [7.033348083496094e-05]}, "step": 8, "episode": 8, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.544798"], "values": [0.00017714500427246094]}, "episode_duration": {"times": ["10-01-21 14:35:15.544810"], "values": [0.0008535385131835938]}, "step": 9, "episode": 8, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.545125"], "values": [7.534027099609375e-05]}, "step": 0, "episode": 9, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.545263"], "values": [7.605552673339844e-05]}, "step": 1, "episode": 9, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.545396"], "values": [7.414817810058594e-05]}, "step": 2, "episode": 9, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.545526"], "values": [7.271766662597656e-05]}, "step": 3, "episode": 9, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.545655"], "values": [7.295608520507812e-05]}, "step": 4, "episode": 9, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.545781"], "values": [7.081031799316406e-05]}, "step": 5, "episode": 9, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.545963"], "values": [0.00011277198791503906]}, "step": 6, "episode": 9, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.546104"], "values": [7.295608520507812e-05]}, "step": 7, "episode": 9, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.546233"], "values": [7.295608520507812e-05]}, "step": 8, "episode": 9, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.546473"], "values": [0.0001838207244873047]}, "episode_duration": {"times": ["10-01-21 14:35:15.546486"], "values": [0.0008845329284667969]}, "step": 9, "episode": 9, "instance": 0, "seed": 2}
+{"step_duration": {"times": ["10-01-21 14:35:15.547665"], "values": [8.320808410644531e-05]}, "step": 0, "episode": 0, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.547812"], "values": [7.867813110351562e-05]}, "step": 1, "episode": 0, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.547947"], "values": [7.414817810058594e-05]}, "step": 2, "episode": 0, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.548092"], "values": [8.726119995117188e-05]}, "step": 3, "episode": 0, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.548233"], "values": [7.224082946777344e-05]}, "step": 4, "episode": 0, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.548364"], "values": [7.295608520507812e-05]}, "step": 5, "episode": 0, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.548494"], "values": [7.271766662597656e-05]}, "step": 6, "episode": 0, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.548623"], "values": [7.2479248046875e-05]}, "step": 7, "episode": 0, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.548752"], "values": [7.2479248046875e-05]}, "step": 8, "episode": 0, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.548989"], "values": [0.0001819133758544922]}, "episode_duration": {"times": ["10-01-21 14:35:15.549002"], "values": [0.0008680820465087891]}, "step": 9, "episode": 0, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.549344"], "values": [7.700920104980469e-05]}, "step": 0, "episode": 1, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.549484"], "values": [7.557868957519531e-05]}, "step": 1, "episode": 1, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.549616"], "values": [7.390975952148438e-05]}, "step": 2, "episode": 1, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.549746"], "values": [7.319450378417969e-05]}, "step": 3, "episode": 1, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.549902"], "values": [9.965896606445312e-05]}, "step": 4, "episode": 1, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.550045"], "values": [7.224082946777344e-05]}, "step": 5, "episode": 1, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.550172"], "values": [7.128715515136719e-05]}, "step": 6, "episode": 1, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.550298"], "values": [7.104873657226562e-05]}, "step": 7, "episode": 1, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.550424"], "values": [7.05718994140625e-05]}, "step": 8, "episode": 1, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.550662"], "values": [0.0001823902130126953]}, "episode_duration": {"times": ["10-01-21 14:35:15.550674"], "values": [0.0008668899536132812]}, "step": 9, "episode": 1, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.550992"], "values": [7.43865966796875e-05]}, "step": 0, "episode": 2, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.551129"], "values": [7.462501525878906e-05]}, "step": 1, "episode": 2, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.551261"], "values": [7.2479248046875e-05]}, "step": 2, "episode": 2, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.551389"], "values": [7.176399230957031e-05]}, "step": 3, "episode": 2, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.551516"], "values": [7.128715515136719e-05]}, "step": 4, "episode": 2, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.551641"], "values": [7.033348083496094e-05]}, "step": 5, "episode": 2, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.551766"], "values": [6.961822509765625e-05]}, "step": 6, "episode": 2, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.551891"], "values": [7.033348083496094e-05]}, "step": 7, "episode": 2, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.552017"], "values": [7.033348083496094e-05]}, "step": 8, "episode": 2, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.552254"], "values": [0.00018286705017089844]}, "episode_duration": {"times": ["10-01-21 14:35:15.552266"], "values": [0.0008280277252197266]}, "step": 9, "episode": 2, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.552612"], "values": [7.510185241699219e-05]}, "step": 0, "episode": 3, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.552751"], "values": [7.557868957519531e-05]}, "step": 1, "episode": 3, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.552883"], "values": [7.343292236328125e-05]}, "step": 2, "episode": 3, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.553013"], "values": [7.224082946777344e-05]}, "step": 3, "episode": 3, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.553142"], "values": [7.200241088867188e-05]}, "step": 4, "episode": 3, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.553309"], "values": [0.000110626220703125]}, "step": 5, "episode": 3, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.553436"], "values": [7.104873657226562e-05]}, "step": 6, "episode": 3, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.553562"], "values": [7.081031799316406e-05]}, "step": 7, "episode": 3, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.553687"], "values": [7.05718994140625e-05]}, "step": 8, "episode": 3, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.553923"], "values": [0.0001819133758544922]}, "episode_duration": {"times": ["10-01-21 14:35:15.553935"], "values": [0.0008733272552490234]}, "step": 9, "episode": 3, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.554249"], "values": [7.390975952148438e-05]}, "step": 0, "episode": 4, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.554387"], "values": [7.581710815429688e-05]}, "step": 1, "episode": 4, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.554519"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 4, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.554648"], "values": [7.2479248046875e-05]}, "step": 3, "episode": 4, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.554775"], "values": [7.176399230957031e-05]}, "step": 4, "episode": 4, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.554902"], "values": [7.152557373046875e-05]}, "step": 5, "episode": 4, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.555028"], "values": [7.081031799316406e-05]}, "step": 6, "episode": 4, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.555153"], "values": [7.033348083496094e-05]}, "step": 7, "episode": 4, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.555278"], "values": [7.009506225585938e-05]}, "step": 8, "episode": 4, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.555518"], "values": [0.0001857280731201172]}, "episode_duration": {"times": ["10-01-21 14:35:15.555530"], "values": [0.000835418701171875]}, "step": 9, "episode": 4, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.555847"], "values": [7.581710815429688e-05]}, "step": 0, "episode": 5, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.555986"], "values": [7.605552673339844e-05]}, "step": 1, "episode": 5, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.556131"], "values": [8.58306884765625e-05]}, "step": 2, "episode": 5, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.556259"], "values": [7.128715515136719e-05]}, "step": 3, "episode": 5, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.556385"], "values": [7.033348083496094e-05]}, "step": 4, "episode": 5, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.556510"], "values": [6.961822509765625e-05]}, "step": 5, "episode": 5, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.556685"], "values": [8.320808410644531e-05]}, "step": 6, "episode": 5, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.556810"], "values": [7.033348083496094e-05]}, "step": 7, "episode": 5, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.556936"], "values": [7.05718994140625e-05]}, "step": 8, "episode": 5, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.557165"], "values": [0.0001742839813232422]}, "episode_duration": {"times": ["10-01-21 14:35:15.557177"], "values": [0.0008473396301269531]}, "step": 9, "episode": 5, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.557487"], "values": [7.43865966796875e-05]}, "step": 0, "episode": 6, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.557676"], "values": [0.00010061264038085938]}, "step": 1, "episode": 6, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.557807"], "values": [7.343292236328125e-05]}, "step": 2, "episode": 6, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.557936"], "values": [7.152557373046875e-05]}, "step": 3, "episode": 6, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.558064"], "values": [7.128715515136719e-05]}, "step": 4, "episode": 6, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.558191"], "values": [7.152557373046875e-05]}, "step": 5, "episode": 6, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.558317"], "values": [6.985664367675781e-05]}, "step": 6, "episode": 6, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.558442"], "values": [7.033348083496094e-05]}, "step": 7, "episode": 6, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.558566"], "values": [6.961822509765625e-05]}, "step": 8, "episode": 6, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.558801"], "values": [0.0001804828643798828]}, "episode_duration": {"times": ["10-01-21 14:35:15.558814"], "values": [0.0008530616760253906]}, "step": 9, "episode": 6, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.559122"], "values": [7.462501525878906e-05]}, "step": 0, "episode": 7, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.559260"], "values": [7.581710815429688e-05]}, "step": 1, "episode": 7, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.559392"], "values": [7.367134094238281e-05]}, "step": 2, "episode": 7, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.559521"], "values": [7.152557373046875e-05]}, "step": 3, "episode": 7, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.559647"], "values": [7.104873657226562e-05]}, "step": 4, "episode": 7, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.559773"], "values": [7.05718994140625e-05]}, "step": 5, "episode": 7, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.559959"], "values": [0.00011873245239257812]}, "step": 6, "episode": 7, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.560086"], "values": [7.104873657226562e-05]}, "step": 7, "episode": 7, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.560252"], "values": [0.00011157989501953125]}, "step": 8, "episode": 7, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.560562"], "values": [0.0002193450927734375]}, "episode_duration": {"times": ["10-01-21 14:35:15.560574"], "values": [0.0009579658508300781]}, "step": 9, "episode": 7, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.560883"], "values": [7.367134094238281e-05]}, "step": 0, "episode": 8, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.561021"], "values": [7.534027099609375e-05]}, "step": 1, "episode": 8, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.561152"], "values": [7.271766662597656e-05]}, "step": 2, "episode": 8, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.561280"], "values": [7.128715515136719e-05]}, "step": 3, "episode": 8, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.561406"], "values": [6.985664367675781e-05]}, "step": 4, "episode": 8, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.561531"], "values": [6.985664367675781e-05]}, "step": 5, "episode": 8, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.561654"], "values": [6.890296936035156e-05]}, "step": 6, "episode": 8, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.561779"], "values": [6.937980651855469e-05]}, "step": 7, "episode": 8, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.561903"], "values": [6.961822509765625e-05]}, "step": 8, "episode": 8, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.562135"], "values": [0.00017762184143066406]}, "episode_duration": {"times": ["10-01-21 14:35:15.562148"], "values": [0.0008182525634765625]}, "step": 9, "episode": 8, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.562456"], "values": [7.319450378417969e-05]}, "step": 0, "episode": 9, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.562591"], "values": [7.414817810058594e-05]}, "step": 1, "episode": 9, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.562776"], "values": [0.0001125335693359375]}, "step": 2, "episode": 9, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.562903"], "values": [7.152557373046875e-05]}, "step": 3, "episode": 9, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.563030"], "values": [7.104873657226562e-05]}, "step": 4, "episode": 9, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.563154"], "values": [6.961822509765625e-05]}, "step": 5, "episode": 9, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.563331"], "values": [0.00011706352233886719]}, "step": 6, "episode": 9, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.563467"], "values": [8.249282836914062e-05]}, "step": 7, "episode": 9, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.563647"], "values": [9.751319885253906e-05]}, "step": 8, "episode": 9, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.563884"], "values": [0.0001819133758544922]}, "episode_duration": {"times": ["10-01-21 14:35:15.563897"], "values": [0.0009510517120361328]}, "step": 9, "episode": 9, "instance": 0, "seed": 3}
+{"step_duration": {"times": ["10-01-21 14:35:15.564983"], "values": [8.249282836914062e-05]}, "step": 0, "episode": 0, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.565129"], "values": [7.700920104980469e-05]}, "step": 1, "episode": 0, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.565265"], "values": [7.462501525878906e-05]}, "step": 2, "episode": 0, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.565398"], "values": [7.295608520507812e-05]}, "step": 3, "episode": 0, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.565530"], "values": [7.343292236328125e-05]}, "step": 4, "episode": 0, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.565661"], "values": [7.43865966796875e-05]}, "step": 5, "episode": 0, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.565793"], "values": [7.295608520507812e-05]}, "step": 6, "episode": 0, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.565923"], "values": [7.319450378417969e-05]}, "step": 7, "episode": 0, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.566052"], "values": [7.271766662597656e-05]}, "step": 8, "episode": 0, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.566289"], "values": [0.00018024444580078125]}, "episode_duration": {"times": ["10-01-21 14:35:15.566301"], "values": [0.0008540153503417969]}, "step": 9, "episode": 0, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.566677"], "values": [7.677078247070312e-05]}, "step": 0, "episode": 1, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.566818"], "values": [7.605552673339844e-05]}, "step": 1, "episode": 1, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.566953"], "values": [7.462501525878906e-05]}, "step": 2, "episode": 1, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.567093"], "values": [7.128715515136719e-05]}, "step": 3, "episode": 1, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.567220"], "values": [7.081031799316406e-05]}, "step": 4, "episode": 1, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.567345"], "values": [7.033348083496094e-05]}, "step": 5, "episode": 1, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.567471"], "values": [7.033348083496094e-05]}, "step": 6, "episode": 1, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.567594"], "values": [6.866455078125e-05]}, "step": 7, "episode": 1, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.567716"], "values": [6.890296936035156e-05]}, "step": 8, "episode": 1, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.567996"], "values": [0.00019788742065429688]}, "episode_duration": {"times": ["10-01-21 14:35:15.568008"], "values": [0.0008456707000732422]}, "step": 9, "episode": 1, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.568325"], "values": [7.414817810058594e-05]}, "step": 0, "episode": 2, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.568463"], "values": [7.724761962890625e-05]}, "step": 1, "episode": 2, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.568594"], "values": [7.224082946777344e-05]}, "step": 2, "episode": 2, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.568719"], "values": [7.009506225585938e-05]}, "step": 3, "episode": 2, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.568845"], "values": [7.033348083496094e-05]}, "step": 4, "episode": 2, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.568969"], "values": [6.914138793945312e-05]}, "step": 5, "episode": 2, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.569093"], "values": [6.985664367675781e-05]}, "step": 6, "episode": 2, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.569216"], "values": [6.866455078125e-05]}, "step": 7, "episode": 2, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.569340"], "values": [6.937980651855469e-05]}, "step": 8, "episode": 2, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.569571"], "values": [0.0001785755157470703]}, "episode_duration": {"times": ["10-01-21 14:35:15.569584"], "values": [0.0008196830749511719]}, "step": 9, "episode": 2, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.569931"], "values": [9.751319885253906e-05]}, "step": 0, "episode": 3, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.570079"], "values": [7.486343383789062e-05]}, "step": 1, "episode": 3, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.570210"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 3, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.570336"], "values": [7.081031799316406e-05]}, "step": 3, "episode": 3, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.570476"], "values": [8.511543273925781e-05]}, "step": 4, "episode": 3, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.570683"], "values": [0.00012373924255371094]}, "step": 5, "episode": 3, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.570838"], "values": [7.176399230957031e-05]}, "step": 6, "episode": 3, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.571006"], "values": [0.00011277198791503906]}, "step": 7, "episode": 3, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.571187"], "values": [8.726119995117188e-05]}, "step": 8, "episode": 3, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.571427"], "values": [0.00018405914306640625]}, "episode_duration": {"times": ["10-01-21 14:35:15.571440"], "values": [0.0009808540344238281]}, "step": 9, "episode": 3, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.571791"], "values": [8.106231689453125e-05]}, "step": 0, "episode": 4, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.571937"], "values": [7.915496826171875e-05]}, "step": 1, "episode": 4, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.572075"], "values": [7.653236389160156e-05]}, "step": 2, "episode": 4, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.572209"], "values": [7.462501525878906e-05]}, "step": 3, "episode": 4, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.572342"], "values": [7.390975952148438e-05]}, "step": 4, "episode": 4, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.572500"], "values": [9.918212890625e-05]}, "step": 5, "episode": 4, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.572633"], "values": [7.486343383789062e-05]}, "step": 6, "episode": 4, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.572764"], "values": [7.390975952148438e-05]}, "step": 7, "episode": 4, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.572906"], "values": [8.58306884765625e-05]}, "step": 8, "episode": 4, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.573187"], "values": [0.00019884109497070312]}, "episode_duration": {"times": ["10-01-21 14:35:15.573212"], "values": [0.0009179115295410156]}, "step": 9, "episode": 4, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.573603"], "values": [9.059906005859375e-05]}, "step": 0, "episode": 5, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.573754"], "values": [8.678436279296875e-05]}, "step": 1, "episode": 5, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.573886"], "values": [7.319450378417969e-05]}, "step": 2, "episode": 5, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.574015"], "values": [7.176399230957031e-05]}, "step": 3, "episode": 5, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.574141"], "values": [7.152557373046875e-05]}, "step": 4, "episode": 5, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.574266"], "values": [7.009506225585938e-05]}, "step": 5, "episode": 5, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.574391"], "values": [6.985664367675781e-05]}, "step": 6, "episode": 5, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.574515"], "values": [6.937980651855469e-05]}, "step": 7, "episode": 5, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.574638"], "values": [6.961822509765625e-05]}, "step": 8, "episode": 5, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.574868"], "values": [0.0001747608184814453]}, "episode_duration": {"times": ["10-01-21 14:35:15.574881"], "values": [0.0008475780487060547]}, "step": 9, "episode": 5, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.575196"], "values": [7.486343383789062e-05]}, "step": 0, "episode": 6, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.575333"], "values": [7.414817810058594e-05]}, "step": 1, "episode": 6, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.575464"], "values": [7.271766662597656e-05]}, "step": 2, "episode": 6, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.575594"], "values": [7.128715515136719e-05]}, "step": 3, "episode": 6, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.575722"], "values": [7.128715515136719e-05]}, "step": 4, "episode": 6, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.575849"], "values": [7.128715515136719e-05]}, "step": 5, "episode": 6, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.575975"], "values": [7.033348083496094e-05]}, "step": 6, "episode": 6, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.576100"], "values": [6.961822509765625e-05]}, "step": 7, "episode": 6, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.576225"], "values": [6.937980651855469e-05]}, "step": 8, "episode": 6, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.576463"], "values": [0.00018024444580078125]}, "episode_duration": {"times": ["10-01-21 14:35:15.576476"], "values": [0.0008251667022705078]}, "step": 9, "episode": 6, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.576825"], "values": [7.43865966796875e-05]}, "step": 0, "episode": 7, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.576962"], "values": [7.486343383789062e-05]}, "step": 1, "episode": 7, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.577094"], "values": [7.319450378417969e-05]}, "step": 2, "episode": 7, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.577221"], "values": [7.176399230957031e-05]}, "step": 3, "episode": 7, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.577349"], "values": [7.081031799316406e-05]}, "step": 4, "episode": 7, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.577474"], "values": [7.081031799316406e-05]}, "step": 5, "episode": 7, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.577599"], "values": [7.05718994140625e-05]}, "step": 6, "episode": 7, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.577724"], "values": [7.009506225585938e-05]}, "step": 7, "episode": 7, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.577849"], "values": [6.985664367675781e-05]}, "step": 8, "episode": 7, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.578118"], "values": [0.00021600723266601562]}, "episode_duration": {"times": ["10-01-21 14:35:15.578131"], "values": [0.0008623600006103516]}, "step": 9, "episode": 7, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.578439"], "values": [7.462501525878906e-05]}, "step": 0, "episode": 8, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.578574"], "values": [7.390975952148438e-05]}, "step": 1, "episode": 8, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.578705"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 8, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.578832"], "values": [7.152557373046875e-05]}, "step": 3, "episode": 8, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.579004"], "values": [0.0001010894775390625]}, "step": 4, "episode": 8, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.579142"], "values": [7.033348083496094e-05]}, "step": 5, "episode": 8, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.579266"], "values": [7.009506225585938e-05]}, "step": 6, "episode": 8, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.579390"], "values": [6.890296936035156e-05]}, "step": 7, "episode": 8, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.579516"], "values": [7.104873657226562e-05]}, "step": 8, "episode": 8, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.579749"], "values": [0.0001780986785888672]}, "episode_duration": {"times": ["10-01-21 14:35:15.579761"], "values": [0.0008525848388671875]}, "step": 9, "episode": 8, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.580123"], "values": [7.390975952148438e-05]}, "step": 0, "episode": 9, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.580258"], "values": [7.367134094238281e-05]}, "step": 1, "episode": 9, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.580387"], "values": [7.152557373046875e-05]}, "step": 2, "episode": 9, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.580515"], "values": [7.104873657226562e-05]}, "step": 3, "episode": 9, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.580640"], "values": [7.009506225585938e-05]}, "step": 4, "episode": 9, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.580764"], "values": [6.961822509765625e-05]}, "step": 5, "episode": 9, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.580888"], "values": [6.961822509765625e-05]}, "step": 6, "episode": 9, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.581012"], "values": [6.961822509765625e-05]}, "step": 7, "episode": 9, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.581136"], "values": [6.961822509765625e-05]}, "step": 8, "episode": 9, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.581374"], "values": [0.00018310546875]}, "episode_duration": {"times": ["10-01-21 14:35:15.581386"], "values": [0.0008218288421630859]}, "step": 9, "episode": 9, "instance": 0, "seed": 4}
+{"step_duration": {"times": ["10-01-21 14:35:15.582435"], "values": [7.653236389160156e-05]}, "step": 0, "episode": 0, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.582577"], "values": [7.62939453125e-05]}, "step": 1, "episode": 0, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.582710"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 0, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.582839"], "values": [7.128715515136719e-05]}, "step": 3, "episode": 0, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.582966"], "values": [7.224082946777344e-05]}, "step": 4, "episode": 0, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.583114"], "values": [9.107589721679688e-05]}, "step": 5, "episode": 0, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.583287"], "values": [0.00011539459228515625]}, "step": 6, "episode": 0, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.583413"], "values": [7.081031799316406e-05]}, "step": 7, "episode": 0, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.583538"], "values": [7.05718994140625e-05]}, "step": 8, "episode": 0, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.583768"], "values": [0.00017404556274414062]}, "episode_duration": {"times": ["10-01-21 14:35:15.583780"], "values": [0.0008912086486816406]}, "step": 9, "episode": 0, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.584091"], "values": [7.462501525878906e-05]}, "step": 0, "episode": 1, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.584229"], "values": [7.510185241699219e-05]}, "step": 1, "episode": 1, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.584360"], "values": [7.319450378417969e-05]}, "step": 2, "episode": 1, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.584488"], "values": [7.104873657226562e-05]}, "step": 3, "episode": 1, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.584615"], "values": [7.104873657226562e-05]}, "step": 4, "episode": 1, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.584741"], "values": [7.128715515136719e-05]}, "step": 5, "episode": 1, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.584867"], "values": [7.081031799316406e-05]}, "step": 6, "episode": 1, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.584991"], "values": [7.009506225585938e-05]}, "step": 7, "episode": 1, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.585115"], "values": [6.890296936035156e-05]}, "step": 8, "episode": 1, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.585347"], "values": [0.00017905235290527344]}, "episode_duration": {"times": ["10-01-21 14:35:15.585359"], "values": [0.0008251667022705078]}, "step": 9, "episode": 1, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.585668"], "values": [7.319450378417969e-05]}, "step": 0, "episode": 2, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.585802"], "values": [7.343292236328125e-05]}, "step": 1, "episode": 2, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.585932"], "values": [7.200241088867188e-05]}, "step": 2, "episode": 2, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.586057"], "values": [6.985664367675781e-05]}, "step": 3, "episode": 2, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.586182"], "values": [6.985664367675781e-05]}, "step": 4, "episode": 2, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.586306"], "values": [6.866455078125e-05]}, "step": 5, "episode": 2, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.586430"], "values": [6.985664367675781e-05]}, "step": 6, "episode": 2, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.586579"], "values": [9.441375732421875e-05]}, "step": 7, "episode": 2, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.586715"], "values": [6.937980651855469e-05]}, "step": 8, "episode": 2, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.586957"], "values": [0.0001876354217529297]}, "episode_duration": {"times": ["10-01-21 14:35:15.586969"], "values": [0.0008482933044433594]}, "step": 9, "episode": 2, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.587343"], "values": [8.130073547363281e-05]}, "step": 0, "episode": 3, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.587487"], "values": [7.843971252441406e-05]}, "step": 1, "episode": 3, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.587649"], "values": [0.0001010894775390625]}, "step": 2, "episode": 3, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.587782"], "values": [7.534027099609375e-05]}, "step": 3, "episode": 3, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.587916"], "values": [7.486343383789062e-05]}, "step": 4, "episode": 3, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.588048"], "values": [7.43865966796875e-05]}, "step": 5, "episode": 3, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.588191"], "values": [8.559226989746094e-05]}, "step": 6, "episode": 3, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.588318"], "values": [7.128715515136719e-05]}, "step": 7, "episode": 3, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.588444"], "values": [7.152557373046875e-05]}, "step": 8, "episode": 3, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.588683"], "values": [0.0001842975616455078]}, "episode_duration": {"times": ["10-01-21 14:35:15.588696"], "values": [0.0008981227874755859]}, "step": 9, "episode": 3, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.589055"], "values": [7.748603820800781e-05]}, "step": 0, "episode": 4, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.589208"], "values": [9.059906005859375e-05]}, "step": 1, "episode": 4, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.589345"], "values": [7.605552673339844e-05]}, "step": 2, "episode": 4, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.589479"], "values": [7.486343383789062e-05]}, "step": 3, "episode": 4, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.589612"], "values": [7.462501525878906e-05]}, "step": 4, "episode": 4, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.589743"], "values": [7.367134094238281e-05]}, "step": 5, "episode": 4, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.589884"], "values": [8.320808410644531e-05]}, "step": 6, "episode": 4, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.590027"], "values": [7.176399230957031e-05]}, "step": 7, "episode": 4, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.590153"], "values": [7.104873657226562e-05]}, "step": 8, "episode": 4, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.590394"], "values": [0.00018525123596191406]}, "episode_duration": {"times": ["10-01-21 14:35:15.590407"], "values": [0.0008785724639892578]}, "step": 9, "episode": 4, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.590779"], "values": [8.177757263183594e-05]}, "step": 0, "episode": 5, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.590989"], "values": [0.00011849403381347656]}, "step": 1, "episode": 5, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.591135"], "values": [8.630752563476562e-05]}, "step": 2, "episode": 5, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.591264"], "values": [7.200241088867188e-05]}, "step": 3, "episode": 5, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.591392"], "values": [7.176399230957031e-05]}, "step": 4, "episode": 5, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.591518"], "values": [7.152557373046875e-05]}, "step": 5, "episode": 5, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.591645"], "values": [7.152557373046875e-05]}, "step": 6, "episode": 5, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.591770"], "values": [6.985664367675781e-05]}, "step": 7, "episode": 5, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.591895"], "values": [7.081031799316406e-05]}, "step": 8, "episode": 5, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.592132"], "values": [0.0001823902130126953]}, "episode_duration": {"times": ["10-01-21 14:35:15.592145"], "values": [0.000896453857421875]}, "step": 9, "episode": 5, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.592471"], "values": [7.486343383789062e-05]}, "step": 0, "episode": 6, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.592607"], "values": [7.414817810058594e-05]}, "step": 1, "episode": 6, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.592739"], "values": [7.343292236328125e-05]}, "step": 2, "episode": 6, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.592866"], "values": [7.104873657226562e-05]}, "step": 3, "episode": 6, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.592992"], "values": [7.081031799316406e-05]}, "step": 4, "episode": 6, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.593117"], "values": [7.033348083496094e-05]}, "step": 5, "episode": 6, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.593281"], "values": [0.00010943412780761719]}, "step": 6, "episode": 6, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.593418"], "values": [7.081031799316406e-05]}, "step": 7, "episode": 6, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.593543"], "values": [6.961822509765625e-05]}, "step": 8, "episode": 6, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.593780"], "values": [0.00017881393432617188]}, "episode_duration": {"times": ["10-01-21 14:35:15.593792"], "values": [0.0008633136749267578]}, "step": 9, "episode": 6, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.594103"], "values": [7.414817810058594e-05]}, "step": 0, "episode": 7, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.594239"], "values": [7.510185241699219e-05]}, "step": 1, "episode": 7, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.594371"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 7, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.594500"], "values": [7.176399230957031e-05]}, "step": 3, "episode": 7, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.594627"], "values": [7.128715515136719e-05]}, "step": 4, "episode": 7, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.594753"], "values": [7.033348083496094e-05]}, "step": 5, "episode": 7, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.594879"], "values": [7.104873657226562e-05]}, "step": 6, "episode": 7, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.595004"], "values": [7.05718994140625e-05]}, "step": 7, "episode": 7, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.595174"], "values": [0.0001125335693359375]}, "step": 8, "episode": 7, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.595439"], "values": [0.0002090930938720703]}, "episode_duration": {"times": ["10-01-21 14:35:15.595452"], "values": [0.0008988380432128906]}, "step": 9, "episode": 7, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.595822"], "values": [7.748603820800781e-05]}, "step": 0, "episode": 8, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.595974"], "values": [7.62939453125e-05]}, "step": 1, "episode": 8, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.596107"], "values": [7.343292236328125e-05]}, "step": 2, "episode": 8, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.596236"], "values": [7.152557373046875e-05]}, "step": 3, "episode": 8, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.596363"], "values": [7.128715515136719e-05]}, "step": 4, "episode": 8, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.596490"], "values": [7.05718994140625e-05]}, "step": 5, "episode": 8, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.596679"], "values": [0.00011396408081054688]}, "step": 6, "episode": 8, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.596804"], "values": [6.985664367675781e-05]}, "step": 7, "episode": 8, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.596930"], "values": [7.081031799316406e-05]}, "step": 8, "episode": 8, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.597166"], "values": [0.00018024444580078125]}, "episode_duration": {"times": ["10-01-21 14:35:15.597178"], "values": [0.0008754730224609375]}, "step": 9, "episode": 8, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.597494"], "values": [7.486343383789062e-05]}, "step": 0, "episode": 9, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.597631"], "values": [7.534027099609375e-05]}, "step": 1, "episode": 9, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.597763"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 9, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.597892"], "values": [7.176399230957031e-05]}, "step": 3, "episode": 9, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.598019"], "values": [7.081031799316406e-05]}, "step": 4, "episode": 9, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.598145"], "values": [7.104873657226562e-05]}, "step": 5, "episode": 9, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.598286"], "values": [7.152557373046875e-05]}, "step": 6, "episode": 9, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.598452"], "values": [7.009506225585938e-05]}, "step": 7, "episode": 9, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.598576"], "values": [6.937980651855469e-05]}, "step": 8, "episode": 9, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.598811"], "values": [0.000179290771484375]}, "episode_duration": {"times": ["10-01-21 14:35:15.598823"], "values": [0.0008270740509033203]}, "step": 9, "episode": 9, "instance": 0, "seed": 5}
+{"step_duration": {"times": ["10-01-21 14:35:15.599968"], "values": [0.00016999244689941406]}, "step": 0, "episode": 0, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.600113"], "values": [7.772445678710938e-05]}, "step": 1, "episode": 0, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.600247"], "values": [7.343292236328125e-05]}, "step": 2, "episode": 0, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.600377"], "values": [7.200241088867188e-05]}, "step": 3, "episode": 0, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.600504"], "values": [7.104873657226562e-05]}, "step": 4, "episode": 0, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.600634"], "values": [7.200241088867188e-05]}, "step": 5, "episode": 0, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.600760"], "values": [7.081031799316406e-05]}, "step": 6, "episode": 0, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.600886"], "values": [7.081031799316406e-05]}, "step": 7, "episode": 0, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.601010"], "values": [7.033348083496094e-05]}, "step": 8, "episode": 0, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.601243"], "values": [0.00017714500427246094]}, "episode_duration": {"times": ["10-01-21 14:35:15.601255"], "values": [0.0009253025054931641]}, "step": 9, "episode": 0, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.601567"], "values": [7.390975952148438e-05]}, "step": 0, "episode": 1, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.601704"], "values": [7.534027099609375e-05]}, "step": 1, "episode": 1, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.601836"], "values": [7.271766662597656e-05]}, "step": 2, "episode": 1, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.601964"], "values": [7.152557373046875e-05]}, "step": 3, "episode": 1, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.602091"], "values": [7.081031799316406e-05]}, "step": 4, "episode": 1, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.602218"], "values": [7.081031799316406e-05]}, "step": 5, "episode": 1, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.602344"], "values": [7.033348083496094e-05]}, "step": 6, "episode": 1, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.602469"], "values": [6.937980651855469e-05]}, "step": 7, "episode": 1, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.602592"], "values": [6.937980651855469e-05]}, "step": 8, "episode": 1, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.602828"], "values": [0.00018072128295898438]}, "episode_duration": {"times": ["10-01-21 14:35:15.602841"], "values": [0.0008249282836914062]}, "step": 9, "episode": 1, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.603149"], "values": [7.343292236328125e-05]}, "step": 0, "episode": 2, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.603316"], "values": [9.822845458984375e-05]}, "step": 1, "episode": 2, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.603475"], "values": [9.799003601074219e-05]}, "step": 2, "episode": 2, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.603603"], "values": [7.104873657226562e-05]}, "step": 3, "episode": 2, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.603758"], "values": [8.606910705566406e-05]}, "step": 4, "episode": 2, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.603889"], "values": [7.319450378417969e-05]}, "step": 5, "episode": 2, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.604044"], "values": [8.606910705566406e-05]}, "step": 6, "episode": 2, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.604196"], "values": [9.489059448242188e-05]}, "step": 7, "episode": 2, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.604318"], "values": [6.890296936035156e-05]}, "step": 8, "episode": 2, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.604545"], "values": [0.0001742839813232422]}, "episode_duration": {"times": ["10-01-21 14:35:15.604558"], "values": [0.0009241104125976562]}, "step": 9, "episode": 2, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.604948"], "values": [7.486343383789062e-05]}, "step": 0, "episode": 3, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.605086"], "values": [7.581710815429688e-05]}, "step": 1, "episode": 3, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.605220"], "values": [7.486343383789062e-05]}, "step": 2, "episode": 3, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.605351"], "values": [7.343292236328125e-05]}, "step": 3, "episode": 3, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.605480"], "values": [7.224082946777344e-05]}, "step": 4, "episode": 3, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.605635"], "values": [9.822845458984375e-05]}, "step": 5, "episode": 3, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.605762"], "values": [7.176399230957031e-05]}, "step": 6, "episode": 3, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.605889"], "values": [7.152557373046875e-05]}, "step": 7, "episode": 3, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.606015"], "values": [7.05718994140625e-05]}, "step": 8, "episode": 3, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.606257"], "values": [0.00018596649169921875]}, "episode_duration": {"times": ["10-01-21 14:35:15.606269"], "values": [0.0008692741394042969]}, "step": 9, "episode": 3, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.606644"], "values": [0.00011348724365234375]}, "step": 0, "episode": 4, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.606784"], "values": [7.62939453125e-05]}, "step": 1, "episode": 4, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.606917"], "values": [7.390975952148438e-05]}, "step": 2, "episode": 4, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.607047"], "values": [7.271766662597656e-05]}, "step": 3, "episode": 4, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.607176"], "values": [7.176399230957031e-05]}, "step": 4, "episode": 4, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.607303"], "values": [7.128715515136719e-05]}, "step": 5, "episode": 4, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.607431"], "values": [7.176399230957031e-05]}, "step": 6, "episode": 4, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.607558"], "values": [7.152557373046875e-05]}, "step": 7, "episode": 4, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.607684"], "values": [7.05718994140625e-05]}, "step": 8, "episode": 4, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.607919"], "values": [0.0001804828643798828]}, "episode_duration": {"times": ["10-01-21 14:35:15.607932"], "values": [0.0008738040924072266]}, "step": 9, "episode": 4, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.608272"], "values": [7.653236389160156e-05]}, "step": 0, "episode": 5, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.608412"], "values": [7.677078247070312e-05]}, "step": 1, "episode": 5, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.608574"], "values": [0.00010180473327636719]}, "step": 2, "episode": 5, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.608707"], "values": [7.390975952148438e-05]}, "step": 3, "episode": 5, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.608838"], "values": [7.319450378417969e-05]}, "step": 4, "episode": 5, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.608967"], "values": [7.224082946777344e-05]}, "step": 5, "episode": 5, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.609095"], "values": [7.176399230957031e-05]}, "step": 6, "episode": 5, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.609223"], "values": [7.2479248046875e-05]}, "step": 7, "episode": 5, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.609351"], "values": [7.176399230957031e-05]}, "step": 8, "episode": 5, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.609587"], "values": [0.0001804828643798828]}, "episode_duration": {"times": ["10-01-21 14:35:15.609600"], "values": [0.0008709430694580078]}, "step": 9, "episode": 5, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.609967"], "values": [0.00011515617370605469]}, "step": 0, "episode": 6, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.610107"], "values": [7.700920104980469e-05]}, "step": 1, "episode": 6, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.610242"], "values": [7.390975952148438e-05]}, "step": 2, "episode": 6, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.610374"], "values": [7.367134094238281e-05]}, "step": 3, "episode": 6, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.610504"], "values": [7.271766662597656e-05]}, "step": 4, "episode": 6, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.610633"], "values": [7.200241088867188e-05]}, "step": 5, "episode": 6, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.610761"], "values": [7.128715515136719e-05]}, "step": 6, "episode": 6, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.610888"], "values": [7.128715515136719e-05]}, "step": 7, "episode": 6, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.611015"], "values": [7.200241088867188e-05]}, "step": 8, "episode": 6, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.611256"], "values": [0.00018525123596191406]}, "episode_duration": {"times": ["10-01-21 14:35:15.611269"], "values": [0.0008842945098876953]}, "step": 9, "episode": 6, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.611586"], "values": [7.605552673339844e-05]}, "step": 0, "episode": 7, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.611728"], "values": [7.653236389160156e-05]}, "step": 1, "episode": 7, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.611863"], "values": [7.557868957519531e-05]}, "step": 2, "episode": 7, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.611996"], "values": [7.390975952148438e-05]}, "step": 3, "episode": 7, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.612125"], "values": [7.2479248046875e-05]}, "step": 4, "episode": 7, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.612255"], "values": [7.295608520507812e-05]}, "step": 5, "episode": 7, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.612384"], "values": [7.152557373046875e-05]}, "step": 6, "episode": 7, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.612513"], "values": [7.224082946777344e-05]}, "step": 7, "episode": 7, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.612641"], "values": [7.200241088867188e-05]}, "step": 8, "episode": 7, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.612876"], "values": [0.00017905235290527344]}, "episode_duration": {"times": ["10-01-21 14:35:15.612889"], "values": [0.0008423328399658203]}, "step": 9, "episode": 7, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.613210"], "values": [8.082389831542969e-05]}, "step": 0, "episode": 8, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.613381"], "values": [7.700920104980469e-05]}, "step": 1, "episode": 8, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.613514"], "values": [7.390975952148438e-05]}, "step": 2, "episode": 8, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.613678"], "values": [0.00010585784912109375]}, "step": 3, "episode": 8, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.613809"], "values": [7.295608520507812e-05]}, "step": 4, "episode": 8, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.613938"], "values": [7.2479248046875e-05]}, "step": 5, "episode": 8, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.614065"], "values": [7.152557373046875e-05]}, "step": 6, "episode": 8, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.614193"], "values": [7.128715515136719e-05]}, "step": 7, "episode": 8, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.614320"], "values": [7.104873657226562e-05]}, "step": 8, "episode": 8, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.614559"], "values": [0.0001842975616455078]}, "episode_duration": {"times": ["10-01-21 14:35:15.614572"], "values": [0.000881195068359375]}, "step": 9, "episode": 8, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.614889"], "values": [7.534027099609375e-05]}, "step": 0, "episode": 9, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.615030"], "values": [7.677078247070312e-05]}, "step": 1, "episode": 9, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.615164"], "values": [7.43865966796875e-05]}, "step": 2, "episode": 9, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.615294"], "values": [7.319450378417969e-05]}, "step": 3, "episode": 9, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.615425"], "values": [7.295608520507812e-05]}, "step": 4, "episode": 9, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.615554"], "values": [7.224082946777344e-05]}, "step": 5, "episode": 9, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.615684"], "values": [7.319450378417969e-05]}, "step": 6, "episode": 9, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.615812"], "values": [7.200241088867188e-05]}, "step": 7, "episode": 9, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.615939"], "values": [7.081031799316406e-05]}, "step": 8, "episode": 9, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.616186"], "values": [0.00019073486328125]}, "episode_duration": {"times": ["10-01-21 14:35:15.616198"], "values": [0.0008516311645507812]}, "step": 9, "episode": 9, "instance": 0, "seed": 6}
+{"step_duration": {"times": ["10-01-21 14:35:15.617324"], "values": [7.772445678710938e-05]}, "step": 0, "episode": 0, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.617466"], "values": [7.510185241699219e-05]}, "step": 1, "episode": 0, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.617599"], "values": [7.390975952148438e-05]}, "step": 2, "episode": 0, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.617728"], "values": [7.152557373046875e-05]}, "step": 3, "episode": 0, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.617856"], "values": [7.200241088867188e-05]}, "step": 4, "episode": 0, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.617984"], "values": [7.200241088867188e-05]}, "step": 5, "episode": 0, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.618111"], "values": [7.081031799316406e-05]}, "step": 6, "episode": 0, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.618236"], "values": [7.05718994140625e-05]}, "step": 7, "episode": 0, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.618363"], "values": [7.152557373046875e-05]}, "step": 8, "episode": 0, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.618597"], "values": [0.00017952919006347656]}, "episode_duration": {"times": ["10-01-21 14:35:15.618609"], "values": [0.0008347034454345703]}, "step": 9, "episode": 0, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.618970"], "values": [7.343292236328125e-05]}, "step": 0, "episode": 1, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.619104"], "values": [7.319450378417969e-05]}, "step": 1, "episode": 1, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.619234"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 1, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.619360"], "values": [7.033348083496094e-05]}, "step": 3, "episode": 1, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.619486"], "values": [7.033348083496094e-05]}, "step": 4, "episode": 1, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.619610"], "values": [6.937980651855469e-05]}, "step": 5, "episode": 1, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.619734"], "values": [7.033348083496094e-05]}, "step": 6, "episode": 1, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.619858"], "values": [7.009506225585938e-05]}, "step": 7, "episode": 1, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.620030"], "values": [6.985664367675781e-05]}, "step": 8, "episode": 1, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.620257"], "values": [0.0001735687255859375]}, "episode_duration": {"times": ["10-01-21 14:35:15.620269"], "values": [0.0008134841918945312]}, "step": 9, "episode": 1, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.620686"], "values": [0.00012636184692382812]}, "step": 0, "episode": 2, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.620904"], "values": [0.00014328956604003906]}, "step": 1, "episode": 2, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.621060"], "values": [8.511543273925781e-05]}, "step": 2, "episode": 2, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.621187"], "values": [6.985664367675781e-05]}, "step": 3, "episode": 2, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.621312"], "values": [7.009506225585938e-05]}, "step": 4, "episode": 2, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.621437"], "values": [7.009506225585938e-05]}, "step": 5, "episode": 2, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.621561"], "values": [6.890296936035156e-05]}, "step": 6, "episode": 2, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.621683"], "values": [6.866455078125e-05]}, "step": 7, "episode": 2, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.621806"], "values": [6.818771362304688e-05]}, "step": 8, "episode": 2, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.622036"], "values": [0.00017690658569335938]}, "episode_duration": {"times": ["10-01-21 14:35:15.622049"], "values": [0.0009474754333496094]}, "step": 9, "episode": 2, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.622358"], "values": [7.319450378417969e-05]}, "step": 0, "episode": 3, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.622493"], "values": [7.414817810058594e-05]}, "step": 1, "episode": 3, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.622622"], "values": [7.200241088867188e-05]}, "step": 2, "episode": 3, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.622749"], "values": [7.081031799316406e-05]}, "step": 3, "episode": 3, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.622874"], "values": [7.05718994140625e-05]}, "step": 4, "episode": 3, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.622999"], "values": [7.009506225585938e-05]}, "step": 5, "episode": 3, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.623122"], "values": [6.937980651855469e-05]}, "step": 6, "episode": 3, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.623284"], "values": [0.00010848045349121094]}, "step": 7, "episode": 3, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.623408"], "values": [6.961822509765625e-05]}, "step": 8, "episode": 3, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.623640"], "values": [0.000179290771484375]}, "episode_duration": {"times": ["10-01-21 14:35:15.623653"], "values": [0.0008575916290283203]}, "step": 9, "episode": 3, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.624015"], "values": [7.367134094238281e-05]}, "step": 0, "episode": 4, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.624150"], "values": [7.414817810058594e-05]}, "step": 1, "episode": 4, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.624280"], "values": [7.2479248046875e-05]}, "step": 2, "episode": 4, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.624406"], "values": [7.033348083496094e-05]}, "step": 3, "episode": 4, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.624531"], "values": [7.033348083496094e-05]}, "step": 4, "episode": 4, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.624655"], "values": [6.985664367675781e-05]}, "step": 5, "episode": 4, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.624780"], "values": [7.009506225585938e-05]}, "step": 6, "episode": 4, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.624904"], "values": [6.914138793945312e-05]}, "step": 7, "episode": 4, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.625028"], "values": [7.033348083496094e-05]}, "step": 8, "episode": 4, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.625262"], "values": [0.00017976760864257812]}, "episode_duration": {"times": ["10-01-21 14:35:15.625274"], "values": [0.000820159912109375]}, "step": 9, "episode": 4, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.625583"], "values": [7.43865966796875e-05]}, "step": 0, "episode": 5, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.625720"], "values": [7.557868957519531e-05]}, "step": 1, "episode": 5, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.625851"], "values": [7.271766662597656e-05]}, "step": 2, "episode": 5, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.625978"], "values": [7.152557373046875e-05]}, "step": 3, "episode": 5, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.626106"], "values": [7.104873657226562e-05]}, "step": 4, "episode": 5, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.626233"], "values": [7.152557373046875e-05]}, "step": 5, "episode": 5, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.626358"], "values": [7.009506225585938e-05]}, "step": 6, "episode": 5, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.626483"], "values": [6.985664367675781e-05]}, "step": 7, "episode": 5, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.626656"], "values": [0.00011205673217773438]}, "step": 8, "episode": 5, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.626890"], "values": [0.00017976760864257812]}, "episode_duration": {"times": ["10-01-21 14:35:15.626902"], "values": [0.0008685588836669922]}, "step": 9, "episode": 5, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.627212"], "values": [7.43865966796875e-05]}, "step": 0, "episode": 6, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.627349"], "values": [7.43865966796875e-05]}, "step": 1, "episode": 6, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.627480"], "values": [7.2479248046875e-05]}, "step": 2, "episode": 6, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.627607"], "values": [7.128715515136719e-05]}, "step": 3, "episode": 6, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.627734"], "values": [7.104873657226562e-05]}, "step": 4, "episode": 6, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.627860"], "values": [7.05718994140625e-05]}, "step": 5, "episode": 6, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.627984"], "values": [7.009506225585938e-05]}, "step": 6, "episode": 6, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.628108"], "values": [6.961822509765625e-05]}, "step": 7, "episode": 6, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.628233"], "values": [7.009506225585938e-05]}, "step": 8, "episode": 6, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.628514"], "values": [0.00019741058349609375]}, "episode_duration": {"times": ["10-01-21 14:35:15.628527"], "values": [0.0008413791656494141]}, "step": 9, "episode": 6, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.628845"], "values": [7.62939453125e-05]}, "step": 0, "episode": 7, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.629013"], "values": [8.916854858398438e-05]}, "step": 1, "episode": 7, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.629149"], "values": [7.486343383789062e-05]}, "step": 2, "episode": 7, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.629282"], "values": [7.367134094238281e-05]}, "step": 3, "episode": 7, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.629411"], "values": [7.200241088867188e-05]}, "step": 4, "episode": 7, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.629539"], "values": [7.200241088867188e-05]}, "step": 5, "episode": 7, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.629666"], "values": [7.152557373046875e-05]}, "step": 6, "episode": 7, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.629809"], "values": [7.319450378417969e-05]}, "step": 7, "episode": 7, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.629958"], "values": [9.179115295410156e-05]}, "step": 8, "episode": 7, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.630200"], "values": [0.00018548965454101562]}, "episode_duration": {"times": ["10-01-21 14:35:15.630213"], "values": [0.0008800029754638672]}, "step": 9, "episode": 7, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.630551"], "values": [7.748603820800781e-05]}, "step": 0, "episode": 8, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.630703"], "values": [8.273124694824219e-05]}, "step": 1, "episode": 8, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.630852"], "values": [8.058547973632812e-05]}, "step": 2, "episode": 8, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.630998"], "values": [7.987022399902344e-05]}, "step": 3, "episode": 8, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.631143"], "values": [8.0108642578125e-05]}, "step": 4, "episode": 8, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.631287"], "values": [7.963180541992188e-05]}, "step": 5, "episode": 8, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.631431"], "values": [7.939338684082031e-05]}, "step": 6, "episode": 8, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.631574"], "values": [7.891654968261719e-05]}, "step": 7, "episode": 8, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.631719"], "values": [7.987022399902344e-05]}, "step": 8, "episode": 8, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.631981"], "values": [0.0001862049102783203]}, "episode_duration": {"times": ["10-01-21 14:35:15.631993"], "values": [0.0009047985076904297]}, "step": 9, "episode": 8, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.632328"], "values": [7.486343383789062e-05]}, "step": 0, "episode": 9, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.632467"], "values": [7.605552673339844e-05]}, "step": 1, "episode": 9, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.632599"], "values": [7.343292236328125e-05]}, "step": 2, "episode": 9, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.632727"], "values": [7.176399230957031e-05]}, "step": 3, "episode": 9, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.632854"], "values": [7.05718994140625e-05]}, "step": 4, "episode": 9, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.632982"], "values": [7.176399230957031e-05]}, "step": 5, "episode": 9, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.633107"], "values": [7.009506225585938e-05]}, "step": 6, "episode": 9, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.633282"], "values": [0.00011968612670898438]}, "step": 7, "episode": 9, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.633408"], "values": [7.104873657226562e-05]}, "step": 8, "episode": 9, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.633641"], "values": [0.00017786026000976562]}, "episode_duration": {"times": ["10-01-21 14:35:15.633654"], "values": [0.0008771419525146484]}, "step": 9, "episode": 9, "instance": 0, "seed": 7}
+{"step_duration": {"times": ["10-01-21 14:35:15.634760"], "values": [7.772445678710938e-05]}, "step": 0, "episode": 0, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.634902"], "values": [7.653236389160156e-05]}, "step": 1, "episode": 0, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.635034"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 0, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.635163"], "values": [7.104873657226562e-05]}, "step": 3, "episode": 0, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.635291"], "values": [7.200241088867188e-05]}, "step": 4, "episode": 0, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.635420"], "values": [7.2479248046875e-05]}, "step": 5, "episode": 0, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.635548"], "values": [7.200241088867188e-05]}, "step": 6, "episode": 0, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.635675"], "values": [7.200241088867188e-05]}, "step": 7, "episode": 0, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.635802"], "values": [7.152557373046875e-05]}, "step": 8, "episode": 0, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.636039"], "values": [0.00018215179443359375]}, "episode_duration": {"times": ["10-01-21 14:35:15.636052"], "values": [0.0008404254913330078]}, "step": 9, "episode": 0, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.636410"], "values": [7.653236389160156e-05]}, "step": 0, "episode": 1, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.636576"], "values": [0.00010061264038085938]}, "step": 1, "episode": 1, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.636734"], "values": [7.390975952148438e-05]}, "step": 2, "episode": 1, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.636861"], "values": [7.081031799316406e-05]}, "step": 3, "episode": 1, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.636988"], "values": [7.104873657226562e-05]}, "step": 4, "episode": 1, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.637129"], "values": [8.463859558105469e-05]}, "step": 5, "episode": 1, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.637284"], "values": [8.511543273925781e-05]}, "step": 6, "episode": 1, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.637425"], "values": [8.58306884765625e-05]}, "step": 7, "episode": 1, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.637582"], "values": [7.367134094238281e-05]}, "step": 8, "episode": 1, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.637834"], "values": [0.000194549560546875]}, "episode_duration": {"times": ["10-01-21 14:35:15.637847"], "values": [0.0009167194366455078]}, "step": 9, "episode": 1, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.638247"], "values": [8.440017700195312e-05]}, "step": 0, "episode": 2, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.638396"], "values": [8.034706115722656e-05]}, "step": 1, "episode": 2, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.638535"], "values": [7.724761962890625e-05]}, "step": 2, "episode": 2, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.638670"], "values": [7.581710815429688e-05]}, "step": 3, "episode": 2, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.638802"], "values": [7.43865966796875e-05]}, "step": 4, "episode": 2, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.638933"], "values": [7.343292236328125e-05]}, "step": 5, "episode": 2, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.639064"], "values": [7.367134094238281e-05]}, "step": 6, "episode": 2, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.639195"], "values": [7.343292236328125e-05]}, "step": 7, "episode": 2, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.639389"], "values": [0.0001366138458251953]}, "step": 8, "episode": 2, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.639664"], "values": [0.00019550323486328125]}, "episode_duration": {"times": ["10-01-21 14:35:15.639677"], "values": [0.0009448528289794922]}, "step": 9, "episode": 2, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.640089"], "values": [7.748603820800781e-05]}, "step": 0, "episode": 3, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.640237"], "values": [7.414817810058594e-05]}, "step": 1, "episode": 3, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.640366"], "values": [7.224082946777344e-05]}, "step": 2, "episode": 3, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.640493"], "values": [7.05718994140625e-05]}, "step": 3, "episode": 3, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.640618"], "values": [7.05718994140625e-05]}, "step": 4, "episode": 3, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.640743"], "values": [7.033348083496094e-05]}, "step": 5, "episode": 3, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.640867"], "values": [6.937980651855469e-05]}, "step": 6, "episode": 3, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.640989"], "values": [6.866455078125e-05]}, "step": 7, "episode": 3, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.641113"], "values": [6.937980651855469e-05]}, "step": 8, "episode": 3, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.641341"], "values": [0.00017523765563964844]}, "episode_duration": {"times": ["10-01-21 14:35:15.641354"], "values": [0.0008180141448974609]}, "step": 9, "episode": 3, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.641665"], "values": [7.343292236328125e-05]}, "step": 0, "episode": 4, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.641800"], "values": [7.414817810058594e-05]}, "step": 1, "episode": 4, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.641929"], "values": [7.104873657226562e-05]}, "step": 2, "episode": 4, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.642055"], "values": [7.05718994140625e-05]}, "step": 3, "episode": 4, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.642180"], "values": [7.009506225585938e-05]}, "step": 4, "episode": 4, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.642305"], "values": [6.985664367675781e-05]}, "step": 5, "episode": 4, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.642428"], "values": [6.914138793945312e-05]}, "step": 6, "episode": 4, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.642550"], "values": [6.914138793945312e-05]}, "step": 7, "episode": 4, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.642673"], "values": [6.914138793945312e-05]}, "step": 8, "episode": 4, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.642907"], "values": [0.00018143653869628906]}, "episode_duration": {"times": ["10-01-21 14:35:15.642920"], "values": [0.0008180141448974609]}, "step": 9, "episode": 4, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.643278"], "values": [0.00010967254638671875]}, "step": 0, "episode": 5, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.643417"], "values": [7.605552673339844e-05]}, "step": 1, "episode": 5, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.643549"], "values": [7.390975952148438e-05]}, "step": 2, "episode": 5, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.643678"], "values": [7.2479248046875e-05]}, "step": 3, "episode": 5, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.643806"], "values": [7.176399230957031e-05]}, "step": 4, "episode": 5, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.643961"], "values": [8.535385131835938e-05]}, "step": 5, "episode": 5, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.644112"], "values": [8.296966552734375e-05]}, "step": 6, "episode": 5, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.644276"], "values": [0.00010895729064941406]}, "step": 7, "episode": 5, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.644400"], "values": [6.985664367675781e-05]}, "step": 8, "episode": 5, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.644633"], "values": [0.00017905235290527344]}, "episode_duration": {"times": ["10-01-21 14:35:15.644646"], "values": [0.0009300708770751953]}, "step": 9, "episode": 5, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.644958"], "values": [7.414817810058594e-05]}, "step": 0, "episode": 6, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.645097"], "values": [7.534027099609375e-05]}, "step": 1, "episode": 6, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.645229"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 6, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.645358"], "values": [7.200241088867188e-05]}, "step": 3, "episode": 6, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.645485"], "values": [7.081031799316406e-05]}, "step": 4, "episode": 6, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.645612"], "values": [7.176399230957031e-05]}, "step": 5, "episode": 6, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.645738"], "values": [7.033348083496094e-05]}, "step": 6, "episode": 6, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.645905"], "values": [0.00011205673217773438]}, "step": 7, "episode": 6, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.646059"], "values": [8.440017700195312e-05]}, "step": 8, "episode": 6, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.646342"], "values": [0.00019788742065429688]}, "episode_duration": {"times": ["10-01-21 14:35:15.646354"], "values": [0.0009016990661621094]}, "step": 9, "episode": 6, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.646740"], "values": [7.677078247070312e-05]}, "step": 0, "episode": 7, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.646882"], "values": [7.748603820800781e-05]}, "step": 1, "episode": 7, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.647019"], "values": [7.534027099609375e-05]}, "step": 2, "episode": 7, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.647151"], "values": [7.367134094238281e-05]}, "step": 3, "episode": 7, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.647282"], "values": [7.319450378417969e-05]}, "step": 4, "episode": 7, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.647423"], "values": [7.43865966796875e-05]}, "step": 5, "episode": 7, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.647553"], "values": [7.271766662597656e-05]}, "step": 6, "episode": 7, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.647685"], "values": [7.2479248046875e-05]}, "step": 7, "episode": 7, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.647814"], "values": [7.271766662597656e-05]}, "step": 8, "episode": 7, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.648055"], "values": [0.00018668174743652344]}, "episode_duration": {"times": ["10-01-21 14:35:15.648068"], "values": [0.0008554458618164062]}, "step": 9, "episode": 7, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.648432"], "values": [7.653236389160156e-05]}, "step": 0, "episode": 8, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.648575"], "values": [7.748603820800781e-05]}, "step": 1, "episode": 8, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.648709"], "values": [7.462501525878906e-05]}, "step": 2, "episode": 8, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.648841"], "values": [7.295608520507812e-05]}, "step": 3, "episode": 8, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.648972"], "values": [7.224082946777344e-05]}, "step": 4, "episode": 8, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.649100"], "values": [7.224082946777344e-05]}, "step": 5, "episode": 8, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.649229"], "values": [7.224082946777344e-05]}, "step": 6, "episode": 8, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.649384"], "values": [8.487701416015625e-05]}, "step": 7, "episode": 8, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.649580"], "values": [0.00012564659118652344]}, "step": 8, "episode": 8, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.649942"], "values": [0.0002529621124267578]}, "episode_duration": {"times": ["10-01-21 14:35:15.649967"], "values": [0.0009818077087402344]}, "step": 9, "episode": 8, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.650338"], "values": [7.700920104980469e-05]}, "step": 0, "episode": 9, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.650479"], "values": [7.700920104980469e-05]}, "step": 1, "episode": 9, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.650613"], "values": [7.462501525878906e-05]}, "step": 2, "episode": 9, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.650744"], "values": [7.343292236328125e-05]}, "step": 3, "episode": 9, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.650874"], "values": [7.271766662597656e-05]}, "step": 4, "episode": 9, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.651004"], "values": [7.295608520507812e-05]}, "step": 5, "episode": 9, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.651134"], "values": [7.271766662597656e-05]}, "step": 6, "episode": 9, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.651261"], "values": [7.176399230957031e-05]}, "step": 7, "episode": 9, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.651388"], "values": [7.152557373046875e-05]}, "step": 8, "episode": 9, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.651624"], "values": [0.00018024444580078125]}, "episode_duration": {"times": ["10-01-21 14:35:15.651636"], "values": [0.0008440017700195312]}, "step": 9, "episode": 9, "instance": 0, "seed": 8}
+{"step_duration": {"times": ["10-01-21 14:35:15.652774"], "values": [7.963180541992188e-05]}, "step": 0, "episode": 0, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.652918"], "values": [7.724761962890625e-05]}, "step": 1, "episode": 0, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.653054"], "values": [7.43865966796875e-05]}, "step": 2, "episode": 0, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.653185"], "values": [7.271766662597656e-05]}, "step": 3, "episode": 0, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.653363"], "values": [7.224082946777344e-05]}, "step": 4, "episode": 0, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.653491"], "values": [7.200241088867188e-05]}, "step": 5, "episode": 0, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.653634"], "values": [8.702278137207031e-05]}, "step": 6, "episode": 0, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.653763"], "values": [7.224082946777344e-05]}, "step": 7, "episode": 0, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.653936"], "values": [0.00010180473327636719]}, "step": 8, "episode": 0, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.654226"], "values": [0.000232696533203125]}, "episode_duration": {"times": ["10-01-21 14:35:15.654239"], "values": [0.0009419918060302734]}, "step": 9, "episode": 0, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.654610"], "values": [9.226799011230469e-05]}, "step": 0, "episode": 1, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.654805"], "values": [0.000102996826171875]}, "step": 1, "episode": 1, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.654936"], "values": [7.2479248046875e-05]}, "step": 2, "episode": 1, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.655064"], "values": [7.128715515136719e-05]}, "step": 3, "episode": 1, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.655190"], "values": [6.985664367675781e-05]}, "step": 4, "episode": 1, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.655316"], "values": [7.009506225585938e-05]}, "step": 5, "episode": 1, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.655440"], "values": [6.961822509765625e-05]}, "step": 6, "episode": 1, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.655565"], "values": [7.009506225585938e-05]}, "step": 7, "episode": 1, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.655689"], "values": [6.961822509765625e-05]}, "step": 8, "episode": 1, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.656018"], "values": [0.0002739429473876953]}, "episode_duration": {"times": ["10-01-21 14:35:15.656030"], "values": [0.0009622573852539062]}, "step": 9, "episode": 1, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.656404"], "values": [7.486343383789062e-05]}, "step": 0, "episode": 2, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.656568"], "values": [8.273124694824219e-05]}, "step": 1, "episode": 2, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.656715"], "values": [7.43865966796875e-05]}, "step": 2, "episode": 2, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.656845"], "values": [7.200241088867188e-05]}, "step": 3, "episode": 2, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.656974"], "values": [7.2479248046875e-05]}, "step": 4, "episode": 2, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.657116"], "values": [8.630752563476562e-05]}, "step": 5, "episode": 2, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.657280"], "values": [0.00010704994201660156]}, "step": 6, "episode": 2, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.657418"], "values": [7.05718994140625e-05]}, "step": 7, "episode": 2, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.657545"], "values": [7.152557373046875e-05]}, "step": 8, "episode": 2, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.657784"], "values": [0.00018525123596191406]}, "episode_duration": {"times": ["10-01-21 14:35:15.657796"], "values": [0.0008971691131591797]}, "step": 9, "episode": 2, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.658119"], "values": [7.462501525878906e-05]}, "step": 0, "episode": 3, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.658257"], "values": [7.43865966796875e-05]}, "step": 1, "episode": 3, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.658389"], "values": [7.295608520507812e-05]}, "step": 2, "episode": 3, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.658517"], "values": [7.128715515136719e-05]}, "step": 3, "episode": 3, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.658646"], "values": [7.152557373046875e-05]}, "step": 4, "episode": 3, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.658773"], "values": [7.128715515136719e-05]}, "step": 5, "episode": 3, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.658899"], "values": [7.104873657226562e-05]}, "step": 6, "episode": 3, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.659024"], "values": [6.985664367675781e-05]}, "step": 7, "episode": 3, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.659150"], "values": [7.081031799316406e-05]}, "step": 8, "episode": 3, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.659386"], "values": [0.00018167495727539062]}, "episode_duration": {"times": ["10-01-21 14:35:15.659398"], "values": [0.0008294582366943359]}, "step": 9, "episode": 3, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.659714"], "values": [7.510185241699219e-05]}, "step": 0, "episode": 4, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.659852"], "values": [7.510185241699219e-05]}, "step": 1, "episode": 4, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.660022"], "values": [7.486343383789062e-05]}, "step": 2, "episode": 4, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.660152"], "values": [7.2479248046875e-05]}, "step": 3, "episode": 4, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.660282"], "values": [7.200241088867188e-05]}, "step": 4, "episode": 4, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.660408"], "values": [7.05718994140625e-05]}, "step": 5, "episode": 4, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.660535"], "values": [7.081031799316406e-05]}, "step": 6, "episode": 4, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.660661"], "values": [7.05718994140625e-05]}, "step": 7, "episode": 4, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.660787"], "values": [7.081031799316406e-05]}, "step": 8, "episode": 4, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.661024"], "values": [0.0001819133758544922]}, "episode_duration": {"times": ["10-01-21 14:35:15.661037"], "values": [0.0008342266082763672]}, "step": 9, "episode": 4, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.661354"], "values": [7.724761962890625e-05]}, "step": 0, "episode": 5, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.661495"], "values": [7.653236389160156e-05]}, "step": 1, "episode": 5, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.661630"], "values": [7.43865966796875e-05]}, "step": 2, "episode": 5, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.661761"], "values": [7.343292236328125e-05]}, "step": 3, "episode": 5, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.661891"], "values": [7.271766662597656e-05]}, "step": 4, "episode": 5, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.662021"], "values": [7.2479248046875e-05]}, "step": 5, "episode": 5, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.662150"], "values": [7.200241088867188e-05]}, "step": 6, "episode": 5, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.662278"], "values": [7.176399230957031e-05]}, "step": 7, "episode": 5, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.662406"], "values": [7.2479248046875e-05]}, "step": 8, "episode": 5, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.662652"], "values": [0.00018453598022460938]}, "episode_duration": {"times": ["10-01-21 14:35:15.662664"], "values": [0.0008475780487060547]}, "step": 9, "episode": 5, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.662981"], "values": [7.534027099609375e-05]}, "step": 0, "episode": 6, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.663121"], "values": [7.653236389160156e-05]}, "step": 1, "episode": 6, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.663294"], "values": [0.00011348724365234375]}, "step": 2, "episode": 6, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.663425"], "values": [7.295608520507812e-05]}, "step": 3, "episode": 6, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.663555"], "values": [7.343292236328125e-05]}, "step": 4, "episode": 6, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.663684"], "values": [7.176399230957031e-05]}, "step": 5, "episode": 6, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.663854"], "values": [0.00011372566223144531]}, "step": 6, "episode": 6, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.664020"], "values": [7.128715515136719e-05]}, "step": 7, "episode": 6, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.664147"], "values": [7.128715515136719e-05]}, "step": 8, "episode": 6, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.664386"], "values": [0.00018358230590820312]}, "episode_duration": {"times": ["10-01-21 14:35:15.664398"], "values": [0.0009233951568603516]}, "step": 9, "episode": 6, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.664723"], "values": [7.677078247070312e-05]}, "step": 0, "episode": 7, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.664863"], "values": [7.605552673339844e-05]}, "step": 1, "episode": 7, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.664998"], "values": [7.557868957519531e-05]}, "step": 2, "episode": 7, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.665130"], "values": [7.390975952148438e-05]}, "step": 3, "episode": 7, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.665261"], "values": [7.295608520507812e-05]}, "step": 4, "episode": 7, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.665389"], "values": [7.176399230957031e-05]}, "step": 5, "episode": 7, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.665518"], "values": [7.2479248046875e-05]}, "step": 6, "episode": 7, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.665646"], "values": [7.200241088867188e-05]}, "step": 7, "episode": 7, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.665776"], "values": [7.271766662597656e-05]}, "step": 8, "episode": 7, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.666020"], "values": [0.00018787384033203125]}, "episode_duration": {"times": ["10-01-21 14:35:15.666032"], "values": [0.0008521080017089844]}, "step": 9, "episode": 7, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.666358"], "values": [7.43865966796875e-05]}, "step": 0, "episode": 8, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.666493"], "values": [7.390975952148438e-05]}, "step": 1, "episode": 8, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.666675"], "values": [9.846687316894531e-05]}, "step": 2, "episode": 8, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.666801"], "values": [7.104873657226562e-05]}, "step": 3, "episode": 8, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.666926"], "values": [7.104873657226562e-05]}, "step": 4, "episode": 8, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.667051"], "values": [7.009506225585938e-05]}, "step": 5, "episode": 8, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.667175"], "values": [6.985664367675781e-05]}, "step": 6, "episode": 8, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.667298"], "values": [6.914138793945312e-05]}, "step": 7, "episode": 8, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.667450"], "values": [9.655952453613281e-05]}, "step": 8, "episode": 8, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.667679"], "values": [0.00017547607421875]}, "episode_duration": {"times": ["10-01-21 14:35:15.667692"], "values": [0.0008699893951416016]}, "step": 9, "episode": 8, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.668001"], "values": [7.43865966796875e-05]}, "step": 0, "episode": 9, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.668153"], "values": [7.557868957519531e-05]}, "step": 1, "episode": 9, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.668286"], "values": [7.343292236328125e-05]}, "step": 2, "episode": 9, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.668415"], "values": [7.224082946777344e-05]}, "step": 3, "episode": 9, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.668541"], "values": [7.152557373046875e-05]}, "step": 4, "episode": 9, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.668667"], "values": [7.033348083496094e-05]}, "step": 5, "episode": 9, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.668793"], "values": [7.05718994140625e-05]}, "step": 6, "episode": 9, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.668918"], "values": [7.009506225585938e-05]}, "step": 7, "episode": 9, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.669044"], "values": [7.009506225585938e-05]}, "step": 8, "episode": 9, "instance": 0, "seed": 9}
+{"step_duration": {"times": ["10-01-21 14:35:15.669278"], "values": [0.000179290771484375]}, "episode_duration": {"times": ["10-01-21 14:35:15.669290"], "values": [0.0008275508880615234]}, "step": 9, "episode": 9, "instance": 0, "seed": 9}

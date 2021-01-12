@@ -12,7 +12,7 @@ def per_instance_example():
     data = log2dataframe(logs, wide=True, drop_columns=["time"])
     grid = plot_performance_per_instance(data)
 
-    grid.savefig("performance_per_instance.pdf")
+    grid.savefig("output/performance_per_instance.pdf")
     plt.show()
 
 
@@ -23,17 +23,17 @@ def performance_example():
 
     # overall
     grid = plot_performance(data)
-    grid.savefig("overall_performance.pdf")
+    grid.savefig("output/overall_performance.pdf")
     plt.show()
 
     # per instance seed (hue)
     grid = plot_performance(data, hue="seed")
-    grid.savefig("overall_performance_per_seed_hue.pdf")
+    grid.savefig("output/overall_performance_per_seed_hue.pdf")
     plt.show()
 
-    # per instance seed (hue)
+    # per instance seed (col)
     grid = plot_performance(data, col="seed", col_wrap=3)
-    grid.savefig("overall_performance_per_seed.pdf")
+    grid.savefig("output/overall_performance_per_seed.pdf")
     plt.show()
 
 
