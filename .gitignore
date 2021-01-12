@@ -1,9 +1,18 @@
+# python stuff
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints
 tox.ini
+*.egg-info/
+
+# project spcecific stuff
 TODOS.md
 builds/
+
+## results, data or temp files written during runs
 output/
-*.egg-info/
+port_*.txt
+tests/data/
+
+# pycharm specific stuff
 .idea
