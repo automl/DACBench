@@ -6,7 +6,6 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 """
 
 import itertools
-import logging
 from typing import List
 
 import matplotlib.cm as cm
@@ -47,7 +46,6 @@ class SigmoidEnv(AbstractEnv):
             itertools.product(*[np.arange(val) for val in config["action_values"]]),
         ):
             self.action_mapper[idx] = prod_idx
-        self.logger = logging.getLogger(self.__str__())
         self._prev_state = None
 
     def step(self, action: int):
@@ -87,15 +85,6 @@ class SigmoidEnv(AbstractEnv):
             next_state.append(slope)
         next_state += action
         prev_state = self._prev_state
-
-        self.logger.debug(
-            "i: (s, a, r, s') / %d: (%s, %d, %5.2f, %2s)",
-            self.c_step - 1,
-            str(prev_state),
-            action,
-            r,
-            str(next_state),
-        )
         self._prev_state = next_state
         return np.array(next_state), r, done, {}
 
@@ -118,9 +107,6 @@ class SigmoidEnv(AbstractEnv):
             next_state.append(slope)
         next_state += [-1 for _ in range(self.n_actions)]
         self._prev_state = None
-        self.logger.debug(
-            "i: (s, a, r, s') / %d: (%2d, %d, %5.2f, %2d)", -1, -1, -1, -1, -1
-        )
         return np.array(next_state)
 
     def close(self) -> bool:

@@ -5,7 +5,6 @@ by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
 Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 """
 
-import logging
 from typing import List
 import numpy as np
 
@@ -32,7 +31,6 @@ class LubyEnv(AbstractEnv):
         """
         super().__init__(config)
         self.rng = np.random.RandomState(config["seed"])
-        self.logger = None
 
         self._hist_len = config["hist_length"]
         self._ms = self.n_steps
@@ -46,8 +44,6 @@ class LubyEnv(AbstractEnv):
             [next(luby_gen(i)) for i in range(1, 2 * config["cutoff"] + 2)]
         )
         self._jenny_i = 1
-        self.logger = logging.getLogger(self.__str__())
-
         self._start_dist = None
         self._sticky_dis = None
         self._sticky_shif = 0
@@ -99,16 +95,6 @@ class LubyEnv(AbstractEnv):
             self._state[-2] = action
         self._state[-1] = self.c_step - 1
         next_state = self._state if not done else prev_state
-        self.logger.debug(
-            "i: (s, a, r, s') / %+5d: (%s, %d, %5.2f, %2s)     g: %3d  l: %3d",
-            self.c_step - 1,
-            str(prev_state),
-            action,
-            self._r,
-            str(next_state),
-            int(self._next_goal),
-            self.n_steps,
-        )
         return np.array(next_state), self._r, done, {}
 
     def reset(self) -> List[int]:
@@ -130,16 +116,6 @@ class LubyEnv(AbstractEnv):
         self._jenny_i = 1
         luby_t = max(1, int(np.round(self._jenny_i + self._start_shift + self.__error)))
         self._next_goal = self._seq[luby_t - 1]
-        self.logger.debug(
-            "i: (s, a, r, s') / %+5d: (%2d, %d, %5.2f, %2d)     g: %3d  l: %3d",
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            int(self._next_goal),
-            self.n_steps,
-        )
         self._state = [-1 for _ in range(self._hist_len + 1)]
         return np.array(self._state)
 

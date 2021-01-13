@@ -220,7 +220,31 @@ class TestModuleLogger(unittest.TestCase):
             logs = list(map(json.loads, log_file))
 
         dataframe = log2dataframe(logs, wide=True)
-        self.assertEqual(dataframe.iloc[0].state, [1, 2, 3])
+        self.assertEqual(dataframe.iloc[0].state, (1, 2, 3))
+
+    def test_numpy_logging(self):
+        experiment_name = "test_numpy_logging"
+        module_name = "module"
+        logger = ModuleLogger(
+            output_path=Path(self.temp_dir.name),
+            experiment_name=experiment_name,
+            module=module_name,
+            step_write_frequency=None,
+            episode_write_frequency=None,
+        )
+
+        logger.set_additional_info(np=np.zeros((2, 3, 3)))
+        logger.log("test", 0)
+
+        logger.close()
+
+        with open(logger.get_logfile(), "r") as log_file:
+            logs = list(map(json.loads, log_file))
+
+        dataframe = log2dataframe(logs, wide=True)
+
+        expected_result = (((0,) * 3,) * 3,) * 2
+        self.assertEqual(dataframe.iloc[0].np, expected_result)
 
     def test_basic_logging(self):
         experiment_name = "test_basic_logging"

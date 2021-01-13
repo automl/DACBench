@@ -75,6 +75,12 @@ def flatten_log_entry(log_entry: Dict) -> List[Dict]:
     return rows
 
 
+def list_to_tuple(list_):
+    return tuple(
+        list_to_tuple(item) if isinstance(item, list) else item for item in list_
+    )
+
+
 def log2dataframe(logs: List[dict], wide=False, drop_columns=["time"]) -> pd.DataFrame:
     """
     Converts a list of log entries to a pandas dataframe.
@@ -94,6 +100,15 @@ def log2dataframe(logs: List[dict], wide=False, drop_columns=["time"]) -> pd.Dat
 
     if drop_columns is not None:
         dataframe = dataframe.drop(columns=drop_columns)
+
+    dataframe = dataframe.infer_objects()
+    list_column_candidates = dataframe.dtypes == object
+
+    for i, candidate in enumerate(list_column_candidates):
+        if candidate:
+            dataframe.iloc[:, i] = dataframe.iloc[:, i].apply(
+                lambda x: list_to_tuple(x) if isinstance(x, list) else x
+            )
 
     if wide:
         primary_index_columns = ["episode", "step"]
@@ -498,8 +513,7 @@ class Logger(AbstractLogger):
 
     def __update_auto_additional_info(self):
         # TODO add seed too if av?
-        if self.env is not None:
-            self.set_additional_info(instance=self.env.get_inst_id())
+        self.set_additional_info(instance=self.env.get_inst_id())
 
     def reset_episode(self):
         for _, module_logger in self.module_logger.items():

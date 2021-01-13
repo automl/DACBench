@@ -1,6 +1,5 @@
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import SigmoidEnv
-from dacbench.wrappers import InstanceSamplingWrapper
 
 import numpy as np
 import os
@@ -8,16 +7,18 @@ import csv
 
 ACTION_VALUES = (5, 10)
 
-INFO = {"identifier": "Sigmoid",
-        "name": "Sigmoid Function Approximation",
-        "reward": "Multiplied Differences between Function and Action in each Dimension",
-        "state_description": [
-            "Remaining Budget",
-            "Shift (dimension 1)",
-            "Slope (dimension 1)",
-            "Shift (dimension 2)",
-            "Slope (dimension 2)",
-            "Action",
+INFO = {
+    "identifier": "Sigmoid",
+    "name": "Sigmoid Function Approximation",
+    "reward": "Multiplied Differences between Function and Action in each Dimension",
+    "state_description": [
+        "Remaining Budget",
+        "Shift (dimension 1)",
+        "Slope (dimension 1)",
+        "Shift (dimension 2)",
+        "Slope (dimension 2)",
+        "Action 1",
+        "Action 2",
     ],
 }
 
@@ -36,7 +37,7 @@ SIGMOID_DEFAULTS = objdict(
         "action_values": ACTION_VALUES,
         "slope_multiplier": 2.0,
         "seed": 0,
-        "instance_set_path": "../instance_sets/sigmoid/sigmoid_train.csv",
+        "instance_set_path": "../instance_sets/sigmoid/sigmoid_2D3M_train.csv",
         "benchmark_info": INFO,
     }
 )
@@ -146,29 +147,58 @@ class SigmoidBenchmark(AbstractBenchmark):
         self.config = objdict(SIGMOID_DEFAULTS.copy())
         if dimension == 1:
             self.set_action_values([3])
+            self.config.instance_set_path = (
+                "../instance_sets/sigmoid/sigmoid_1D3M_train.csv"
+            )
+            self.config.benchmark_info["state_description"] = [
+                "Remaining Budget",
+                "Shift (dimension 1)",
+                "Slope (dimension 1)",
+                "Action",
+            ]
         if dimension == 2:
             self.set_action_values([3, 3])
         if dimension == 3:
             self.set_action_values((3, 3, 3))
+            self.config.instance_set_path = (
+                "../instance_sets/sigmoid/sigmoid_3D3M_train.csv"
+            )
+            self.config.benchmark_info["state_description"] = [
+                "Remaining Budget",
+                "Shift (dimension 1)",
+                "Slope (dimension 1)",
+                "Shift (dimension 2)",
+                "Slope (dimension 2)",
+                "Shift (dimension 3)",
+                "Slope (dimension 3)",
+                "Action 1",
+                "Action 2",
+                "Action 3",
+            ]
         if dimension == 5:
             self.set_action_values((3, 3, 3, 3, 3))
+            self.config.instance_set_path = (
+                "../instance_sets/sigmoid/sigmoid_5D3M_train.csv"
+            )
+            self.config.benchmark_info["state_description"] = [
+                "Remaining Budget",
+                "Shift (dimension 1)",
+                "Slope (dimension 1)",
+                "Shift (dimension 2)",
+                "Slope (dimension 2)",
+                "Shift (dimension 3)",
+                "Slope (dimension 3)",
+                "Shift (dimension 4)",
+                "Slope (dimension 4)",
+                "Shift (dimension 5)",
+                "Slope (dimension 5)",
+                "Action 1",
+                "Action 2",
+                "Action 3",
+                "Action 4",
+                "Action 5",
+            ]
         self.config.seed = seed
-        self.config.instance_set = {0: 0}
+        self.read_instance_set()
         env = SigmoidEnv(self.config)
-
-        def sample_sigmoid():
-            rng = np.random.default_rng()
-            shifts = rng.normal(
-                self.config.cutoff / 2,
-                self.config.cutoff / 4,
-                self.config.action_space_args[0],
-            )
-            slopes = (
-                rng.choice([-1, 1], self.config.action_space_args[0])
-                * rng.uniform(size=self.config.action_space_args[0])
-                * self.config.slope_multiplier
-            )
-            return np.concatenate((shifts, slopes))
-
-        sampling_env = InstanceSamplingWrapper(env, sampling_function=sample_sigmoid)
-        return sampling_env
+        return env
