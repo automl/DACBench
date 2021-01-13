@@ -5,7 +5,7 @@ from dacbench.logger import Logger, log2dataframe
 from dacbench.agents.simple_agents import RandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
 from dacbench.runner import run_benchmark
-from dacbench.wrappers import PerformanceTrackingWrapper
+from dacbench.wrappers import PerformanceTrackingWrapper, StateTrackingWrapper
 
 import matplotlib.pyplot as plt
 
@@ -22,12 +22,14 @@ if __name__ == "__main__":
         step_write_frequency=None,
         episode_write_frequency=None,
     )
+    state_logger = logger.add_module(StateTrackingWrapper)
     performance_logger = logger.add_module(PerformanceTrackingWrapper)
 
     for s in seeds:
         logger.set_additional_info(seed=s)
         env = bench.get_benchmark(seed=s)
         env = PerformanceTrackingWrapper(env, logger=performance_logger)
+        env = StateTrackingWrapper(env, logger=state_logger)
         logger.set_env(env)
         agent = RandomAgent(env)
         run_benchmark(env, agent, num_episodes, logger)
