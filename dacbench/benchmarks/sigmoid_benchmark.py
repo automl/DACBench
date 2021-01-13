@@ -13,8 +13,10 @@ INFO = {"identifier": "Sigmoid",
         "reward": "Multiplied Differences between Function and Action in each Dimension",
         "state_description": [
             "Remaining Budget",
-            "Shift",
-            "Slope",
+            "Shift (dimension 1)",
+            "Slope (dimension 1)",
+            "Shift (dimension 2)",
+            "Slope (dimension 2)",
             "Action",
     ],
 }
@@ -34,7 +36,7 @@ SIGMOID_DEFAULTS = objdict(
         "action_values": ACTION_VALUES,
         "slope_multiplier": 2.0,
         "seed": 0,
-        "instance_set_path": "../instance_sets/sigmoid/sigmoid_train.csv",
+        "instance_set_path": "../instance_sets/sigmoid/sigmoid_2D3M_train.csv",
         "benchmark_info": INFO,
     }
 )
@@ -146,13 +148,13 @@ class SigmoidBenchmark(AbstractBenchmark):
             self.set_action_values([3])
         if dimension == 2:
             self.set_action_values([3, 3])
-            self.config.benchmark_info["state_description"] = ["Remaining Budget", "Shift (dimension 1)", "Slope (dimension 1)", "Shift (dimension 2)", "Slope (dimension 2)", "Action"]
+            self.config.benchmark_info["state_description"] = ["Remaining Budget", "Shift (dimension 1)", "Slope (dimension 1)", "Shift (dimension 2)", "Slope (dimension 2)", "Action 1", "Action 2"]
         if dimension == 3:
             self.set_action_values((3, 3, 3))
-            self.config.benchmark_info["state_description"] = ["Remaining Budget", "Shift (dimension 1)", "Slope (dimension 1)", "Shift (dimension 2)", "Slope (dimension 2)", "Shift (dimension 3)", "Slope (dimension 3)", "Action"]
+            self.config.benchmark_info["state_description"] = ["Remaining Budget", "Shift (dimension 1)", "Slope (dimension 1)", "Shift (dimension 2)", "Slope (dimension 2)", "Shift (dimension 3)", "Slope (dimension 3)", "Action 1", "Action 2", "Action 3"]
         if dimension == 5:
             self.set_action_values((3, 3, 3, 3, 3))
-            self.config.benchmark_info["state_description"] = ["Remaining Budget", "Shift (dimension 1)", "Slope (dimension 1)", "Shift (dimension 2)", "Slope (dimension 2)", "Shift (dimension 3)", "Slope (dimension 3)", "Shift (dimension 4)", "Slope (dimension 4)", "Shift (dimension 5)", "Slope (dimension 5)", "Action"]
+            self.config.benchmark_info["state_description"] = ["Remaining Budget", "Shift (dimension 1)", "Slope (dimension 1)", "Shift (dimension 2)", "Slope (dimension 2)", "Shift (dimension 3)", "Slope (dimension 3)", "Shift (dimension 4)", "Slope (dimension 4)", "Shift (dimension 5)", "Slope (dimension 5)", "Action 1", "Action 2", "Action 3", "Action 4", "Action 5"]
         self.config.seed = seed
         self.config.instance_set = {0: 0}
         env = SigmoidEnv(self.config)
