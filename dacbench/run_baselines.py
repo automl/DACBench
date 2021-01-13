@@ -41,8 +41,12 @@ DISCRETE_ACTIONS = {
 def run_random(results_path, benchmark_name, num_episodes, seeds, fixed):
     bench = getattr(benchmarks, benchmark_name)()
     for s in seeds:
+        if fixed > 1:
+            experiment_name = f"random_fixed{fixed}_{s}"
+        else:
+            experiment_name = f"random_{s}"
         logger = Logger(
-            experiment_name=f"random_{s}", output_path=results_path / benchmark_name
+            experiment_name=experiment_name, output_path=results_path / benchmark_name
         )
         env = bench.get_benchmark(seed=s)
         env = PerformanceTrackingWrapper(
@@ -163,10 +167,7 @@ def main():
         help="Seeds for evaluation",
     )
     parser.add_argument(
-        "--fixed_random",
-        type=int,
-        default=0,
-        help="Fixes random actions for n steps",
+        "--fixed_random", type=int, default=0, help="Fixes random actions for n steps",
     )
     args = parser.parse_args()
 
