@@ -11,23 +11,54 @@ from typing import Union, Dict, Any, Tuple, List
 import numpy as np
 import pandas as pd
 
+from typing import Callable, Iterable
 from dacbench import AbstractEnv, AbstractBenchmark
 from dacbench.abstract_agent import AbstractDACBenchAgent
 
 
-def load_logs(log_file: Path):
+def load_logs(log_file: Path) -> List[Dict]:
+    """
+    Loads the logs from a jsonl written by any logger.
+
+    The result is the list of dicts in the format:
+    {
+        'instance': 0,
+        'episode': 0,
+        'step': 1,
+        'example_log_val':  {
+            'values': [val1, val2, ... valn],
+            'times: [time1, time2, ..., timen],
+        }
+        ...
+    }
+    Parameters
+    ----------
+    log_file: pathlib.Path
+        The path to the log file
+
+    Returns
+    -------
+    [Dict, ...]
+    """
     with open(log_file, "r") as log_file:
         logs = list(map(json.loads, log_file))
 
     return logs
 
 
-def split(predicate, iterable) -> Tuple[List, List]:
+def split(predicate: Callable, iterable: Iterable) -> Tuple[List, List]:
     """
     Splits the iterable into two list depending on the result of predicate.
-    :param predicate:
-    :param iterable:
-    :return: positives, negatives
+
+    Parameters
+    ----------
+    predicate: Callable
+        A function taking an element of the iterable and return Ture or False
+    iterable: Iterable
+
+    Returns
+    -------
+    (positives, negatives)
     """
     positives, negatives = [], []
 
@@ -40,6 +71,8 @@ def split(predicate, iterable) -> Tuple[List, List]:
 def flatten_log_entry(log_entry: Dict) -> List[Dict]:
     """
     Transforms a log entry of format like
+
+
     {
         'step': 0,
         'episode': 2,
@@ -54,8 +87,13 @@ def flatten_log_entry(log_entry: Dict) -> List[Dict]:
         { 'step': 0,'episode': 2, 'value': 45, 'time': '28-12-20 16:21:30'}
     ]
 
-    :param log_entry:
-    :return:
+    Parameters
+    ----------
+    log_entry: Dict
+        A log entry
+
+    Returns
+    -------
     """
     dict_entries, top_level_entries = split(
         lambda item: isinstance(item[1], dict), log_entry.items()
@@ -75,23 +113,48 @@ def flatten_log_entry(log_entry: Dict) -> List[Dict]:
     return rows
 
 
-def list_to_tuple(list_):
+def list_to_tuple(list_: List) -> Tuple:
+    """
+    Recursively transforms a list of lists into tuples of tuples
+    Parameters
+    ----------
+    list_:
+        (nested) list
+
+    Returns
+    -------
+    (nested) tuple
+    """
     return tuple(
         list_to_tuple(item) if isinstance(item, list) else item for item in list_
     )
 
 
-def log2dataframe(logs: List[dict], wide=False, drop_columns=["time"]) -> pd.DataFrame:
+def log2dataframe(
+    logs: List[dict], wide: bool = False, drop_columns: List[str] = ["time"]
+) -> pd.DataFrame:
     """
     Converts a list of log entries to a pandas dataframe.
-    :param logs:
-    :param wide: determines the format of the dataframe.
-    wide=False (default) produces a dataframe with columns (episode, step, time, name, value)
-    wide=True returns a dataframe (episode, step, time, name_1, name_2, ...) if the variable name_n has not been logged
-    at (episode, step, time) name_n is NaN.
-    :param drop_columns: drops the time columns mostly used in combination with wide=True to reduce NaN values
-    :return:
+
+    Usually used in combination with load_dataframe.
+
+    Parameters
+    ----------
+    logs: List
+        List of log entries
+    wide: bool
+        wide=False (default) produces a dataframe with columns (episode, step, time, name, value)
+        wide=True returns a dataframe (episode, step, time, name_1, name_2, ...) if the variable name_n has not been logged
+        at (episode, step, time) name_n is NaN.
+    drop_columns: List[str]
+        List of column names to be dropped (before reshaping the long dataframe) mostly used in combination
+        with wide=True to reduce NaN values
+
+    Returns
+    -------
+    dataframe
     """
+
     flat_logs = map(flatten_log_entry, logs)
     rows = reduce(lambda l1, l2: l1 + l2, flat_logs)
 
@@ -149,12 +212,19 @@ class AbstractLogger(metaclass=ABCMeta):
         episode_write_frequency: int = 1,
     ):
         """
-        :param experiment_name:
-        :param output_path:
-        :param step_write_frequency: number of steps after which the loggers writes to file.
-        If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
-        or on close
-        :param episode_write_frequency: see step_write_frequency
+
+        Parameters
+        ----------
+        experiment_name: str
+            Name of the folder to store the result in
+        output_path: pathlib.Path
+            Path under which the experiment folder is created
+        step_write_frequency: int
+            number of steps after which the loggers writes to file.
+            If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
+            or on close
+        episode_write_frequency: int
+            see step_write_frequency
         """
         self.experiment_name = experiment_name
         self.output_path = output_path
@@ -163,32 +233,47 @@ class AbstractLogger(metaclass=ABCMeta):
         self.episode_write_frequency = episode_write_frequency
         self.additional_info = {"instance": None}
 
-    def _pretty_valid_types(self) -> str:
+    @staticmethod
+    def _pretty_valid_types() -> str:
         """
         Returns a string pretty string representation of the types that can be logged as values
-        :return:
+        Returns
+        -------
+
         """
         valid_types = chain(
-            self.valid_types["recursive"], self.valid_types["primitive"]
+            AbstractLogger.valid_types["recursive"],
+            AbstractLogger.valid_types["primitive"],
         )
         return ", ".join(map(lambda type_: type_.__name__, valid_types))
 
     @staticmethod
-    def _init_logging_dir(log_dir: Path):
+    def _init_logging_dir(log_dir: Path) -> None:
         """
-        Prepares the logging directory
-        :param log_dir:
-        :return:
+         Prepares the logging directory
+        Parameters
+        ----------
+        log_dir: pathlib.Path
+
+        Returns
+        -------
+        None
         """
         log_dir.mkdir(parents=True, exist_ok=True)
         return log_dir
 
     def is_of_valid_type(self, value: Any) -> bool:
         f"""
-        Check if the value of any type in {self._pretty_valid_types()}
-        :param value:
-        :return:
+        Checks if the value of any type in {AbstractLogger._pretty_valid_types()}
+        Parameters
+        ----------
+        value
+
+        Returns
+        -------
+        bool
         """
+
         if any(isinstance(value, type) for type in self.valid_types["primitive"]):
             return True
 
@@ -200,73 +285,109 @@ class AbstractLogger(metaclass=ABCMeta):
             return False
 
     @abstractmethod
-    def close(self):
+    def close(self) -> None:
         """
-        Makes sure, that all remaining entries in the are written to file and the file is closed
-        :return:
+        Makes sure, that all remaining entries in the are written to file and the file is closed.
+
+        Returns
+        -------
+
         """
         pass
 
     @abstractmethod
-    def next_step(self):
+    def next_step(self) -> None:
         """
         Call at the end of the step.
         Updates the internal state and dumps the information of the last step into a json
-        :return:
+
+        Returns
+        -------
+
         """
         pass
 
     @abstractmethod
-    def next_episode(self):
+    def next_episode(self) -> None:
         """
         Call at the end of episode.
 
         See next_step
-        :return:
+        Returns
+        -------
+
         """
         pass
 
     @abstractmethod
-    def write(self):
+    def write(self) -> None:
         """
-        Writes buffered logs to file
-        :return:
+        Writes buffered logs to file.
+
+        Invoke manually if you want to load logs during a run.
+
+        Returns
+        -------
+
         """
         pass
 
     @abstractmethod
-    def log(self, key, value, **kwargs):
+    def log(self, key: str, value) -> None:
         f"""
-        Writes value to list of values for key.
-        :param key:
-        :param value: the value must of of a type that is
-        json serializable. Currently only {self._pretty_valid_types()} and recursive types of these are
-        valid
-        :return:
+        Writes value to list of values and save the current time for key
+
+        Parameters
+        ----------
+        key: str
+        value:
+            the value must of of a type that is json serializable.
+            Currently only {AbstractLogger._pretty_valid_types()} and recursive types of those are supported.
+
+        Returns
+        -------
+
         """
         pass
 
     @abstractmethod
     def log_dict(self, data):
         """
-        Alternative to log if more the one value should be logged
-        :param data: a dict with key-value so that each value is a valid value for log
-        :return:
+        Alternative to log if more the one value should be logged at once.
+
+        Parameters
+        ----------
+        data: dict
+            a dict with key-value so that each value is a valid value for log
+
+        Returns
+        -------
+
         """
         pass
 
     @abstractmethod
-    def log_space(self, key, value, space_info=None):
+    def log_space(self, key: str, value: Union[np.ndarray, Dict], space_info=None):
         """
         Special for logging gym.spaces.
+
         Currently three types are supported:
         * Numbers: e.g. samples from Discrete
         * Fixed length arrays like MultiDiscrete or Box
         * Dict: assuming each key has fixed length array
-        :param space_info: a list of column names. The length of this list must equal the resulting number of columns.
-        :param key:
-        :param value:
-        :return:
+
+        Parameters
+        ----------
+        key:
+            see log
+        value:
+            see log
+        space_info:
+            a list of column names. The length of this list must equal the resulting number of columns.
+
+        Returns
+        -------
+
         """
         pass
 
@@ -288,15 +409,25 @@ class ModuleLogger(AbstractLogger):
     ) -> None:
         """
         All results are placed under 'output_path / experiment_name'
-        :param output_path: the path where logged information should be stored
-        :param experiment_name: name of the experiment.
-        :param the module (mostly name of the wrapper), each wrapper get's its own file
-        :param step_write_frequency: number of steps after which the loggers writes to file.
-         If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
-        or on close
-        :param episode_write_frequency: see step_write_frequency
-        """
 
+        Parameters
+        ----------
+        experiment_name: str
+            Name of the folder to store the result in
+        output_path: pathlib.Path
+            Path under which the experiment folder is created
+        module: str
+            the module (mostly name of the wrapper), each wrapper gets its own file
+        step_write_frequency: int
+            number of steps after which the loggers writes to file.
+            If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
+            or on close
+        episode_write_frequency: int
+            see step_write_frequency
+        output_path:
+            The path where logged information should be stored
+
+        """
         super(ModuleLogger, self).__init__(
             experiment_name, output_path, step_write_frequency, episode_write_frequency
         )
@@ -309,9 +440,22 @@ class ModuleLogger(AbstractLogger):
         self.current_step = self.__init_dict()
 
     def get_logfile(self) -> Path:
+        """
+        Returns
+        -------
+        pathlib.Path
+            the path to the log file of this logger
+        """
         return Path(self.log_file.name)
 
     def close(self):
+        """
+        Makes sure, that all remaining entries in the are written to file and the file is closed.
+
+        Returns
+        -------
+
+        """
         if not self.log_file.closed:
             self.write()
             self.log_file.close()
@@ -322,6 +466,16 @@ class ModuleLogger(AbstractLogger):
 
     @staticmethod
     def __json_default(object):
+        """
+        Add supoort for dumping numpy arrays and numbers to json
+        Parameters
+        ----------
+        object
+
+        Returns
+        -------
+
+        """
         if isinstance(object, np.ndarray):
             return object.tolist()
         elif isinstance(object, np.number):
@@ -343,7 +497,16 @@ class ModuleLogger(AbstractLogger):
     def __init_dict():
         return defaultdict(lambda: {"times": [], "values": []})
 
-    def reset_episode(self):
+    def reset_episode(self) -> None:
+        """
+         Resets the episode and step.
+
+         Be aware that this can lead to ambitious keys if no instance or seed or other identifying additional info is set
+
+        Returns
+         -------
+
+        """
         self.__end_step()
         self.episode = 0
         self.step = 0
@@ -353,6 +516,14 @@ class ModuleLogger(AbstractLogger):
         self.step = 0
 
     def next_step(self):
+        """
+        Call at the end of the step.
+        Updates the internal state and dumps the information of the last step into a json
+
+        Returns
+        -------
+
+        """
         self.__end_step()
         if (
             self.step_write_frequency is not None
@@ -362,6 +533,15 @@ class ModuleLogger(AbstractLogger):
         self.step += 1
 
     def next_episode(self):
+        """
+        Writes buffered logs to file.
+
+        Invoke manually if you want to load logs during a run.
+
+        Returns
+        -------
+
+        """
         self.__reset_step()
         if (
             self.episode_write_frequency is not None
@@ -371,6 +551,15 @@ class ModuleLogger(AbstractLogger):
         self.episode += 1
 
     def write(self):
+        """
+        Writes buffered logs to file.
+
+        Invoke manually if you want to load logs during a run.
+
+        Returns
+        -------
+
+        """
         self.__end_step()
         self.__buffer_to_file()
 
@@ -383,23 +572,33 @@ class ModuleLogger(AbstractLogger):
 
     def set_additional_info(self, **kwargs):
         """
-        Can be used to log additional infomation for each step e.g. for seed, and instance id.
-        :param kwargs:
-        :return:
+        Can be used to log additional information for each step e.g. for seed, and instance id.
+        Parameters
+        ----------
+        kwargs
+
+        Returns
+        -------
+
         """
         self.additional_info.update(kwargs)
 
     def log(
-        self, key: str, value: Union[Dict, List, Tuple, str, int, float, bool], **kwargs
+        self, key: str, value: Union[Dict, List, Tuple, str, int, float, bool]
     ) -> None:
         f"""
-        Write value to list of values for key.
-        :param **kwargs:
-        :param key:
-        :param value: the value must of of a type that is
-        json serializable. Currently only {self._pretty_valid_types()} and recursive types of these are
-        valid
-        :return:
+        Writes value to list of values and save the current time for key
+
+        Parameters
+        ----------
+        key: str
+        value:
+           the value must of of a type that is json serializable.
+           Currently only {AbstractLogger._pretty_valid_types()} and recursive types of those are supported.
+
+        Returns
+        -------
+
         """
         self.__log(key, value, datetime.now().strftime("%d-%m-%y %H:%M:%S.%f"))
 
@@ -412,13 +611,24 @@ class ModuleLogger(AbstractLogger):
         self.current_step[key]["times"].append(time)
         self.current_step[key]["values"].append(value)
 
-    def log_dict(self, data):
+    def log_dict(self, data: Dict) -> None:
+        """
+        Alternative to log if more the one value should be logged at once.
+
+        Parameters
+        ----------
+        data: dict
+            a dict with key-value so that each value is a valid value for log
+
+        Returns
+        -------
+        """
         time = datetime.now().strftime("%d-%m-%y %H:%M:%S.%f")
         for key, value in data.items():
             self.__log(key, value, time)
 
     @staticmethod
-    def __space_dict(key, value, space_info):
+    def __space_dict(key: str, value, space_info):
         if isinstance(value, np.ndarray) and len(value.shape) == 0:
             value = value.item()
 
@@ -458,6 +668,27 @@ class ModuleLogger(AbstractLogger):
         return data
 
     def log_space(self, key, value, space_info=None):
+        """
+        Special for logging gym.spaces.
+
+        Currently three types are supported:
+        * Numbers: e.g. samples from Discrete
+        * Fixed length arrays like MultiDiscrete or Box
+        * Dict: assuming each key has fixed length array
+
+        Parameters
+        ----------
+        key:
+            see log
+        value:
+            see log
+        space_info:
+            a list of column names. The length of this list must equal the resulting number of columns.
+
+        Returns
+        -------
+
+        """
         data = self.__space_dict(key, value, space_info)
         self.log_dict(data)
 
@@ -481,12 +712,19 @@ class Logger(AbstractLogger):
         episode_write_frequency: int = 1,
     ) -> None:
         """
-        :param experiment_name:
-        :param output_path:
-        :param step_write_frequency: number of steps after which the loggers writes to file.
-        If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
-        or on close
-        :param episode_write_frequency: see step_write_frequency
+
+        Parameters
+        ----------
+        experiment_name: str
+            Name of the folder to store the result in
+        output_path: pathlib.Path
+            Path under which the experiment folder is created
+        step_write_frequency: int
+            number of steps after which the loggers writes to file.
+            If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
+            or on close
+        episode_write_frequency: int
+            see step_write_frequency
         """
         super(Logger, self).__init__(
             experiment_name, output_path, step_write_frequency, episode_write_frequency
@@ -495,6 +733,13 @@ class Logger(AbstractLogger):
         self.module_logger: Dict[str, ModuleLogger] = dict()
 
     def close(self):
+        """
+        Makes sure, that all remaining entries (from all sublogger) are written to files and the files are closed.
+
+        Returns
+        -------
+
+        """
         for _, module_logger in self.module_logger.items():
             module_logger.close()
 
@@ -502,17 +747,34 @@ class Logger(AbstractLogger):
         self.close()
 
     def next_step(self):
+        """
+        Call at the end of the step.
+        Updates the internal state of all subloggers and dumps the information of the last step into a json
+
+        Returns
+        -------
+
+        """
         for _, module_logger in self.module_logger.items():
             module_logger.next_step()
 
     def next_episode(self):
+        """
+        Call at the end of episode.
+
+        See next_step
+        Returns
+        -------
+
+        """
         for _, module_logger in self.module_logger.items():
             module_logger.next_episode()
-
         self.__update_auto_additional_info()
 
     def __update_auto_additional_info(self):
         # TODO add seed too if av?
+        if self.env is None:
+            raise ValueError("No environment found! Please set environment!")
         self.set_additional_info(instance=self.env.get_inst_id())
 
     def reset_episode(self):
@@ -520,14 +782,28 @@ class Logger(AbstractLogger):
             module_logger.reset_episode()
 
     def write(self):
+        """
+        Writes buffered logs to file.
+
+        Invoke manually if you want to load logs during a run.
+
+        Returns
+        -------
+
+        """
         for _, module_logger in self.module_logger.items():
             module_logger.write()
 
     def add_module(self, module: Union[str, type]) -> ModuleLogger:
         """
         Creates a sub-logger. For more details see class level documentation
-        :param module:
-        :return: sub-logger for the given module
+        Parameters
+        ----------
+        module: str or type
+            The module name or Wrapper-Type to create a sub-logger for
+        Returns
+        -------
+        ModuleLogger
         """
         if isinstance(module, str):
             pass
@@ -555,19 +831,28 @@ class Logger(AbstractLogger):
 
     def add_agent(self, agent: AbstractDACBenchAgent):
         """
-        Writes information about the agent
-        :param agent:
-        :return:
+         Writes information about the agent
+        Parameters
+        ----------
+        agent: AbstractDACBenchAgent
+
+        Returns
+        -------
         """
         agent_config = {"type": str(agent.__class__)}
         with open(self.log_dir / "agent.json", "w") as f:
             json.dump(agent_config, f)
 
-    def set_env(self, env: AbstractEnv):
+    def set_env(self, env: AbstractEnv) -> None:
         """
-        Writes information about the env
-        :param env:
-        :return:
+        Needed to infer automatically logged information like the instance id
+        Parameters
+        ----------
+        env: AbstractEnv
+
+        Returns
+        -------
+
         """
         self.env = env
         self.__update_auto_additional_info()
@@ -575,8 +860,13 @@ class Logger(AbstractLogger):
     def add_benchmark(self, benchmark: AbstractBenchmark) -> None:
         """
         Writes the config to the experiment path
-        :param benchmark:
-        :return:
+        Parameters
+        ----------
+        benchmark
+
+        Returns
+        -------
+
         """
         benchmark.save_config(self.log_dir / "benchmark.json")
 
