@@ -16,7 +16,7 @@ def per_instance_example():
         data, title="CMA Mean Performance per Instance"
     )
 
-    grid.savefig("output/performance_per_instance.pdf")
+    grid.savefig("output/cma_performance_per_instance.pdf")
     plt.show()
 
 
@@ -27,12 +27,12 @@ def performance_example():
 
     # overall
     grid = plot_performance(data, title="Overall Performance")
-    grid.savefig("output/overall_performance.pdf")
+    grid.savefig("output/sigmoid_overall_performance.pdf")
     plt.show()
 
     # per instance seed (hue)
     grid = plot_performance(data, title="Overall Performance", hue="seed")
-    grid.savefig("output/overall_performance_per_seed_hue.pdf")
+    grid.savefig("output/sigmoid_overall_performance_per_seed_hue.pdf")
     plt.show()
 
     # per instance seed (col)
@@ -41,7 +41,7 @@ def performance_example():
             data, title="Overall Performance", col="seed", col_wrap=3
         )
         grid.fig.subplots_adjust(top=0.92)
-        grid.savefig("output/overall_performance_per_seed.pdf")
+        grid.savefig("output/sigmoid_overall_performance_per_seed.pdf")
         plt.show()
 
 

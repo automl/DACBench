@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 
 def step_time_example(data):
     grid = plot_step_time(data, y_label="Step Duration [s]")
-    grid.savefig("output/step_duration.pdf")
+    grid.savefig("output/sigmoid_step_duration.pdf")
     plt.show()
 
     grid = plot_step_time(data, y_label="Step Duration [s]", hue="seed")
-    grid.savefig("output/step_duration_per_seed.pdf")
+    grid.savefig("output/sigmoid_step_duration_per_seed.pdf")
     plt.show()
 
 
@@ -20,7 +20,7 @@ def episode_time_example(data):
     grid = plot_episode_time(
         data[~data.episode_duration.isna()], y_label="Episode Duration [s]"
     )
-    grid.savefig("output/episode_duration.pdf")
+    grid.savefig("output/sigmoid_episode_duration.pdf")
     plt.show()
 
 
@@ -36,7 +36,7 @@ def step_time_interval_example(data: pd.DataFrame, interval: int = 10):
 
     """
     grid = plot_step_time(data, interval, title="Mean Step Duration")
-    grid.savefig("output/step_duration.pdf")
+    grid.savefig("output/sigmoid_step_duration.pdf")
     plt.show()
 
 

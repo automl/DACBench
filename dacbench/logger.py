@@ -123,7 +123,7 @@ def log2dataframe(logs: List[dict], wide=False, drop_columns=["time"]) -> pd.Dat
         dataframe.reset_index(inplace=True)
         dataframe.columns = [a if b == "" else b for a, b in dataframe.columns]
 
-    return dataframe
+    return dataframe.infer_objects()
 
 
 class AbstractLogger(metaclass=ABCMeta):
