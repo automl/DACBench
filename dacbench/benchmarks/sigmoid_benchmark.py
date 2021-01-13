@@ -17,7 +17,8 @@ INFO = {"identifier": "Sigmoid",
             "Slope (dimension 1)",
             "Shift (dimension 2)",
             "Slope (dimension 2)",
-            "Action",
+            "Action 1",
+            "Action 2"
     ],
 }
 
