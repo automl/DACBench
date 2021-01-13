@@ -541,7 +541,7 @@ def plot_space(
     if number_of_space_entries > 3:
         settings["col_wrap"] = 3
 
-    if "seed" in data.columns:
+    if "instance" in data.columns:
         settings["hue"] = "instance"
 
     if x_label is None:

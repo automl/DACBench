@@ -7,6 +7,16 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
+def plot_state_sigmoid():
+    file = Path("data/sigmoid_example/StateTrackingWrapper.jsonl")
+    logs = load_logs(file)
+    data = log2dataframe(logs, wide=True)
+
+    grid = plot_state(data)
+    grid.savefig("output/sigmoid_state.pdf")
+    plt.show()
+
+
 def plot_state_CMAES():
     # Since converting the json logs to a data frame takes a couple of minutes
     # we we cache the logs for tuning the plot settings in a picked datafarme object
@@ -61,4 +71,5 @@ def plot_state_CMAES():
 
 
 if __name__ == "__main__":
-    plot_state_CMAES()
+    # plot_state_CMAES()
+    plot_state_sigmoid()
