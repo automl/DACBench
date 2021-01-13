@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from seaborn import plotting_context
+
 from dacbench.logger import load_logs, log2dataframe
 from dacbench.plotting import plot_performance_per_instance, plot_performance
 
@@ -34,10 +36,13 @@ def performance_example():
     plt.show()
 
     # per instance seed (col)
-    grid = plot_performance(data, title="Overall Performance", col="seed", col_wrap=3)
-    grid.fig.subplots_adjust(top=0.92)
-    grid.savefig("output/overall_performance_per_seed.pdf")
-    plt.show()
+    with plotting_context("poster"):
+        grid = plot_performance(
+            data, title="Overall Performance", col="seed", col_wrap=3
+        )
+        grid.fig.subplots_adjust(top=0.92)
+        grid.savefig("output/overall_performance_per_seed.pdf")
+        plt.show()
 
 
 if __name__ == "__main__":
