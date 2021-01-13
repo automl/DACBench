@@ -146,10 +146,13 @@ class SigmoidBenchmark(AbstractBenchmark):
             self.set_action_values([3])
         if dimension == 2:
             self.set_action_values([3, 3])
+            self.config.benchmark_info["state_description"] = ["Remaining Budget", "Shift (dimension 1)", "Slope (dimension 1)", "Shift (dimension 2)", "Slope (dimension 2)", "Action"]
         if dimension == 3:
             self.set_action_values((3, 3, 3))
+            self.config.benchmark_info["state_description"] = ["Remaining Budget", "Shift (dimension 1)", "Slope (dimension 1)", "Shift (dimension 2)", "Slope (dimension 2)", "Shift (dimension 3)", "Slope (dimension 3)", "Action"]
         if dimension == 5:
             self.set_action_values((3, 3, 3, 3, 3))
+            self.config.benchmark_info["state_description"] = ["Remaining Budget", "Shift (dimension 1)", "Slope (dimension 1)", "Shift (dimension 2)", "Slope (dimension 2)", "Shift (dimension 3)", "Slope (dimension 3)", "Shift (dimension 4)", "Slope (dimension 4)", "Shift (dimension 5)", "Slope (dimension 5)", "Action"]
         self.config.seed = seed
         self.config.instance_set = {0: 0}
         env = SigmoidEnv(self.config)
