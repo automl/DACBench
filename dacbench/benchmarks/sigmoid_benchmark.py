@@ -13,10 +13,8 @@ INFO = {"identifier": "Sigmoid",
         "reward": "Multiplied Differences between Function and Action in each Dimension",
         "state_description": [
             "Remaining Budget",
-            "Shift (dimension 1)",
-            "Slope (dimension 1)",
-            "Shift (dimension 2)",
-            "Slope (dimension 2)",
+            "Shift",
+            "Slope",
             "Action",
     ],
 }
