@@ -26,7 +26,7 @@ def plot_state_CMAES():
         file = Path("data/CMAESBenchmark/StateTrackingWrapper.jsonl")
         if not file.exists():
             print(
-                "Please run 'examples/plotting/state_plotting.py' to generate plotting data first"
+                "Please run 'examples/benchmarks/chainerrl_cma.py' to generate plotting data first"
             )
             return
         logs = load_logs(file)

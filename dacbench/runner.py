@@ -59,8 +59,6 @@ def run_dacbench(results_path, agent_method, num_episodes):
     num_episodes : int
         Number of episodes to run for each benchmark
     """
-    if not os.path.exists(results_path):
-        os.makedirs(results_path)
 
     for b in map(benchmarks.__dict__.get, benchmarks.__all__):
         overall = []
@@ -69,65 +67,17 @@ def run_dacbench(results_path, agent_method, num_episodes):
             print(f"Seed {i}/10")
             bench = b()
             env = bench.get_benchmark(seed=i)
-            env = PerformanceTrackingWrapper(env)
+
+            logger = Logger(experiment_name=f"seed_{i}", output_path=Path(results_path) / benchmark_name)
+            perf_logger = logger.add_module(PerformanceTrackingWrapper)
+            logger.add_benchmark(bench)
+            logger.set_env(env)
+            logger.set_additional_info(seed=s)
+
+            env = PerformanceTrackingWrapper(env, logger=perf_logger)
             agent = agent_method(env)
-            run_benchmark(env, agent, num_episodes)
-            performance = env.get_performance()[0]
-            overall.append(performance)
-        print("\n")
-        file_name = results_path + "/" + b.__name__ + ".json"
-        with open(file_name, "w+") as fp:
-            json.dump(overall, fp)
+            logger.add_agent(agent)
 
+            run_benchmark(env, agent, num_episodes, logger)
 
-def plot_results(path):
-    """
-    Load and plot results from file
-
-    Parameters
-    -------
-    path : str
-        Path to result directory
-    """
-    performances = {}
-    stds = {}
-    with os.scandir(path) as it:
-        for entry in it:
-            if entry.name.endswith(".json"):
-                key = entry.name.split(".")[0]
-                filename = path + "/" + entry.name
-                with open(filename, "r") as fp:
-                    overall = json.load(fp)
-                    performances[key] = np.mean(overall, axis=0)
-                    stds[key] = np.std(overall, axis=0)
-
-    num_benchmarks = len(list(performances.keys()))
-    if num_benchmarks > 5:
-        xs = num_benchmarks // 5
-        ys = num_benchmarks % 5
-        figure, axs = plt.subplots(xs, ys, figsize=(12, 12))
-    else:
-        figure, axs = plt.subplots(num_benchmarks, figsize=(12, 12))
-    plt.tight_layout()
-    for k, i in zip(performances.keys(), np.arange(num_benchmarks)):
-        plt.subplots_adjust(hspace=0.4)
-        perf = np.array(performances[k])
-        perf = np.interp(perf, (perf.min(), perf.max()), (-1, +1))
-        std = np.interp(stds[k], (perf.min(), perf.max()), (-1, +1))
-        if num_benchmarks > 5:
-            axs[i // 5, i % 5].set_xlabel("Episodes")
-            axs[i // 5, i % 5].set_ylabel("Reward")
-            axs[i // 5, i % 5].set_title(k)
-            axs[i // 5, i % 5].plot(np.arange(len(perf)), perf, label=k)
-            axs[i // 5, i % 5].fill_between(
-                np.arange(len(perf)), perf - std, perf + std, alpha=0.25
-            )
-        else:
-            axs[i].set_xlabel("Episodes")
-            axs[i].set_ylabel("Reward")
-            axs[i].set_title(k)
-            axs[i].plot(np.arange(len(perf)), perf, label=k)
-            axs[i].fill_between(
-                np.arange(len(perf)), perf - std, perf + std, alpha=0.25
-            )
-    plt.show()
+            logger.close()
