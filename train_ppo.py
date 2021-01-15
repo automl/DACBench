@@ -1,7 +1,7 @@
 from stable_baselines import PPO2
 from dacbench import benchmarks
 from dacbench.logger import Logger
-from dacbench.wrappers import PerformanceTrackingWrapper
+from dacbench.wrappers import PerformanceTrackingWrapper, ObservationWrapper
 from pathlib import Path
 import argparse
 
@@ -9,6 +9,8 @@ import argparse
 def make_benchmark(config):
     bench = getattr(benchmarks, config["benchmark"])()
     env = bench.get_benchmark(seed=config["seed"])
+    if config["benchmark"] in ["SGDBenchmark", "CMAESBenchmark"]:
+        env = ObservationWrapper(env)
     wrapped = PerformanceTrackingWrapper(env, logger=config["logger"])
     logger.set_env(wrapped)
     return wrapped
