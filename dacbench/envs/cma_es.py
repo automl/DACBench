@@ -51,6 +51,12 @@ class CMAESEnv(AbstractEnv):
         self.lock = threading.Lock()
         self.popsize = config["popsize"]
         self.cur_ps = self.popsize
+
+        if "reward_function" in config.keys():
+            self.get_reward = config["reward_function"]
+        else:
+            self.get_reward = self.get_default_reward
+
         if "state_method" in config.keys():
             self.get_state = config["state_method"]
         else:
@@ -96,8 +102,8 @@ class CMAESEnv(AbstractEnv):
         self.cur_loc = self.es.best.x
         self.cur_sigma = self.es.sigma
         self.cur_obj_val = self.es.best.f
-        self.fbest = min(self.reward_range[1], max(self.reward_range[0], -self.fbest))
-        return self.get_state(), self.fbest, done, {}
+
+        return self.get_state(), self.get_reward(), done, {}
 
     def reset(self):
         """
@@ -161,6 +167,19 @@ class CMAESEnv(AbstractEnv):
             raise NotImplementedError
 
         pass
+
+    def get_default_reward(self):
+        """
+        Compute reward
+
+        Returns
+        -------
+        float
+            Reward
+
+        """
+        self.fbest = min(self.reward_range[1], max(self.reward_range[0], -self.fbest))
+        return self.fbest
 
     def get_default_state(self):
         """

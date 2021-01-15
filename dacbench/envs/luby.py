@@ -50,6 +50,18 @@ class LubyEnv(AbstractEnv):
         self._start_shift = 0
         self.__lower, self.__upper = 0, 0
         self.__error = 0
+        self.done = None
+        self.action = None
+
+        if "reward_function" in config.keys():
+            self.get_reward = config["reward_function"]
+        else:
+            self.get_reward = self.get_default_reward
+
+        if "state_method" in config.keys():
+            self.get_state = config["state_method"]
+        else:
+            self.get_state = self.get_default_state
 
     def step(self, action: int):
         """
@@ -65,14 +77,10 @@ class LubyEnv(AbstractEnv):
         np.array, float, bool, dict
             state, reward, done, info
         """
-        done = super(LubyEnv, self).step_()
+        self.done = super(LubyEnv, self).step_()
         prev_state = self._state.copy()
-        if action == self._next_goal:
-            self._r = 0  # we don't want to allow for exploiting large rewards by tending towards long sequences
-        else:  # mean and var chosen s.t. ~1/4 of rewards are positive
-            self._r = -1
-        self._r = max(self.reward_range[0], min(self.reward_range[1], self._r))
-
+        self.action = action
+        reward = self.get_reward()
         if (
             self.__error < self.__lower
         ):  # needed to avoid too long sequences of sticky actions
@@ -88,14 +96,7 @@ class LubyEnv(AbstractEnv):
         # the t+1 timestep.
         luby_t = max(1, int(np.round(self._jenny_i + self._start_shift + self.__error)))
         self._next_goal = self._seq[luby_t - 1]
-        if self.c_step - 1 < self._hist_len:
-            self._state[(self.c_step - 1)] = action
-        else:
-            self._state[:-2] = self._state[1:-1]
-            self._state[-2] = action
-        self._state[-1] = self.c_step - 1
-        next_state = self._state if not done else prev_state
-        return np.array(next_state), self._r, done, {}
+        return self.get_state(), reward, done, {}
 
     def reset(self) -> List[int]:
         """
@@ -116,8 +117,28 @@ class LubyEnv(AbstractEnv):
         self._jenny_i = 1
         luby_t = max(1, int(np.round(self._jenny_i + self._start_shift + self.__error)))
         self._next_goal = self._seq[luby_t - 1]
-        self._state = [-1 for _ in range(self._hist_len + 1)]
-        return np.array(self._state)
+        return self.get_state()
+
+    def get_default_reward(self):
+        if action == self._next_goal:
+            self._r = 0  # we don't want to allow for exploiting large rewards by tending towards long sequences
+        else:  # mean and var chosen s.t. ~1/4 of rewards are positive
+            self._r = -1
+        self._r = max(self.reward_range[0], min(self.reward_range[1], self._r))
+        return self._r
+
+    def get_default_state(self):
+        if self.c_step == 0:
+            self._state = [-1 for _ in range(self._hist_len + 1)]
+        else:
+            if self.c_step - 1 < self._hist_len:
+                self._state[(self.c_step - 1)] = self.action
+            else:
+                self._state[:-2] = self._state[1:-1]
+                self._state[-2] = self.action
+            self._state[-1] = self.c_step - 1
+            next_state = np.array(self._state if not self.done else prev_state)
+        return self._state
 
     def close(self) -> bool:
         """
