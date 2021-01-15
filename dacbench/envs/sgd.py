@@ -161,6 +161,9 @@ class SGDEnv(AbstractEnv):
 
         self.step_count += 1
         index = 0
+        if not isinstance(action, float):
+            action = action[0]
+
         action = torch.Tensor([action]).to(self.device)
         new_lr = 10 ** (-action)
         self.current_lr = new_lr

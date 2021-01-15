@@ -21,8 +21,11 @@ class ObservationWrapper(Wrapper):
         """
         super(ObservationWrapper, self).__init__(env)
         obs_sample = self.flatten(self.env.observation_space.sample())
-        self.size = len(obs_sample)
-        self.observation_space = spaces.box(low=-np.inf*np.ones(size), high=np.inf*np.ones(size))
+        size = len(obs_sample)
+        print(obs_sample)
+        self.observation_space = spaces.Box(
+            low=-np.inf * np.ones(size), high=np.inf * np.ones(size)
+        )
 
     def __setattr__(self, name, value):
         """
@@ -35,11 +38,7 @@ class ObservationWrapper(Wrapper):
         value
             Value to set attribute to
         """
-        if name in [
-            "observation_space",
-            "step",
-            "reset"
-        ]:
+        if name in ["observation_space", "step", "env", "flatten", "reset"]:
             object.__setattr__(self, name, value)
         else:
             setattr(self.env, name, value)
@@ -58,11 +57,7 @@ class ObservationWrapper(Wrapper):
         value
             Value of given name
         """
-        if name in [
-            "observation_space",
-            "step",
-            "reset"
-        ]:
+        if name in ["observation_space", "step", "env", "flatten", "reset"]:
             return object.__getattribute__(self, name)
         else:
             return getattr(self.env, name)
@@ -102,6 +97,9 @@ class ObservationWrapper(Wrapper):
         keys = sorted(list(state_dict.keys()))
         values = []
         for k in keys:
-            values += state_dict[k]
+            if isinstance(state_dict[k], np.ndarray):
+                for s in state_dict[k]:
+                    values.append(s)
+            else:
+                values.append(state_dict[k])
         return values
-
