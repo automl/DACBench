@@ -11,6 +11,11 @@ from cma.evolution_strategy import CMAEvolutionStrategy
 import threading
 import warnings
 from dacbench import AbstractEnv
+import resource
+import sys
+
+resource.setrlimit(resource.RLIMIT_STACK, (2 ** 29, -1))
+sys.setrecursionlimit(10 ** 6)
 
 warnings.filterwarnings("ignore")
 
