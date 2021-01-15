@@ -8,4 +8,3 @@ def make_agent(env):
 
 path = "dacbench_tabular"
 run_dacbench(path, make_agent, 2)
-plot_results(path)

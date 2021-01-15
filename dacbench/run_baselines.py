@@ -102,8 +102,12 @@ def run_optimal(results_path, benchmark_name, num_episodes, seeds=np.arange(10))
         return
 
     for s in seeds:
+        if benchmark_name == "CMAESBenchmark":
+            experiment_name = f"csa_{s}"
+        else:
+            experiment_name = f"optimal_{s}"
         logger = Logger(
-            experiment_name=f"optimal_{s}", output_path=results_path / benchmark_name
+            experiment_name=experiment_name, output_path=results_path / benchmark_name
         )
 
         env = bench.get_benchmark(seed=s)

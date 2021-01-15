@@ -21,6 +21,16 @@ class ModeaEnv(AbstractEnv):
         self.budget = config.budget
         self.total_budget = self.budget
 
+        if "reward_function" in config.keys():
+            self.get_reward = config["reward_function"]
+        else:
+            self.get_reward = self.get_default_reward
+
+        if "state_method" in config.keys():
+            self.get_state = config["state_method"]
+        else:
+            self.get_state = self.get_default_state
+
     def reset(self):
         super(ModeaEnv, self).reset_()
         self.dim = self.instance[0]
@@ -142,7 +152,7 @@ class ModeaEnv(AbstractEnv):
         else:
             self.regime = "small"
 
-    def get_state(self):
+    def get_default_state(self):
         return [
             self.es.gen_size,
             self.es.parameters.sigma,
@@ -151,7 +161,7 @@ class ModeaEnv(AbstractEnv):
             self.instance_id,
         ]
 
-    def get_reward(self):
+    def get_default_reward(self):
         return max(
             self.reward_range[0],
             min(self.reward_range[1], -self.es.best_individual.fitness),

@@ -369,10 +369,11 @@ def train_chainer(
                 state = state.astype(np.float32)
             else:
                 state = next_state
-            if logger is None:
+            if logger is not None:
                 logger.next_step()
         agent.stop_episode_and_train(state, reward, done=done)
-        logger.next_episode()
+        if logger is not None:
+            logger.next_episode()
         print(
             f"Episode {i}/{num_episodes}...........................................Reward: {r}"
         )

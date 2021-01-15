@@ -16,7 +16,7 @@ def flatten(li):
 
 
 # logger
-logger = Logger(experiment_name="chainererrl_cma", output_path=Path("../plotting/data"))
+logger = Logger(experiment_name="CMAESBenchmark", output_path=Path("../plotting/data"))
 
 # Make CMA-ES environment
 # We use the configuration from the "Learning to Optimize Step-size Adaption in CMA-ES" Paper by Shala et al.

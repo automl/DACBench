@@ -47,6 +47,17 @@ class SigmoidEnv(AbstractEnv):
         ):
             self.action_mapper[idx] = prod_idx
         self._prev_state = None
+        self.action = None
+
+        if "reward_function" in config.keys():
+            self.get_reward = config["reward_function"]
+        else:
+            self.get_reward = self.get_default_reward
+
+        if "state_method" in config.keys():
+            self.get_state = config["state_method"]
+        else:
+            self.get_state = self.get_default_state
 
     def step(self, action: int):
         """
@@ -68,25 +79,11 @@ class SigmoidEnv(AbstractEnv):
             action
         ), f"action should be of length {self.n_actions}."
 
-        val = self.c_step
-        r = [
-            1 - np.abs(self._sig(val, slope, shift) - (act / (max_act - 1)))
-            for slope, shift, act, max_act in zip(
-                self.slopes, self.shifts, action, self.action_vals
-            )
-        ]
-        r = np.prod(r)
-        r = max(self.reward_range[0], min(self.reward_range[1], r))
-        remaining_budget = self.n_steps - self.c_step
-
-        next_state = [remaining_budget]
-        for shift, slope in zip(self.shifts, self.slopes):
-            next_state.append(shift)
-            next_state.append(slope)
-        next_state += action
+        self.action = action
+        state = self.get_state()
         prev_state = self._prev_state
         self._prev_state = next_state
-        return np.array(next_state), r, done, {}
+        return state, self.get_reward(), done, {}
 
     def reset(self) -> List[int]:
         """
@@ -100,13 +97,30 @@ class SigmoidEnv(AbstractEnv):
         super(SigmoidEnv, self).reset_()
         self.shifts = self.instance[: self.n_actions]
         self.slopes = self.instance[self.n_actions :]
+        self._prev_state = None
+        return self.get_state()
+
+    def get_default_reward(self):
+        r = [
+            1 - np.abs(self._sig(self.c_step, slope, shift) - (act / (max_act - 1)))
+            for slope, shift, act, max_act in zip(
+                self.slopes, self.shifts, action, self.action_vals
+            )
+        ]
+        r = np.prod(r)
+        r = max(self.reward_range[0], min(self.reward_range[1], r))
+        return r
+
+    def get_default_state(self):
         remaining_budget = self.n_steps - self.c_step
         next_state = [remaining_budget]
         for shift, slope in zip(self.shifts, self.slopes):
             next_state.append(shift)
             next_state.append(slope)
-        next_state += [-1 for _ in range(self.n_actions)]
-        self._prev_state = None
+        if self.c_step == 0:
+            next_state += [-1 for _ in range(self.n_actions)]
+        else:
+            next_state += self.action
         return np.array(next_state)
 
     def close(self) -> bool:

@@ -123,6 +123,11 @@ class SGDEnv(AbstractEnv):
 
         self.writer = None
 
+        if "reward_function" in config.keys():
+            self.get_reward = config["reward_function"]
+        else:
+            self.get_reward = self.get_default_reward
+
         if "state_method" in config.keys():
             self.get_state = config["state_method"]
         else:
@@ -180,9 +185,8 @@ class SGDEnv(AbstractEnv):
             index += layer_size
 
         self._set_zero_grad()
-        reward = self._train_batch()
 
-        return self.get_state(), reward, done, {}
+        return self.get_state(), self.get_reward(), done, {}
 
     def reset(self):
         """
@@ -273,7 +277,7 @@ class SGDEnv(AbstractEnv):
         self.prev_descent = torch.zeros(
             (self.parameter_count,), device=self.device, requires_grad=False
         )
-        self._train_batch()
+        self.get_default_reward()
 
         return self.get_state()
 
@@ -367,7 +371,7 @@ class SGDEnv(AbstractEnv):
 
         return reward
 
-    def _train_batch(self):
+    def get_default_reward(self):
         try:
             reward = self._train_batch_()
         except StopIteration:
