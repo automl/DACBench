@@ -17,9 +17,9 @@ def sample_sigmoid():
 
 
 def sample_instance(n):
-    instances = []
+    instances = {}
     for _ in range(n):
-        instances.append(sample_sigmoid())
+        instances[n] = sample_sigmoid()
     return instances
 
 
@@ -28,8 +28,8 @@ def sample_instance(n):
 
 def print_instance_set(instance_set):
     c = 1
-    for i in instance_set:
-        print(f"Instance {c}: {i[0]}, {i[1]}")
+    for i in instance_set.keys():
+        print(f"Instance {c}: {instance_set[i][0]}, {instance_set[i][1]}")
         c += 1
 
 
@@ -82,8 +82,8 @@ print("\n")
 # Advanced option: directly setting the instance set during training
 env = bench.get_environment()
 print("Replacing the instance_set mid training")
-env.instance_set = [[0, 0]]
+env.instance_set = {0: [0, 0]}
 print_instance_set(env.instance_set)
 print("Instance set change")
-env.instance_set = [[2, 1], [3, 5], [1, 1]]
+env.instance_set = {0: [2, 1], 1: [3, 5], 2: [1, 1]}
 print_instance_set(env.instance_set)

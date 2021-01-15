@@ -63,5 +63,5 @@ for i in range(num_episodes):
     agent.stop_episode_and_train(state, reward, done=done)
     # Log episode
     print(
-        f"Episode {i}/{num_episodes}...........................................Reward: {r}"
+        f"Episode {i+1}/{num_episodes}...........................................Reward: {r}"
     )
