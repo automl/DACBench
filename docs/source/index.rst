@@ -13,6 +13,7 @@ Welcome to DACBench's documentation!
    installation
    benchmarks
    modifications
+   wrappers
    logging
    plotting
    cite
