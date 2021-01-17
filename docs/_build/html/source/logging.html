@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logging Experiments &#8212; DACBench 01.02.2021 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plotting results" href="plotting.html" />
+    <link rel="prev" title="Functionality through Wrappers" href="wrappers.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="logging-experiments">
+<h1>Logging Experiments<a class="headerlink" href="#logging-experiments" title="Permalink to this headline">¶</a></h1>
+<p>As there are many potentially interesting metrics involved in the analysis of DAC methods,
+DACBench includes the possibility to track and store them.</p>
+<p>To log information on an environment, you need a logger object:
+.. code:: python</p>
+<blockquote>
+<div><p>from dacbench.logger import Logger
+from pathlib import Path</p>
+<p>logger = Logger(experiment_name=”example”, output_path=Path(“your/path”))</p>
+</div></blockquote>
+<p>If you want to use any of our tracking wrappers, you can then create a logging module for them:
+.. code:: python</p>
+<blockquote>
+<div><p>from dacbench.wrappers import PerformanceTrackingWrapper</p>
+<p>performance_logger = logger.add_module(PerformanceTrackingWrapper)
+env = PerformanceTrackingWrapper(env, logger=performance_logger)
+logger.add_env()</p>
+</div></blockquote>
+<p>Now the logger will store information in the specified directory in .jsonl files.
+By adding more wrappers, you will also be provided with more information.
+The stored data can then be loaded into pandas dataframes:
+.. code:: python</p>
+<blockquote>
+<div><p>from dacbench.logger import load_logs, log2dataframe</p>
+<p>logs = load_logs(“your/path/PerformancyTrackingWrapper.jsonl”)
+df = log2dataframe(logs)</p>
+</div></blockquote>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">DACBench</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to Install DACBench</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">The Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifications.html">Saving &amp; Loading Benchmark Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wrappers.html">Functionality through Wrappers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Logging Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">Plotting results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cite.html">Citing DACBench</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="wrappers.html" title="previous chapter">Functionality through Wrappers</a></li>
+      <li>Next: <a href="plotting.html" title="next chapter">Plotting results</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Theresa Eimer, Maximilian Reimer.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/source/logging.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

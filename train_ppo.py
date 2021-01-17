@@ -1,9 +1,23 @@
 from stable_baselines import PPO2
+from stable_baselines.common.callbacks import BaseCallback
 from dacbench import benchmarks
 from dacbench.logger import Logger
 from dacbench.wrappers import PerformanceTrackingWrapper, ObservationWrapper
 from pathlib import Path
 import argparse
+
+
+class LoggerCallback(BaseCallback):
+    def __init__(self, logger, verbose=0):
+        super(LoggerCallback, self).__init__(verbose)
+        self.env_logger = logger
+
+    def _on_step(self):
+        self.env_logger.next_step()
+        return True
+
+    def _on_rollout_end(self):
+        self.env_logger.next_episode()
 
 
 def make_benchmark(config):
@@ -41,5 +55,6 @@ for b in args.benchmarks:
         config = {"seed": s, "logger": perf_logger, "benchmark": b}
         env = make_benchmark(config)
         model = PPO2("MlpPolicy", env)
-        model.learn(total_timesteps=args.timesteps)
+        logging = LoggerCallback(logger)
+        model.learn(total_timesteps=args.timesteps, callback=logging)
         logger.close()

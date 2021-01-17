@@ -10,12 +10,13 @@ Welcome to DACBench's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   installation
-   benchmarks
-   modifications
-   logging
-   plotting
-   cite
+   source/installation
+   source/benchmarks
+   source/modifications
+   source/wrappers
+   source/logging
+   source/plotting
+   source/cite
 
 
 Indices and tables
