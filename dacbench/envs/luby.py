@@ -137,7 +137,7 @@ class LubyEnv(AbstractEnv):
                 self._state[:-2] = self._state[1:-1]
                 self._state[-2] = self.action
             self._state[-1] = self.c_step - 1
-            next_state = np.array(self._state if not self.done else self.prev_state)
+        next_state = np.array(self._state if not self.done else self.prev_state)
         return next_state
 
     def close(self) -> bool:
