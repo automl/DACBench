@@ -102,4 +102,4 @@ class ObservationWrapper(Wrapper):
                     values.append(s)
             else:
                 values.append(state_dict[k])
-        return values
+        return np.array(values).astype(np.float32)
