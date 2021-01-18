@@ -61,6 +61,18 @@ class AbstractBenchmark:
         if "action_space" in self.config:
             conf["action_space"] = self.space_to_list(conf["action_space"])
 
+        if "reward_function" in self.config:
+            conf["reward_function"] = [
+                conf["reward_function"].__module__,
+                conf["reward_function"].__name__,
+            ]
+
+        if "state_method" in self.config:
+            conf["state_method"] = [
+                conf["state_method"].__module__,
+                conf["state_method"].__name__,
+            ]
+
         for k in self.config.keys():
             if isinstance(self.config[k], np.ndarray) or isinstance(
                 self.config[k], list
@@ -209,6 +221,20 @@ class AbstractBenchmark:
         if "wrappers" in self.config:
             self.dejson_wrappers(self.config["wrappers"])
             del self.config["wrappers"]
+
+        import importlib
+
+        if "reward_function" in self.config:
+            self.config["reward_function"] = getattr(
+                importlib.import_module(self.config["reward_function"][0]),
+                self.config["reward_function"][1],
+            )
+
+        if "state_method" in self.config:
+            self.config["state_method"] = getattr(
+                importlib.import_module(self.config["state_method"][0]),
+                self.config["state_method"][1],
+            )
 
         for k in self.config.keys():
             if type(self.config[k]) == list:

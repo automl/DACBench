@@ -2,7 +2,7 @@ import numpy as np
 
 
 def small_random_luby_state(self):
-    core_state = self.get_default_state()
+    core_state = self.get_default_state(None)
     num_random_elements = 20 - len(core_state)
     for i in range(num_random_elements):
         core_state.append(np.random.normal(3, 2.5))
@@ -10,7 +10,7 @@ def small_random_luby_state(self):
 
 
 def random_luby_state(self):
-    core_state = self.get_default_state()
+    core_state = self.get_default_state(None)
     num_random_elements = 200 - len(core_state)
     for i in range(num_random_elements):
         core_state.append(np.random.normal(3, 2.5))
@@ -18,7 +18,7 @@ def random_luby_state(self):
 
 
 def small_random_sigmoid_state(self):
-    core_state = self.get_default_state()
+    core_state = self.get_default_state(None)
     num_random_elements = 50 - len(core_state)
     state = []
     for i in range(50):
@@ -39,7 +39,7 @@ def small_random_sigmoid_state(self):
 
 
 def random_sigmoid_state(self):
-    core_state = self.get_default_state()
+    core_state = self.get_default_state(None)
     num_random_elements = 500 - len(core_state)
     state = []
     for i in range(500):

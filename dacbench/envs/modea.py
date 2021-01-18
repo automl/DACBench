@@ -62,7 +62,7 @@ class ModeaEnv(AbstractEnv):
         self.budgets = {"small": None, "large": None}
         self.regime = "first"
         self.update_parameters()
-        return self.get_state()
+        return self.get_state(self)
 
     def step(self, action):
         done = super(ModeaEnv, self).step_()
@@ -83,7 +83,7 @@ class ModeaEnv(AbstractEnv):
             else:
                 done = True
 
-        return self.get_state(), self.get_reward(), done, {}
+        return self.get_state(self), self.get_reward(self), done, {}
 
     def update_parameters(self):
         # Every local restart needs its own parameters, so parameter update/mutation must also be linked every time
@@ -152,7 +152,7 @@ class ModeaEnv(AbstractEnv):
         else:
             self.regime = "small"
 
-    def get_default_state(self):
+    def get_default_state(self, _):
         return [
             self.es.gen_size,
             self.es.parameters.sigma,
@@ -161,7 +161,7 @@ class ModeaEnv(AbstractEnv):
             self.instance_id,
         ]
 
-    def get_default_reward(self):
+    def get_default_reward(self, _):
         return max(
             self.reward_range[0],
             min(self.reward_range[1], -self.es.best_individual.fitness),

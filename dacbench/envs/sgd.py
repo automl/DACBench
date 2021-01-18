@@ -186,7 +186,7 @@ class SGDEnv(AbstractEnv):
 
         self._set_zero_grad()
 
-        return self.get_state(), self.get_reward(), done, {}
+        return self.get_state(self), self.get_reward(self), done, {}
 
     def reset(self):
         """
@@ -279,7 +279,7 @@ class SGDEnv(AbstractEnv):
         )
         self.get_default_reward()
 
-        return self.get_state()
+        return self.get_state(self)
 
     def set_writer(self, writer):
         self.writer = writer
@@ -309,7 +309,7 @@ class SGDEnv(AbstractEnv):
 
         pass
 
-    def get_default_state(self):
+    def get_default_state(self, _):
         """
         Gather state description
 
@@ -371,7 +371,7 @@ class SGDEnv(AbstractEnv):
 
         return reward
 
-    def get_default_reward(self):
+    def get_default_reward(self, _):
         try:
             reward = self._train_batch_()
         except StopIteration:

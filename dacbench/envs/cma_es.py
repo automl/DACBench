@@ -108,7 +108,7 @@ class CMAESEnv(AbstractEnv):
         self.cur_sigma = self.es.sigma
         self.cur_obj_val = self.es.best.f
 
-        return self.get_state(), self.get_reward(), done, {}
+        return self.get_state(self), self.get_reward(self), done, {}
 
     def reset(self):
         """
@@ -146,7 +146,7 @@ class CMAESEnv(AbstractEnv):
         )
         self.es.mean_old = self.es.mean
         self.history.append([self.f_difference, self.velocity])
-        return self.get_state()
+        return self.get_state(self)
 
     def close(self):
         """
@@ -173,7 +173,7 @@ class CMAESEnv(AbstractEnv):
 
         pass
 
-    def get_default_reward(self):
+    def get_default_reward(self, _):
         """
         Compute reward
 
@@ -186,7 +186,7 @@ class CMAESEnv(AbstractEnv):
         self.fbest = min(self.reward_range[1], max(self.reward_range[0], -self.fbest))
         return self.fbest
 
-    def get_default_state(self):
+    def get_default_state(self, _):
         """
         Gather state description
 
