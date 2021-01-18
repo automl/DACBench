@@ -14,8 +14,6 @@ tf.logging.set_verbosity(tf.logging.ERROR)
 
 # Environment creation method
 # Overwrite standard configuration with given options, but adapt action space automatically
-
-
 def make_sigmoid(config):
     bench = SigmoidBenchmark()
     for k in config.keys():

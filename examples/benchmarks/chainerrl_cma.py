@@ -3,19 +3,11 @@ from pathlib import Path
 import numpy as np
 
 from dacbench.logger import Logger
-from dacbench.wrappers import PerformanceTrackingWrapper
+from dacbench.wrappers import PerformanceTrackingWrapper, ObservationWrapper
 from examples.example_utils import make_chainer_a3c
 from dacbench.benchmarks import CMAESBenchmark
 
-
-# Helper method to flatten observation space
-
-
-def flatten(li):
-    return [value for sublist in li for value in sublist]
-
-
-# logger
+# Make logger object
 logger = Logger(experiment_name="CMAESBenchmark", output_path=Path("../plotting/data"))
 
 # Make CMA-ES environment
@@ -24,14 +16,15 @@ bench = CMAESBenchmark()
 env = bench.get_benchmark()
 logger.set_env(env)
 
-# Make an performance wrapper to track performance
+# Wrap to track performance
 performance_logger = logger.add_module(PerformanceTrackingWrapper)
 env = PerformanceTrackingWrapper(env=env, logger=performance_logger)
+
+# Also wrap to make the dictionary observations into an easy to work with list
+env = ObservationWrapper(env)
+
 # Make chainer agent
-space_array = [
-    env.observation_space[k].low for k in list(env.observation_space.spaces.keys())
-]
-obs_size = np.array(flatten(space_array)).size
+obs_size = env.observation_space.low.size
 action_size = env.action_space.low.size
 agent = make_chainer_a3c(obs_size, action_size)
 

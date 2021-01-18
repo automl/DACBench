@@ -80,10 +80,10 @@ class SigmoidEnv(AbstractEnv):
         ), f"action should be of length {self.n_actions}."
 
         self.action = action
-        state = self.get_state()
+        next_state = self.get_state()
         prev_state = self._prev_state
         self._prev_state = next_state
-        return state, self.get_reward(), done, {}
+        return next_state, self.get_reward(), done, {}
 
     def reset(self) -> List[int]:
         """
@@ -104,7 +104,7 @@ class SigmoidEnv(AbstractEnv):
         r = [
             1 - np.abs(self._sig(self.c_step, slope, shift) - (act / (max_act - 1)))
             for slope, shift, act, max_act in zip(
-                self.slopes, self.shifts, action, self.action_vals
+                self.slopes, self.shifts, self.action, self.action_vals
             )
         ]
         r = np.prod(r)

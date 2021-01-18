@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 
 
 def plot_scalar_action():
+    """
+    Plot Sigmoid actions over time by action component and by mean action component in intervals
+    """
     file = Path("data/sigmoid_example/ActionFrequencyWrapper.jsonl")
     logs = load_logs(file)
     dataframe = log2dataframe(logs, wide=True)
@@ -20,6 +23,9 @@ def plot_scalar_action():
 
 
 def plot_action_modea():
+    """
+    Plot ModEA actions over time and in intervals
+    """
     file = Path("data/ModeaBenchmark/ActionFrequencyWrapper.jsonl")
     logs = load_logs(file)
     dataframe = log2dataframe(logs, wide=True)

@@ -6,6 +6,15 @@ import matplotlib.pyplot as plt
 
 
 def step_time_example(data):
+    """
+    Plot time spent per step on average and split by seed
+
+    Parameters
+    ----------
+    data : pd.DataFrame
+        The non-wide data frame resulting from loading the logging results from EpisodeTimeTracker
+    """
+
     grid = plot_step_time(data, y_label="Step Duration [s]")
     grid.savefig("output/sigmoid_step_duration.pdf")
     plt.show()
@@ -16,6 +25,14 @@ def step_time_example(data):
 
 
 def episode_time_example(data):
+    """
+    Plot time spent per episode
+
+    Parameters
+    ----------
+    data : pd.DataFrame
+        The non-wide data frame resulting from loading the logging results from EpisodeTimeTracker
+    """
     print(data[~data.episode_duration.isna()])
     grid = plot_episode_time(
         data[~data.episode_duration.isna()], y_label="Episode Duration [s]"
@@ -26,6 +43,7 @@ def episode_time_example(data):
 
 def step_time_interval_example(data: pd.DataFrame, interval: int = 10):
     """
+    Plot mean time spent on steps in a given interval
 
     Parameters
     ----------
@@ -33,17 +51,22 @@ def step_time_interval_example(data: pd.DataFrame, interval: int = 10):
         The non-wide data frame resulting from loading the logging results from EpisodeTimeTracker
     interval : int
         Number of steps to average over
-
     """
+
     grid = plot_step_time(data, interval, title="Mean Step Duration")
     grid.savefig("output/sigmoid_step_duration.pdf")
     plt.show()
 
 
 if __name__ == "__main__":
+    # Load data from file into pandas DataFrame
     file = Path("data/sigmoid_example/EpisodeTimeWrapper.jsonl")
     logs = load_logs(file)
     data = log2dataframe(logs, wide=True, drop_columns=["time"])
+
+    # Plot episode time
     episode_time_example(data)
+    # Plot step time (overall & per seed)
     step_time_example(data)
+    # Plot step time over intervals of 10 steps
     step_time_interval_example(data)

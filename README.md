@@ -22,6 +22,7 @@ conda create -n dacbench python=3.6
 conda activate dacbench
 git clone https://github.com/automl/DACBench.git
 cd DACBench
+git submodule update --init --recursive
 pip install -e .[example]
 ```
 When using the Fast Downward Benchmark, you need to build it separately (we recommend cmake version 3.10.2):
@@ -42,6 +43,6 @@ pip install -e .[dev,example]
 ## Using DACBench
 After installing DACBench, you can start developing immediately.
 For an introduction to the interface and structure of DACBench, see the
-"Getting Started" jupyter notebook.
-You can also take a look at our examples in the repository or our documentation at
-https://dacbench.readthedocs.io
+["Getting Started"](https://github.com/automl/DACBench/blob/main/Getting%20started.ipynb) jupyter notebook.
+You can also take a look at our [examples](https://github.com/automl/DACBench/tree/main/examples) in the repository 
+or our [documentation](https://dacbench.readthedocs.io).

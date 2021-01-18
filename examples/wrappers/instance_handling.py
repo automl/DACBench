@@ -4,8 +4,6 @@ from dacbench.wrappers import InstanceSamplingWrapper
 
 
 # Helper method to sample a single sigmoid instance
-
-
 def sample_sigmoid():
     rng = np.random.default_rng()
     shifts = rng.normal(5, 2.5, 1)
@@ -14,8 +12,6 @@ def sample_sigmoid():
 
 
 # Sample n sigmoid instances
-
-
 def sample_instance(n):
     instances = {}
     for _ in range(n):
@@ -23,9 +19,7 @@ def sample_instance(n):
     return instances
 
 
-# Helper method to print current set
-
-
+# Helper method to print current instance set
 def print_instance_set(instance_set):
     c = 1
     for i in instance_set.keys():
@@ -33,7 +27,7 @@ def print_instance_set(instance_set):
         c += 1
 
 
-# Make Sigmoid benchmark
+# Make Sigmoid benchmark object
 bench = SigmoidBenchmark()
 bench.set_action_values([3])
 
