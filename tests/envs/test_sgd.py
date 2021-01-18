@@ -14,7 +14,7 @@ class TestSGDEnv(unittest.TestCase):
     def test_setup(self):
         env = self.make_env()
         self.assertTrue(issubclass(type(env), AbstractEnv))
-        self.assertFalse(env.no_cuda)
+        self.assertTrue(env.no_cuda)
         self.assertTrue(env.model is None)
         self.assertTrue(env.current_training_loss is None)
         self.assertTrue(env.batch_size == SGD_DEFAULTS["training_batch_size"])
@@ -30,7 +30,7 @@ class TestSGDEnv(unittest.TestCase):
     def test_step(self):
         env = self.make_env()
         env.reset()
-        state, reward, done, meta = env.step(1)
+        state, reward, done, meta = env.step(1.0)
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertFalse(done)

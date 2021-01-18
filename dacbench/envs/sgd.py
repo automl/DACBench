@@ -277,7 +277,7 @@ class SGDEnv(AbstractEnv):
         self.prev_descent = torch.zeros(
             (self.parameter_count,), device=self.device, requires_grad=False
         )
-        self.get_default_reward()
+        self.get_default_reward(self)
 
         return self.get_state(self)
 

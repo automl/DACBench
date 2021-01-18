@@ -26,7 +26,7 @@ class TestFDBenchmark(unittest.TestCase):
             "fd_rovers.json",
         ]
         for s in scenarios:
-            path = os.path.join("dacbench/scenarios/fast_downward/", s)
+            path = os.path.join("dacbench/additional_configs/fast_downward/", s)
             bench = FastDownwardBenchmark(path)
             self.assertTrue(bench.config is not None)
             env = bench.get_environment()

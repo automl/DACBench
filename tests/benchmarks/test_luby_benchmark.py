@@ -17,7 +17,7 @@ class TestLubyBenchmark(unittest.TestCase):
     def test_scenarios(self):
         scenarios = ["luby_hard.json", "luby_harder.json", "luby_very_hard.json"]
         for s in scenarios:
-            path = os.path.join("dacbench/scenarios/luby/", s)
+            path = os.path.join("dacbench/additional_configs/luby/", s)
             bench = LubyBenchmark(path)
             self.assertTrue(bench.config is not None)
             env = bench.get_environment()

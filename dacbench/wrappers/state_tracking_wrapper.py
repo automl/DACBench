@@ -141,7 +141,8 @@ class StateTrackingWrapper(Wrapper):
         """
         state, reward, done, info = self.env.step(action)
         self.overall_states.append(state)
-        self.logger.log_space("state", state, self.state_description)
+        if self.logger is not None:
+            self.logger.log_space("state", state, self.state_description)
         if self.state_interval:
             if len(self.current_states) < self.state_interval:
                 self.current_states.append(state)

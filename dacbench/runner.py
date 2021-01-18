@@ -1,10 +1,8 @@
-import os
-import json
-import numpy as np
-import matplotlib.pyplot as plt
 from dacbench import benchmarks
 from dacbench.wrappers import PerformanceTrackingWrapper
+from dacbench.logger import Logger
 import seaborn as sb
+from pathlib import Path
 
 sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())
@@ -61,18 +59,20 @@ def run_dacbench(results_path, agent_method, num_episodes):
     """
 
     for b in map(benchmarks.__dict__.get, benchmarks.__all__):
-        overall = []
         print(f"Evaluating {b.__name__}")
         for i in range(10):
             print(f"Seed {i}/10")
             bench = b()
             env = bench.get_benchmark(seed=i)
 
-            logger = Logger(experiment_name=f"seed_{i}", output_path=Path(results_path) / benchmark_name)
+            logger = Logger(
+                experiment_name=f"seed_{i}",
+                output_path=Path(results_path) / f"{b.__name__}",
+            )
             perf_logger = logger.add_module(PerformanceTrackingWrapper)
             logger.add_benchmark(bench)
             logger.set_env(env)
-            logger.set_additional_info(seed=s)
+            logger.set_additional_info(seed=i)
 
             env = PerformanceTrackingWrapper(env, logger=perf_logger)
             agent = agent_method(env)

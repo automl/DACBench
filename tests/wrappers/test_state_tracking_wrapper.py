@@ -42,7 +42,8 @@ class TestStateTrackingWrapper(unittest.TestCase):
         dataframe = log2dataframe(logs, wide=True)
 
         sate_columns = [
-            "state_Action t (current)Step t (current)",
+            "state_Action t (current)",
+            "state_Step t (current)",
             "state_Action t-1",
             "state_Action t-2",
             "state_Step t-1",
@@ -176,7 +177,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
 
         bench = CMAESBenchmark()
 
-        def dummy():
+        def dummy(_):
             return [1, [2, 3]]
 
         bench.config.state_method = dummy
@@ -192,7 +193,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
         with pytest.raises(NotImplementedError):
             wrapped.render_state_tracking()
 
-        def dummy2():
+        def dummy2(_):
             return [0.5]
 
         bench.config.state_method = dummy2

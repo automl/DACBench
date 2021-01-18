@@ -4,7 +4,6 @@ import os
 
 from dacbench.benchmarks import SigmoidBenchmark
 from dacbench.envs import SigmoidEnv
-from dacbench.wrappers import InstanceSamplingWrapper
 
 
 class TestSigmoidBenchmark(unittest.TestCase):
@@ -21,7 +20,7 @@ class TestSigmoidBenchmark(unittest.TestCase):
             "sigmoid_5D3M.json",
         ]
         for s in scenarios:
-            path = os.path.join("dacbench/scenarios/sigmoid", s)
+            path = os.path.join("dacbench/additional_configs/sigmoid", s)
             bench = SigmoidBenchmark(path)
             self.assertTrue(bench.config is not None)
             env = bench.get_environment()
@@ -42,27 +41,15 @@ class TestSigmoidBenchmark(unittest.TestCase):
     def test_read_instances(self):
         bench = SigmoidBenchmark()
         bench.read_instance_set()
-        self.assertTrue(len(bench.config.instance_set.keys()) == 100)
-        self.assertTrue(len(bench.config.instance_set[0]) == 2)
-        self.assertTrue(
-            bench.config.instance_set[0] == [2.0004403531465558, 7.903476325943215]
-        )
+        self.assertTrue(len(bench.config.instance_set.keys()) == 300)
+        self.assertTrue(len(bench.config.instance_set[0]) == 4)
+        first_inst = bench.config.instance_set[0]
+
         bench2 = SigmoidBenchmark()
         env = bench2.get_environment()
-        self.assertTrue(len(env.instance_set[0]) == 2)
-        self.assertTrue(env.instance_set[0] == [2.0004403531465558, 7.903476325943215])
-        self.assertTrue(len(env.instance_set.keys()) == 100)
-
-    def test_benchmark_env(self):
-        bench = SigmoidBenchmark()
-
-        for d in [1, 2, 3, 5]:
-            env = bench.get_benchmark(d)
-            self.assertTrue(issubclass(type(env), InstanceSamplingWrapper))
-            env.reset()
-            s, r, d, i = env.step(0)
-            self.assertTrue(env.inst_id == 0)
-            self.assertTrue(len(env.instance_set) == 1)
+        self.assertTrue(len(env.instance_set[0]) == 4)
+        self.assertTrue(env.instance_set[0] == first_inst)
+        self.assertTrue(len(env.instance_set.keys()) == 300)
 
     def test_action_value_setting(self):
         bench = SigmoidBenchmark()
