@@ -30,6 +30,7 @@ def performance_example():
     file = Path("data/sigmoid_example/PerformanceTrackingWrapper.jsonl")
     logs = load_logs(file)
     data = log2dataframe(logs, wide=True, drop_columns=["time"])
+    Path('output').mkdir(exist_ok=True)
 
     # overall
     grid = plot_performance(data, title="Overall Performance")

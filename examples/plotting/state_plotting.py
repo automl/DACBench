@@ -28,6 +28,7 @@ def plot_state_CMAES():
         dataframe.to_pickle(path)
     else:
         dataframe = pd.read_pickle(path)
+    Path('output').mkdir(exist_ok=True)
 
     # The CMAES observation space has over 170 dims. Here we just plot a subset
     # here we get all different parts of the states
