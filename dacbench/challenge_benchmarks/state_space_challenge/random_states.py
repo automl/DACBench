@@ -11,7 +11,7 @@ def small_random_luby_state(self):
 
 def random_luby_state(self):
     core_state = self.get_default_state(None)
-    num_random_elements = 200 - len(core_state)
+    num_random_elements = 250 - len(core_state)
     for i in range(num_random_elements):
         core_state.append(np.random.normal(3, 2.5))
     return core_state
