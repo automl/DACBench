@@ -73,7 +73,7 @@ class SigmoidEnv(AbstractEnv):
         np.array, float, bool, dict
             state, reward, done, info
         """
-        done = super(SigmoidEnv, self).step_()
+        self.done = super(SigmoidEnv, self).step_()
         action = self.action_mapper[action]
         assert self.n_actions == len(
             action
@@ -81,9 +81,8 @@ class SigmoidEnv(AbstractEnv):
 
         self.action = action
         next_state = self.get_state()
-        prev_state = self._prev_state
         self._prev_state = next_state
-        return next_state, self.get_reward(), done, {}
+        return next_state, self.get_reward(), self.done, {}
 
     def reset(self) -> List[int]:
         """
