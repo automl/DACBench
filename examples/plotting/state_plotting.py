@@ -17,7 +17,7 @@ def plot_state_CMAES():
     path = Path("output/cached_logs.pickle")
 
     if not path.exists():
-        file = Path("data/CMAESBenchmark/StateTrackingWrapper.jsonl")
+        file = Path("./data/CMAESBenchmark/StateTrackingWrapper.jsonl")
         if not file.exists():
             print(
                 "Please run 'examples/benchmarks/chainerrl_cma.py' to generate plotting data first"
@@ -28,7 +28,7 @@ def plot_state_CMAES():
         dataframe.to_pickle(path)
     else:
         dataframe = pd.read_pickle(path)
-    Path('output').mkdir(exist_ok=True)
+    Path("output").mkdir(exist_ok=True)
 
     # The CMAES observation space has over 170 dims. Here we just plot a subset
     # here we get all different parts of the states

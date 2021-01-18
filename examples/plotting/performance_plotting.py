@@ -12,7 +12,7 @@ def per_instance_example():
     """
     Plot CMA performance for each training instance
     """
-    file = Path("data/chainererrl_cma/PerformanceTrackingWrapper.jsonl")
+    file = Path("./data/chainererrl_cma/PerformanceTrackingWrapper.jsonl")
     logs = load_logs(file)
     data = log2dataframe(logs, wide=True, drop_columns=["time"])
     grid = plot_performance_per_instance(
@@ -27,10 +27,10 @@ def performance_example():
     """
     Plot Sigmoid performance over time, divided by seed and with each seed in its own plot
     """
-    file = Path("data/sigmoid_example/PerformanceTrackingWrapper.jsonl")
+    file = Path("./data/sigmoid_example/PerformanceTrackingWrapper.jsonl")
     logs = load_logs(file)
     data = log2dataframe(logs, wide=True, drop_columns=["time"])
-    Path('output').mkdir(exist_ok=True)
+    Path("output").mkdir(exist_ok=True)
 
     # overall
     grid = plot_performance(data, title="Overall Performance")

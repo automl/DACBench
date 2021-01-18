@@ -1,7 +1,4 @@
 from pathlib import Path
-
-import numpy as np
-
 from dacbench.logger import Logger
 from dacbench.wrappers import PerformanceTrackingWrapper, ObservationWrapper
 from examples.example_utils import make_chainer_a3c
@@ -33,10 +30,6 @@ num_episodes = 3
 for i in range(num_episodes):
     # Reset environment to begin episode
     state = env.reset()
-    # Flattening state
-    state = np.array(flatten([state[k] for k in state.keys()]))
-    # Casting is necessary for chainer
-    state = state.astype(np.float32)
 
     # Initialize episode
     done = False
@@ -48,8 +41,6 @@ for i in range(num_episodes):
         # Execute action
         next_state, reward, done, _ = env.step(action)
         r += reward
-        state = np.array(flatten([next_state[k] for k in next_state.keys()]))
-        state = state.astype(np.float32)
         logger.next_step()
     logger.next_episode()
     # Train agent after episode has ended

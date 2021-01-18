@@ -9,10 +9,10 @@ def plot_scalar_action():
     """
     Plot Sigmoid actions over time by action component and by mean action component in intervals
     """
-    file = Path("data/sigmoid_example/ActionFrequencyWrapper.jsonl")
+    file = Path("./data/sigmoid_example/ActionFrequencyWrapper.jsonl")
     logs = load_logs(file)
     dataframe = log2dataframe(logs, wide=True)
-    Path('output').mkdir(exist_ok=True)
+    Path("output").mkdir(exist_ok=True)
 
     grid = plot_action(dataframe, interval=18, title="Sigmoid", col="seed", col_wrap=3)
     grid.savefig("output/sigmoid_example_action_interval_18.pdf")
@@ -30,7 +30,7 @@ def plot_action_modea():
     file = Path("data/ModeaBenchmark/ActionFrequencyWrapper.jsonl")
     logs = load_logs(file)
     dataframe = log2dataframe(logs, wide=True)
-    Path('output').mkdir(exist_ok=True)
+    Path("output").mkdir(exist_ok=True)
 
     grid = plot_action(dataframe, interval=5)
     grid.savefig("output/modea_action_interval_5.pdf")

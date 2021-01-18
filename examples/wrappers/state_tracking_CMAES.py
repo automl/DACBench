@@ -23,3 +23,4 @@ env = StateTrackingWrapper(env, logger=logger.add_module(StateTrackingWrapper))
 # You can plot these results with the plotting examples
 agent = RandomAgent(env)
 run_benchmark(env, agent, 5, logger=logger)
+logger.close()
