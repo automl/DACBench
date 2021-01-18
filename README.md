@@ -25,7 +25,12 @@ cd DACBench
 git submodule update --init --recursive
 pip install -e .[example]
 ```
-When using the Fast Downward Benchmark, you need to build it separately (we recommend cmake version 3.10.2):
+When using the Fast Downward Benchmark, you need to build it separately (we recommend cmake version 3.10.2).
+Make sure you have previously called:
+```
+git submodule update --init --recursive
+```
+Then run:
 ```
 ./dacbench/envs/rl-plan/fast-downward/build.py
 ```
