@@ -1,34 +1,17 @@
-import numpy as np
+import math
 import warnings
-from dacbench import AbstractEnv
-import torch
-import torch.nn as nn
-from torchvision import datasets, transforms
 from functools import reduce
+
+import numpy as np
+import torch
 from backpack import backpack, extend
 from backpack.extensions import BatchGrad
-import math
 from gym.utils import seeding
+from torchvision import datasets, transforms
+
+from dacbench import AbstractEnv
 
 warnings.filterwarnings("ignore")
-
-
-class Net(nn.Module):
-    def __init__(self):
-        super(Net, self).__init__()
-
-        self.model = nn.Sequential(
-            nn.Linear(784, 16),
-            nn.Sigmoid(),
-            nn.Linear(16, 16),
-            nn.Sigmoid(),
-            nn.Linear(16, 10),
-            nn.LogSoftmax(dim=1),
-        )
-
-    def forward(self, x):
-        output = self.model(x)
-        return output
 
 
 class SGDEnv(AbstractEnv):
@@ -179,7 +162,7 @@ class SGDEnv(AbstractEnv):
         )
         for i, p in enumerate(self.model.parameters()):
             layer_size = self.layer_sizes[i]
-            p.data = p.data - delta_w[index : index + layer_size].reshape(
+            p.data = p.data - delta_w[index: index + layer_size].reshape(
                 shape=p.data.shape
             )
             index += layer_size
@@ -201,10 +184,11 @@ class SGDEnv(AbstractEnv):
 
         dataset = self.instance[0]
         instance_seed = self.instance[1]
+        construct_model = self.instance[2]
 
         self.seed(instance_seed)
 
-        self.model = Net().to(self.device)
+        self.model = construct_model().to(self.device)
 
         self.training_validation_ratio = 0.8
 
@@ -356,7 +340,6 @@ class SGDEnv(AbstractEnv):
         (data, target) = self.train_loader_it.next()
         data, target = data.to(self.device), target.to(self.device)
         self.current_batch_size = data.size()[0]
-        data = torch.flatten(data, start_dim=1)
         output = self.model(data)
         loss = self.loss_function(output, target)
 
@@ -388,7 +371,6 @@ class SGDEnv(AbstractEnv):
         with torch.no_grad():
             for data, target in self.validation_loader:
                 data, target = data.to(self.device), target.to(self.device)
-                data = torch.flatten(data, start_dim=1)
                 output = self.model(data)
                 validation_loss += self.loss_function(output, target).mean()
 
@@ -400,7 +382,6 @@ class SGDEnv(AbstractEnv):
         self.model.eval()
         (data, target) = self.validation_loader_it.next()
         data, target = data.to(self.device), target.to(self.device)
-        data = torch.flatten(data, start_dim=1)
         output = self.model(data)
         validation_loss = self.loss_function(output, target).mean()
         validation_loss = torch.unsqueeze(validation_loss.detach(), dim=0)
@@ -447,13 +428,13 @@ class SGDEnv(AbstractEnv):
             loss_var = torch.log(torch.var(self.loss_batch))
 
             self.lossVarDiscountedAverage = (
-                self.discount_factor * self.lossVarDiscountedAverage
-                + (1 - self.discount_factor) * loss_var
+                    self.discount_factor * self.lossVarDiscountedAverage
+                    + (1 - self.discount_factor) * loss_var
             )
             self.lossVarUncertainty = (
-                self.discount_factor * self.lossVarUncertainty
-                + (1 - self.discount_factor)
-                * (loss_var - self.lossVarDiscountedAverage) ** 2
+                    self.discount_factor * self.lossVarUncertainty
+                    + (1 - self.discount_factor)
+                    * (loss_var - self.lossVarDiscountedAverage) ** 2
             )
 
         return self.lossVarDiscountedAverage, self.lossVarUncertainty
@@ -474,13 +455,13 @@ class SGDEnv(AbstractEnv):
         )
 
         self.predictiveChangeVarDiscountedAverage = (
-            self.discount_factor * self.predictiveChangeVarDiscountedAverage
-            + (1 - self.discount_factor) * predictive_change
+                self.discount_factor * self.predictiveChangeVarDiscountedAverage
+                + (1 - self.discount_factor) * predictive_change
         )
         self.predictiveChangeVarUncertainty = (
-            self.discount_factor * self.predictiveChangeVarUncertainty
-            + (1 - self.discount_factor)
-            * (predictive_change - self.predictiveChangeVarDiscountedAverage) ** 2
+                self.discount_factor * self.predictiveChangeVarUncertainty
+                + (1 - self.discount_factor)
+                * (predictive_change - self.predictiveChangeVarDiscountedAverage) ** 2
         )
 
         return (
