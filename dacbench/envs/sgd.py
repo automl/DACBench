@@ -185,8 +185,8 @@ class SGDEnv(AbstractEnv):
             index += layer_size
 
         self._set_zero_grad()
-
-        return self.get_state(self), self.get_reward(self), done, {}
+        reward = self.get_reward(self)
+        return self.get_state(self), reward, done, {}
 
     def reset(self):
         """
