@@ -8,6 +8,7 @@ Original author: Gresa Shala
 import numpy as np
 from collections import deque
 from cma.evolution_strategy import CMAEvolutionStrategy
+from cma import bbobbenchmarks as bn
 import threading
 import warnings
 from dacbench import AbstractEnv
@@ -127,7 +128,7 @@ class CMAESEnv(AbstractEnv):
         self.dim = self.instance[1]
         self.init_sigma = self.instance[2]
         self.cur_sigma = [self.init_sigma]
-        self.fcn = self.instance[0]
+        self.fcn = bn.instantiate(self.instance[0])[0]
 
         self.func_values = []
         self.f_vals = deque(maxlen=self.popsize)

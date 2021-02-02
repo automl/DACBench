@@ -1,6 +1,5 @@
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import CMAESEnv
-from cma import bbobbenchmarks as bn
 from gym import spaces
 import numpy as np
 import os
@@ -107,10 +106,9 @@ class CMAESBenchmark(AbstractBenchmark):
         with open(path, "r") as fh:
             reader = csv.DictReader(fh)
             for row in reader:
-                function = bn.instantiate(int(row["fcn_index"]))[0]
                 init_locs = [float(row[f"init_loc{i}"]) for i in range(int(row["dim"]))]
                 instance = [
-                    function,
+                    int(row["fcn_index"]),
                     int(row["dim"]),
                     float(row["init_sigma"]),
                     init_locs,
