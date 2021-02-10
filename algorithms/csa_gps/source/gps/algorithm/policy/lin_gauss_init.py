@@ -5,6 +5,7 @@ from gps.algorithm.policy.config import INIT_LG
 from gps.algorithm.policy.csa_policy import CSAPolicy
 from gps.algorithm.policy.lin_gauss_policy import LinearGaussianPolicy
 from dacbench.benchmarks import CMAESBenchmark
+from gym import spaces
 
 
 def init_cmaes_controller(hyperparams, agent):
@@ -46,14 +47,13 @@ def init_cmaes_controller(hyperparams, agent):
         f_values = []
         cur_policy = CSAPolicy(T=T)
 
-        world.reset_world()
-        world.run()
+        state = world.reset()
         for t in range(T):
-            X_t = agent.get_vectorized_state(world.get_state(), cur_cond_idx)
+            X_t = agent.get_vectorized_state(state, cur_cond_idx)
             es = world.es
             f_vals = world.func_values
             U_t = cur_policy.act(X_t, None, t, np.zeros((dU,)), es, f_vals)
-            world.run_next(U_t)
+            world.step(U_t)
             f_values.append(U_t)
         action_mean.append(f_values)  # np.mean(f_values, axis=0))
         action_var.append(f_values)  # np.mean(f_values, axis=0))

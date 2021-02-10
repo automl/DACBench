@@ -4,6 +4,7 @@ from gps.agent.agent import Agent
 from gps.proto.gps_pb2 import ACTION
 from gps.sample.sample import Sample
 from dacbench.benchmarks import CMAESBenchmark
+from gym import spaces
 
 
 class AgentCMAES(Agent):
@@ -14,14 +15,22 @@ class AgentCMAES(Agent):
         self._setup_worlds()
 
     def _setup_conditions(self):
+        self.conds = self._hyperparams["conditions"]
         self.history_len = self._hyperparams["history_len"]
         self.popsize = self._hyperparams["popsize"]
         self.input_dim = self._hyperparams["dim"]
+        if "config_file" in self._hyperparams.keys():
+            self.config = self._hyperparams["config_file"]
+        else:
+            self.config = None
 
     def _setup_worlds(self):
-        bench = CMAESBenchmark()
+        if self.config:
+            bench = CMAESBenchmark(self.config)
+        else:
+            bench = CMAESBenchmark()
         bench.read_instance_set()
-        instances = bench.config.instance_set
+        instances = bench.config.instance_set.values()
         bench.config.popsize = self.popsize
         bench.config.hist_length = self.history_len
         bench.config.observation_space_args = [
@@ -44,13 +53,21 @@ class AgentCMAES(Agent):
         ]
         self._worlds = []
         for i in instances:
-            bench.config.instance_set = [i]
+            bench.config.instance_set = {0: i}
             self._worlds.append(bench.get_environment())
         self.x0 = []
 
+        bench.instance_set = {}
+        bench.instance_set_path = "../instance_sets/cma/cma_test.csv"
+        bench.read_instance_set()
+        instances = bench.config.instance_set.values()
+        for i in instances:
+            bench.config.instance_set = {0: i}
+            self._worlds.append(bench.get_environment())
+
         for i in range(self.conds):
-            self._worlds[i].reset()  # Get noiseless initial state
-            x0 = self.get_vectorized_state(self._worlds[i].get_state())
+            state = self._worlds[i].reset()  # Get noiseless initial state
+            x0 = self.get_vectorized_state(state)
             self.x0.append(x0)
 
     def sample(
@@ -79,7 +96,7 @@ class AgentCMAES(Agent):
         if t_length == None:
             t_length = self.T
         state = self._worlds[condition].reset()
-        new_sample = self._init_sample(self.get_vectorized_state(state))
+        new_sample = self._init_sample(state)
         new_sample.trajectory.append(self._worlds[condition].fbest)
         U = np.zeros([t_length, self.dU])
         if noisy:
@@ -102,7 +119,7 @@ class AgentCMAES(Agent):
                 next_action = U[t, :]  # * es.sigma
                 state, reward, done, _ = self._worlds[condition].step(next_action)
                 self._set_sample(new_sample, state, t)
-            new_sample.trajectory.append(reward)
+            new_sample.trajectory.append(self._worlds[condition].fbest)
         new_sample.set(ACTION, U)
         policy.finalize()
         if save:

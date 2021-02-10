@@ -24,11 +24,12 @@ from gps.proto.gps_pb2 import (
 )
 from gps.algorithm.cost.cost_utils import RAMP_CONSTANT
 import csv
-import cPickle as pickle
+import _pickle as pickle
 
 session = tf.Session()
 history_len = 40
 
+input_dim = 10
 num_fcns = 200
 train_fcns = range(100)
 test_fcns = range(100, 200)
@@ -37,7 +38,7 @@ fcn_names = ["BentCigar", "Discus", "Ellipsoid", "Katsuura", "Rastrigin", "Rosen
 
 fcn_objs = []
 fcns = []
-with open("../../../../../dacbench/instance_sets/cma/cma_train.csv", "r") as fh:
+with open("../../../../dacbench/instance_sets/cma/cma_train.csv", "r") as fh:
     reader = csv.DictReader(fh)
     for row in reader:
         init_locs = [float(row[f"init_loc{i}"]) for i in range(int(row["dim"]))]
@@ -51,7 +52,7 @@ with open("../../../../../dacbench/instance_sets/cma/cma_train.csv", "r") as fh:
                 "init_sigma": float(row["init_sigma"]),
             }
         )
-with open("../../../../../dacbench/instance_sets/cma/cma_test.csv", "r") as fh:
+with open("../../../../dacbench/instance_sets/cma/cma_test.csv", "r") as fh:
     reader = csv.DictReader(fh)
     for row in reader:
         init_locs = [float(row[f"init_loc{i}"]) for i in range(int(row["dim"]))]
@@ -68,6 +69,10 @@ with open("../../../../../dacbench/instance_sets/cma/cma_test.csv", "r") as fh:
 
 
 SENSOR_DIMS = {
+    "past_deltas": history_len,
+    "current_ps": 1,
+    "current_sigma": 1,
+    "past_sigma_deltas": history_len,
     PAST_OBJ_VAL_DELTAS: history_len,
     CUR_PS: 1,
     CUR_SIGMA: 1,
@@ -86,7 +91,6 @@ common = {
     "plot_filename": EXP_DIR + "plot",
     "log_filename": EXP_DIR + "log_data.txt",
     "conditions": num_fcns,
-    "dim": input_dim,
     "train_conditions": train_fcns,
     "test_conditions": test_fcns,
     "test_functions": test_fcns,
@@ -105,9 +109,10 @@ agent = {
     "substeps": 1,
     "conditions": common["conditions"],
     "dt": 0.05,
+    "dim": input_dim,
     "T": 50,
     "sensor_dims": SENSOR_DIMS,
-    "state_include": [PAST_OBJ_VAL_DELTAS, CUR_SIGMA, CUR_PS, PAST_SIGMA],
+    "state_include": ["past_deltas", "current_sigma", "current_ps", "past_sigma_deltas"], #[PAST_OBJ_VAL_DELTAS, CUR_SIGMA, CUR_PS, PAST_SIGMA],
     "obs_include": [PAST_OBJ_VAL_DELTAS, CUR_PS, PAST_SIGMA, CUR_SIGMA],
     "history_len": history_len,
     "fcns": fcns,

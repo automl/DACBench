@@ -38,7 +38,7 @@ class Cost(object):
             final_lxx = np.zeros((T, Dx, Dx))
             final_lux = np.zeros((T, Du, Dx))
 
-        x = sample.get(CUR_LOC)
+        x = sample.get("current_loc")
         _, dim = x.shape
 
         # Time step-specific weights
