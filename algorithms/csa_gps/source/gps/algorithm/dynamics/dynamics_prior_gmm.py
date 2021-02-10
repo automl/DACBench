@@ -19,6 +19,7 @@ class DynamicsPriorGMM(object):
         training of Deep Visuomotor Policies", arXiv:1504.00702,
         Appendix A.3.
     """
+
     def __init__(self, hyperparams):
         """
         Hyperparameters:
@@ -34,10 +35,10 @@ class DynamicsPriorGMM(object):
         self.X = None
         self.U = None
         self.gmm = GMM()
-        self._min_samp = self._hyperparams['min_samples_per_cluster']
-        self._max_samples = self._hyperparams['max_samples']
-        self._max_clusters = self._hyperparams['max_clusters']
-        self._strength = self._hyperparams['strength']
+        self._min_samp = self._hyperparams["min_samples_per_cluster"]
+        self._max_samples = self._hyperparams["max_samples"]
+        self._max_clusters = self._hyperparams["max_clusters"]
+        self._strength = self._hyperparams["strength"]
 
     def initial_state(self):
         """ Return dynamics prior for initial time step. """
@@ -85,14 +86,15 @@ class DynamicsPriorGMM(object):
         # Create dataset.
         N = self.X.shape[0]
         xux = np.reshape(
-            np.c_[self.X[:, :T, :], self.U[:, :T, :], self.X[:, 1:(T+1), :]],
-            [T * N, Do]
+            np.c_[self.X[:, :T, :], self.U[:, :T, :], self.X[:, 1 : (T + 1), :]],
+            [T * N, Do],
         )
 
         # Choose number of clusters.
-        K = int(max(2, min(self._max_clusters,
-                           np.floor(float(N * T) / self._min_samp))))
-        LOGGER.debug('Generating %d clusters for dynamics GMM.', K)
+        K = int(
+            max(2, min(self._max_clusters, np.floor(float(N * T) / self._min_samp)))
+        )
+        LOGGER.debug("Generating %d clusters for dynamics GMM.", K)
 
         # Update GMM.
         self.gmm.update(xux, K)

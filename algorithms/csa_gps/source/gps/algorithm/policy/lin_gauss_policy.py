@@ -10,6 +10,7 @@ class LinearGaussianPolicy(Policy):
     Time-varying linear Gaussian policy.
     U = K*x + k + noise, where noise ~ N(0, chol_pol_covar)
     """
+
     def __init__(self, K, k, pol_covar, chol_pol_covar, inv_pol_covar):
         Policy.__init__(self)
 
@@ -70,9 +71,11 @@ class LinearGaussianPolicy(Policy):
             but all values filled with NaNs.
         """
         policy = LinearGaussianPolicy(
-            np.zeros_like(self.K), np.zeros_like(self.k),
-            np.zeros_like(self.pol_covar), np.zeros_like(self.chol_pol_covar),
-            np.zeros_like(self.inv_pol_covar)
+            np.zeros_like(self.K),
+            np.zeros_like(self.k),
+            np.zeros_like(self.pol_covar),
+            np.zeros_like(self.chol_pol_covar),
+            np.zeros_like(self.inv_pol_covar),
         )
         policy.K.fill(np.nan)
         policy.k.fill(np.nan)
@@ -80,4 +83,3 @@ class LinearGaussianPolicy(Policy):
         policy.chol_pol_covar.fill(np.nan)
         policy.inv_pol_covar.fill(np.nan)
         return policy
-

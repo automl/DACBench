@@ -3,5 +3,5 @@ import numpy as np
 
 # Agent
 AGENT = {
-    'substeps': 1,
+    "substeps": 1,
 }

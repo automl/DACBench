@@ -10,6 +10,7 @@ class ConstantPolicy(Policy):
     Constant policy
     Important for RL learning ability check
     """
+
     def __init__(self, const=0.5):
         Policy.__init__(self)
         self.const = const
@@ -32,5 +33,3 @@ class ConstantPolicy(Policy):
         es.adapt_sigma.update2(es, function_values=f_vals)
         u = self.const
         return u
-
-

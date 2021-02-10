@@ -13,6 +13,7 @@ class Agent(object):
     Agent superclass. The agent interacts with the environment to
     collect samples.
     """
+
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, hyperparams):
@@ -21,47 +22,46 @@ class Agent(object):
         self._hyperparams = config
 
         # Store samples, along with size/index information for samples.
-        self._samples = [[] for _ in range(self._hyperparams['conditions'])]
-        self.T = self._hyperparams['T']
-        self.dU = self._hyperparams['sensor_dims'][ACTION]
+        self._samples = [[] for _ in range(self._hyperparams["conditions"])]
+        self.T = self._hyperparams["T"]
+        self.dU = self._hyperparams["sensor_dims"][ACTION]
 
-        self.x_data_types = self._hyperparams['state_include']
-        self.obs_data_types = self._hyperparams['obs_include']
-        if 'meta_include' in self._hyperparams:
-            self.meta_data_types = self._hyperparams['meta_include']
+        self.x_data_types = self._hyperparams["state_include"]
+        self.obs_data_types = self._hyperparams["obs_include"]
+        if "meta_include" in self._hyperparams:
+            self.meta_data_types = self._hyperparams["meta_include"]
         else:
             self.meta_data_types = []
 
         # List of indices for each data type in state X.
         self._state_idx, i = [], 0
         for sensor in self.x_data_types:
-            dim = self._hyperparams['sensor_dims'][sensor]
-            self._state_idx.append(list(range(i, i+dim)))
+            dim = self._hyperparams["sensor_dims"][sensor]
+            self._state_idx.append(list(range(i, i + dim)))
             i += dim
         self.dX = i
 
         # List of indices for each data type in observation.
         self._obs_idx, i = [], 0
         for sensor in self.obs_data_types:
-            dim = self._hyperparams['sensor_dims'][sensor]
-            self._obs_idx.append(list(range(i, i+dim)))
+            dim = self._hyperparams["sensor_dims"][sensor]
+            self._obs_idx.append(list(range(i, i + dim)))
             i += dim
         self.dO = i
 
         # List of indices for each data type in meta data.
         self._meta_idx, i = [], 0
         for sensor in self.meta_data_types:
-            dim = self._hyperparams['sensor_dims'][sensor]
-            self._meta_idx.append(list(range(i, i+dim)))
+            dim = self._hyperparams["sensor_dims"][sensor]
+            self._meta_idx.append(list(range(i, i + dim)))
             i += dim
         self.dM = i
 
-        self._x_data_idx = {d: i for d, i in zip(self.x_data_types,
-                                                 self._state_idx)}
-        self._obs_data_idx = {d: i for d, i in zip(self.obs_data_types,
-                                                   self._obs_idx)}
-        self._meta_data_idx = {d: i for d, i in zip(self.meta_data_types,
-                                                   self._meta_idx)}
+        self._x_data_idx = {d: i for d, i in zip(self.x_data_types, self._state_idx)}
+        self._obs_data_idx = {d: i for d, i in zip(self.obs_data_types, self._obs_idx)}
+        self._meta_data_idx = {
+            d: i for d, i in zip(self.meta_data_types, self._meta_idx)
+        }
 
     @abc.abstractmethod
     def sample(self, policy, condition, verbose=True, save=True, noisy=True):
@@ -82,8 +82,11 @@ class Agent(object):
             start: Starting index of samples to return.
             end: End index of samples to return.
         """
-        return (SampleList(self._samples[condition][start:]) if end is None
-                else SampleList(self._samples[condition][start:end]))
+        return (
+            SampleList(self._samples[condition][start:])
+            if end is None
+            else SampleList(self._samples[condition][start:end])
+        )
 
     def clear_samples(self, condition=None):
         """
@@ -92,7 +95,7 @@ class Agent(object):
             condition: Condition for which to reset samples.
         """
         if condition is None:
-            self._samples = [[] for _ in range(self._hyperparams['conditions'])]
+            self._samples = [[] for _ in range(self._hyperparams["conditions"])]
         else:
             self._samples[condition] = []
 
@@ -116,8 +119,7 @@ class Agent(object):
         """
         return self._obs_data_idx[sensor_name]
 
-    def pack_data_obs(self, existing_mat, data_to_insert, data_types,
-                      axes=None):
+    def pack_data_obs(self, existing_mat, data_to_insert, data_types, axes=None):
         """
         Update the observation matrix with new data.
         Args:
@@ -134,8 +136,9 @@ class Agent(object):
             # Make sure number of sensors and axes are consistent.
             if num_sensor != len(axes):
                 raise ValueError(
-                    'Length of sensors (%d) must equal length of axes (%d)',
-                    num_sensor, len(axes)
+                    "Length of sensors (%d) must equal length of axes (%d)",
+                    num_sensor,
+                    len(axes),
                 )
 
         # Shape checks.
@@ -143,23 +146,25 @@ class Agent(object):
         for i in range(num_sensor):
             # Make sure to slice along X.
             if existing_mat.shape[axes[i]] != self.dO:
-                raise ValueError('Axes must be along an dX=%d dimensional axis',
-                                 self.dO)
+                raise ValueError(
+                    "Axes must be along an dX=%d dimensional axis", self.dO
+                )
             insert_shape[axes[i]] = len(self._obs_data_idx[data_types[i]])
-        #if tuple(insert_shape) != data_to_insert.shape:
-            #if data_to_insert.shape[0] 
-            #raise ValueError('Data has shape %s. Expected %s',
-                             #data_to_insert.shape, tuple(insert_shape))
+        # if tuple(insert_shape) != data_to_insert.shape:
+        # if data_to_insert.shape[0]
+        # raise ValueError('Data has shape %s. Expected %s',
+        # data_to_insert.shape, tuple(insert_shape))
 
         # Actually perform the slice.
         index = [slice(None) for _ in range(len(existing_mat.shape))]
         for i in range(num_sensor):
-            index[axes[i]] = slice(self._obs_data_idx[data_types[i]][0],
-                                   self._obs_data_idx[data_types[i]][-1] + 1)
+            index[axes[i]] = slice(
+                self._obs_data_idx[data_types[i]][0],
+                self._obs_data_idx[data_types[i]][-1] + 1,
+            )
         existing_mat[index] = data_to_insert
 
-    def pack_data_meta(self, existing_mat, data_to_insert, data_types,
-                       axes=None):
+    def pack_data_meta(self, existing_mat, data_to_insert, data_types, axes=None):
         """
         Update the meta data matrix with new data.
         Args:
@@ -176,8 +181,9 @@ class Agent(object):
             # Make sure number of sensors and axes are consistent.
             if num_sensor != len(axes):
                 raise ValueError(
-                    'Length of sensors (%d) must equal length of axes (%d)',
-                    num_sensor, len(axes)
+                    "Length of sensors (%d) must equal length of axes (%d)",
+                    num_sensor,
+                    len(axes),
                 )
 
         # Shape checks.
@@ -185,18 +191,24 @@ class Agent(object):
         for i in range(num_sensor):
             # Make sure to slice along X.
             if existing_mat.shape[axes[i]] != self.dM:
-                raise ValueError('Axes must be along an dX=%d dimensional axis',
-                                 self.dM)
+                raise ValueError(
+                    "Axes must be along an dX=%d dimensional axis", self.dM
+                )
             insert_shape[axes[i]] = len(self._meta_data_idx[data_types[i]])
         if tuple(insert_shape) != data_to_insert.shape:
-            raise ValueError('Data has shape %s. Expected %s',
-                             data_to_insert.shape, tuple(insert_shape))
+            raise ValueError(
+                "Data has shape %s. Expected %s",
+                data_to_insert.shape,
+                tuple(insert_shape),
+            )
 
         # Actually perform the slice.
         index = [slice(None) for _ in range(len(existing_mat.shape))]
         for i in range(num_sensor):
-            index[axes[i]] = slice(self._meta_data_idx[data_types[i]][0],
-                                   self._meta_data_idx[data_types[i]][-1] + 1)
+            index[axes[i]] = slice(
+                self._meta_data_idx[data_types[i]][0],
+                self._meta_data_idx[data_types[i]][-1] + 1,
+            )
         existing_mat[index] = data_to_insert
 
     def pack_data_x(self, existing_mat, data_to_insert, data_types, axes=None):
@@ -216,8 +228,9 @@ class Agent(object):
             # Make sure number of sensors and axes are consistent.
             if num_sensor != len(axes):
                 raise ValueError(
-                    'Length of sensors (%d) must equal length of axes (%d)',
-                    num_sensor, len(axes)
+                    "Length of sensors (%d) must equal length of axes (%d)",
+                    num_sensor,
+                    len(axes),
                 )
 
         # Shape checks.
@@ -225,20 +238,26 @@ class Agent(object):
         for i in range(num_sensor):
             # Make sure to slice along X.
             if existing_mat.shape[axes[i]] != self.dX:
-                raise ValueError('Axes must be along an dX=%d dimensional axis',
-                                 self.dX)
+                raise ValueError(
+                    "Axes must be along an dX=%d dimensional axis", self.dX
+                )
             insert_shape[axes[i]] = len(self._x_data_idx[data_types[i]])
-        if isinstance(data_to_insert,(list)):
+        if isinstance(data_to_insert, (list)):
             data_to_insert = np.array(data_to_insert).reshape(tuple(insert_shape))
             if tuple(insert_shape) != data_to_insert.shape:
-                raise ValueError('Data has shape %s. Expected %s',
-                             data_to_insert.shape, tuple(insert_shape))
+                raise ValueError(
+                    "Data has shape %s. Expected %s",
+                    data_to_insert.shape,
+                    tuple(insert_shape),
+                )
 
         # Actually perform the slice.
         index = [slice(None) for _ in range(len(existing_mat.shape))]
         for i in range(num_sensor):
-            index[axes[i]] = slice(self._x_data_idx[data_types[i]][0],
-                                   self._x_data_idx[data_types[i]][-1] + 1)
+            index[axes[i]] = slice(
+                self._x_data_idx[data_types[i]][0],
+                self._x_data_idx[data_types[i]][-1] + 1,
+            )
         existing_mat[index] = data_to_insert
 
     def unpack_data_x(self, existing_mat, data_types, axes=None):
@@ -257,30 +276,33 @@ class Agent(object):
             # Make sure number of sensors and axes are consistent.
             if num_sensor != len(axes):
                 raise ValueError(
-                    'Length of sensors (%d) must equal length of axes (%d)',
-                    num_sensor, len(axes)
+                    "Length of sensors (%d) must equal length of axes (%d)",
+                    num_sensor,
+                    len(axes),
                 )
 
         # Shape checks.
         for i in range(num_sensor):
             # Make sure to slice along X.
             if existing_mat.shape[axes[i]] != self.dX:
-                raise ValueError('Axes must be along an dX=%d dimensional axis',
-                                 self.dX)
+                raise ValueError(
+                    "Axes must be along an dX=%d dimensional axis", self.dX
+                )
 
         # Actually perform the slice.
         index = [slice(None) for _ in range(len(existing_mat.shape))]
         for i in range(num_sensor):
-            index[axes[i]] = slice(self._x_data_idx[data_types[i]][0],
-                                   self._x_data_idx[data_types[i]][-1] + 1)
+            index[axes[i]] = slice(
+                self._x_data_idx[data_types[i]][0],
+                self._x_data_idx[data_types[i]][-1] + 1,
+            )
         return existing_mat[index]
-    
+
     # state is a dictionary
-    def get_vectorized_state(self, state, condition = None):
+    def get_vectorized_state(self, state, condition=None):
         state_vector = np.empty((self.dX,))
         state_vector.fill(np.nan)
         for data_type in self.x_data_types:
             self.pack_data_x(state_vector, state[data_type], data_types=[data_type])
-        assert(not np.any(np.isnan(state_vector)))
+        assert not np.any(np.isnan(state_vector))
         return state_vector
-

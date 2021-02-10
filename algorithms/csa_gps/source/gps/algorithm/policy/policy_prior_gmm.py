@@ -25,6 +25,7 @@ class PolicyPriorGMM(object):
     python/gps/algorithm/dynamics/dynamics_prior_gmm.py. This is a
     similar GMM prior that is used for the dynamics estimate.
     """
+
     def __init__(self, hyperparams):
         """
         Hyperparameters:
@@ -40,14 +41,14 @@ class PolicyPriorGMM(object):
         self.X = None
         self.obs = None
         self.gmm = GMM()
-        self._min_samp = self._hyperparams['min_samples_per_cluster']
-        self._max_samples = self._hyperparams['max_samples']
-        self._max_clusters = self._hyperparams['max_clusters']
-        self._strength = self._hyperparams['strength']
-        self._init_sig_reg = self._hyperparams['init_regularization']
-        self._subsequent_sig_reg = self._hyperparams['subsequent_regularization']
+        self._min_samp = self._hyperparams["min_samples_per_cluster"]
+        self._max_samples = self._hyperparams["max_samples"]
+        self._max_clusters = self._hyperparams["max_clusters"]
+        self._strength = self._hyperparams["strength"]
+        self._init_sig_reg = self._hyperparams["init_regularization"]
+        self._subsequent_sig_reg = self._hyperparams["subsequent_regularization"]
 
-    def update(self, samples, policy_opt, mode='add'):
+    def update(self, samples, policy_opt, mode="add"):
         """
         Update GMM using new samples or policy_opt.
         By default does not replace old samples.
@@ -58,10 +59,10 @@ class PolicyPriorGMM(object):
         """
 
         X, obs = samples.get_X(), samples.get_obs()
-        if self.X is None or mode == 'replace':
+        if self.X is None or mode == "replace":
             self.X = X
             self.obs = obs
-        elif mode == 'add' and X.size > 0:
+        elif mode == "add" and X.size > 0:
             self.X = np.concatenate([self.X, X], axis=0)
             self.obs = np.concatenate([self.obs, obs], axis=0)
             # Trim extra samples
@@ -72,18 +73,19 @@ class PolicyPriorGMM(object):
                 self.obs = self.obs[start:, :, :]
 
         # Evaluate policy at samples to get mean policy action.
-        U = policy_opt.prob(self.obs,diag_var=True)[0]
+        U = policy_opt.prob(self.obs, diag_var=True)[0]
         # Create the dataset
         N, T = self.X.shape[:2]
         dO = self.X.shape[2] + U.shape[2]
         XU = np.reshape(np.concatenate([self.X, U], axis=2), [T * N, dO])
         # Choose number of clusters.
-        K = int(max(2, min(self._max_clusters,
-                           np.floor(float(N * T) / self._min_samp))))
-        
-        LOGGER.debug('Generating %d clusters for policy prior GMM.', K)
+        K = int(
+            max(2, min(self._max_clusters, np.floor(float(N * T) / self._min_samp)))
+        )
+
+        LOGGER.debug("Generating %d clusters for policy prior GMM.", K)
         self.gmm.update(XU, K)
-    
+
     def eval(self, Ts, Ps):
         """ Evaluate prior. """
         # Construct query data point.
@@ -96,7 +98,7 @@ class PolicyPriorGMM(object):
         # Multiply Phi by m (since it was normalized before).
         Phi *= m
         return mu0, Phi, m, n0
-    
+
     def fit(self, X, pol_mu, pol_sig):
         """
         Fit policy linearization.
@@ -128,14 +130,14 @@ class PolicyPriorGMM(object):
             Ys = np.concatenate([Ts, Ps], axis=1)
             # Obtain Normal-inverse-Wishart prior.
             mu0, Phi, mm, n0 = self.eval(Ts, Ps)
-            sig_reg = np.zeros((dX+dU, dX+dU))
+            sig_reg = np.zeros((dX + dU, dX + dU))
             # Slightly regularize on first timestep.
             if t == 0:
-                sig_reg[:dX, :dX] = self._init_sig_reg*np.eye(dX)
+                sig_reg[:dX, :dX] = self._init_sig_reg * np.eye(dX)
             else:
-                sig_reg[:dX, :dX] = self._subsequent_sig_reg*np.eye(dX)
-            pol_K[t, :, :], pol_k[t, :], pol_S[t, :, :] = \
-                    gauss_fit_joint_prior(Ys,
-                            mu0, Phi, mm, n0, dwts, dX, dU, sig_reg)
+                sig_reg[:dX, :dX] = self._subsequent_sig_reg * np.eye(dX)
+            pol_K[t, :, :], pol_k[t, :], pol_S[t, :, :] = gauss_fit_joint_prior(
+                Ys, mu0, Phi, mm, n0, dwts, dX, dU, sig_reg
+            )
         pol_S += pol_sig
         return pol_K, pol_k, pol_S
