@@ -15,21 +15,27 @@ def init_cmaes_controller(hyperparams, agent):
     dX, dU = config["dX"], config["dU"]
     T = config["T"]
     cur_cond_idx = config["cur_cond_idx"]
-    history_len = agent.history_len
-    fcn = agent.fcns[cur_cond_idx]
-    popsize = agent.popsize
     bench = CMAESBenchmark()
-    if "fcn_obj" in fcn:
-        fcn_obj = fcn["fcn_obj"]
-    else:
-        fcn_obj = None
-    hpolib = False
-    if "hpolib" in fcn:
-        hpolib = True
-    benchmark = None
-    if "benchmark" in fcn:
-        benchmark = fcn["benchmark"]
-    # Create new world to avoiding changing the state of the original world
+    bench.config.popsize = agent.popsize
+    bench.config.hist_length = agent.history_len
+    bench.config.observation_space_args = [
+        {
+            "current_loc": spaces.Box(
+                low=-np.inf, high=np.inf, shape=np.arange(agent.input_dim).shape
+            ),
+            "past_deltas": spaces.Box(
+                low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length).shape
+            ),
+            "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+            "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+            "history_deltas": spaces.Box(
+                low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length * 2).shape
+            ),
+            "past_sigma_deltas": spaces.Box(
+                low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length).shape
+            ),
+        }
+    ]
     world = bench.get_environment()
 
     if config["verbose"]:

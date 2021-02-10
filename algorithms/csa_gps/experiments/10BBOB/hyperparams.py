@@ -23,61 +23,49 @@ from gps.proto.gps_pb2 import (
     ACTION,
 )
 from gps.algorithm.cost.cost_utils import RAMP_CONSTANT
-
+import csv
 import cPickle as pickle
 
 session = tf.Session()
 history_len = 40
 
-num_fcns = 100
-train_fcns = range(num_fcns)
-test_fcns = range(num_fcns - 20, num_fcns)
-
+num_fcns = 200
+train_fcns = range(100)
+test_fcns = range(100, 200)
 fcn_ids = [12, 11, 2, 23, 15, 8, 17, 20, 1, 16]
-fcn_names = [
-    "BentCigar",
-    "Discus",
-    "Ellipsoid",
-    "Katsuura",
-    "Rastrigin",
-    "Rosenbrock",
-    "Schaffers",
-    "Schwefel",
-    "Sphere",
-    "Weierstrass",
-]
-
-input_dim = 10
-num_inits_per_fcn = 1
-cur_dir = os.path.dirname(os.path.abspath(__file__))
-
-init_sigma_test = [1.28, 0.38, 1.54, 1.18, 0.1, 1.66, 0.33, 0.1, 1.63, 0.1]
-
-# initialize the initial locations of the optimization trajectories
-init_locs = list(np.random.randn(num_fcns - 10, input_dim))
-# append the initial locations of the conditions in the test set
-for i in range(20):
-    init_locs.append([0] * 10)
-
-# initialize the initial sigma(step size) values
-init_sigmas = list(np.random.rand(num_fcns - 10)) + [0.5] * 10
+fcn_names = ["BentCigar", "Discus", "Ellipsoid", "Katsuura", "Rastrigin", "Rosenbrock", "Schaffers", "Schwefel", "Sphere", "Weierstrass"]
 
 fcn_objs = []
 fcns = []
-for i in range(num_fcns // len(fcn_ids)):
-    # for k in range(7,9):
-    for i in fcn_ids:
-        fcn_objs.append(bn.instantiate(i)[0])
+with open("../../../../../dacbench/instance_sets/cma/cma_train.csv", "r") as fh:
+    reader = csv.DictReader(fh)
+    for row in reader:
+        init_locs = [float(row[f"init_loc{i}"]) for i in range(int(row["dim"]))]
+        function = bn.instantiate(int(row["fcn_index"]))[0]
+        fcn_objs.append(function)
+        fcns.append(
+            {
+                "fcn_obj": function,
+                "dim": input_dim,
+                "init_loc": init_locs,
+                "init_sigma": float(row["init_sigma"]),
+            }
+        )
+with open("../../../../../dacbench/instance_sets/cma/cma_test.csv", "r") as fh:
+    reader = csv.DictReader(fh)
+    for row in reader:
+        init_locs = [float(row[f"init_loc{i}"]) for i in range(int(row["dim"]))]
+        function = bn.instantiate(int(row["fcn_index"]))[0]
+        fcn_objs.append(function)
+        fcns.append(
+            {
+                "fcn_obj": function,
+                "dim": input_dim,
+                "init_loc": init_locs,
+                "init_sigma": float(row["init_sigma"]),
+            }
+        )
 
-for i, function in enumerate(fcn_objs):
-    fcns.append(
-        {
-            "fcn_obj": function,
-            "dim": input_dim,
-            "init_loc": list(init_locs[i]),
-            "init_sigma": init_sigmas[i],
-        }
-    )
 
 SENSOR_DIMS = {
     PAST_OBJ_VAL_DELTAS: history_len,
@@ -98,6 +86,7 @@ common = {
     "plot_filename": EXP_DIR + "plot",
     "log_filename": EXP_DIR + "log_data.txt",
     "conditions": num_fcns,
+    "dim": input_dim,
     "train_conditions": train_fcns,
     "test_conditions": test_fcns,
     "test_functions": test_fcns,

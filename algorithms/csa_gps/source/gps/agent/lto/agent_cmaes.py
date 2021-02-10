@@ -16,6 +16,7 @@ class AgentCMAES(Agent):
     def _setup_conditions(self):
         self.history_len = self._hyperparams["history_len"]
         self.popsize = self._hyperparams["popsize"]
+        self.input_dim = self._hyperparams["dim"]
 
     def _setup_worlds(self):
         bench = CMAESBenchmark()
@@ -26,18 +27,18 @@ class AgentCMAES(Agent):
         bench.config.observation_space_args = [
             {
                 "current_loc": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(INPUT_DIM).shape
+                    low=-np.inf, high=np.inf, shape=np.arange(self.input_dim).shape
                 ),
                 "past_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape
+                    low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length).shape
                 ),
                 "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
                 "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
                 "history_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH * 2).shape
+                    low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length * 2).shape
                 ),
                 "past_sigma_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape
+                    low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length).shape
                 ),
             }
         ]
