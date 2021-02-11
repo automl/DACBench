@@ -86,6 +86,8 @@ class AbstractBenchmark:
                             and -np.inf not in conf[k][i]
                         ):
                             conf[k][i] = list(map(int, conf[k][i]))
+                elif isinstance(conf[k],np.ndarray):                    
+                    conf[k] = conf[k].tolist()
 
         conf["wrappers"] = self.jsonify_wrappers()
 
