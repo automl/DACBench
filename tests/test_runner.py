@@ -1,4 +1,4 @@
-import pytest
+
 import unittest
 from gym import spaces
 import os
@@ -16,13 +16,13 @@ class TestRunner(unittest.TestCase):
     def test_abstract_agen(self):
         agent = AbstractDACBenchAgent("dummy")
 
-        with pytest.raises(NotImplementedError):
+        with self.assertRaises(NotImplementedError):
             agent.act(0, 0)
 
-        with pytest.raises(NotImplementedError):
+        with self.assertRaises(NotImplementedError):
             agent.train(0, 0)
 
-        with pytest.raises(NotImplementedError):
+        with self.assertRaises(NotImplementedError):
             agent.end_episode(0, 0)
 
     def test_loop(self):

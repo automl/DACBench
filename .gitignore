@@ -17,3 +17,8 @@ test/*.json
 
 # pycharm specific stuff
 .idea
+
+
+venv
+settings.json
+*egg

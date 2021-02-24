@@ -312,18 +312,15 @@ class objdict(dict):
     """
     Modified dict to make config changes more flexible
     """
+    
+    __getattr__ = dict.__getitem__
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
+    
+    def copy(self):
+        return objdict(**super().copy())
 
-    def __getattr__(self, name):
-        if name in self:
-            return self[name]
-        else:
-            raise AttributeError("No such attribute: " + name)
 
-    def __setattr__(self, name, value):
-        self[name] = value
+    
 
-    def __delattr__(self, name):
-        if name in self:
-            del self[name]
-        else:
-            raise AttributeError("No such attribute: " + name)
+

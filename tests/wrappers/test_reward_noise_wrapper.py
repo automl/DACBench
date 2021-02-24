@@ -1,4 +1,4 @@
-import pytest
+
 import unittest
 
 from dacbench.benchmarks import LubyBenchmark
@@ -12,9 +12,9 @@ class TestRewardNoiseWrapper(unittest.TestCase):
         wrapped = RewardNoiseWrapper(env)
         self.assertFalse(wrapped.noise_function is None)
 
-        with pytest.raises(Exception):
+        with self.assertRaises(Exception):
             wrapped = RewardNoiseWrapper(env, noise_dist=None)
-        with pytest.raises(Exception):
+        with self.assertRaises(Exception):
             wrapped = RewardNoiseWrapper(env, noise_dist="norm")
 
         wrapped = RewardNoiseWrapper(env, noise_dist="normal", dist_args=[0, 0.3])
