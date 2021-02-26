@@ -1,4 +1,4 @@
-import pytest
+
 import unittest
 
 import numpy as np
@@ -9,10 +9,10 @@ from dacbench.abstract_env import AbstractEnv
 class TestAbstractEnv(unittest.TestCase):
     def test_not_implemented_methods(self):
         env = self.make_env()
-        with pytest.raises(NotImplementedError):
+        with self.assertRaises(NotImplementedError):
             env.step(0)
 
-        with pytest.raises(NotImplementedError):
+        with self.assertRaises(NotImplementedError):
             env.reset()
 
     def test_exceptions(self):
@@ -30,7 +30,7 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": {0: 1, 1: 1},
             "benchmark_info": None,
         }
-        with pytest.raises(TypeError):
+        with self.assertRaises(TypeError):
             AbstractEnv(config)
 
         config = {
@@ -43,7 +43,7 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
             "instance_set": {0: 1, 1: 1},
         }
-        with pytest.raises(KeyError):
+        with self.assertRaises(KeyError):
             AbstractEnv(config)
 
         config = {
@@ -59,7 +59,7 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
             "instance_set": {0: 1, 1: 1},
         }
-        with pytest.raises(KeyError):
+        with self.assertRaises(KeyError):
             AbstractEnv(config)
 
         config = {
@@ -76,7 +76,7 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
             "instance_set": {0: 1, 1: 1},
         }
-        with pytest.raises(TypeError):
+        with self.assertRaises(TypeError):
             AbstractEnv(config)
 
         config = {
@@ -92,7 +92,7 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
             "instance_set": {0: 1, 1: 1},
         }
-        with pytest.raises(KeyError):
+        with self.assertRaises(KeyError):
             AbstractEnv(config)
 
     def make_env(self):
