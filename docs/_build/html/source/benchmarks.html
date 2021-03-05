@@ -71,13 +71,12 @@ That means to run a benchmark, you need to create an environment of that benchma
 to then interact with it.
 We include of this interaction between environment and DAC methods in our GitHub repository.</p>
 <p>All of the benchmarks have a standardized version that should be used by default.
-To instantiate a benchmark environment, run:
-.. code:: python</p>
-<blockquote>
-<div><p>from dacbench.benchmarks import SigmoidBenchmark
-bench = SigmoidBenchmark()
-benchmark_env = bench.get_benchmark()</p>
-</div></blockquote>
+To instantiate a benchmark environment, run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.benchmarks</span> <span class="kn">import</span> <span class="n">SigmoidBenchmark</span>
+<span class="n">bench</span> <span class="o">=</span> <span class="n">SigmoidBenchmark</span><span class="p">()</span>
+<span class="n">benchmark_env</span> <span class="o">=</span> <span class="n">bench</span><span class="o">.</span><span class="n">get_benchmark</span><span class="p">()</span>
+</pre></div>
+</div>
 </div>
 
 
@@ -143,7 +142,7 @@ benchmark_env = bench.get_benchmark()</p>
       &copy;2021, Theresa Eimer, Maximilian Reimer.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

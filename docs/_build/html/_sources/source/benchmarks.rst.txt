@@ -28,7 +28,9 @@ We include of this interaction between environment and DAC methods in our GitHub
 
 All of the benchmarks have a standardized version that should be used by default.
 To instantiate a benchmark environment, run:
-.. code:: python
+
+.. code-block:: python
+
     from dacbench.benchmarks import SigmoidBenchmark
     bench = SigmoidBenchmark()
     benchmark_env = bench.get_benchmark()

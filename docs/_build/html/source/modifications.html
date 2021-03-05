@@ -37,31 +37,32 @@
 <p>While we encourage the use of the default benchmark settings,
 we recognize that our benchmarks are not perfect and can be improved upon.
 Therefore, it is possible to modify benchmarks and save these modifications to share with others.</p>
-<p>To load a configuration shared with you, read it using the corresponding benchmark class:
-.. code:: python</p>
-<blockquote>
-<div><p>from dacbench.benchmarks import SigmoidBenchmark</p>
-<p>bench = SigmoidBenchmark()
-bench.read_config_file(“path/to/your/config.json”)
-modified_benchmark = bench.get_environment()</p>
-</div></blockquote>
+<p>To load a configuration shared with you, read it using the corresponding benchmark class:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.benchmarks</span> <span class="kn">import</span> <span class="n">SigmoidBenchmark</span>
+
+<span class="n">bench</span> <span class="o">=</span> <span class="n">SigmoidBenchmark</span><span class="p">()</span>
+<span class="n">bench</span><span class="o">.</span><span class="n">read_config_file</span><span class="p">(</span><span class="s2">&quot;path/to/your/config.json&quot;</span><span class="p">)</span>
+<span class="n">modified_benchmark</span> <span class="o">=</span> <span class="n">bench</span><span class="o">.</span><span class="n">get_environment</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>The get_environment() method overrides wth default configurations with your changes.
-That way you can directly modify the benchmarks:
-.. code:: python</p>
-<blockquote>
-<div><p>from dacbench.benchmarks import SigmoidBenchmark</p>
-<p>bench = SigmoidBenchmark()</p>
-<p># Increase episode length
-bench.config.cutoff = 20
-# Decrease slope multiplier
-bench.config.slope_multiplier = 1.5</p>
-<p>modified_benchmark = bench.get_environment()</p>
-</div></blockquote>
-<p>To then save this configuration:
-.. code:: python</p>
-<blockquote>
-<div><p>bench.save_config(“your/path/config.json”)</p>
-</div></blockquote>
+That way you can directly modify the benchmarks:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.benchmarks</span> <span class="kn">import</span> <span class="n">SigmoidBenchmark</span>
+
+<span class="n">bench</span> <span class="o">=</span> <span class="n">SigmoidBenchmark</span><span class="p">()</span>
+
+<span class="c1"># Increase episode length</span>
+<span class="n">bench</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">cutoff</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="c1"># Decrease slope multiplier</span>
+<span class="n">bench</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">slope_multiplier</span> <span class="o">=</span> <span class="mf">1.5</span>
+
+<span class="n">modified_benchmark</span> <span class="o">=</span> <span class="n">bench</span><span class="o">.</span><span class="n">get_environment</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To then save this configuration:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bench</span><span class="o">.</span><span class="n">save_config</span><span class="p">(</span><span class="s2">&quot;your/path/config.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>In case you want to modify state information, reward function or other complex benchmark attributes,
 be sure to adapt all dependencies in the configuration.
 Benchmarks have methods to do this for common changes like the number of dimensions in Sigmoid.</p>
@@ -134,7 +135,7 @@ you need to register them beforehand and also provide any functions that may ser
       &copy;2021, Theresa Eimer, Maximilian Reimer.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

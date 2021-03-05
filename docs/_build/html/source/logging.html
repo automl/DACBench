@@ -36,30 +36,30 @@
 <h1>Logging Experiments<a class="headerlink" href="#logging-experiments" title="Permalink to this headline">¶</a></h1>
 <p>As there are many potentially interesting metrics involved in the analysis of DAC methods,
 DACBench includes the possibility to track and store them.</p>
-<p>To log information on an environment, you need a logger object:
-.. code:: python</p>
-<blockquote>
-<div><p>from dacbench.logger import Logger
-from pathlib import Path</p>
-<p>logger = Logger(experiment_name=”example”, output_path=Path(“your/path”))</p>
-</div></blockquote>
-<p>If you want to use any of our tracking wrappers, you can then create a logging module for them:
-.. code:: python</p>
-<blockquote>
-<div><p>from dacbench.wrappers import PerformanceTrackingWrapper</p>
-<p>performance_logger = logger.add_module(PerformanceTrackingWrapper)
-env = PerformanceTrackingWrapper(env, logger=performance_logger)
-logger.add_env()</p>
-</div></blockquote>
+<p>To log information on an environment, you need a logger object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">experiment_name</span><span class="o">=</span><span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;your/path&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>If you want to use any of our tracking wrappers, you can then create a logging module for them:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.wrappers</span> <span class="kn">import</span> <span class="n">PerformanceTrackingWrapper</span>
+
+<span class="n">performance_logger</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">add_module</span><span class="p">(</span><span class="n">PerformanceTrackingWrapper</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">PerformanceTrackingWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">performance_logger</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">add_env</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>Now the logger will store information in the specified directory in .jsonl files.
 By adding more wrappers, you will also be provided with more information.
-The stored data can then be loaded into pandas dataframes:
-.. code:: python</p>
-<blockquote>
-<div><p>from dacbench.logger import load_logs, log2dataframe</p>
-<p>logs = load_logs(“your/path/PerformancyTrackingWrapper.jsonl”)
-df = log2dataframe(logs)</p>
-</div></blockquote>
+The stored data can then be loaded into pandas dataframes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.logger</span> <span class="kn">import</span> <span class="n">load_logs</span><span class="p">,</span> <span class="n">log2dataframe</span>
+
+<span class="n">logs</span> <span class="o">=</span> <span class="n">load_logs</span><span class="p">(</span><span class="s2">&quot;your/path/PerformancyTrackingWrapper.jsonl&quot;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">log2dataframe</span><span class="p">(</span><span class="n">logs</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 
 
@@ -125,7 +125,7 @@ df = log2dataframe(logs)</p>
       &copy;2021, Theresa Eimer, Maximilian Reimer.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

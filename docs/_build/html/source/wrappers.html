@@ -38,12 +38,12 @@
 we can use so-called wrappers.
 They execute environment resets and steps internally, but can either alter the environment behavior
 (e.g. by adding noise) or record information about the environment.
-To wrap an existing environment is simple:
-.. code:: python</p>
-<blockquote>
-<div><p>from dacbench.wrappers import PerformanceTrackingWrapper</p>
-<p>wrapped_env = PerformanceTrackingWrapper(env)</p>
-</div></blockquote>
+To wrap an existing environment is simple:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.wrappers</span> <span class="kn">import</span> <span class="n">PerformanceTrackingWrapper</span>
+
+<span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">PerformanceTrackingWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>The provided environments for tracking performance, state and action information are designed to be
 used with DACBench’s logging functionality.</p>
 </div>
@@ -111,7 +111,7 @@ used with DACBench’s logging functionality.</p>
       &copy;2021, Theresa Eimer, Maximilian Reimer.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

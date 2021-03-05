@@ -10,7 +10,9 @@ we recognize that our benchmarks are not perfect and can be improved upon.
 Therefore, it is possible to modify benchmarks and save these modifications to share with others.
 
 To load a configuration shared with you, read it using the corresponding benchmark class:
-.. code:: python
+
+.. code-block:: python
+
     from dacbench.benchmarks import SigmoidBenchmark
 
     bench = SigmoidBenchmark()
@@ -19,7 +21,9 @@ To load a configuration shared with you, read it using the corresponding benchma
 
 The get_environment() method overrides wth default configurations with your changes.
 That way you can directly modify the benchmarks:
-.. code:: python
+
+.. code-block:: python
+
     from dacbench.benchmarks import SigmoidBenchmark
 
     bench = SigmoidBenchmark()
@@ -32,7 +36,9 @@ That way you can directly modify the benchmarks:
     modified_benchmark = bench.get_environment()
 
 To then save this configuration:
-.. code:: python
+
+.. code-block:: python
+
     bench.save_config("your/path/config.json")
 
 In case you want to modify state information, reward function or other complex benchmark attributes,
