@@ -135,8 +135,9 @@ def main():
         "--benchmarks",
         nargs="+",
         type=str,
+        choices=benchmarks.__all__,
         default=None,
-        help="Benchmarks to run baselines for",
+        help="Benchmarks to run baselines for, if not provides all benchmarks are run.",
     )
     parser.add_argument(
         "--num_episodes",
@@ -171,7 +172,10 @@ def main():
         help="Seeds for evaluation",
     )
     parser.add_argument(
-        "--fixed_random", type=int, default=0, help="Fixes random actions for n steps",
+        "--fixed_random",
+        type=int,
+        default=0,
+        help="Fixes random actions for n steps",
     )
     args = parser.parse_args()
 
