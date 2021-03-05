@@ -2,18 +2,21 @@ name: assing issue to project
   # You may pin to the exact commit or the version.
   # uses: AlexisMateo/issue-to-project-action@3800dcd0d8b6f15a9dae417d08e64ef7b8a04e85
   uses: AlexisMateo/issue-to-project-action@0.0.1
-  with:
-    # admin github token
-    github-token: 
-    # the path to the project
-    project_path: 
+  on:
+  issues:
+    types: [opened, labeled]
+  pull_request:
+    types: [opened, labeled]
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+jobs:
+  assign_one_project:
+    runs-on: ubuntu-latest
+    name: Assign to One Project
+    steps:
+    - name: Assign NEW issues and NEW pull requests to project 2
+      uses: srggrs/assign-one-project-github-action@1.2.0
+      if: github.event.action == 'opened'
+      with:
+        project: 'https://github.com/automl/DACBench/projects/1'
