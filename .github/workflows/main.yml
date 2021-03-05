@@ -1,9 +1,9 @@
 name: adding issue to project
 on:
   issues:
-    types: [opened, labeled]
+    types: [opened]
   pull_request:
-    types: [opened, labeled]
+    types: [opened]
 env:
   GITHUB_TOKEN: ${{ secrets.ACTIONS }}
 
@@ -17,4 +17,3 @@ jobs:
       if: github.event.action == 'opened'
       with:
         project: 'https://github.com/automl/DACBench/projects/1'
-        column_name: 'Labeled'
