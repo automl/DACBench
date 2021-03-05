@@ -1,5 +1,5 @@
 name: assing issue to project
-  on:
+on:
   issues:
     types: [opened, labeled]
   pull_request:
