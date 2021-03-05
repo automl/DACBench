@@ -1,6 +1,4 @@
 name: assing issue to project
-  # You may pin to the exact commit or the version.
-  # uses: AlexisMateo/issue-to-project-action@3800dcd0d8b6f15a9dae417d08e64ef7b8a04e85
   uses: AlexisMateo/issue-to-project-action@0.0.1
   on:
   issues:
