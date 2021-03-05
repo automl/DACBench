@@ -6,10 +6,7 @@ import numpy as np
 
 from dacbench import benchmarks
 from dacbench.agents import StaticAgent, GenericAgent, DynamicRandomAgent
-from dacbench.envs.policies.csa_cma import csa
-from dacbench.envs.policies.optimal_fd import get_optimum as optimal_fd
-from dacbench.envs.policies.optimal_luby import get_optimum as optimal_luby
-from dacbench.envs.policies.optimal_sigmoid import get_optimum as optimal_sigmoid
+from dacbench.envs.policies import OPTIMAL_POLICIES, NON_OPTIMAL_POLICIES
 from dacbench.logger import Logger
 from dacbench.runner import run_benchmark
 from dacbench.wrappers import PerformanceTrackingWrapper
@@ -34,13 +31,6 @@ DISCRETE_ACTIONS = {
     "CMAESBenchmark": [np.around(a, decimals=1) for a in np.linspace(0.2, 10, num=50)],
     "ModeaBenchmark": list(itertools.product(*modea_actions)),
     "SGDBenchmark": [np.around(a, decimals=1) for a in np.linspace(0, 10, num=50)],
-}
-
-OPTIMAL_POLICIES = {
-    "LubyBenchmark": optimal_luby,
-    "SigmoidBenchmark": optimal_sigmoid,
-    "FastDownwardBenchmark": optimal_fd,
-    "CMAESBenchmark": csa,
 }
 
 
@@ -93,12 +83,23 @@ def run_static(results_path, benchmark_name, action, num_episodes, seeds=np.aran
         logger.close()
 
 
-def run_optimal(results_path, benchmark_name, num_episodes, seeds=np.arange(10)):
-    bench = getattr(benchmarks, benchmark_name)()
+def run_optimal(results_path, benchmark_name, num_episodes, seeds):
     if benchmark_name not in OPTIMAL_POLICIES:
-        print("No comparison policy found for this benchmark")
+        print("No optimal policy found for this benchmark")
         return
     policy = OPTIMAL_POLICIES[benchmark_name]
+    run_policy(results_path, benchmark_name, num_episodes, policy, seeds)
+
+
+def run_dynamic_policy(results_path, benchmark_name, num_episodes, seeds=np.arange(10)):
+    if benchmark_name not in NON_OPTIMAL_POLICIES:
+        print("No dynamic policy found for this benchmark")
+    policy = NON_OPTIMAL_POLICIES[benchmark_name]
+    run_policy(results_path, benchmark_name, num_episodes, policy, seeds)
+
+
+def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.arange(10)):
+    bench = getattr(benchmarks, benchmark_name)()
 
     for s in seeds:
         if benchmark_name == "CMAESBenchmark":
@@ -155,8 +156,9 @@ def main():
     parser.add_argument(
         "--dyna_baseline",
         action="store_true",
-        help=f"Run dynamic baseline. Only available for {', '.join(OPTIMAL_POLICIES.keys())}",
+        help=f"Run dynamic baseline. Only available for {', '.join(NON_OPTIMAL_POLICIES.keys())}",
     )
+
     shortened_possible_actions = {
         benchmark: ", ".join(
             (
@@ -220,13 +222,21 @@ def main():
             for a in actions:
                 run_static(args.outdir, b, a, args.num_episodes, args.seeds)
 
-    if args.optimal or args.dyna_baseline:
+    if args.optimal:
         for b in benchs:
-            if b not in OPTIMAL_POLICIES.keys():
+            if b not in OPTIMAL_POLICIES:
                 print("Option not available!")
                 break
 
             run_optimal(args.outdir, b, args.num_episodes, args.seeds)
+
+    if args.dyna_baseline:
+        for b in benchs:
+            if b not in NON_OPTIMAL_POLICIES:
+                print("Option not available!")
+                break
+
+            run_dynamic_policy(args.outdir, b, args.num_episodes, args.seeds)
 
 
 if __name__ == "__main__":
