@@ -1,4 +1,4 @@
-name: assing issue to project
+name: adding issue to project
 on:
   issues:
     types: [opened, labeled]
