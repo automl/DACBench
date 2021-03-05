@@ -1,5 +1,4 @@
 name: assing issue to project
-  uses: AlexisMateo/issue-to-project-action@0.0.1
   on:
   issues:
     types: [opened, labeled]
