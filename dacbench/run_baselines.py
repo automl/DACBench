@@ -146,8 +146,14 @@ def main():
         default=10,
         help="Number of episodes to evaluate policy on",
     )
-    parser.add_argument("--random", action="store_true", help="Run random policy")
+    parser.add_argument(
+        "--random",
+        action="store_true",
+        help="Run random policy. Use '--fixed_random' to fix the "
+        "random action for a number of steps",
+    )
     parser.add_argument("--static", action="store_true", help="Run static policy")
+
     parser.add_argument(
         "--optimal",
         action="store_true",
