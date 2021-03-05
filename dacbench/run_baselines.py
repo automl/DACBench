@@ -1,19 +1,18 @@
+import argparse
+import itertools
 from pathlib import Path
 
-from dacbench import benchmarks
-
 import numpy as np
-import argparse
 
-from dacbench.logger import Logger
-from dacbench.wrappers import PerformanceTrackingWrapper
-from dacbench.runner import run_benchmark
+from dacbench import benchmarks
 from dacbench.agents import StaticAgent, GenericAgent, DynamicRandomAgent
-from dacbench.envs.policies.optimal_sigmoid import get_optimum as optimal_sigmoid
-from dacbench.envs.policies.optimal_luby import get_optimum as optimal_luby
-from dacbench.envs.policies.optimal_fd import get_optimum as optimal_fd
 from dacbench.envs.policies.csa_cma import csa
-import itertools
+from dacbench.envs.policies.optimal_fd import get_optimum as optimal_fd
+from dacbench.envs.policies.optimal_luby import get_optimum as optimal_luby
+from dacbench.envs.policies.optimal_sigmoid import get_optimum as optimal_sigmoid
+from dacbench.logger import Logger
+from dacbench.runner import run_benchmark
+from dacbench.wrappers import PerformanceTrackingWrapper
 
 modea_actions = [
     np.arange(2),
@@ -35,6 +34,13 @@ DISCRETE_ACTIONS = {
     "CMAESBenchmark": [np.around(a, decimals=1) for a in np.linspace(0.2, 10, num=50)],
     "ModeaBenchmark": list(itertools.product(*modea_actions)),
     "SGDBenchmark": [np.around(a, decimals=1) for a in np.linspace(0, 10, num=50)],
+}
+
+OPTIMAL_POLICIES = {
+    "LubyBenchmark": optimal_luby,
+    "SigmoidBenchmark": optimal_sigmoid,
+    "FastDownwardBenchmark": optimal_fd,
+    "CMAESBenchmark": csa,
 }
 
 
@@ -89,17 +95,10 @@ def run_static(results_path, benchmark_name, action, num_episodes, seeds=np.aran
 
 def run_optimal(results_path, benchmark_name, num_episodes, seeds=np.arange(10)):
     bench = getattr(benchmarks, benchmark_name)()
-    if benchmark_name == "LubyBenchmark":
-        policy = optimal_luby
-    elif benchmark_name == "SigmoidBenchmark":
-        policy = optimal_sigmoid
-    elif benchmark_name == "FastDownwardBenchmark":
-        policy = optimal_fd
-    elif benchmark_name == "CMAESBenchmark":
-        policy = csa
-    else:
+    if benchmark_name not in OPTIMAL_POLICIES:
         print("No comparison policy found for this benchmark")
         return
+    policy = OPTIMAL_POLICIES[benchmark_name]
 
     for s in seeds:
         if benchmark_name == "CMAESBenchmark":
@@ -128,7 +127,8 @@ def run_optimal(results_path, benchmark_name, num_episodes, seeds=np.arange(10))
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Run simple baselines for DAC benchmarks"
+        description="Run simple baselines for DAC benchmarks",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--outdir", type=str, default="output", help="Output directory")
     parser.add_argument(
@@ -150,19 +150,37 @@ def main():
     parser.add_argument(
         "--optimal",
         action="store_true",
-        help="Run optimal policy. Not available for all benchmarks!",
+        help=f"Run optimal policy. Only available for {', '.join(OPTIMAL_POLICIES.keys())}",
     )
     parser.add_argument(
         "--dyna_baseline",
         action="store_true",
-        help="Run dynamic baseline. Not available for all benchmarks!",
+        help=f"Run dynamic baseline. Only available for {', '.join(OPTIMAL_POLICIES.keys())}",
+    )
+    shortened_possible_actions = {
+        benchmark: ", ".join(
+            (
+                map(str, actions)
+                if len(actions) < 4
+                else map(str, [*actions[:3], "...", actions[-1]])
+            )
+        )
+        for benchmark, actions in DISCRETE_ACTIONS.items()
+    }
+
+    possible_actions = ", ".join(
+        [
+            f"{benchmark} : {actions}"
+            for benchmark, actions in shortened_possible_actions.items()
+        ]
     )
     parser.add_argument(
         "--actions",
         nargs="+",
         type=float,
         default=None,
-        help="Action(s) for static policy",
+        help="Action(s) for static policy. Make sure, that the actions correspond to the benchmarks. Available action "
+        f"are {possible_actions}",
     )
     parser.add_argument(
         "--seeds",
@@ -204,12 +222,7 @@ def main():
 
     if args.optimal or args.dyna_baseline:
         for b in benchs:
-            if b not in [
-                "LubyBenchmark",
-                "SigmoidBenchmark",
-                "FastDownwardBenchmark",
-                "CMAESBenchmark",
-            ]:
+            if b not in OPTIMAL_POLICIES.keys():
                 print("Option not available!")
                 break
 
