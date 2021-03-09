@@ -5,18 +5,17 @@
 
 Welcome to DACBench's documentation!
 ====================================
-DACBench is a library of benchmark problems for Dynamic Algorithm Configuration (DAC).
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+ :maxdepth: 2
+ :caption: Contents:
 
-   source/installation
-   source/benchmarks
-   source/modifications
-   source/wrappers
-   source/logging
-   source/plotting
-   source/cite
+ source/installation
+ source/benchmarks
+ source/modifications
+ source/wrappers
+ source/logging
+ source/plotting
+ source/cite
 
 
 Indices and tables
