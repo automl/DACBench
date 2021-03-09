@@ -9,17 +9,17 @@ The Benchmarks
 
 DACBench currently contains six benchmarks:
 
-* Sigmoid toy benchmark 
+* Sigmoid toy benchmark: 
   Sigmoid function approximation in multiple dimensions.
-* Luby toy benchmark
+* Luby toy benchmark:
   Learning the Luby sequence.
-* FastDownward
+* FastDownward:
   Heuristic selection for the FastDownward Planner.
-* CMA-ES
+* CMA-ES:
   Step-size adpation for CMA-ES.
-* ModEA
+* ModEA:
   Selection of Algorithm Components for EAs.
-* SGD-DL
+* SGD-DL:
   Learning rate adaption for a small neural network.
 
 Our benchmarks are based on OpenAI's gym interface.

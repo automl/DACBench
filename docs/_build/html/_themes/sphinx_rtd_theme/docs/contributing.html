@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contributing &mdash; DACBench 01.02.2021 documentation</title>
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> DACBench
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div>
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Main">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">How to Install DACBench</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/benchmarks.html">The Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/modifications.html">Saving &amp; Loading Benchmark Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/wrappers.html">Functionality through Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/logging.html">Logging Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/plotting.html">Plotting results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/cite.html">Citing DACBench</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" aria-label="Top">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">DACBench</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+<div role="navigation" aria-label="Breadcrumbs">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Contributing</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/_themes/sphinx_rtd_theme/docs/contributing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<p>This project follows the Read the Docs <span class="xref std std-doc">code of conduct</span>. If you are not familiar with our code of conduct policy,
+take a minute to read the policy before starting with your first contribution.</p>
+<div class="section" id="modifying-the-theme">
+<h2>Modifying the theme<a class="headerlink" href="#modifying-the-theme" title="Permalink to this headline">¶</a></h2>
+<p>The styles for this theme use <a class="reference external" href="http://www.sass-lang.com">SASS</a> and a custom CSS framework called <a class="reference external" href="http://www.github.com/snide/wyrm/">Wyrm</a>. We
+use <a class="reference external" href="https://webpack.js.org/">Webpack</a> and <a class="reference external" href="https://github.com/sass/node-sass">node-sass</a> to build the CSS. <a class="reference external" href="https://webpack.js.org/">Webpack</a> is used to watch for
+changes, rebuild the static assets, and rebuild the Sphinx demo documentation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The installation of Node is outside the scope of this documentation. You
+will need Node version 10+ in order to make changes to this theme.</p>
+</div>
+<div class="section" id="set-up-your-environment">
+<h3>Set up your environment<a class="headerlink" href="#set-up-your-environment" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic">
+<li><p>Install <a class="reference external" href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> and documentation build dependencies.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip install -e <span class="s1">&#39;.[dev]&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Install <a class="reference external" href="https://webpack.js.org/">Webpack</a>, <a class="reference external" href="https://github.com/sass/node-sass">node-sass</a>, and theme dependencies locally.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>npm install
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="making-changes">
+<h3>Making changes<a class="headerlink" href="#making-changes" title="Permalink to this headline">¶</a></h3>
+<p>Changes to the theme can be compiled and tested with <a class="reference external" href="https://webpack.js.org/">Webpack</a>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>npm run dev
+</pre></div>
+</div>
+<p>This script will do the following:</p>
+<ol class="arabic simple">
+<li><p>Install and update any dependencies.</p></li>
+<li><p>Build the static CSS from SASS source files.</p></li>
+<li><p>Build the demo documentation.</p></li>
+<li><p>Watch for changes to the SASS files and documentation and rebuild everything
+on any detected changes.</p></li>
+</ol>
+<p>Alternatively, if you don’t need to watch the files, the release build script
+can be used to test built assets:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>npm run build
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="translations">
+<h2>Translations<a class="headerlink" href="#translations" title="Permalink to this headline">¶</a></h2>
+<p>Translations are managed using <a class="reference external" href="https://www.transifex.com/readthedocs/sphinx-rtd-theme">Transifex</a>. You can join any of the existing
+language teams or request a new language is added to the project. For more
+information on our translation standards, see our docs on
+<span class="xref std std-doc">rtd:development/i18n</span></p>
+<p>Periodically, core team should update the translation files outside our normal
+releases. Someone from the core team, with write access to Transifex, should run
+the following:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python setup.py update_translations
+</pre></div>
+</div>
+<p>This will extract new messages, upload the messages to Transifex, and will
+update our local translation files. Changes can be checked in to a branch and
+put up for review.</p>
+</div>
+<div class="section" id="releasing-the-theme">
+<h2>Releasing the theme<a class="headerlink" href="#releasing-the-theme" title="Permalink to this headline">¶</a></h2>
+<p>To release a new version of the theme, core team will take the following steps:</p>
+<ol class="arabic">
+<li><p>Bump the version by running <code class="docutils literal notranslate"><span class="pre">bump2version</span> <span class="pre">[major|minor|patch|dev]</span></code>.
+This will automatically increase the correct part(s) of the version number,
+you do not need to specify the exact version number.
+We follow <a class="reference external" href="http://semver.org/">semver</a> and <a class="reference external" href="https://www.python.org/dev/peps/pep-0440/">PEP440</a>
+(with regards to alpha release and development versions). The version
+increment should reflect these releases and any potentially breaking changes.</p></li>
+<li><p>New versions are by default <code class="docutils literal notranslate"><span class="pre">alpha</span></code> releases. If this is a release candidate,
+run <code class="docutils literal notranslate"><span class="pre">bump2version</span> <span class="pre">--allow-dirty</span> <span class="pre">release</span></code> to update the release to an <code class="docutils literal notranslate"><span class="pre">rc</span></code>
+release. If this is a final release, run the command again.</p></li>
+<li><p>Update the changelog (<code class="docutils literal notranslate"><span class="pre">docs/changelog.rst</span></code>) with the version information.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">update_translations</span></code> to compile new translation files
+and update Transifex.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">build</span></code> to rebuild all the theme assets and the Python
+package.</p></li>
+<li><p>Commit these changes.</p></li>
+<li><p>Tag the release in git: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">$NEW_VERSION</span></code>.</p></li>
+<li><p>Push the tag to GitHub: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">--tags</span> <span class="pre">origin</span></code>.</p></li>
+<li><p>Upload the package to PyPI:</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>rm -rf dist/
+<span class="gp">$ </span>python setup.py sdist bdist_wheel
+<span class="gp">$ </span>twine upload --sign --identity security@readthedocs.org dist/*
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Theresa Eimer, Maximilian Reimer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
