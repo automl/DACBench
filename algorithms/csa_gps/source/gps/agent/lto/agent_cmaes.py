@@ -39,15 +39,21 @@ class AgentCMAES(Agent):
                     low=-np.inf, high=np.inf, shape=np.arange(self.input_dim).shape
                 ),
                 "past_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length).shape
+                    low=-np.inf,
+                    high=np.inf,
+                    shape=np.arange(bench.config.hist_length).shape,
                 ),
                 "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
                 "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
                 "history_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length * 2).shape
+                    low=-np.inf,
+                    high=np.inf,
+                    shape=np.arange(bench.config.hist_length * 2).shape,
                 ),
                 "past_sigma_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length).shape
+                    low=-np.inf,
+                    high=np.inf,
+                    shape=np.arange(bench.config.hist_length).shape,
                 ),
             }
         ]
@@ -97,7 +103,7 @@ class AgentCMAES(Agent):
             t_length = self.T
         state = self._worlds[condition].reset()
         new_sample = self._init_sample(state)
-        new_sample.trajectory.append(self._worlds[condition].fbest)
+        new_sample.trajectory.append(self._worlds[condition].func_values[np.argmin(self._worlds[condition].func_values)] )
         U = np.zeros([t_length, self.dU])
         if noisy:
             noise = np.random.randn(t_length, self.dU)
@@ -119,7 +125,7 @@ class AgentCMAES(Agent):
                 next_action = U[t, :]  # * es.sigma
                 state, reward, done, _ = self._worlds[condition].step(next_action)
                 self._set_sample(new_sample, state, t)
-            new_sample.trajectory.append(self._worlds[condition].fbest)
+            new_sample.trajectory.append(min(self._worlds[condition].es.best.f, np.amin(self._worlds[condition].func_values)))
         new_sample.set(ACTION, U)
         policy.finalize()
         if save:

@@ -25,15 +25,21 @@ def init_cmaes_controller(hyperparams, agent):
                 low=-np.inf, high=np.inf, shape=np.arange(agent.input_dim).shape
             ),
             "past_deltas": spaces.Box(
-                low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length).shape
+                low=-np.inf,
+                high=np.inf,
+                shape=np.arange(bench.config.hist_length).shape,
             ),
             "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
             "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
             "history_deltas": spaces.Box(
-                low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length * 2).shape
+                low=-np.inf,
+                high=np.inf,
+                shape=np.arange(bench.config.hist_length * 2).shape,
             ),
             "past_sigma_deltas": spaces.Box(
-                low=-np.inf, high=np.inf, shape=np.arange(bench.config.hist_length).shape
+                low=-np.inf,
+                high=np.inf,
+                shape=np.arange(bench.config.hist_length).shape,
             ),
         }
     ]

@@ -34,7 +34,18 @@ num_fcns = 200
 train_fcns = range(100)
 test_fcns = range(100, 200)
 fcn_ids = [12, 11, 2, 23, 15, 8, 17, 20, 1, 16]
-fcn_names = ["BentCigar", "Discus", "Ellipsoid", "Katsuura", "Rastrigin", "Rosenbrock", "Schaffers", "Schwefel", "Sphere", "Weierstrass"]
+fcn_names = [
+    "BentCigar",
+    "Discus",
+    "Ellipsoid",
+    "Katsuura",
+    "Rastrigin",
+    "Rosenbrock",
+    "Schaffers",
+    "Schwefel",
+    "Sphere",
+    "Weierstrass",
+]
 
 fcn_objs = []
 fcns = []
@@ -112,7 +123,12 @@ agent = {
     "dim": input_dim,
     "T": 50,
     "sensor_dims": SENSOR_DIMS,
-    "state_include": ["past_deltas", "current_sigma", "current_ps", "past_sigma_deltas"], #[PAST_OBJ_VAL_DELTAS, CUR_SIGMA, CUR_PS, PAST_SIGMA],
+    "state_include": [
+        "past_deltas",
+        "current_sigma",
+        "current_ps",
+        "past_sigma_deltas",
+    ],  # [PAST_OBJ_VAL_DELTAS, CUR_SIGMA, CUR_PS, PAST_SIGMA],
     "obs_include": [PAST_OBJ_VAL_DELTAS, CUR_PS, PAST_SIGMA, CUR_SIGMA],
     "history_len": history_len,
     "fcns": fcns,
