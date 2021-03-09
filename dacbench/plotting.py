@@ -9,7 +9,7 @@ sns.set_style("darkgrid")
 
 def space_sep_upper(column_name: str) -> str:
     """
-    Converts a string of format 'part0_part1_...' to 'Part0 Part1 ...'. C
+    Separates strings at underscores into headings.
     Used to generate labels from logging names.
 
     Parameters

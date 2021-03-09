@@ -5,7 +5,7 @@
 Citing DACBench
 =================
 
-If you use the HPOlib for your research, please cite us with the following Bibtex file:
+If you use DACBench your research, please cite us with the following Bibtex file:
 
 .. code:: bash
 

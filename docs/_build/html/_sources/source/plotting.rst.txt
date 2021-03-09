@@ -9,5 +9,6 @@ To immediately plot data stored with DACBench wrappers, you can use the built-in
 They use seaborn and format loaded dataframes automatically (see examples on GitHub).
 
 .. automodule:: dacbench.plotting
+    :imported-members:
     :members:
     :undoc-members:

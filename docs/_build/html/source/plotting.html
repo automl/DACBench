@@ -164,7 +164,22 @@
 <h1>Plotting results<a class="headerlink" href="#plotting-results" title="Permalink to this headline">¶</a></h1>
 <p>To immediately plot data stored with DACBench wrappers, you can use the built-in plotting functions.
 They use seaborn and format loaded dataframes automatically (see examples on GitHub).</p>
-<span class="target" id="module-dacbench.plotting"></span><dl class="py function">
+<span class="target" id="module-dacbench.plotting"></span><dl class="py class">
+<dt id="dacbench.plotting.List">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">List</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.plotting.List" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.plotting.Tuple">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">Tuple</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.plotting.Tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tuple type; Tuple[X, Y] is the cross-product type of X and Y.</p>
+<p>Example: Tuple[T1, T2] is a tuple of two elements corresponding
+to type variables T1 and T2.  Tuple[int, float, str] is a tuple
+of an int, a float and a string.</p>
+<p>To specify a variable-length tuple of homogeneous type, use Tuple[T, …].</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="dacbench.plotting.add_multi_level_ticks">
 <code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">add_multi_level_ticks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grid</span><span class="p">:</span> <span class="n">seaborn.axisgrid.FacetGrid</span></em>, <em class="sig-param"><span class="n">plot_index</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">x_column</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">x_label_columns</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.plotting.add_multi_level_ticks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expects a FacedGrid with global_step (x_column) as x-axis and replaces the tick labels to match format episode:step</p>
@@ -186,7 +201,7 @@ usually the result from generate_global_step</p></li>
 
 <dl class="py function">
 <dt id="dacbench.plotting.generate_global_step">
-<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">generate_global_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">x_column</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'global_step'</span></em>, <em class="sig-param"><span class="n">x_label_columns</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">['episode', 'step']</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>pandas.core.frame.DataFrame<span class="p">, </span>str<span class="p">, </span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span><a class="headerlink" href="#dacbench.plotting.generate_global_step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">generate_global_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">x_column</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'global_step'</span></em>, <em class="sig-param"><span class="n">x_label_columns</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">['episode', 'step']</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#dacbench.plotting.Tuple" title="dacbench.plotting.Tuple">Tuple</a><span class="p">[</span>pandas.core.frame.DataFrame<span class="p">, </span>str<span class="p">, </span><a class="reference internal" href="#dacbench.plotting.List" title="dacbench.plotting.List">List</a><span class="p">[</span>str<span class="p">]</span><span class="p">]</span><a class="headerlink" href="#dacbench.plotting.generate_global_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a global_step column which enumerate all step over all episodes.</p>
 <p>Returns the altered data, a data frame containing mapping between global_step, x_column and x_label_columns.</p>
 <p>Often used in combination with add_multi_level_ticks.</p>
@@ -448,7 +463,7 @@ For more details see: <a class="reference external" href="https://seaborn.pydata
 <dl class="py function">
 <dt id="dacbench.plotting.space_sep_upper">
 <code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">space_sep_upper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#dacbench.plotting.space_sep_upper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a string of format ‘<a href="#id3"><span class="problematic" id="id4">part0_part1_</span></a>…’ to ‘Part0 Part1 …’. C
+<dd><p>Separates strings at underscores into headings.
 Used to generate labels from logging names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
