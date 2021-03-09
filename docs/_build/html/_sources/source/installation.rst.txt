@@ -8,6 +8,7 @@ How to Install DACBench
     :language: bash
 
 First clone our GitHub repository:
+
 .. code-block:: bash
 
     git clone https://github.com/automl/DACBench.git
