@@ -1,0 +1,873 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>dacbench.benchmarks package &mdash; DACBench 01.02.2021 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> DACBench
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to Install DACBench</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">The Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifications.html">Saving &amp; Loading Benchmark Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wrappers.html">Functionality through Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">Plotting results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cite.html">Citing DACBench</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">DACBench</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>dacbench.benchmarks package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/dacbench.benchmarks.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dacbench-benchmarks-package">
+<h1>dacbench.benchmarks package<a class="headerlink" href="#dacbench-benchmarks-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-dacbench.benchmarks.cma_benchmark">
+<span id="dacbench-benchmarks-cma-benchmark-module"></span><h2>dacbench.benchmarks.cma_benchmark module<a class="headerlink" href="#module-dacbench.benchmarks.cma_benchmark" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.benchmarks.cma_benchmark.CMAESBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.cma_benchmark.</code><code class="sig-name descname">CMAESBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.cma_benchmark.CMAESBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for CMA-ES</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.cma_benchmark.CMAESBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.cma_benchmark.CMAESBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get benchmark from the LTO paper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – Environment seed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – CMAES environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.cma_es.CMAESEnv" title="dacbench.envs.cma_es.CMAESEnv">CMAESEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.cma_benchmark.CMAESBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.cma_benchmark.CMAESBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return CMAESEnv env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>CMAES environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.cma_es.CMAESEnv" title="dacbench.envs.cma_es.CMAESEnv">CMAESEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.cma_benchmark.CMAESBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.cma_benchmark.CMAESBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read path of instances from config into list</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.benchmarks.fast_downward_benchmark">
+<span id="dacbench-benchmarks-fast-downward-benchmark-module"></span><h2>dacbench.benchmarks.fast_downward_benchmark module<a class="headerlink" href="#module-dacbench.benchmarks.fast_downward_benchmark" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.benchmarks.fast_downward_benchmark.FastDownwardBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.fast_downward_benchmark.</code><code class="sig-name descname">FastDownwardBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.fast_downward_benchmark.FastDownwardBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for Sigmoid</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.fast_downward_benchmark.FastDownwardBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.fast_downward_benchmark.FastDownwardBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get published benchmark</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – Environment seed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – FD environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.fast_downward.FastDownwardEnv" title="dacbench.envs.fast_downward.FastDownwardEnv">FastDownwardEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.fast_downward_benchmark.FastDownwardBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.fast_downward_benchmark.FastDownwardBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Luby env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Luby environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.luby.LubyEnv" title="dacbench.envs.luby.LubyEnv">LubyEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.fast_downward_benchmark.FastDownwardBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.fast_downward_benchmark.FastDownwardBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read paths of instances from config into list</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.fast_downward_benchmark.FastDownwardBenchmark.set_heuristics">
+<code class="sig-name descname">set_heuristics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">heuristics</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.fast_downward_benchmark.FastDownwardBenchmark.set_heuristics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.benchmarks.luby_benchmark">
+<span id="dacbench-benchmarks-luby-benchmark-module"></span><h2>dacbench.benchmarks.luby_benchmark module<a class="headerlink" href="#module-dacbench.benchmarks.luby_benchmark" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.benchmarks.luby_benchmark.LubyBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.luby_benchmark.</code><code class="sig-name descname">LubyBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.luby_benchmark.LubyBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for Sigmoid</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.luby_benchmark.LubyBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">L</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">fuzziness</span><span class="o">=</span><span class="default_value">1.5</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.luby_benchmark.LubyBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Benchmark from DAC paper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> (<em>int</em>) – Minimum sequence lenght, was 8, 16 or 32 in the paper</p></li>
+<li><p><strong>fuzziness</strong> (<em>float</em>) – Amount of noise applied. Was 1.5 for most of the experiments</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Environment seed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – Luby environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.luby.LubyEnv" title="dacbench.envs.luby.LubyEnv">LubyEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.luby_benchmark.LubyBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.luby_benchmark.LubyBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Luby env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Luby environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.luby.LubyEnv" title="dacbench.envs.luby.LubyEnv">LubyEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.luby_benchmark.LubyBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.luby_benchmark.LubyBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read instance set from file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.luby_benchmark.LubyBenchmark.set_cutoff">
+<code class="sig-name descname">set_cutoff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">steps</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.luby_benchmark.LubyBenchmark.set_cutoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set cutoff and adapt dependencies</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>int</strong> – Maximum number of steps</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.luby_benchmark.LubyBenchmark.set_history_length">
+<code class="sig-name descname">set_history_length</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">length</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.luby_benchmark.LubyBenchmark.set_history_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set history length and adapt dependencies</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>int</strong> – History length</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.benchmarks.modea_benchmark">
+<span id="dacbench-benchmarks-modea-benchmark-module"></span><h2>dacbench.benchmarks.modea_benchmark module<a class="headerlink" href="#module-dacbench.benchmarks.modea_benchmark" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.benchmarks.modea_benchmark.ModeaBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.modea_benchmark.</code><code class="sig-name descname">ModeaBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.modea_benchmark.ModeaBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for Modea</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.modea_benchmark.ModeaBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.modea_benchmark.ModeaBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get benchmark</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – Environment seed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – Modea environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.modea.ModeaEnv" title="dacbench.envs.modea.ModeaEnv">ModeaEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.modea_benchmark.ModeaBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.modea_benchmark.ModeaBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return ModeaEnv env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Modea environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.modea.ModeaEnv" title="dacbench.envs.modea.ModeaEnv">ModeaEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.modea_benchmark.ModeaBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.modea_benchmark.ModeaBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read path of instances from config into list</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.benchmarks.onell_benchmark">
+<span id="dacbench-benchmarks-onell-benchmark-module"></span><h2>dacbench.benchmarks.onell_benchmark module<a class="headerlink" href="#module-dacbench.benchmarks.onell_benchmark" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.benchmarks.onell_benchmark.OneLLBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.onell_benchmark.</code><code class="sig-name descname">OneLLBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">'/home/eimer/Dokumente/git/DACBench/dacbench/benchmarks/../additional_configs/onell/lbd_theory.json'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.onell_benchmark.OneLLBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with various settings for (1+(lbd, lbd))-GA</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.onell_benchmark.OneLLBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.onell_benchmark.OneLLBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an environment with current configuration</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.onell_benchmark.OneLLBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.onell_benchmark.OneLLBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read instance set from file</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.benchmarks.sgd_benchmark">
+<span id="dacbench-benchmarks-sgd-benchmark-module"></span><h2>dacbench.benchmarks.sgd_benchmark module<a class="headerlink" href="#module-dacbench.benchmarks.sgd_benchmark" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.benchmarks.sgd_benchmark.SGDBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.sgd_benchmark.</code><code class="sig-name descname">SGDBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.sgd_benchmark.SGDBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for SGD</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.sgd_benchmark.SGDBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.sgd_benchmark.SGDBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get benchmark from the LTO paper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – Environment seed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – SGD environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.sgd.SGDEnv" title="dacbench.envs.sgd.SGDEnv">SGDEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.sgd_benchmark.SGDBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.sgd_benchmark.SGDBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return SGDEnv env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>SGD environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.sgd.SGDEnv" title="dacbench.envs.sgd.SGDEnv">SGDEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.sgd_benchmark.SGDBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.sgd_benchmark.SGDBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read path of instances from config into list</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.benchmarks.sigmoid_benchmark">
+<span id="dacbench-benchmarks-sigmoid-benchmark-module"></span><h2>dacbench.benchmarks.sigmoid_benchmark module<a class="headerlink" href="#module-dacbench.benchmarks.sigmoid_benchmark" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.sigmoid_benchmark.</code><code class="sig-name descname">SigmoidBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for Sigmoid</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dimension</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Benchmark from DAC paper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dimension</strong> (<em>int</em>) – Sigmoid dimension, was 1, 2, 3 or 5 in the paper</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Environment seed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – Sigmoid environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.sigmoid.SigmoidEnv" title="dacbench.envs.sigmoid.SigmoidEnv">SigmoidEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Sigmoid env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Sigmoid environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.sigmoid.SigmoidEnv" title="dacbench.envs.sigmoid.SigmoidEnv">SigmoidEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read instance set from file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.set_action_values">
+<code class="sig-name descname">set_action_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.set_action_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapt action values and update dependencies</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>values</strong> (<em>list</em>) – A list of possible actions per dimension</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.benchmarks">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dacbench.benchmarks" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.benchmarks.CMAESBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.</code><code class="sig-name descname">CMAESBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.CMAESBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for CMA-ES</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.CMAESBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.CMAESBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get benchmark from the LTO paper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – Environment seed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – CMAES environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.cma_es.CMAESEnv" title="dacbench.envs.cma_es.CMAESEnv">CMAESEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.CMAESBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.CMAESBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return CMAESEnv env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>CMAES environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.cma_es.CMAESEnv" title="dacbench.envs.cma_es.CMAESEnv">CMAESEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.CMAESBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.CMAESBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read path of instances from config into list</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.benchmarks.FastDownwardBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.</code><code class="sig-name descname">FastDownwardBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.FastDownwardBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for Sigmoid</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.FastDownwardBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.FastDownwardBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get published benchmark</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – Environment seed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – FD environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.fast_downward.FastDownwardEnv" title="dacbench.envs.fast_downward.FastDownwardEnv">FastDownwardEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.FastDownwardBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.FastDownwardBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Luby env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Luby environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.luby.LubyEnv" title="dacbench.envs.luby.LubyEnv">LubyEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.FastDownwardBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.FastDownwardBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read paths of instances from config into list</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.FastDownwardBenchmark.set_heuristics">
+<code class="sig-name descname">set_heuristics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">heuristics</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.FastDownwardBenchmark.set_heuristics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.benchmarks.LubyBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.</code><code class="sig-name descname">LubyBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.LubyBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for Sigmoid</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.LubyBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">L</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">fuzziness</span><span class="o">=</span><span class="default_value">1.5</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.LubyBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Benchmark from DAC paper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> (<em>int</em>) – Minimum sequence lenght, was 8, 16 or 32 in the paper</p></li>
+<li><p><strong>fuzziness</strong> (<em>float</em>) – Amount of noise applied. Was 1.5 for most of the experiments</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Environment seed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – Luby environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.luby.LubyEnv" title="dacbench.envs.luby.LubyEnv">LubyEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.LubyBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.LubyBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Luby env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Luby environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.luby.LubyEnv" title="dacbench.envs.luby.LubyEnv">LubyEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.LubyBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.LubyBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read instance set from file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.LubyBenchmark.set_cutoff">
+<code class="sig-name descname">set_cutoff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">steps</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.LubyBenchmark.set_cutoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set cutoff and adapt dependencies</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>int</strong> – Maximum number of steps</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.LubyBenchmark.set_history_length">
+<code class="sig-name descname">set_history_length</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">length</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.LubyBenchmark.set_history_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set history length and adapt dependencies</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>int</strong> – History length</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.benchmarks.ModeaBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.</code><code class="sig-name descname">ModeaBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.ModeaBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for Modea</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.ModeaBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.ModeaBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get benchmark</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – Environment seed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – Modea environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.modea.ModeaEnv" title="dacbench.envs.modea.ModeaEnv">ModeaEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.ModeaBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.ModeaBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return ModeaEnv env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Modea environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.modea.ModeaEnv" title="dacbench.envs.modea.ModeaEnv">ModeaEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.ModeaBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.ModeaBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read path of instances from config into list</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.benchmarks.SGDBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.</code><code class="sig-name descname">SGDBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.SGDBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for SGD</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.SGDBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.SGDBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get benchmark from the LTO paper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – Environment seed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – SGD environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.sgd.SGDEnv" title="dacbench.envs.sgd.SGDEnv">SGDEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.SGDBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.SGDBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return SGDEnv env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>SGD environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.sgd.SGDEnv" title="dacbench.envs.sgd.SGDEnv">SGDEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.SGDBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.SGDBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read path of instances from config into list</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.benchmarks.SigmoidBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.benchmarks.</code><code class="sig-name descname">SigmoidBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.SigmoidBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_benchmark.AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for Sigmoid</p>
+<dl class="py method">
+<dt id="dacbench.benchmarks.SigmoidBenchmark.get_benchmark">
+<code class="sig-name descname">get_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dimension</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.SigmoidBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Benchmark from DAC paper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dimension</strong> (<em>int</em>) – Sigmoid dimension, was 1, 2, 3 or 5 in the paper</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Environment seed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>env</strong> – Sigmoid environment</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.sigmoid.SigmoidEnv" title="dacbench.envs.sigmoid.SigmoidEnv">SigmoidEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.SigmoidBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.SigmoidBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Sigmoid env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Sigmoid environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="dacbench.envs.html#dacbench.envs.sigmoid.SigmoidEnv" title="dacbench.envs.sigmoid.SigmoidEnv">SigmoidEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.SigmoidBenchmark.read_instance_set">
+<code class="sig-name descname">read_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.SigmoidBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read instance set from file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.benchmarks.SigmoidBenchmark.set_action_values">
+<code class="sig-name descname">set_action_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.benchmarks.SigmoidBenchmark.set_action_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapt action values and update dependencies</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>values</strong> (<em>list</em>) – A list of possible actions per dimension</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Theresa Eimer, Maximilian Reimer.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -17,10 +17,3 @@ Welcome to DACBench's documentation!
  source/plotting
  source/cite
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

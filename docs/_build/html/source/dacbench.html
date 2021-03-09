@@ -1,0 +1,1713 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>dacbench package &mdash; DACBench 01.02.2021 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> DACBench
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to Install DACBench</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">The Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifications.html">Saving &amp; Loading Benchmark Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wrappers.html">Functionality through Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">Plotting results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cite.html">Citing DACBench</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">DACBench</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>dacbench package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/dacbench.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dacbench-package">
+<h1>dacbench package<a class="headerlink" href="#dacbench-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dacbench.agents.html">dacbench.agents package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.agents.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.agents.html#module-dacbench.agents.dynamic_random_agent">dacbench.agents.dynamic_random_agent module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.agents.html#module-dacbench.agents.generic_agent">dacbench.agents.generic_agent module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.agents.html#module-dacbench.agents.simple_agents">dacbench.agents.simple_agents module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.agents.html#module-dacbench.agents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dacbench.benchmarks.html">dacbench.benchmarks package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.benchmarks.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.benchmarks.html#module-dacbench.benchmarks.cma_benchmark">dacbench.benchmarks.cma_benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.benchmarks.html#module-dacbench.benchmarks.fast_downward_benchmark">dacbench.benchmarks.fast_downward_benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.benchmarks.html#module-dacbench.benchmarks.luby_benchmark">dacbench.benchmarks.luby_benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.benchmarks.html#module-dacbench.benchmarks.modea_benchmark">dacbench.benchmarks.modea_benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.benchmarks.html#module-dacbench.benchmarks.onell_benchmark">dacbench.benchmarks.onell_benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.benchmarks.html#module-dacbench.benchmarks.sgd_benchmark">dacbench.benchmarks.sgd_benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.benchmarks.html#module-dacbench.benchmarks.sigmoid_benchmark">dacbench.benchmarks.sigmoid_benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.benchmarks.html#module-dacbench.benchmarks">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dacbench.envs.html">dacbench.envs package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.envs.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dacbench.envs.policies.html">dacbench.envs.policies package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dacbench.envs.policies.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dacbench.envs.policies.html#module-dacbench.envs.policies.bestknown_onell">dacbench.envs.policies.bestknown_onell module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dacbench.envs.policies.html#module-dacbench.envs.policies.csa_cma">dacbench.envs.policies.csa_cma module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dacbench.envs.policies.html#module-dacbench.envs.policies.optimal_fd">dacbench.envs.policies.optimal_fd module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dacbench.envs.policies.html#module-dacbench.envs.policies.optimal_luby">dacbench.envs.policies.optimal_luby module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dacbench.envs.policies.html#module-dacbench.envs.policies.optimal_sigmoid">dacbench.envs.policies.optimal_sigmoid module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dacbench.envs.policies.html#module-dacbench.envs.policies">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.envs.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.envs.html#module-dacbench.envs.cma_es">dacbench.envs.cma_es module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.envs.html#dacbench-envs-cma-step-size-module">dacbench.envs.cma_step_size module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.envs.html#module-dacbench.envs.fast_downward">dacbench.envs.fast_downward module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.envs.html#module-dacbench.envs.luby">dacbench.envs.luby module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.envs.html#module-dacbench.envs.modea">dacbench.envs.modea module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.envs.html#module-dacbench.envs.onell_env">dacbench.envs.onell_env module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.envs.html#module-dacbench.envs.sgd">dacbench.envs.sgd module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.envs.html#module-dacbench.envs.sigmoid">dacbench.envs.sigmoid module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.envs.html#module-dacbench.envs">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dacbench.wrappers.html">dacbench.wrappers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.wrappers.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.wrappers.html#module-dacbench.wrappers.action_tracking_wrapper">dacbench.wrappers.action_tracking_wrapper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.wrappers.html#module-dacbench.wrappers.episode_time_tracker">dacbench.wrappers.episode_time_tracker module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.wrappers.html#module-dacbench.wrappers.instance_sampling_wrapper">dacbench.wrappers.instance_sampling_wrapper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.wrappers.html#module-dacbench.wrappers.observation_wrapper">dacbench.wrappers.observation_wrapper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.wrappers.html#module-dacbench.wrappers.performance_tracking_wrapper">dacbench.wrappers.performance_tracking_wrapper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.wrappers.html#module-dacbench.wrappers.policy_progress_wrapper">dacbench.wrappers.policy_progress_wrapper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.wrappers.html#module-dacbench.wrappers.reward_noise_wrapper">dacbench.wrappers.reward_noise_wrapper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.wrappers.html#module-dacbench.wrappers.state_tracking_wrapper">dacbench.wrappers.state_tracking_wrapper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dacbench.wrappers.html#module-dacbench.wrappers">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-dacbench.abstract_agent">
+<span id="dacbench-abstract-agent-module"></span><h2>dacbench.abstract_agent module<a class="headerlink" href="#module-dacbench.abstract_agent" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.abstract_agent.AbstractDACBenchAgent">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.abstract_agent.</code><code class="sig-name descname">AbstractDACBenchAgent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_agent.AbstractDACBenchAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract class to implement for use with the runner function</p>
+<dl class="py method">
+<dt id="dacbench.abstract_agent.AbstractDACBenchAgent.act">
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_agent.AbstractDACBenchAgent.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and return environment action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Action to take</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>action</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_agent.AbstractDACBenchAgent.end_episode">
+<code class="sig-name descname">end_episode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_agent.AbstractDACBenchAgent.end_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>End of episode training if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_agent.AbstractDACBenchAgent.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">next_state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_agent.AbstractDACBenchAgent.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train during episode if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>next_state</strong> – Environment state after step</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.abstract_benchmark">
+<span id="dacbench-abstract-benchmark-module"></span><h2>dacbench.abstract_benchmark module<a class="headerlink" href="#module-dacbench.abstract_benchmark" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.abstract_benchmark.</code><code class="sig-name descname">AbstractBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract template for benchmark classes</p>
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.dejson_wrappers">
+<code class="sig-name descname">dejson_wrappers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrapper_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.dejson_wrappers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.dictify_json">
+<code class="sig-name descname">dictify_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dict_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.dictify_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.get_config">
+<code class="sig-name descname">get_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Current config</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make benchmark environment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>env</strong> – Benchmark environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>gym.Env</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.jsonify_dict_space">
+<code class="sig-name descname">jsonify_dict_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dict_space</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.jsonify_dict_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.jsonify_wrappers">
+<code class="sig-name descname">jsonify_wrappers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.jsonify_wrappers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.list_to_space">
+<code class="sig-name descname">list_to_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">space_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.list_to_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.read_config_file">
+<code class="sig-name descname">read_config_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.read_config_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read configuration from file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path to config file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.register_wrapper">
+<code class="sig-name descname">register_wrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrap_func</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.register_wrapper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.save_config">
+<code class="sig-name descname">save_config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.save_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save configuration to .json</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – File to save config to</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.set_action_space">
+<code class="sig-name descname">set_action_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kind</span></em>, <em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.set_action_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change action space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind</strong> (<em>str</em>) – Name of action space class</p></li>
+<li><p><strong>args</strong> (<em>list</em>) – List of arguments to pass to action space class</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.set_observation_space">
+<code class="sig-name descname">set_observation_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kind</span></em>, <em class="sig-param"><span class="n">args</span></em>, <em class="sig-param"><span class="n">data_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.set_observation_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change observation_space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind</strong> (<em>str</em>) – Name of observation space class</p></li>
+<li><p><strong>args</strong> (<em>list</em>) – List of arguments to pass to observation space class</p></li>
+<li><p><strong>data_type</strong> (<em>type</em>) – Data type of observation space</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.set_seed">
+<code class="sig-name descname">set_seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.set_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set environment seed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – New seed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_benchmark.AbstractBenchmark.space_to_list">
+<code class="sig-name descname">space_to_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">space</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.space_to_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.abstract_benchmark.objdict">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.abstract_benchmark.</code><code class="sig-name descname">objdict</code><a class="headerlink" href="#dacbench.abstract_benchmark.objdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>Modified dict to make config changes more flexible</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.abstract_env">
+<span id="dacbench-abstract-env-module"></span><h2>dacbench.abstract_env module<a class="headerlink" href="#module-dacbench.abstract_env" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.abstract_env.AbstractEnv">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.abstract_env.</code><code class="sig-name descname">AbstractEnv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.core.Env</span></code></p>
+<p>Abstract template for environments</p>
+<dl class="py method">
+<dt id="dacbench.abstract_env.AbstractEnv.get_inst_id">
+<code class="sig-name descname">get_inst_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.get_inst_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return instance ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>ID of current instance</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_env.AbstractEnv.get_instance">
+<code class="sig-name descname">get_instance</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.get_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return current instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Currently used instance</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>type flexible</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_env.AbstractEnv.get_instance_set">
+<code class="sig-name descname">get_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.get_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return instance set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of instances</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_env.AbstractEnv.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset environment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Environment state</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_env.AbstractEnv.reset_">
+<code class="sig-name descname">reset_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.reset_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pre-reset function for round robin schedule through instance set</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_env.AbstractEnv.seed">
+<code class="sig-name descname">seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set rng seed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed for rng</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_env.AbstractEnv.set_inst_id">
+<code class="sig-name descname">set_inst_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inst_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.set_inst_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change current instance ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inst_id</strong> (<em>int</em>) – New instance index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_env.AbstractEnv.set_instance">
+<code class="sig-name descname">set_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.set_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change currently used instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>instance</strong> – New instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_env.AbstractEnv.set_instance_set">
+<code class="sig-name descname">set_instance_set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inst_set</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.set_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change instance set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inst_set</strong> (<em>list</em>) – New instance set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_env.AbstractEnv.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action</strong> – Action to take</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>state</em> – Environment state</p></li>
+<li><p><em>reward</em> – Environment reward</p></li>
+<li><p><strong>done</strong> (<em>bool</em>) – Run finished flag</p></li>
+<li><p><strong>info</strong> (<em>dict</em>) – Additional metainfo</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.abstract_env.AbstractEnv.step_">
+<code class="sig-name descname">step_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.step_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pre-step function for step count and cutoff</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>End of episode</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.logger">
+<span id="dacbench-logger-module"></span><h2>dacbench.logger module<a class="headerlink" href="#module-dacbench.logger" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.logger.AbstractLogger">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.logger.</code><code class="sig-name descname">AbstractLogger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">experiment_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">step_write_frequency</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">episode_write_frequency</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.AbstractLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Logger interface.</p>
+<p>The logger classes provide a way of writing structured logs as jsonl files and also help to track information like
+current episode, step, time …</p>
+<p>In the jsonl log file each row corresponds to a step.</p>
+<dl class="py method">
+<dt id="dacbench.logger.AbstractLogger.close">
+<em class="property">abstract </em><code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.logger.AbstractLogger.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure, that all remaining entries in the are written to file and the file is closed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.AbstractLogger.is_of_valid_type">
+<code class="sig-name descname">is_of_valid_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#dacbench.logger.AbstractLogger.is_of_valid_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.AbstractLogger.log">
+<em class="property">abstract </em><code class="sig-name descname">log</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.logger.AbstractLogger.log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.AbstractLogger.log_dict">
+<em class="property">abstract </em><code class="sig-name descname">log_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.AbstractLogger.log_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative to log if more the one value should be logged at once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – a dict with key-value so that each value is a valid value for log</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.AbstractLogger.log_space">
+<em class="property">abstract </em><code class="sig-name descname">log_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>Dict<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">space_info</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.AbstractLogger.log_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Special for logging gym.spaces.</p>
+<p>Currently three types are supported:
+* Numbers: e.g. samples from Discrete
+* Fixed length arrays like MultiDiscrete or Box
+* Dict: assuming each key has fixed length array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – see log</p></li>
+<li><p><strong>value</strong> – see log</p></li>
+<li><p><strong>space_info</strong> – a list of column names. The length of this list must equal the resulting number of columns.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.AbstractLogger.next_episode">
+<em class="property">abstract </em><code class="sig-name descname">next_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.logger.AbstractLogger.next_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call at the end of episode.</p>
+<p>See next_step</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.AbstractLogger.next_step">
+<em class="property">abstract </em><code class="sig-name descname">next_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.logger.AbstractLogger.next_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call at the end of the step.
+Updates the internal state and dumps the information of the last step into a json</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="dacbench.logger.AbstractLogger.valid_types">
+<code class="sig-name descname">valid_types</code><em class="property"> = {'primitive': [&lt;class 'str'&gt;, &lt;class 'int'&gt;, &lt;class 'float'&gt;, &lt;class 'bool'&gt;, &lt;class 'numpy.number'&gt;], 'recursive': [&lt;class 'dict'&gt;, &lt;class 'list'&gt;, &lt;class 'tuple'&gt;, &lt;class 'numpy.ndarray'&gt;]}</em><a class="headerlink" href="#dacbench.logger.AbstractLogger.valid_types" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.AbstractLogger.write">
+<em class="property">abstract </em><code class="sig-name descname">write</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.logger.AbstractLogger.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes buffered logs to file.</p>
+<p>Invoke manually if you want to load logs during a run.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.logger.Logger">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.logger.</code><code class="sig-name descname">Logger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">experiment_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">step_write_frequency</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">episode_write_frequency</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.Logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dacbench.logger.AbstractLogger" title="dacbench.logger.AbstractLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.logger.AbstractLogger</span></code></a></p>
+<p>A logger that manages the creation of the module loggers.</p>
+<p>To get a ModuleLogger for you module (e.g. wrapper) call module_logger = Logger(…).add_module(“my_wrapper”).
+From now on  module_logger.log(…) or logger.log(…, module=”my_wrapper”) can be used to log.</p>
+<p>The logger module takes care of updating information like episode and step in the subloggers. To indicate to the loggers
+the end of the episode or the next_step simple call logger.next_episode() or logger.next_step().</p>
+<dl class="py method">
+<dt id="dacbench.logger.Logger.add_agent">
+<code class="sig-name descname">add_agent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agent</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dacbench.abstract_agent.AbstractDACBenchAgent" title="dacbench.abstract_agent.AbstractDACBenchAgent">dacbench.abstract_agent.AbstractDACBenchAgent</a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.Logger.add_agent" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Writes information about the agent</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>agent</strong> (<a class="reference internal" href="#dacbench.abstract_agent.AbstractDACBenchAgent" title="dacbench.abstract_agent.AbstractDACBenchAgent"><em>AbstractDACBenchAgent</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.add_benchmark">
+<code class="sig-name descname">add_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">benchmark</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark">dacbench.abstract_benchmark.AbstractBenchmark</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.logger.Logger.add_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the config to the experiment path
+:param benchmark:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.add_module">
+<code class="sig-name descname">add_module</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">module</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>type<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#dacbench.logger.ModuleLogger" title="dacbench.logger.ModuleLogger">dacbench.logger.ModuleLogger</a><a class="headerlink" href="#dacbench.logger.Logger.add_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a sub-logger. For more details see class level documentation
+:param module: The module name or Wrapper-Type to create a sub-logger for
+:type module: str or type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#dacbench.logger.ModuleLogger" title="dacbench.logger.ModuleLogger">ModuleLogger</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.Logger.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure, that all remaining entries (from all sublogger) are written to files and the files are closed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.log">
+<code class="sig-name descname">log</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">module</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.Logger.log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.log_dict">
+<code class="sig-name descname">log_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">module</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.Logger.log_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative to log if more the one value should be logged at once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – a dict with key-value so that each value is a valid value for log</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.log_space">
+<code class="sig-name descname">log_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">module</span></em>, <em class="sig-param"><span class="n">space_info</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.Logger.log_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Special for logging gym.spaces.</p>
+<p>Currently three types are supported:
+* Numbers: e.g. samples from Discrete
+* Fixed length arrays like MultiDiscrete or Box
+* Dict: assuming each key has fixed length array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – see log</p></li>
+<li><p><strong>value</strong> – see log</p></li>
+<li><p><strong>space_info</strong> – a list of column names. The length of this list must equal the resulting number of columns.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.next_episode">
+<code class="sig-name descname">next_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.Logger.next_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call at the end of episode.</p>
+<p>See next_step</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.next_step">
+<code class="sig-name descname">next_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.Logger.next_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call at the end of the step.
+Updates the internal state of all subloggers and dumps the information of the last step into a json</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.reset_episode">
+<code class="sig-name descname">reset_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.Logger.reset_episode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.set_additional_info">
+<code class="sig-name descname">set_additional_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.Logger.set_additional_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.set_env">
+<code class="sig-name descname">set_env</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dacbench.abstract_env.AbstractEnv" title="dacbench.abstract_env.AbstractEnv">dacbench.abstract_env.AbstractEnv</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.logger.Logger.set_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Needed to infer automatically logged information like the instance id
+:param env:
+:type env: AbstractEnv</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.Logger.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.Logger.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes buffered logs to file.</p>
+<p>Invoke manually if you want to load logs during a run.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.logger.ModuleLogger">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.logger.</code><code class="sig-name descname">ModuleLogger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">experiment_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">module</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">step_write_frequency</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">episode_write_frequency</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.ModuleLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dacbench.logger.AbstractLogger" title="dacbench.logger.AbstractLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.logger.AbstractLogger</span></code></a></p>
+<p>A logger for handling logging of one module. e.g. a wrapper or toplevel general logging.</p>
+<p>Don’t create manually use Logger to manage ModuleLoggers</p>
+<dl class="py method">
+<dt id="dacbench.logger.ModuleLogger.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.ModuleLogger.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure, that all remaining entries in the are written to file and the file is closed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.ModuleLogger.get_logfile">
+<code class="sig-name descname">get_logfile</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; pathlib.Path<a class="headerlink" href="#dacbench.logger.ModuleLogger.get_logfile" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the path to the log file of this logger</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pathlib.Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.ModuleLogger.log">
+<code class="sig-name descname">log</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Dict<span class="p">, </span>List<span class="p">, </span>Tuple<span class="p">, </span>str<span class="p">, </span>int<span class="p">, </span>float<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.logger.ModuleLogger.log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.ModuleLogger.log_dict">
+<code class="sig-name descname">log_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.logger.ModuleLogger.log_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative to log if more the one value should be logged at once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – a dict with key-value so that each value is a valid value for log</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.ModuleLogger.log_space">
+<code class="sig-name descname">log_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">space_info</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.ModuleLogger.log_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Special for logging gym.spaces.</p>
+<p>Currently three types are supported:
+* Numbers: e.g. samples from Discrete
+* Fixed length arrays like MultiDiscrete or Box
+* Dict: assuming each key has fixed length array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – see log</p></li>
+<li><p><strong>value</strong> – see log</p></li>
+<li><p><strong>space_info</strong> – a list of column names. The length of this list must equal the resulting number of columns.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.ModuleLogger.next_episode">
+<code class="sig-name descname">next_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.ModuleLogger.next_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes buffered logs to file.</p>
+<p>Invoke manually if you want to load logs during a run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.ModuleLogger.next_step">
+<code class="sig-name descname">next_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.ModuleLogger.next_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call at the end of the step.
+Updates the internal state and dumps the information of the last step into a json</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.ModuleLogger.reset_episode">
+<code class="sig-name descname">reset_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.logger.ModuleLogger.reset_episode" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Resets the episode and step.</p>
+<p>Be aware that this can lead to ambitious keys if no instance or seed or other identifying additional info is set</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns</dt><dd></dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.ModuleLogger.set_additional_info">
+<code class="sig-name descname">set_additional_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.ModuleLogger.set_additional_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Can be used to log additional information for each step e.g. for seed, and instance id.
+:param kwargs:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.logger.ModuleLogger.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.logger.ModuleLogger.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes buffered logs to file.</p>
+<p>Invoke manually if you want to load logs during a run.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.logger.flatten_log_entry">
+<code class="sig-prename descclassname">dacbench.logger.</code><code class="sig-name descname">flatten_log_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log_entry</span><span class="p">:</span> <span class="n">Dict</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Dict<span class="p">]</span><a class="headerlink" href="#dacbench.logger.flatten_log_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a log entry of format like</p>
+<dl>
+<dt>{</dt><dd><p>‘step’: 0,
+‘episode’: 2,
+‘some_value’: {</p>
+<blockquote>
+<div><p>‘values’ : [34, 45],
+‘times’:[‘28-12-20 16:20:53’, ‘28-12-20 16:21:30’],</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}
+into
+[</p>
+<blockquote>
+<div><p>{ ‘step’: 0,’episode’: 2, ‘value’: 34, ‘time’: ‘28-12-20 16:20:53’},
+{ ‘step’: 0,’episode’: 2, ‘value’: 45, ‘time’: ‘28-12-20 16:21:30’}</p>
+</div></blockquote>
+<p>]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>log_entry</strong> (<em>Dict</em>) – A log entry</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.logger.list_to_tuple">
+<code class="sig-prename descclassname">dacbench.logger.</code><code class="sig-name descname">list_to_tuple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">list_</span><span class="p">:</span> <span class="n">List</span></em><span class="sig-paren">)</span> &#x2192; Tuple<a class="headerlink" href="#dacbench.logger.list_to_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively transforms a list of lists into tuples of tuples
+:param <a href="#id3"><span class="problematic" id="id4">list_</span></a>: (nested) list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(nested) tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.logger.load_logs">
+<code class="sig-prename descclassname">dacbench.logger.</code><code class="sig-name descname">load_logs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log_file</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Dict<span class="p">]</span><a class="headerlink" href="#dacbench.logger.load_logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the logs from a jsonl written by any logger.</p>
+<p>The result is the list of dicts in the format:
+{</p>
+<blockquote>
+<div><p>‘instance’: 0,
+‘episode’: 0,
+‘step’: 1,
+‘example_log_val’:  {</p>
+<blockquote>
+<div><p>‘values’: [val1, val2, … valn],
+‘times: [time1, time2, …, timen],</p>
+</div></blockquote>
+</div></blockquote>
+<p>}
+:param log_file: The path to the log file
+:type log_file: pathlib.Path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>[Dict, ..]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.logger.log2dataframe">
+<code class="sig-prename descclassname">dacbench.logger.</code><code class="sig-name descname">log2dataframe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logs</span><span class="p">:</span> <span class="n">List<span class="p">[</span>dict<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">wide</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">drop_columns</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">['time']</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#dacbench.logger.log2dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of log entries to a pandas dataframe.</p>
+<p>Usually used in combination with load_dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logs</strong> (<em>List</em>) – List of log entries</p></li>
+<li><p><strong>wide</strong> (<em>bool</em>) – wide=False (default) produces a dataframe with columns (episode, step, time, name, value)
+wide=True returns a dataframe (episode, step, time, name_1, name_2, …) if the variable name_n has not been logged
+at (episode, step, time) name_n is NaN.</p></li>
+<li><p><strong>drop_columns</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of column names to be dropped (before reshaping the long dataframe) mostly used in combination
+with wide=True to reduce NaN values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.logger.split">
+<code class="sig-prename descclassname">dacbench.logger.</code><code class="sig-name descname">split</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predicate</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>List<span class="p">, </span>List<span class="p">]</span><a class="headerlink" href="#dacbench.logger.split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits the iterable into two list depending on the result of predicate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predicate</strong> (<em>Callable</em>) – A function taking an element of the iterable and return Ture or False</p></li>
+<li><p><strong>iterable</strong> (<em>Iterable</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(positives, negatives)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.plotting">
+<span id="dacbench-plotting-module"></span><h2>dacbench.plotting module<a class="headerlink" href="#module-dacbench.plotting" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="dacbench.plotting.add_multi_level_ticks">
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">add_multi_level_ticks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grid</span><span class="p">:</span> <span class="n">seaborn.axisgrid.FacetGrid</span></em>, <em class="sig-param"><span class="n">plot_index</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">x_column</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">x_label_columns</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#dacbench.plotting.add_multi_level_ticks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expects a FacedGrid with global_step (x_column) as x-axis and replaces the tick labels to match format episode:step</p>
+<p>E.g. Run with 3 episodes, each of 10 steps. This results in 30 global steps.
+The resulting tick labels could be [‘0’, ‘4’, ‘9’, ‘14’, ‘19’, ‘24’, ‘29’].
+After applying this method they will look like [‘0:0’, ‘0:4’, ‘1:0’, ‘1:4’, ‘2:0’, ‘2:4’, ‘3:0’, ‘3:4’]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>sns.FacesGrid</em>) – </p></li>
+<li><p><strong>plot_index</strong> (<em>pd.DataFrame</em>) – The mapping between current tick labels (global step values) and new tick labels joined by ‘:’.
+usually the result from generate_global_step</p></li>
+<li><p><strong>x_column</strong> (<em>str</em>) – column label to use for looking up tick values</p></li>
+<li><p><strong>x_label_columns</strong> (<em>[</em><em>str</em><em>, </em><em>..</em><em>]</em>) – columns labels of columns to use for new labels (joined by ‘:’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.plotting.generate_global_step">
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">generate_global_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">x_column</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'global_step'</span></em>, <em class="sig-param"><span class="n">x_label_columns</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">['episode', 'step']</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>pandas.core.frame.DataFrame<span class="p">, </span>str<span class="p">, </span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span><a class="headerlink" href="#dacbench.plotting.generate_global_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a global_step column which enumerate all step over all episodes.</p>
+<p>Returns the altered data, a data frame containing mapping between global_step, x_column and x_label_columns.</p>
+<p>Often used in combination with add_multi_level_ticks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – </p></li>
+<li><p><strong>x_column</strong> (<em>str</em>) – the name of the global_step (default ‘global_step’)</p></li>
+<li><p><strong>x_label_columns</strong> (<em>[</em><em>str</em><em>, </em><em>..</em><em>]</em>) – the name and hierarchical order of the columns (default [‘episode’, ‘step’]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(data, plot_index, x_column, x_label_columns)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.plotting.plot">
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plot_function</span></em>, <em class="sig-param"><span class="n">settings</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_label</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_label</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; seaborn.axisgrid.FacetGrid<a class="headerlink" href="#dacbench.plotting.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function that: create a FacetGrid
+1. Updates settings with kwargs (overwrites values)
+2. Plots using plot_function(<a href="#id1"><span class="problematic" id="id2">**</span></a>settings)
+3. Set x and y labels of not provided the columns names will converted to pretty strings using space_sep_upper
+4. Sets title (some times has to be readjusted afterwards especially in case of large plots e.g. multiple rows/cols)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_function</strong> – function to generate the FacedGrid. E.g. sns.catplot or sns.catplot</p></li>
+<li><p><strong>settings</strong> (<em>dict</em>) – a dicts containing all needed default settings.</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.plotting.plot_action">
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">plot_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">show_global_step</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.plotting.plot_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot showing actions over time.</p>
+<p>Please be aware that action spaces can be quite large and the plots can become quite messy (and take some time)
+if you try plot all dimensions at once. It is therefore recommended to select a subset of columns before running the
+plot method.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<p>For examples refer to examples/plotting/action_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>show_global_step</strong> (<em>bool</em>) – If to show the global_step (step enumerated over all episodes) or Episode:Step. (False default)</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – Interval in number of steps to average over. (default = 1)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.plotting.plot_episode_time">
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">plot_episode_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span> &#x2192; seaborn.axisgrid.FacetGrid<a class="headerlink" href="#dacbench.plotting.plot_episode_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot showing the measured time per episode.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<p>For examples refer to examples/plotting/time_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.plotting.plot_performance">
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">plot_performance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; seaborn.axisgrid.FacetGrid<a class="headerlink" href="#dacbench.plotting.plot_performance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot of the performance over episodes.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<p>For examples refer to examples/plotting/performance_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.plotting.plot_performance_per_instance">
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">plot_performance_per_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">args</span></em><span class="sig-paren">)</span> &#x2192; seaborn.axisgrid.FacetGrid<a class="headerlink" href="#dacbench.plotting.plot_performance_per_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a bar plot of the mean performance per instance ordered by the performance.</p>
+<p>Per default the mean performance seeds is shown if you want to change
+this specify a property to map seed to e.g. col=’seed’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.catplot.html">https://seaborn.pydata.org/generated/seaborn.catplot.html</a></p>
+<p>For examples refer to examples/plotting/performance_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.plotting.plot_space">
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">plot_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">space_column_name</span></em>, <em class="sig-param"><span class="n">show_global_step</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">args</span></em><span class="sig-paren">)</span> &#x2192; seaborn.axisgrid.FacetGrid<a class="headerlink" href="#dacbench.plotting.plot_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot showing sapce over time.</p>
+<p>Please be aware that spaces can be quite large and the plots can become quite messy (and take some time)
+if you try plot all dimensions at once. It is therefore recommended to select a subset of columns before running the
+plot method. Especially for dict spaces.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<dl class="simple">
+<dt>For examples refer to</dt><dd><p>examples/plotting/state_plotting.py or
+examples/plotting/action_plotting.py</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>show_global_step</strong> (<em>bool</em>) – If to show the global_step (step enumerated over all episodes) or Episode:Step. (False default)</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – Interval in number of steps to average over. (default = 1)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.plotting.plot_state">
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">plot_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">show_global_step</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.plotting.plot_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot showing state over time.</p>
+<p>Please be aware that state can be quite large and the plots can become quite messy (and take some time)
+if you try plot all dimensions at once. It is therefore recommended to select a subset of columns before running the
+plot method. Especially for dict state spaces.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<p>For examples refer to examples/plotting/state_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>show_global_step</strong> (<em>bool</em>) – If to show the global_step (step enumerated over all episodes) or Episode:Step. (False default)</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – Interval in number of steps to average over. (default = 1)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.plotting.plot_step_time">
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">plot_step_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">show_global_step</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">args</span></em><span class="sig-paren">)</span> &#x2192; seaborn.axisgrid.FacetGrid<a class="headerlink" href="#dacbench.plotting.plot_step_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot showing the measured time per step.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<p>For examples refer to examples/plotting/time_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>show_global_step</strong> (<em>bool</em>) – If to show the global_step (step enumerated over all episodes) or Episode:Step. (False default)</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – Interval in number of steps to average over. (default = 1)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.plotting.space_sep_upper">
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">space_sep_upper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#dacbench.plotting.space_sep_upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a string of format ‘<a href="#id5"><span class="problematic" id="id6">part0_part1_</span></a>…’ to ‘Part0 Part1 …’. C
+Used to generate labels from logging names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>column_name</strong> (<em>str</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.run_baselines">
+<span id="dacbench-run-baselines-module"></span><h2>dacbench.run_baselines module<a class="headerlink" href="#module-dacbench.run_baselines" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="dacbench.run_baselines.main">
+<code class="sig-prename descclassname">dacbench.run_baselines.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.run_baselines.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.run_baselines.run_dynamic_policy">
+<code class="sig-prename descclassname">dacbench.run_baselines.</code><code class="sig-name descname">run_dynamic_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results_path</span></em>, <em class="sig-param"><span class="n">benchmark_name</span></em>, <em class="sig-param"><span class="n">num_episodes</span></em>, <em class="sig-param"><span class="n">seeds</span><span class="o">=</span><span class="default_value">array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.run_baselines.run_dynamic_policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.run_baselines.run_optimal">
+<code class="sig-prename descclassname">dacbench.run_baselines.</code><code class="sig-name descname">run_optimal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results_path</span></em>, <em class="sig-param"><span class="n">benchmark_name</span></em>, <em class="sig-param"><span class="n">num_episodes</span></em>, <em class="sig-param"><span class="n">seeds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.run_baselines.run_optimal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.run_baselines.run_policy">
+<code class="sig-prename descclassname">dacbench.run_baselines.</code><code class="sig-name descname">run_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results_path</span></em>, <em class="sig-param"><span class="n">benchmark_name</span></em>, <em class="sig-param"><span class="n">num_episodes</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">seeds</span><span class="o">=</span><span class="default_value">array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.run_baselines.run_policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.run_baselines.run_random">
+<code class="sig-prename descclassname">dacbench.run_baselines.</code><code class="sig-name descname">run_random</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results_path</span></em>, <em class="sig-param"><span class="n">benchmark_name</span></em>, <em class="sig-param"><span class="n">num_episodes</span></em>, <em class="sig-param"><span class="n">seeds</span></em>, <em class="sig-param"><span class="n">fixed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.run_baselines.run_random" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.run_baselines.run_static">
+<code class="sig-prename descclassname">dacbench.run_baselines.</code><code class="sig-name descname">run_static</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results_path</span></em>, <em class="sig-param"><span class="n">benchmark_name</span></em>, <em class="sig-param"><span class="n">action</span></em>, <em class="sig-param"><span class="n">num_episodes</span></em>, <em class="sig-param"><span class="n">seeds</span><span class="o">=</span><span class="default_value">array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.run_baselines.run_static" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.runner">
+<span id="dacbench-runner-module"></span><h2>dacbench.runner module<a class="headerlink" href="#module-dacbench.runner" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="dacbench.runner.run_benchmark">
+<code class="sig-prename descclassname">dacbench.runner.</code><code class="sig-name descname">run_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">agent</span></em>, <em class="sig-param"><span class="n">num_episodes</span></em>, <em class="sig-param"><span class="n">logger</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.runner.run_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run single benchmark env for a given number of episodes with a given agent</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>gym.Env</em>) – Benchmark environment</p></li>
+<li><p><strong>agent</strong> – Any agent implementing the methods act, train and end_episode (see AbstractDACBenchAgent below)</p></li>
+<li><p><strong>num_episodes</strong> (<em>int</em>) – Number of episodes to run</p></li>
+<li><p><strong>logger</strong> (<em>dacbench.logger.Logger: logger to use for logging. Not closed automatically like env</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dacbench.runner.run_dacbench">
+<code class="sig-prename descclassname">dacbench.runner.</code><code class="sig-name descname">run_dacbench</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results_path</span></em>, <em class="sig-param"><span class="n">agent_method</span></em>, <em class="sig-param"><span class="n">num_episodes</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.runner.run_dacbench" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all benchmarks for 10 seeds for a given number of episodes with a given agent and save result</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>results_path</strong> (<em>str</em>) – Path to where results should be saved</p></li>
+<li><p><strong>agent_method</strong> (<em>function</em>) – Method that takes an env as input and returns an agent</p></li>
+<li><p><strong>num_episodes</strong> (<em>int</em>) – Number of episodes to run for each benchmark</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dacbench" title="Permalink to this headline">¶</a></h2>
+<p>DACBench: a benchmark library for Dynamic Algorithm Configuration</p>
+<dl class="py class">
+<dt id="dacbench.AbstractBenchmark">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.</code><code class="sig-name descname">AbstractBenchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract template for benchmark classes</p>
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.dejson_wrappers">
+<code class="sig-name descname">dejson_wrappers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrapper_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.dejson_wrappers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.dictify_json">
+<code class="sig-name descname">dictify_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dict_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.dictify_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.get_config">
+<code class="sig-name descname">get_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Current config</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.get_environment">
+<code class="sig-name descname">get_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make benchmark environment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>env</strong> – Benchmark environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>gym.Env</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.jsonify_dict_space">
+<code class="sig-name descname">jsonify_dict_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dict_space</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.jsonify_dict_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.jsonify_wrappers">
+<code class="sig-name descname">jsonify_wrappers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.jsonify_wrappers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.list_to_space">
+<code class="sig-name descname">list_to_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">space_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.list_to_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.read_config_file">
+<code class="sig-name descname">read_config_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.read_config_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read configuration from file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path to config file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.register_wrapper">
+<code class="sig-name descname">register_wrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrap_func</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.register_wrapper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.save_config">
+<code class="sig-name descname">save_config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.save_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save configuration to .json</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – File to save config to</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.set_action_space">
+<code class="sig-name descname">set_action_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kind</span></em>, <em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.set_action_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change action space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind</strong> (<em>str</em>) – Name of action space class</p></li>
+<li><p><strong>args</strong> (<em>list</em>) – List of arguments to pass to action space class</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.set_observation_space">
+<code class="sig-name descname">set_observation_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kind</span></em>, <em class="sig-param"><span class="n">args</span></em>, <em class="sig-param"><span class="n">data_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.set_observation_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change observation_space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind</strong> (<em>str</em>) – Name of observation space class</p></li>
+<li><p><strong>args</strong> (<em>list</em>) – List of arguments to pass to observation space class</p></li>
+<li><p><strong>data_type</strong> (<em>type</em>) – Data type of observation space</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.set_seed">
+<code class="sig-name descname">set_seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.set_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set environment seed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – New seed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractBenchmark.space_to_list">
+<code class="sig-name descname">space_to_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">space</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractBenchmark.space_to_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.AbstractEnv">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.</code><code class="sig-name descname">AbstractEnv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.core.Env</span></code></p>
+<p>Abstract template for environments</p>
+<dl class="py method">
+<dt id="dacbench.AbstractEnv.get_inst_id">
+<code class="sig-name descname">get_inst_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv.get_inst_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return instance ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>ID of current instance</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractEnv.get_instance">
+<code class="sig-name descname">get_instance</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv.get_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return current instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Currently used instance</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>type flexible</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractEnv.get_instance_set">
+<code class="sig-name descname">get_instance_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv.get_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return instance set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of instances</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractEnv.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset environment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Environment state</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractEnv.reset_">
+<code class="sig-name descname">reset_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv.reset_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pre-reset function for round robin schedule through instance set</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractEnv.seed">
+<code class="sig-name descname">seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set rng seed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed for rng</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractEnv.set_inst_id">
+<code class="sig-name descname">set_inst_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inst_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv.set_inst_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change current instance ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inst_id</strong> (<em>int</em>) – New instance index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractEnv.set_instance">
+<code class="sig-name descname">set_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv.set_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change currently used instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>instance</strong> – New instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractEnv.set_instance_set">
+<code class="sig-name descname">set_instance_set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inst_set</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv.set_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change instance set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inst_set</strong> (<em>list</em>) – New instance set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractEnv.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action</strong> – Action to take</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>state</em> – Environment state</p></li>
+<li><p><em>reward</em> – Environment reward</p></li>
+<li><p><strong>done</strong> (<em>bool</em>) – Run finished flag</p></li>
+<li><p><strong>info</strong> (<em>dict</em>) – Additional metainfo</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.AbstractEnv.step_">
+<code class="sig-name descname">step_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.AbstractEnv.step_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pre-step function for step count and cutoff</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>End of episode</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Theresa Eimer, Maximilian Reimer.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

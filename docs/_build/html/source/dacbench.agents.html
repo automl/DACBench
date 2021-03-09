@@ -1,0 +1,656 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>dacbench.agents package &mdash; DACBench 01.02.2021 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> DACBench
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to Install DACBench</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">The Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifications.html">Saving &amp; Loading Benchmark Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wrappers.html">Functionality through Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">Plotting results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cite.html">Citing DACBench</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">DACBench</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>dacbench.agents package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/dacbench.agents.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dacbench-agents-package">
+<h1>dacbench.agents package<a class="headerlink" href="#dacbench-agents-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-dacbench.agents.dynamic_random_agent">
+<span id="dacbench-agents-dynamic-random-agent-module"></span><h2>dacbench.agents.dynamic_random_agent module<a class="headerlink" href="#module-dacbench.agents.dynamic_random_agent" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.agents.dynamic_random_agent.DynamicRandomAgent">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.agents.dynamic_random_agent.</code><code class="sig-name descname">DynamicRandomAgent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">switching_interval</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.dynamic_random_agent.DynamicRandomAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_agent.AbstractDACBenchAgent" title="dacbench.abstract_agent.AbstractDACBenchAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_agent.AbstractDACBenchAgent</span></code></a></p>
+<dl class="py method">
+<dt id="dacbench.agents.dynamic_random_agent.DynamicRandomAgent.act">
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.dynamic_random_agent.DynamicRandomAgent.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and return environment action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Action to take</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>action</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.dynamic_random_agent.DynamicRandomAgent.end_episode">
+<code class="sig-name descname">end_episode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.dynamic_random_agent.DynamicRandomAgent.end_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>End of episode training if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.dynamic_random_agent.DynamicRandomAgent.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">next_state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.dynamic_random_agent.DynamicRandomAgent.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train during episode if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>next_state</strong> – Environment state after step</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.agents.generic_agent">
+<span id="dacbench-agents-generic-agent-module"></span><h2>dacbench.agents.generic_agent module<a class="headerlink" href="#module-dacbench.agents.generic_agent" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.agents.generic_agent.GenericAgent">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.agents.generic_agent.</code><code class="sig-name descname">GenericAgent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.generic_agent.GenericAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_agent.AbstractDACBenchAgent" title="dacbench.abstract_agent.AbstractDACBenchAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_agent.AbstractDACBenchAgent</span></code></a></p>
+<dl class="py method">
+<dt id="dacbench.agents.generic_agent.GenericAgent.act">
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.generic_agent.GenericAgent.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and return environment action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Action to take</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>action</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.generic_agent.GenericAgent.end_episode">
+<code class="sig-name descname">end_episode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.generic_agent.GenericAgent.end_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>End of episode training if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.generic_agent.GenericAgent.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">next_state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.generic_agent.GenericAgent.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train during episode if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>next_state</strong> – Environment state after step</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.agents.simple_agents">
+<span id="dacbench-agents-simple-agents-module"></span><h2>dacbench.agents.simple_agents module<a class="headerlink" href="#module-dacbench.agents.simple_agents" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.agents.simple_agents.RandomAgent">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.agents.simple_agents.</code><code class="sig-name descname">RandomAgent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.simple_agents.RandomAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_agent.AbstractDACBenchAgent" title="dacbench.abstract_agent.AbstractDACBenchAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_agent.AbstractDACBenchAgent</span></code></a></p>
+<dl class="py method">
+<dt id="dacbench.agents.simple_agents.RandomAgent.act">
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.simple_agents.RandomAgent.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and return environment action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Action to take</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>action</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.simple_agents.RandomAgent.end_episode">
+<code class="sig-name descname">end_episode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.simple_agents.RandomAgent.end_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>End of episode training if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.simple_agents.RandomAgent.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">next_state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.simple_agents.RandomAgent.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train during episode if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>next_state</strong> – Environment state after step</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.agents.simple_agents.StaticAgent">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.agents.simple_agents.</code><code class="sig-name descname">StaticAgent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.simple_agents.StaticAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_agent.AbstractDACBenchAgent" title="dacbench.abstract_agent.AbstractDACBenchAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_agent.AbstractDACBenchAgent</span></code></a></p>
+<dl class="py method">
+<dt id="dacbench.agents.simple_agents.StaticAgent.act">
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.simple_agents.StaticAgent.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and return environment action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Action to take</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>action</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.simple_agents.StaticAgent.end_episode">
+<code class="sig-name descname">end_episode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.simple_agents.StaticAgent.end_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>End of episode training if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.simple_agents.StaticAgent.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">next_state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.simple_agents.StaticAgent.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train during episode if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>next_state</strong> – Environment state after step</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dacbench.agents">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dacbench.agents" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dacbench.agents.DynamicRandomAgent">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.agents.</code><code class="sig-name descname">DynamicRandomAgent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">switching_interval</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.DynamicRandomAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_agent.AbstractDACBenchAgent" title="dacbench.abstract_agent.AbstractDACBenchAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_agent.AbstractDACBenchAgent</span></code></a></p>
+<dl class="py method">
+<dt id="dacbench.agents.DynamicRandomAgent.act">
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.DynamicRandomAgent.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and return environment action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Action to take</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>action</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.DynamicRandomAgent.end_episode">
+<code class="sig-name descname">end_episode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.DynamicRandomAgent.end_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>End of episode training if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.DynamicRandomAgent.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">next_state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.DynamicRandomAgent.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train during episode if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>next_state</strong> – Environment state after step</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.agents.GenericAgent">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.agents.</code><code class="sig-name descname">GenericAgent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.GenericAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_agent.AbstractDACBenchAgent" title="dacbench.abstract_agent.AbstractDACBenchAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_agent.AbstractDACBenchAgent</span></code></a></p>
+<dl class="py method">
+<dt id="dacbench.agents.GenericAgent.act">
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.GenericAgent.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and return environment action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Action to take</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>action</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.GenericAgent.end_episode">
+<code class="sig-name descname">end_episode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.GenericAgent.end_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>End of episode training if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.GenericAgent.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">next_state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.GenericAgent.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train during episode if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>next_state</strong> – Environment state after step</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.agents.RandomAgent">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.agents.</code><code class="sig-name descname">RandomAgent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.RandomAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_agent.AbstractDACBenchAgent" title="dacbench.abstract_agent.AbstractDACBenchAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_agent.AbstractDACBenchAgent</span></code></a></p>
+<dl class="py method">
+<dt id="dacbench.agents.RandomAgent.act">
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.RandomAgent.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and return environment action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Action to take</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>action</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.RandomAgent.end_episode">
+<code class="sig-name descname">end_episode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.RandomAgent.end_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>End of episode training if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.RandomAgent.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">next_state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.RandomAgent.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train during episode if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>next_state</strong> – Environment state after step</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dacbench.agents.StaticAgent">
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.agents.</code><code class="sig-name descname">StaticAgent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.StaticAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dacbench.html#dacbench.abstract_agent.AbstractDACBenchAgent" title="dacbench.abstract_agent.AbstractDACBenchAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.abstract_agent.AbstractDACBenchAgent</span></code></a></p>
+<dl class="py method">
+<dt id="dacbench.agents.StaticAgent.act">
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.StaticAgent.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and return environment action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Action to take</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>action</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.StaticAgent.end_episode">
+<code class="sig-name descname">end_episode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.StaticAgent.end_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>End of episode training if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – Environment state</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dacbench.agents.StaticAgent.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">next_state</span></em>, <em class="sig-param"><span class="n">reward</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.agents.StaticAgent.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train during episode if needed (pass if not)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>next_state</strong> – Environment state after step</p></li>
+<li><p><strong>reward</strong> – Environment reward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Theresa Eimer, Maximilian Reimer.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
