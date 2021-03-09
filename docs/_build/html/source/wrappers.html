@@ -177,7 +177,8 @@ used with DACBench’s logging functionality.</p>
 <span class="target" id="module-dacbench.wrappers.action_tracking_wrapper"></span><dl class="py class">
 <dt id="dacbench.wrappers.action_tracking_wrapper.ActionFrequencyWrapper">
 <em class="property">class </em><code class="sig-prename descclassname">dacbench.wrappers.action_tracking_wrapper.</code><code class="sig-name descname">ActionFrequencyWrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">action_interval</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logger</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.wrappers.action_tracking_wrapper.ActionFrequencyWrapper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper to action frequency.
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.core.Wrapper</span></code></p>
+<p>Wrapper to action frequency.
 Includes interval mode that returns frequencies in lists of len(interval) instead of one long list.</p>
 <dl class="py method">
 <dt id="dacbench.wrappers.action_tracking_wrapper.ActionFrequencyWrapper.get_actions">

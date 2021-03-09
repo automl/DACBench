@@ -22,3 +22,5 @@ used with DACBench's logging functionality.
 
 .. automodule:: dacbench.wrappers.action_tracking_wrapper
     :members:
+    :undoc-members:
+    :show-inheritance:

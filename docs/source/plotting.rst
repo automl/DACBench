@@ -10,3 +10,4 @@ They use seaborn and format loaded dataframes automatically (see examples on Git
 
 .. automodule:: dacbench.plotting
     :members:
+    :undoc-members:
