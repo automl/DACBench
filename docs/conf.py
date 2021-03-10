@@ -14,7 +14,6 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(".."))
-import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
@@ -36,10 +35,12 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
     "sphinxcontrib.napoleon",
-    "autoapi.extension"
+    "autoapi.extension",
 ]
 napoleon_google_docstring = False
-autoapi_dirs = ['../dacbench']
+
+autoapi_dirs = ["../dacbench"]
+autoapi_ignore = ["*/rl-plan*"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
