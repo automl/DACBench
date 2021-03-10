@@ -171,6 +171,26 @@ class SGDEnv(AbstractEnv):
         reward = self.get_reward(self)
         return self.get_state(self), reward, done, {}
 
+    def _architecture_constructor(self, arch_str):
+        layer_specs = []
+        layer_strs = arch_str.split('-')
+        for layer_str in layer_strs:
+            idx = layer_str.find('(')
+            if idx == -1:
+                nn_module_name = layer_str
+                vargs = []
+            else:
+                nn_module_name = layer_str[:idx]
+                vargs_json_str = '{"tmp": [' + layer_str[idx + 1:-1] + ']}'
+                vargs = json.loads(vargs_json_str)["tmp"]
+            layer_specs.append((getattr(nn, nn_module_name), vargs))
+
+        def model_constructor():
+            layers = [cls(*vargs) for cls, vargs in layer_specs]
+            return nn.Sequential(*layers)
+
+        return model_constructor
+
     def reset(self):
         """
         Reset environment
@@ -184,7 +204,7 @@ class SGDEnv(AbstractEnv):
 
         dataset = self.instance[0]
         instance_seed = self.instance[1]
-        construct_model = self.instance[2]
+        construct_model = self._architecture_constructor(self.instance[2])
 
         self.seed(instance_seed)
 
