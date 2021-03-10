@@ -2,48 +2,34 @@ from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import HyFlexEnv
 from gym import spaces
 import numpy as np
+import sys
 import os
 import csv
+
 
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
 
 INFO = {"identifier": "hyflex",
         "name": "Selection hyper-heuristic",
-        "reward": "???",  # TODO
-        "state_description": ["Loc",  # TODO
-                              "Past Deltas",
-                              "Population Size",
-                              "Sigma",
-                              "History Deltas",
-                              "Past Sigma Deltas"]}
+        "reward": "Improvement on Best Fitness (f_prev_best - f_new_best)",
+        "state_description": ["Fitness Delta (f_incumbent - f_proposed)"]}
 
 HYFLEX_DEFAULTS = objdict(
     {
-        "action_space_class": "Box",
-        "action_space_args": [np.array([0]), np.array([10])],  # TODO
-        "observation_space_class": "Dict",  # TODO
-        "observation_space_type": None,  # TODO
-        "observation_space_args": [  # TODO
+        "action_space_class": "Discrete",
+        "action_space_args": [2],
+        "observation_space_class": "Dict",
+        "observation_space_type": None,
+        "observation_space_args": [
             {
-                "current_loc": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(INPUT_DIM).shape
-                ),
-                "past_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape
-                ),
-                "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
-                "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
-                "history_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH * 2).shape
-                ),
-                "past_sigma_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape
-                ),
+                "f_delta": spaces.Box(
+                    low=-np.inf, high=np.inf, shape=(1,)
+                )
             }
         ],
-        "reward_range": (-(10 ** 9), 0),  # TODO
-        "cutoff": 1e6,
+        "reward_range": (0, sys.float_info.max),
+        "cutoff": 1e3,
         "seed": 42,
         "instance_set_path": "../instance_sets/hyflex/chesc.csv",
         "benchmark_info": INFO
@@ -96,9 +82,9 @@ class HyFlexBenchmark(AbstractBenchmark):
         Read path of instances from config into list
         """
         path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
         )
         self.config["instance_set"] = {}
         with open(path, "r") as fh:

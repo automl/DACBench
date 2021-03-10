@@ -6,6 +6,7 @@ from enum import Enum
 
 from typing import List
 
+import numpy as np
 
 class ProblemDomain:
     """
@@ -24,7 +25,20 @@ class ProblemDomain:
         :param domain: the unqualified class name of the HyFlex domain to be wrapped, e.g., SAT, BinPacking, etc.
         :param seed: a random seed
         """
-        raise NotImplementedError
+        # raise NotImplementedError
+        self.heuristics = [lambda x: x-2,
+                           lambda x: x+1,
+                           lambda x: x+2,
+                           lambda x: x / 2 if x % 2 == 0 else 2 * x]
+        self.heuristics_of_type = {self.HeuristicType.CROSSOVER: [],
+                                   self.HeuristicType.LOCAL_SEARCH: [0],
+                                   self.HeuristicType.MUTATION: [1, 2],
+                                   self.HeuristicType.OTHER: [],
+                                   self.HeuristicType.RUIN_RECREATE: [3]
+                                   }
+        self.mem_size = 2
+        self.mem = None
+        self.base = None
 
     def getHeuristicCallRecord(self) -> List[int]:
         """
@@ -95,7 +109,8 @@ class ProblemDomain:
         :return: An list containing the indices of the heuristics of the type specified. If there are no heuristics of
             this type it returns None.
         """
-        raise NotImplementedError
+        # raise NotImplementedError
+        return self.heuristics_of_type[heuristicType]
 
     def getHeuristicsThatUseIntensityOfMutation(self) -> List[int]:
         """
@@ -124,7 +139,9 @@ class ProblemDomain:
         :param instanceID: Specifies the instance to load. The ID's start at zero.
         :return: None
         """
-        raise NotImplementedError
+        # raise NotImplementedError
+        self.base = 1024 + 2**instanceID
+        self.mem = [-1] * self.mem_size
 
     def setMemorySize(self, size: int) -> None:
         """
@@ -133,7 +150,9 @@ class ProblemDomain:
         :param size: The new size of the solution array.
         :return: None
         """
-        raise NotImplementedError
+        # raise NotImplementedError
+        self.mem_size = size
+        self.mem = [-1] * self.mem_size
 
     def initialiseSolution(self, index: int) -> None:
         """
@@ -145,7 +164,8 @@ class ProblemDomain:
         :param index: The index of the memory array at which the solution should be initialised.
         :return: None
         """
-        raise NotImplementedError
+        # raise NotImplementedError
+        self.mem[index] = self.base
 
     def getNumberOfHeuristics(self) -> None:
         """
@@ -153,8 +173,9 @@ class ProblemDomain:
 
         :return: The number of heuristics available in this problem domain
         """
+        raise NotImplementedError
 
-    def applyHeuristic(self, heuristicID: int, solutionSourceIndex: int, solutionDestinationIndex: int) -> float:
+    def applyHeuristicUnary(self, heuristicID: int, solutionSourceIndex: int, solutionDestinationIndex: int) -> float:
         """
         Applies the heuristic specified by heuristicID to the solution at position solutionSourceIndex and places the
         resulting solution at position solutionDestinationIndex in the solution array. If the heuristic is a
@@ -165,10 +186,13 @@ class ProblemDomain:
         :param solutionDestinationIndex: The index in the memory array at which to store the resulting solution
         :return: the objective function value of the solution created by applying the heuristic
         """
-        raise NotImplementedError
+        # raise NotImplementedError
+        s = self.heuristics[heuristicID](self.mem[solutionSourceIndex])
+        self.mem[solutionDestinationIndex] = s if s >= 0 else self.mem[solutionSourceIndex]
+        return self.mem[solutionDestinationIndex]
 
-    def applyHeuristic2(self, heuristicID: int, solutionSourceIndex1: int, solutionSourceIndex2: int,
-                        solutionDestinationIndex: int) -> float:
+    def applyHeuristicBinary(self, heuristicID: int, solutionSourceIndex1: int, solutionSourceIndex2: int,
+                             solutionDestinationIndex: int) -> float:
         """
         Apply the heuristic specified by heuristicID to the solutions at position solutionSourceIndex1 and position
         solutionSourceIndex2 and put the resulting solution at position solutionDestinationIndex. The heuristic can
@@ -190,7 +214,8 @@ class ProblemDomain:
         :param solutionDestinationIndex: The position in the array to copy the solution to.
         :return: None
         """
-        raise NotImplementedError
+        # raise NotImplementedError
+        self.mem[solutionDestinationIndex] = self.mem[solutionSourceIndex]
 
     def toString(self) -> str:
         """
@@ -239,7 +264,8 @@ class ProblemDomain:
         :param solutionIndex: The index of the solution from which the objective function is required
         :return: A double value of the solution's objective function value.
         """
-        raise NotImplementedError
+        # raise NotImplementedError
+        return self.mem[solutionIndex]
 
     def compareSolutions(self, solutionIndex1: int, solutionIndex2: int) -> bool:
         """
@@ -258,6 +284,8 @@ Gym Environment for HyFlex
 """
 from dacbench import AbstractEnv
 
+H_TYPE = ProblemDomain.HeuristicType
+
 
 class HyFlexEnv(AbstractEnv):
     """
@@ -274,9 +302,27 @@ class HyFlexEnv(AbstractEnv):
             Environment configuration
         """
         super(HyFlexEnv, self).__init__(config)
+        self.seed(config["seed"])
+
+        # some useful constants
+        # solution memory indices
+        self.mem_size = 3
+        self.s_best = 0  # mem pos for best
+        self.s_inc = 1  # mem pos for incumbent
+        self.s_prop = 2  # mem pos for proposal
+        # actions
+        self.reject = 0  # action corresponding to reject
+        self.accept = 1  # action corresponding to accept
+
+        self.seed = config["seed"]
 
         # The following variables are (re)set at reset
-        self.problem_domain = None  # HyFlex ProblemDomain object ~ current DAC instance
+        self.problem = None  # HyFlex ProblemDomain object ~ current DAC instance
+        self.unary_heuristics = None  # indices for unary heuristics
+        self.binary_heuristics = None  # indices for binary heuristics
+        self.f_best = None  # fitness of current best
+        self.f_prop = None  # fitness of proposal
+        self.f_inc = None  # fitness of incumbent
 
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
@@ -304,10 +350,21 @@ class HyFlexEnv(AbstractEnv):
         """
         done = super(HyFlexEnv, self).step_()
 
-        # TODO
-        raise NotImplementedError
+        if action == self.accept:
+            # accept previous proposal as new incumbent
+            self.problem.copySolution(self.s_prop, self.s_inc)
+            self.f_inc = self.f_prop
 
-        return self.get_state(self), self.get_reward(self), done, {}
+        # generate a new proposal
+        self.f_prop = self._generate_proposal()
+
+        # calculate reward (note: assumes f_best is not yet updated!)
+        reward = self.get_reward(self)
+
+        # update best
+        self._update_best()
+
+        return self.get_state(self), reward, done, {}
 
     def reset(self):
         """
@@ -321,12 +378,48 @@ class HyFlexEnv(AbstractEnv):
         super(HyFlexEnv, self).reset_()
 
         domain, instance_index = self.instance
-        self.problem_domain = ProblemDomain(domain, self.config["seed"])
-        self.problem_domain.loadInstance(instance_index)
-        # TODO
-        raise NotImplementedError
-
+        # create problem domain
+        self.problem = ProblemDomain(domain, self.seed)
+        # classify heuristics as unary/binary
+        self.unary_heuristics = self.problem.getHeuristicsOfType(H_TYPE.LOCAL_SEARCH)
+        self.unary_heuristics += self.problem.getHeuristicsOfType(H_TYPE.MUTATION)
+        self.unary_heuristics += self.problem.getHeuristicsOfType(H_TYPE.RUIN_RECREATE)
+        self.unary_heuristics += self.problem.getHeuristicsOfType(H_TYPE.OTHER)
+        self.binary_heuristics = self.problem.getHeuristicsOfType(H_TYPE.CROSSOVER)
+        # load instance
+        self.problem.loadInstance(instance_index)
+        # initialise solution memory
+        self.problem.setMemorySize(self.mem_size)
+        self.problem.initialiseSolution(self.s_inc)
+        self.problem.copySolution(self.s_inc, self.s_best)
+        # initialise fitness best/inc
+        self.f_best = self.problem.getFunctionValue(self.s_best)
+        self.f_inc = self.f_best
+        # generate a proposal
+        self.f_prop = self._generate_proposal()
+        # update best
+        self._update_best()
         return self.get_state(self)
+
+    def _generate_proposal(self):
+        # select uniformly at random between 0-ary (re-init), 1-ary, 2-ary heuristics
+        nary = self.np_random.choice([0] + [1] * len(self.unary_heuristics) + [2] * len(self.binary_heuristics))
+        if nary == 0:
+            self.problem.initialiseSolution(self.s_prop)
+            f_prop = self.problem.getFunctionValue(self.s_prop)
+        elif nary == 1:
+            h = self.np_random.choice(self.unary_heuristics)
+            f_prop = self.problem.applyHeuristicUnary(h, self.s_inc, self.s_prop)
+        else:
+            h = self.np_random.choice(self.binary_heuristics)
+            # note: the best solution found thus far is used as 2nd argument for crossover
+            f_prop = self.problem.applyHeuristicUnary(h, self.s_inc, self.s_best, self.s_prop)
+        return f_prop
+
+    def _update_best(self):
+        if self.f_prop < self.f_best:
+            self.problem.copySolution(self.s_prop, self.s_best)
+            self.f_best = self.f_prop
 
     def close(self):
         """
@@ -351,7 +444,7 @@ class HyFlexEnv(AbstractEnv):
         if mode != "human":
             raise NotImplementedError
 
-        pass
+        print("incumbent: {} \t proposed: {} \t best: {}".format(self.f_inc, self.f_prop, self.f_best))
 
     def get_default_reward(self, _):
         """
@@ -363,8 +456,7 @@ class HyFlexEnv(AbstractEnv):
             Reward
 
         """
-        # TODO
-        raise NotImplementedError
+        return max(self.f_best - self.f_prop, 0)
 
     def get_default_state(self, _):
         """
@@ -376,5 +468,4 @@ class HyFlexEnv(AbstractEnv):
             Environment state
 
         """
-        # TODO
-        raise NotImplementedError
+        return {"f_delta": self.f_inc - self.f_prop}
