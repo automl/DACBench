@@ -11,3 +11,5 @@ sobol_seq==0.2.0
 torchvision==0.8.2
 torch==1.7.1
 backpack-for-pytorch==1.2.0
+chainerrl
+modcma
