@@ -36,8 +36,10 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
     "sphinxcontrib.napoleon",
+    "autoapi.extension"
 ]
 napoleon_google_docstring = False
+autoapi_dirs = ['../dacbench']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
