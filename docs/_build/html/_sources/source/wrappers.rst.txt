@@ -20,8 +20,4 @@ To wrap an existing environment is simple:
 The provided environments for tracking performance, state and action information are designed to be
 used with DACBench's logging functionality.
 
-.. automodule:: dacbench.wrappers.action_tracking_wrapper
-    :imported-members:
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. include:: dacbench.wrappers.rst

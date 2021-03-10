@@ -974,11 +974,11 @@ into
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>logs</strong> (<a class="reference internal" href="plotting.html#dacbench.plotting.List" title="dacbench.plotting.List"><em>List</em></a>) – List of log entries</p></li>
+<li><p><strong>logs</strong> (<em>List</em>) – List of log entries</p></li>
 <li><p><strong>wide</strong> (<em>bool</em>) – wide=False (default) produces a dataframe with columns (episode, step, time, name, value)
 wide=True returns a dataframe (episode, step, time, name_1, name_2, …) if the variable name_n has not been logged
 at (episode, step, time) name_n is NaN.</p></li>
-<li><p><strong>drop_columns</strong> (<a class="reference internal" href="plotting.html#dacbench.plotting.List" title="dacbench.plotting.List"><em>List</em></a><em>[</em><em>str</em><em>]</em>) – List of column names to be dropped (before reshaping the long dataframe) mostly used in combination
+<li><p><strong>drop_columns</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of column names to be dropped (before reshaping the long dataframe) mostly used in combination
 with wide=True to reduce NaN values</p></li>
 </ul>
 </dd>
@@ -1036,7 +1036,7 @@ usually the result from generate_global_step</p></li>
 
 <dl class="py function">
 <dt id="dacbench.plotting.generate_global_step">
-<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">generate_global_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">x_column</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'global_step'</span></em>, <em class="sig-param"><span class="n">x_label_columns</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">['episode', 'step']</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="plotting.html#dacbench.plotting.Tuple" title="dacbench.plotting.Tuple">Tuple</a><span class="p">[</span>pandas.core.frame.DataFrame<span class="p">, </span>str<span class="p">, </span><a class="reference internal" href="plotting.html#dacbench.plotting.List" title="dacbench.plotting.List">List</a><span class="p">[</span>str<span class="p">]</span><span class="p">]</span><a class="headerlink" href="#dacbench.plotting.generate_global_step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">dacbench.plotting.</code><code class="sig-name descname">generate_global_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">x_column</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'global_step'</span></em>, <em class="sig-param"><span class="n">x_label_columns</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">['episode', 'step']</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>pandas.core.frame.DataFrame<span class="p">, </span>str<span class="p">, </span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span><a class="headerlink" href="#dacbench.plotting.generate_global_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a global_step column which enumerate all step over all episodes.</p>
 <p>Returns the altered data, a data frame containing mapping between global_step, x_column and x_label_columns.</p>
 <p>Often used in combination with add_multi_level_ticks.</p>
