@@ -32,3 +32,5 @@ To also install all dependecies used in the examples, instead run:
 .. code-block:: bash
 
     pip install -e .[example]
+
+If you want to take advantage of our pre-run static and random baselines (10 runs each with 1000 episodes), you can download them `here <https://www.tnt.uni-hannover.de/en/project/dacbench/>`_.
