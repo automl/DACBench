@@ -86,6 +86,8 @@ class AbstractBenchmark:
                             and -np.inf not in conf[k][i]
                         ):
                             conf[k][i] = list(map(int, conf[k][i]))
+                elif isinstance(conf[k],np.ndarray):                    
+                    conf[k] = conf[k].tolist()
 
         conf["wrappers"] = self.jsonify_wrappers()
 
@@ -201,9 +203,12 @@ class AbstractBenchmark:
         if "observation_space_type" in self.config:
             # Types have to be numpy dtype (for gym spaces)s
             if type(self.config["observation_space_type"]) == str:
-                typestring = self.config["observation_space_type"].split(" ")[1][:-2]
-                typestring = typestring.split(".")[1]
-                self.config["observation_space_type"] = getattr(np, typestring)
+                if self.config["observation_space_type"] == "None":
+                    self.config["observation_space_type"] = None
+                else:
+                    typestring = self.config["observation_space_type"].split(" ")[1][:-2]
+                    typestring = typestring.split(".")[1]
+                    self.config["observation_space_type"] = getattr(np, typestring)
         if "observation_space" in self.config:
             self.config["observation_space"] = self.list_to_space(
                 self.config["observation_space"]
