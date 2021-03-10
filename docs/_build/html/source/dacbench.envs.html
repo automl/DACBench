@@ -627,12 +627,12 @@ consisting of the required number of structure, population and parameter values.
 <span id="dacbench-envs-onell-env-module"></span><h2>dacbench.envs.onell_env module<a class="headerlink" href="#module-dacbench.envs.onell_env" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="dacbench.envs.onell_env.BinaryProblem">
-<em class="property">class </em><code class="sig-prename descclassname">dacbench.envs.onell_env.</code><code class="sig-name descname">BinaryProblem</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">val=None</em>, <em class="sig-param">rng=Generator(PCG64) at 0x7FCD743F16D8</em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.envs.onell_env.BinaryProblem" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.envs.onell_env.</code><code class="sig-name descname">BinaryProblem</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">val=None</em>, <em class="sig-param">rng=Generator(PCG64) at 0x7F74D563C048</em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.envs.onell_env.BinaryProblem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>An abstract class for an individual in binary representation</p>
 <dl class="py method">
 <dt id="dacbench.envs.onell_env.BinaryProblem.crossover">
-<code class="sig-name descname">crossover</code><span class="sig-paren">(</span><em class="sig-param">xprime</em>, <em class="sig-param">p</em>, <em class="sig-param">n_offsprings</em>, <em class="sig-param">include_xprime=True</em>, <em class="sig-param">count_different_inds_only=True</em>, <em class="sig-param">rng=Generator(PCG64) at 0x7FCD743F18B8</em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.envs.onell_env.BinaryProblem.crossover" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">crossover</code><span class="sig-paren">(</span><em class="sig-param">xprime</em>, <em class="sig-param">p</em>, <em class="sig-param">n_offsprings</em>, <em class="sig-param">include_xprime=True</em>, <em class="sig-param">count_different_inds_only=True</em>, <em class="sig-param">rng=Generator(PCG64) at 0x7F74D563C228</em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.envs.onell_env.BinaryProblem.crossover" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Generate n_offsprings children using crossover on self and xprime, and return the best one</dt><dd><p>Crossover operator: for each bit, taking value from xprime with probability p and from self with probability 1-p</p>
 </dd>
@@ -705,7 +705,7 @@ consisting of the required number of structure, population and parameter values.
 
 <dl class="py method">
 <dt id="dacbench.envs.onell_env.BinaryProblem.mutate">
-<code class="sig-name descname">mutate</code><span class="sig-paren">(</span><em class="sig-param">p</em>, <em class="sig-param">n_offsprings</em>, <em class="sig-param">rng=Generator(PCG64) at 0x7FCD743F17C8</em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.envs.onell_env.BinaryProblem.mutate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mutate</code><span class="sig-paren">(</span><em class="sig-param">p</em>, <em class="sig-param">n_offsprings</em>, <em class="sig-param">rng=Generator(PCG64) at 0x7F74D563C138</em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.envs.onell_env.BinaryProblem.mutate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw l ~ binomial(n, p), l&gt;0
 Generate n_offsprings children by flipping exactly l bits and select the best one</p>
 <dl class="field-list simple">
@@ -728,7 +728,7 @@ Generate n_offsprings children by flipping exactly l bits and select the best on
 
 <dl class="py class">
 <dt id="dacbench.envs.onell_env.LeadingOne">
-<em class="property">class </em><code class="sig-prename descclassname">dacbench.envs.onell_env.</code><code class="sig-name descname">LeadingOne</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">val=None</em>, <em class="sig-param">rng=Generator(PCG64) at 0x7FCD743F16D8</em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.envs.onell_env.LeadingOne" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.envs.onell_env.</code><code class="sig-name descname">LeadingOne</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">val=None</em>, <em class="sig-param">rng=Generator(PCG64) at 0x7F74D563C048</em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.envs.onell_env.LeadingOne" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#dacbench.envs.onell_env.BinaryProblem" title="dacbench.envs.onell_env.BinaryProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.envs.onell_env.BinaryProblem</span></code></a></p>
 <p>An individual for LeadingOne problem
 The aim is to maximise the number of leading (and consecutive) 1 bits in the string</p>
@@ -856,7 +856,7 @@ for both OneMax and LeadingOne problems</p>
 
 <dl class="py class">
 <dt id="dacbench.envs.onell_env.OneMax">
-<em class="property">class </em><code class="sig-prename descclassname">dacbench.envs.onell_env.</code><code class="sig-name descname">OneMax</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">val=None</em>, <em class="sig-param">rng=Generator(PCG64) at 0x7FCD743F16D8</em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.envs.onell_env.OneMax" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">dacbench.envs.onell_env.</code><code class="sig-name descname">OneMax</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">val=None</em>, <em class="sig-param">rng=Generator(PCG64) at 0x7F74D563C048</em><span class="sig-paren">)</span><a class="headerlink" href="#dacbench.envs.onell_env.OneMax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#dacbench.envs.onell_env.BinaryProblem" title="dacbench.envs.onell_env.BinaryProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">dacbench.envs.onell_env.BinaryProblem</span></code></a></p>
 <p>An individual for OneMax problem
 The aim is to maximise the number of 1 bits</p>
