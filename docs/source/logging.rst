@@ -38,3 +38,5 @@ The stored data can then be loaded into pandas dataframes:
     logs = load_logs("your/path/PerformancyTrackingWrapper.jsonl")
     df = log2dataframe(logs)
 
+.. automodule:: dacbench
+    :members: logging
