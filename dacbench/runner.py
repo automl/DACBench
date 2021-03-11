@@ -44,7 +44,7 @@ def run_benchmark(env, agent, num_episodes, logger=None):
     env.close()
 
 
-def run_dacbench(results_path, agent_method, num_episodes):
+def run_dacbench(results_path, agent_method, num_episodes, bench=None):
     """
     Run all benchmarks for 10 seeds for a given number of episodes with a given agent and save result
 
@@ -58,7 +58,12 @@ def run_dacbench(results_path, agent_method, num_episodes):
         Number of episodes to run for each benchmark
     """
 
-    for b in map(benchmarks.__dict__.get, benchmarks.__all__):
+    if bench is None:
+        bench = map(benchmarks.__dict__.get, benchmarks.__all__)
+    else:
+        bench = [getattr(benchmarks, b) for b in bench]
+
+    for b in bench:
         print(f"Evaluating {b.__name__}")
         for i in range(10):
             print(f"Seed {i}/10")

@@ -13,7 +13,7 @@ matplotlib.use("Agg")
 
 
 class TestRunner(unittest.TestCase):
-    def test_abstract_agen(self):
+    def test_abstract_agent(self):
         agent = AbstractDACBenchAgent("dummy")
 
         with pytest.raises(NotImplementedError):
@@ -51,14 +51,10 @@ class TestRunner(unittest.TestCase):
         def make(env):
             return DummyAgent(env)
 
-        run_dacbench("test_run", make, 1)
-        print("ran")
+        run_dacbench("test_run", make, 1, ["LubyBenchmark", "SigmoidBenchmark"])
         self.assertTrue(os.path.exists("test_run"))
-        self.assertFalse(os.path.exists("test_run/LubyBenchmark/seed_9"))
-        self.assertFalse(os.path.exists("test_run/SigmoidBenchmark/seed_9"))
-        self.assertFalse(os.path.exists("test_run/CMAESBenchmark/seed_9"))
-        self.assertFalse(os.path.exists("test_run/FastDownwardBenchmark/seed_9"))
-        self.assertFalse(os.path.exists("test_run/SGDBenchmark/seed_9"))
+        self.assertTrue(os.path.exists("test_run/LubyBenchmark/seed_9"))
+        self.assertTrue(os.path.exists("test_run/SigmoidBenchmark/seed_9"))
 
 
 #    def test_plotting(self):

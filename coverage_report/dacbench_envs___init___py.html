@@ -21,8 +21,8 @@
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
-            6 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">6 run</button>
+            8 statements &nbsp;
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">8 run</button>
             <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">0 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
@@ -56,21 +56,25 @@
     <p id="t3" class="run"><span class="n"><a href="#t3">3</a></span><span class="t"><span class="key">from</span> <span class="nam">dacbench</span><span class="op">.</span><span class="nam">envs</span><span class="op">.</span><span class="nam">fast_downward</span> <span class="key">import</span> <span class="nam">FastDownwardEnv</span>&nbsp;</span><span class="r"></span></p>
     <p id="t4" class="run"><span class="n"><a href="#t4">4</a></span><span class="t"><span class="key">from</span> <span class="nam">dacbench</span><span class="op">.</span><span class="nam">envs</span><span class="op">.</span><span class="nam">cma_es</span> <span class="key">import</span> <span class="nam">CMAESEnv</span>&nbsp;</span><span class="r"></span></p>
     <p id="t5" class="run"><span class="n"><a href="#t5">5</a></span><span class="t"><span class="key">from</span> <span class="nam">dacbench</span><span class="op">.</span><span class="nam">envs</span><span class="op">.</span><span class="nam">modea</span> <span class="key">import</span> <span class="nam">ModeaEnv</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t6" class="pln"><span class="n"><a href="#t6">6</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t7" class="run"><span class="n"><a href="#t7">7</a></span><span class="t"><span class="nam">__all__</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t8" class="pln"><span class="n"><a href="#t8">8</a></span><span class="t">    <span class="str">"LubyEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t9" class="pln"><span class="n"><a href="#t9">9</a></span><span class="t">    <span class="str">"luby_gen"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t10" class="pln"><span class="n"><a href="#t10">10</a></span><span class="t">    <span class="str">"SigmoidEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t11" class="pln"><span class="n"><a href="#t11">11</a></span><span class="t">    <span class="str">"FastDownwardEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t12" class="pln"><span class="n"><a href="#t12">12</a></span><span class="t">    <span class="str">"CMAESEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t13" class="pln"><span class="n"><a href="#t13">13</a></span><span class="t">    <span class="str">"ModeaEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t14" class="pln"><span class="n"><a href="#t14">14</a></span><span class="t"><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t6" class="run"><span class="n"><a href="#t6">6</a></span><span class="t"><span class="key">from</span> <span class="nam">dacbench</span><span class="op">.</span><span class="nam">envs</span><span class="op">.</span><span class="nam">sgd</span> <span class="key">import</span> <span class="nam">SGDEnv</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t7" class="run"><span class="n"><a href="#t7">7</a></span><span class="t"><span class="key">from</span> <span class="nam">dacbench</span><span class="op">.</span><span class="nam">envs</span><span class="op">.</span><span class="nam">onell_env</span> <span class="key">import</span> <span class="nam">OneLLEnv</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t8" class="pln"><span class="n"><a href="#t8">8</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t9" class="run"><span class="n"><a href="#t9">9</a></span><span class="t"><span class="nam">__all__</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t10" class="pln"><span class="n"><a href="#t10">10</a></span><span class="t">    <span class="str">"LubyEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t11" class="pln"><span class="n"><a href="#t11">11</a></span><span class="t">    <span class="str">"luby_gen"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t12" class="pln"><span class="n"><a href="#t12">12</a></span><span class="t">    <span class="str">"SigmoidEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t13" class="pln"><span class="n"><a href="#t13">13</a></span><span class="t">    <span class="str">"FastDownwardEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t14" class="pln"><span class="n"><a href="#t14">14</a></span><span class="t">    <span class="str">"CMAESEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t15" class="pln"><span class="n"><a href="#t15">15</a></span><span class="t">    <span class="str">"ModeaEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t16" class="pln"><span class="n"><a href="#t16">16</a></span><span class="t">    <span class="str">"SGDEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t17" class="pln"><span class="n"><a href="#t17">17</a></span><span class="t">    <span class="str">"OneLLEnv"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t18" class="pln"><span class="n"><a href="#t18">18</a></span><span class="t"><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
 </div>
 <div id="footer">
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.3</a>,
-            created at 2020-12-10 15:03 +0100
+            created at 2021-03-11 15:34 +0100
         </p>
     </div>
 </div>
