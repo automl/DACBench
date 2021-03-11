@@ -183,11 +183,11 @@ class SGDEnv(AbstractEnv):
                 nn_module_name = layer_str[:idx]
                 vargs_json_str = '{"tmp": [' + layer_str[idx + 1:-1] + ']}'
                 vargs = json.loads(vargs_json_str)["tmp"]
-            layer_specs.append((getattr(nn, nn_module_name), vargs))
+            layer_specs.append((getattr(torch.nn, nn_module_name), vargs))
 
         def model_constructor():
             layers = [cls(*vargs) for cls, vargs in layer_specs]
-            return nn.Sequential(*layers)
+            return torch.nn.Sequential(*layers)
 
         return model_constructor
 
