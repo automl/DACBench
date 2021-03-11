@@ -52,12 +52,13 @@ class TestRunner(unittest.TestCase):
             return DummyAgent(env)
 
         run_dacbench("test_run", make, 1)
+        print("ran")
         self.assertTrue(os.path.exists("test_run"))
-        self.assertFalse(os.stat("test_run/LubyBenchmark.json") == 0)
-        self.assertFalse(os.stat("test_run/SigmoidBenchmark.json") == 0)
-        self.assertFalse(os.stat("test_run/CMAESBenchmark.json") == 0)
-        self.assertFalse(os.stat("test_run/FastDownwardBenchmark.json") == 0)
-        self.assertFalse(os.stat("test_run/SGDBenchmark.json") == 0)
+        self.assertFalse(os.path.exists("test_run/LubyBenchmark/seed_9"))
+        self.assertFalse(os.path.exists("test_run/SigmoidBenchmark/seed_9"))
+        self.assertFalse(os.path.exists("test_run/CMAESBenchmark/seed_9"))
+        self.assertFalse(os.path.exists("test_run/FastDownwardBenchmark/seed_9"))
+        self.assertFalse(os.path.exists("test_run/SGDBenchmark/seed_9"))
 
 
 #    def test_plotting(self):

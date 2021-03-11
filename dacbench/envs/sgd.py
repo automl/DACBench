@@ -1,9 +1,11 @@
 import math
 import warnings
+import json
 from functools import reduce
 
 import numpy as np
 import torch
+import torch.nn as nn
 from backpack import backpack, extend
 from backpack.extensions import BatchGrad
 from gym.utils import seeding
@@ -149,7 +151,7 @@ class SGDEnv(AbstractEnv):
 
         self.step_count += 1
         index = 0
-        if not isinstance(action, float):
+        if not isinstance(action, float) and not isinstance(action, int):
             action = action[0]
 
         action = torch.Tensor([action]).to(self.device)
@@ -162,7 +164,7 @@ class SGDEnv(AbstractEnv):
         )
         for i, p in enumerate(self.model.parameters()):
             layer_size = self.layer_sizes[i]
-            p.data = p.data - delta_w[index: index + layer_size].reshape(
+            p.data = p.data - delta_w[index : index + layer_size].reshape(
                 shape=p.data.shape
             )
             index += layer_size
@@ -173,15 +175,15 @@ class SGDEnv(AbstractEnv):
 
     def _architecture_constructor(self, arch_str):
         layer_specs = []
-        layer_strs = arch_str.split('-')
+        layer_strs = arch_str.split("-")
         for layer_str in layer_strs:
-            idx = layer_str.find('(')
+            idx = layer_str.find("(")
             if idx == -1:
                 nn_module_name = layer_str
                 vargs = []
             else:
                 nn_module_name = layer_str[:idx]
-                vargs_json_str = '{"tmp": [' + layer_str[idx + 1:-1] + ']}'
+                vargs_json_str = '{"tmp": [' + layer_str[idx + 1 : -1] + "]}"
                 vargs = json.loads(vargs_json_str)["tmp"]
             layer_specs.append((getattr(nn, nn_module_name), vargs))
 
@@ -448,13 +450,13 @@ class SGDEnv(AbstractEnv):
             loss_var = torch.log(torch.var(self.loss_batch))
 
             self.lossVarDiscountedAverage = (
-                    self.discount_factor * self.lossVarDiscountedAverage
-                    + (1 - self.discount_factor) * loss_var
+                self.discount_factor * self.lossVarDiscountedAverage
+                + (1 - self.discount_factor) * loss_var
             )
             self.lossVarUncertainty = (
-                    self.discount_factor * self.lossVarUncertainty
-                    + (1 - self.discount_factor)
-                    * (loss_var - self.lossVarDiscountedAverage) ** 2
+                self.discount_factor * self.lossVarUncertainty
+                + (1 - self.discount_factor)
+                * (loss_var - self.lossVarDiscountedAverage) ** 2
             )
 
         return self.lossVarDiscountedAverage, self.lossVarUncertainty
@@ -475,13 +477,13 @@ class SGDEnv(AbstractEnv):
         )
 
         self.predictiveChangeVarDiscountedAverage = (
-                self.discount_factor * self.predictiveChangeVarDiscountedAverage
-                + (1 - self.discount_factor) * predictive_change
+            self.discount_factor * self.predictiveChangeVarDiscountedAverage
+            + (1 - self.discount_factor) * predictive_change
         )
         self.predictiveChangeVarUncertainty = (
-                self.discount_factor * self.predictiveChangeVarUncertainty
-                + (1 - self.discount_factor)
-                * (predictive_change - self.predictiveChangeVarDiscountedAverage) ** 2
+            self.discount_factor * self.predictiveChangeVarUncertainty
+            + (1 - self.discount_factor)
+            * (predictive_change - self.predictiveChangeVarDiscountedAverage) ** 2
         )
 
         return (

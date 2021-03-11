@@ -63,7 +63,10 @@ def run_dacbench(results_path, agent_method, num_episodes):
         for i in range(10):
             print(f"Seed {i}/10")
             bench = b()
-            env = bench.get_benchmark(seed=i)
+            try:
+                env = bench.get_benchmark(seed=i)
+            except:
+                continue
 
             logger = Logger(
                 experiment_name=f"seed_{i}",
