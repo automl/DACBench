@@ -24,6 +24,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e.[dev,example]
       - name: Build fast-downward
-          ./dacbench/envs/rl-plan/fast-downward/build.py
+        run: ./dacbench/envs/rl-plan/fast-downward/build.py
       - name: Run tests with pytest
         run: pytest 
