@@ -11,8 +11,8 @@ formats: all
 # Explicitly set the version of Python and its requirements
 python:
   version: 3.6
-        install:
-            - method: pip
-              path: .
-              extra_requirements:
-                - docs
+  install:
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
