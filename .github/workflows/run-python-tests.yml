@@ -38,4 +38,6 @@ jobs:
         if: ${{ always() }}
         with:
           name: test-report
-          path: test-report.html
+          path: |
+            test-report.html
+            assets
