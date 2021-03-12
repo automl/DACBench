@@ -42,9 +42,9 @@ If want to work on DACBench as a developer you can use the `dev` extra option in
 pip install -e .[dev]
 ```
 
-To install all extras (`dev` and `example`) run:
+To install all extras (`dev`, `example` and `docs`) run:
 ```bash
-pip install -e .[dev,example]
+pip install -e .[dev,example,docs]
 ```
 
 ## Using DACBench
