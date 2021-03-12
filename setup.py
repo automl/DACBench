@@ -7,6 +7,7 @@ with open("pyproject.toml", "r") as f:
 prod = requirements["install_requires"]
 dev = requirements["dev-dependencies"]
 examples = requirements["example-dependencies"]
+docs = requirements["docs-dependencies"]
 print({"dev": [x + " " + dev[x] for x in dev]})
 
 setup(
@@ -15,5 +16,6 @@ setup(
     extras_require={
         "dev": [x + "==" + dev[x] for x in dev],
         "example": [x + "==" + examples[x] for x in examples],
+        "docs": [x + "==" + docs[x] for x in docs],
     },
 )
