@@ -23,7 +23,7 @@ def onell_dynamic_theory(
 ):
     """
     (1+LL)-GA, dynamic version with theoretical results
-    lbd = sqrt(n*(n-f(x))), p = lbd/n, c=1/lbd 
+    lbd = sqrt(n*(n-f(x))), p = lbd/n, c=1/lbd
     """
     rng = get_default_rng(seed)
 

@@ -57,12 +57,13 @@ def step_time_interval_example(data: pd.DataFrame, interval: int = 10):
     grid.savefig("output/sigmoid_step_duration.pdf")
     plt.show()
 
+
 if __name__ == "__main__":
     # Load data from file into pandas DataFrame
     file = Path("data/sigmoid_example/EpisodeTimeWrapper.jsonl")
     logs = load_logs(file)
     data = log2dataframe(logs, wide=True, drop_columns=["time"])
-    Path('output').mkdir(exist_ok=True)
+    Path("output").mkdir(exist_ok=True)
 
     # Plot episode time
     episode_time_example(data)

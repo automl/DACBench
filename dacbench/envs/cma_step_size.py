@@ -19,10 +19,13 @@ class CMAStepSizeEnv(AbstractEnv):
     def reset(self):
         super().reset_()
         self.dim, self.fid, self.iid, self.representation = self.instance
-        self.objective = IOH_function(self.fid, self.dim, self.iid, target_precision=1e-8)
-        self.es = ModularCMAES(self.objective,
-                               parameters=Parameters.from_config_array(self.dim, self.representation)
-                               )
+        self.objective = IOH_function(
+            self.fid, self.dim, self.iid, target_precision=1e-8
+        )
+        self.es = ModularCMAES(
+            self.objective,
+            parameters=Parameters.from_config_array(self.dim, self.representation),
+        )
         return self.get_state(self)
 
     def step(self, action):
@@ -35,22 +38,17 @@ class CMAStepSizeEnv(AbstractEnv):
         return True
 
     def get_default_reward(self, *_):
-        return max(self.reward_range[0],
-                   min(self.reward_range[1], -self.es.parameters.fopt)
-                   )
+        return max(
+            self.reward_range[0], min(self.reward_range[1], -self.es.parameters.fopt)
+        )
 
     def get_default_state(self, *_):
-        return np.array([
-            self.es.parameters.lambda_,
-            self.es.parameters.sigma,
-            self.budget - self.es.parameters.used_budget,
-            self.fid,
-            self.iid,
-        ])
-
-
-
-
-
-
-
+        return np.array(
+            [
+                self.es.parameters.lambda_,
+                self.es.parameters.sigma,
+                self.budget - self.es.parameters.used_budget,
+                self.fid,
+                self.iid,
+            ]
+        )

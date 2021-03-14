@@ -5,7 +5,6 @@ from functools import reduce
 
 import numpy as np
 import torch
-import torch.nn as nn
 from backpack import backpack, extend
 from backpack.extensions import BatchGrad
 from gym.utils import seeding

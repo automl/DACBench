@@ -10,6 +10,7 @@ LOGGER = logging.getLogger(__name__)
 
 class SampleList(object):
     """ Class that handles writes and reads to sample data. """
+
     def __init__(self, samples):
         self._samples = samples
 
@@ -18,7 +19,7 @@ class SampleList(object):
         if idx is None:
             idx = range(len(self._samples))
         return np.asarray([self._samples[i].get(sensor_name) for i in idx])
-    
+
     def get_X(self, idx=None):
         """ Returns N x T x dX numpy array of states. """
         if idx is None:
@@ -30,7 +31,7 @@ class SampleList(object):
         if idx is None:
             idx = range(len(self._samples))
         return np.asarray([self._samples[i].get_coordwise_X(coord) for i in idx])
-    
+
     def get_U(self, idx=None):
         """ Returns N x T x dU numpy array of actions. """
         if idx is None:
@@ -48,7 +49,7 @@ class SampleList(object):
         if idx is None:
             idx = range(len(self._samples))
         return np.asarray([self._samples[i].get_coordwise_obs(coord) for i in idx])
-    
+
     def get_samples(self, idx=None):
         """ Returns N sample objects. """
         if idx is None:
@@ -69,20 +70,22 @@ class SampleList(object):
 
 class PickleSampleWriter(object):
     """ Pickles samples into data_file. """
+
     def __init__(self, data_file):
         self._data_file = data_file
 
     def write(self, samples):
         """ Write samples to data file. """
-        with open(self._data_file, 'wb') as data_file:
+        with open(self._data_file, "wb") as data_file:
             cPickle.dump(data_file, samples)
 
 
 class SysOutWriter(object):
     """ Writes notifications to sysout on sample writes. """
+
     def __init__(self):
         pass
 
     def write(self, samples):
         """ Write number of samples to sysout. """
-        LOGGER.debug('Collected %d samples', len(samples))
+        LOGGER.debug("Collected %d samples", len(samples))

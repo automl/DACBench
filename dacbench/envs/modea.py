@@ -153,13 +153,15 @@ class ModeaEnv(AbstractEnv):
             self.regime = "small"
 
     def get_default_state(self, _):
-        return np.array([
-            self.es.gen_size,
-            self.es.parameters.sigma,
-            self.budget - self.es.used_budget,
-            self.function_id,
-            self.instance_id,
-        ])
+        return np.array(
+            [
+                self.es.gen_size,
+                self.es.parameters.sigma,
+                self.budget - self.es.used_budget,
+                self.function_id,
+                self.instance_id,
+            ]
+        )
 
     def get_default_reward(self, _):
         return max(

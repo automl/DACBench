@@ -13,9 +13,13 @@ class TestOneLLBenchmark(unittest.TestCase):
         self.assertTrue(issubclass(type(env), OneLLEnv))
 
     def test_scenarios(self):
-        scenarios = ['lbd_theory', 'lbd_onefifth', 'lbd_p_c', 'lbd1_lbd2_p_c']
+        scenarios = ["lbd_theory", "lbd_onefifth", "lbd_p_c", "lbd1_lbd2_p_c"]
         for s in scenarios:
-            path = os.path.join(os.path.dirname(os.path.abspath(__file__)),"../../dacbench/additional_configs/onell", s + ".json")
+            path = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "../../dacbench/additional_configs/onell",
+                s + ".json",
+            )
             bench = OneLLBenchmark(path)
             self.assertTrue(bench.config is not None)
             env = bench.get_environment()
@@ -37,7 +41,7 @@ class TestOneLLBenchmark(unittest.TestCase):
     def test_read_instances(self):
         bench = OneLLBenchmark()
         bench.read_instance_set()
-        for name in ['max_evals','size']:
+        for name in ["max_evals", "size"]:
             self.assertTrue(name in bench.config.instance_set[0])
         first_inst = bench.config.instance_set[0]
 
@@ -45,7 +49,8 @@ class TestOneLLBenchmark(unittest.TestCase):
         env = bench2.get_environment()
         self.assertTrue(env.instance_set[0] == first_inst)
 
-#TestOneLLBenchmark().test_get_env()
-#TestOneLLBenchmark().test_scenarios()
-#TestOneLLBenchmark().test_read_instances()
-#TestOneLLBenchmark().test_save_conf()
+
+# TestOneLLBenchmark().test_get_env()
+# TestOneLLBenchmark().test_scenarios()
+# TestOneLLBenchmark().test_read_instances()
+# TestOneLLBenchmark().test_save_conf()

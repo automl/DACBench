@@ -20,6 +20,7 @@ class TfPolicy(Policy):
         sess: tf session.
         device_string: tf device string for running on either gpu or cpu.
     """
+
     def __init__(self, dU, obs_tensor, act_op, var, sess, device_string):
         Policy.__init__(self)
         self.dU = dU
@@ -47,25 +48,27 @@ class TfPolicy(Policy):
         obs = obs.dot(self.scale) + self.bias
         with tf.device(self.device_string):
             action_mean = self.sess.run(self.act_op, feed_dict={self.obs_tensor: obs})
-        #if noise is None:
-            #u = action_mean
-        #else:
-            #u = action_mean + self.chol_pol_covar.T.dot(noise)
-        #u += self.chol_pol_covar[t].T.dot(noise)
+        # if noise is None:
+        # u = action_mean
+        # else:
+        # u = action_mean + self.chol_pol_covar.T.dot(noise)
+        # u += self.chol_pol_covar[t].T.dot(noise)
         u = action_mean
         delta = u[0]
         hsig = es.adapt_sigma.hsig(es)
         es.hsig = hsig
         es.adapt_sigma.update2(es, function_values=f_vals)
-        #if delta < np.exp(-1) or delta > 1e5:
+        # if delta < np.exp(-1) or delta > 1e5:
         #    delta = 1
         if np.any(np.isnan(delta)):
             print("Action %s" % delta)
         action = delta
-        
+
         return action  # the DAG computations are batched by default, but we use batch size 1.
 
-    def pickle_policy(self, deg_obs, deg_action, checkpoint_path, goal_state=None, should_hash=False):
+    def pickle_policy(
+        self, deg_obs, deg_action, checkpoint_path, goal_state=None, should_hash=False
+    ):
         """
         We can save just the policy if we are only interested in running forward at a later point
         without needing a policy optimization class. Useful for debugging and deploying.
@@ -73,12 +76,19 @@ class TfPolicy(Policy):
         if should_hash is True:
             hash_str = str(uuid.uuid4())
             checkpoint_path += hash_str
-        pickled_pol = {'deg_obs': deg_obs, 'deg_action': deg_action, 'chol_pol_covar': self.chol_pol_covar,
-                       'checkpoint_path_tf': checkpoint_path + '_tf_data.ckpt', 'scale': self.scale, 'bias': self.bias,
-                       'device_string': self.device_string, 'goal_state': goal_state}
-        pickle.dump(pickled_pol, open(checkpoint_path + '.pkl', "wb"))
+        pickled_pol = {
+            "deg_obs": deg_obs,
+            "deg_action": deg_action,
+            "chol_pol_covar": self.chol_pol_covar,
+            "checkpoint_path_tf": checkpoint_path + "_tf_data.ckpt",
+            "scale": self.scale,
+            "bias": self.bias,
+            "device_string": self.device_string,
+            "goal_state": goal_state,
+        }
+        pickle.dump(pickled_pol, open(checkpoint_path + ".pkl", "wb"))
         saver = tf.train.Saver()
-        saver.save(self.sess, checkpoint_path + '_tf_data.ckpt')
+        saver.save(self.sess, checkpoint_path + "_tf_data.ckpt")
 
     @classmethod
     def load_policy(cls, policy_dict_path, tf_generator, network_config=None):
@@ -87,30 +97,44 @@ class TfPolicy(Policy):
         a checkpointed policy.
         """
         from tensorflow.python.framework import ops
+
         ops.reset_default_graph()  # we need to destroy the default graph before re_init or checkpoint won't restore.
         pol_dict = pickle.load(open(policy_dict_path, "rb"))
-        #if 'deg_obs' in network_config:
+        # if 'deg_obs' in network_config:
         #    pol_dict['deg_obs'] = network_config['deg_obs']
-        #if 'deg_action' in network_config:
+        # if 'deg_action' in network_config:
         #    pol_dict['deg_action'] = network_config['deg_action']
-        
-        tf_map = tf_generator(dim_input=pol_dict['deg_obs'], dim_output=pol_dict['deg_action'],
-                              batch_size=1, network_config=network_config)
+
+        tf_map = tf_generator(
+            dim_input=pol_dict["deg_obs"],
+            dim_output=pol_dict["deg_action"],
+            batch_size=1,
+            network_config=network_config,
+        )
 
         sess = tf.Session()
         init_op = tf.initialize_all_variables()
         sess.run(init_op)
         saver = tf.train.Saver()
-        check_file = '/'.join(str.split(policy_dict_path, '/')[:-1]) + '/' + str.split(pol_dict['checkpoint_path_tf'], '/')[-1]
-        
+        check_file = (
+            "/".join(str.split(policy_dict_path, "/")[:-1])
+            + "/"
+            + str.split(pol_dict["checkpoint_path_tf"], "/")[-1]
+        )
+
         saver.restore(sess, check_file)
 
-        device_string = pol_dict['device_string']
+        device_string = pol_dict["device_string"]
 
-        cls_init = cls(pol_dict['deg_action'], tf_map.get_input_tensor(), tf_map.get_output_op(), np.zeros((1,)),
-                       sess, device_string)
-        cls_init.chol_pol_covar = pol_dict['chol_pol_covar']
-        cls_init.scale = pol_dict['scale']
-        cls_init.bias = pol_dict['bias']
+        cls_init = cls(
+            pol_dict["deg_action"],
+            tf_map.get_input_tensor(),
+            tf_map.get_output_op(),
+            np.zeros((1,)),
+            sess,
+            device_string,
+        )
+        cls_init.chol_pol_covar = pol_dict["chol_pol_covar"]
+        cls_init.scale = pol_dict["scale"]
+        cls_init.bias = pol_dict["bias"]
         return cls_init
-

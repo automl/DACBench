@@ -1,6 +1,10 @@
 from stable_baselines import DQN
 from stable_baselines.deepq.policies import MlpPolicy
-from stable_baselines.common.callbacks import BaseCallback, CheckpointCallback, CallbackList
+from stable_baselines.common.callbacks import (
+    BaseCallback,
+    CheckpointCallback,
+    CallbackList,
+)
 from dacbench import benchmarks
 from dacbench.logger import Logger
 from dacbench.wrappers import PerformanceTrackingWrapper, ObservationWrapper
@@ -61,7 +65,11 @@ for b in args.benchmarks:
         model = DQN(MlpPolicy, env)
         logging = LoggerCallback(logger)
 
-        checkpoint = CheckpointCallback(save_freq=1000, save_path=f"{args.outdir}/DQN_{b}_s{s}/models", name_prefix="model")
-        callback=CallbackList([logging, checkpoint])
+        checkpoint = CheckpointCallback(
+            save_freq=1000,
+            save_path=f"{args.outdir}/DQN_{b}_s{s}/models",
+            name_prefix="model",
+        )
+        callback = CallbackList([logging, checkpoint])
         model.learn(total_timesteps=args.timesteps, callback=callback)
         logger.close()
