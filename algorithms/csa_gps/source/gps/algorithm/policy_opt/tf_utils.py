@@ -8,7 +8,7 @@ def check_list_and_convert(the_object):
 
 
 class TfMap:
-    """ a container for inputs, outputs, and loss in a tf graph. This object exists only
+    """a container for inputs, outputs, and loss in a tf graph. This object exists only
     to make well-defined the tf inputs, outputs, and losses used in the policy_opt_tf class."""
 
     def __init__(

@@ -1,9 +1,7 @@
 import csv
-import json
 import os
 
 import numpy as np
-import torch.nn as nn
 from gym import spaces
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
@@ -12,16 +10,20 @@ from dacbench.envs import SGDEnv
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
 
-INFO = {"identifier": "LR",
-        "name": "Learning Rate Adaption for Neural Networks",
-        "reward": "Validation Loss",
-        "state_description": ["Predictive Change Variance (Discounted Average)",
-                              "Predictive Change Variance (Uncertainty)",
-                              "Loss Variance (Discounted Average)",
-                              "Loss Variance (Uncertainty)",
-                              "Current Learning Rate",
-                              "Training Loss",
-                              "Validation Loss"]}
+INFO = {
+    "identifier": "LR",
+    "name": "Learning Rate Adaption for Neural Networks",
+    "reward": "Validation Loss",
+    "state_description": [
+        "Predictive Change Variance (Discounted Average)",
+        "Predictive Change Variance (Uncertainty)",
+        "Loss Variance (Discounted Average)",
+        "Loss Variance (Uncertainty)",
+        "Current Learning Rate",
+        "Training Loss",
+        "Validation Loss",
+    ],
+}
 
 SGD_DEFAULTS = objdict(
     {
@@ -37,7 +39,9 @@ SGD_DEFAULTS = objdict(
                 "predictiveChangeVarUncertainty": spaces.Box(
                     low=0, high=np.inf, shape=(1,)
                 ),
-                "lossVarDiscountedAverage": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+                "lossVarDiscountedAverage": spaces.Box(
+                    low=-np.inf, high=np.inf, shape=(1,)
+                ),
                 "lossVarUncertainty": spaces.Box(low=0, high=np.inf, shape=(1,)),
                 "currentLR": spaces.Box(low=0, high=1, shape=(1,)),
                 "trainingLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
@@ -54,7 +58,7 @@ SGD_DEFAULTS = objdict(
         "beta2": 0.999,
         "seed": 0,
         "instance_set_path": "../instance_sets/sgd/sgd_train.csv",
-        "benchmark_info": INFO
+        "benchmark_info": INFO,
     }
 )
 
@@ -105,9 +109,9 @@ class SGDBenchmark(AbstractBenchmark):
         """
 
         path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.instance_set_path
+            os.path.dirname(os.path.abspath(__file__))
+            + "/"
+            + self.config.instance_set_path
         )
         self.config["instance_set"] = {}
         with open(path, "r") as fh:

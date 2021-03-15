@@ -86,7 +86,7 @@ class AbstractBenchmark:
                             and -np.inf not in conf[k][i]
                         ):
                             conf[k][i] = list(map(int, conf[k][i]))
-                elif isinstance(conf[k],np.ndarray):                    
+                elif isinstance(conf[k], np.ndarray):
                     conf[k] = conf[k].tolist()
 
         conf["wrappers"] = self.jsonify_wrappers()
@@ -206,7 +206,9 @@ class AbstractBenchmark:
                 if self.config["observation_space_type"] == "None":
                     self.config["observation_space_type"] = None
                 else:
-                    typestring = self.config["observation_space_type"].split(" ")[1][:-2]
+                    typestring = self.config["observation_space_type"].split(" ")[1][
+                        :-2
+                    ]
                     typestring = typestring.split(".")[1]
                     self.config["observation_space_type"] = getattr(np, typestring)
         if "observation_space" in self.config:

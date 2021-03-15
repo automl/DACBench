@@ -21,9 +21,10 @@ def batched_matrix_vector_multiply(vector, matrix):
 
 def get_input_layer():
     """produce the placeholder inputs that are used to run ops forward and backwards.
-        net_input: usually an observation.
-        action: mu, the ground truth actions we're trying to learn.
-        precision: precision matrix used to compute loss."""
+    net_input: usually an observation.
+    action: mu, the ground truth actions we're trying to learn.
+    precision: precision matrix used to compute loss."""
+    
     net_input = tf.placeholder("float", [None, None], name="nn_input")  # (N*T) x dO
     action = tf.placeholder("float", [None, None], name="action")  # (N*T) x dU
     precision = tf.placeholder(

@@ -50,7 +50,6 @@ def init_cmaes_controller(hyperparams, agent):
             X_t = agent.get_vectorized_state(rename_state_keys(state), cur_cond_idx)
             es = world.es
             f_vals = world.func_values
-            # f_vals = [max(0, f) for f in f_vals]
             U_t = cur_policy.act(X_t, None, t, np.zeros((dU,)), es, f_vals)
             state, reward, done, _ = world.step(U_t)
             f_values.append(U_t)

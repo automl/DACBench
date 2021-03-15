@@ -1,4 +1,7 @@
 # DACBench
+[![Documentation Status](https://readthedocs.org/projects/dacbench/badge/?version=latest)](https://dacbench.readthedocs.io/en/latest/?badge=latest)
+[![Run Python Tests](https://github.com/automl/DACBench/actions/workflows/run-python-tests.yml/badge.svg)](https://github.com/automl/DACBench/actions/workflows/run-python-tests.yml)
+
 DACBench is a benchmark library for Dynamic Algorithm Configuration.
 Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
@@ -40,9 +43,9 @@ If want to work on DACBench as a developer you can use the `dev` extra option in
 pip install -e .[dev]
 ```
 
-To install all extras (`dev` and `example`) run:
+To install all extras (`dev`, `example` and `docs`) run:
 ```bash
-pip install -e .[dev,example]
+pip install -e .[dev,example,docs]
 ```
 
 ## Using DACBench

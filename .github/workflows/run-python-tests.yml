@@ -1,0 +1,43 @@
+
+name: Run Python Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install Python 3
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.6
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e.[dev,example]
+      - name: Build fast-downward
+        run: ./dacbench/envs/rl-plan/fast-downward/build.py
+      - name: Run tests with pytest
+        run: pytest --html=test-report.html
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: code-coverage-report
+          path: coverage_report
+      - name: Archive test report
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: test-report
+          path: |
+            test-report.html
+            assets
