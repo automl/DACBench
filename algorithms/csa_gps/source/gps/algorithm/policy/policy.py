@@ -4,8 +4,9 @@ import abc
 
 class Policy(object):
     """ Computes actions from states/observations. """
+
     __metaclass__ = abc.ABCMeta
-    
+
     @abc.abstractmethod
     def act(self, es, f_vals, obs, t, noise):
         """
@@ -18,14 +19,14 @@ class Policy(object):
             A dU dimensional action vector.
         """
         raise NotImplementedError("Must be implemented in subclass.")
-    
+
     def reset(self):
         return
-    
+
     # Called when done using the object - must call reset() before starting to use it again
     def finalize(self):
         return
-    
+
     def set_meta_data(self, meta):
         """
         Set meta data for policy (e.g., domain image, multi modal observation sizes)

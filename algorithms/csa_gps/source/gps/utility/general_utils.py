@@ -1,11 +1,13 @@
 """ This file defines general utility functions and classes. """
 import numpy as np
 
+
 class BundleType(object):
     """
     This class bundles many fields, similar to a record or a mutable
     namedtuple.
     """
+
     def __init__(self, variables):
         for var, val in variables.items():
             object.__setattr__(self, var, val)
@@ -16,7 +18,8 @@ class BundleType(object):
             raise AttributeError("%r has no attribute %s" % (self, key))
         object.__setattr__(self, key, value)
 
-def check_shape(value, expected_shape, name=''):
+
+def check_shape(value, expected_shape, name=""):
     """
     Throws a ValueError if value.shape != expected_shape.
     Args:
@@ -25,8 +28,10 @@ def check_shape(value, expected_shape, name=''):
         name: An optional name to add to the exception message.
     """
     if value.shape != tuple(expected_shape):
-        raise ValueError('Shape mismatch %s: Expected %s, got %s' %
-                         (name, str(expected_shape), str(value.shape)))
+        raise ValueError(
+            "Shape mismatch %s: Expected %s, got %s"
+            % (name, str(expected_shape), str(value.shape))
+        )
 
 
 def finite_differences(func, inputs, func_output_shape=(), epsilon=1e-5):
@@ -44,7 +49,7 @@ def finite_differences(func, inputs, func_output_shape=(), epsilon=1e-5):
         Gradient vector of each dimension of func with respect to each
         dimension of input.
     """
-    gradient = np.zeros(inputs.shape+func_output_shape)
+    gradient = np.zeros(inputs.shape + func_output_shape)
     for idx, _ in np.ndenumerate(inputs):
         test_input = np.copy(inputs)
         test_input[idx] += epsilon
@@ -73,8 +78,11 @@ def extract_condition(hyperparams, m):
     Pull the relevant hyperparameters corresponding to the specified
     condition, and return a new hyperparameter dictionary.
     """
-    return {var: val[m] if isinstance(val, list) else val
-            for var, val in hyperparams.items()}
+    return {
+        var: val[m] if isinstance(val, list) else val
+        for var, val in hyperparams.items()
+    }
+
 
 def replicate_var(val, num_conds):
     return val if isinstance(val, list) else [val] * num_conds

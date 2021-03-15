@@ -1,5 +1,9 @@
 from stable_baselines import PPO2
-from stable_baselines.common.callbacks import BaseCallback, CheckpointCallback, CallbackList
+from stable_baselines.common.callbacks import (
+    BaseCallback,
+    CheckpointCallback,
+    CallbackList,
+)
 from dacbench import benchmarks
 from dacbench.logger import Logger
 from dacbench.wrappers import PerformanceTrackingWrapper, ObservationWrapper
@@ -60,7 +64,11 @@ for b in args.benchmarks:
         model = PPO2("MlpPolicy", env)
         logging = LoggerCallback(logger)
 
-        checkpoint = CheckpointCallback(save_freq=1000, save_path=f"{args.outdir}/PPO_{b}_s{s}/models", name_prefix="model")
-        callback=CallbackList([logging, checkpoint])
+        checkpoint = CheckpointCallback(
+            save_freq=1000,
+            save_path=f"{args.outdir}/PPO_{b}_s{s}/models",
+            name_prefix="model",
+        )
+        callback = CallbackList([logging, checkpoint])
         model.learn(total_timesteps=args.timesteps, callback=callback)
         logger.close()

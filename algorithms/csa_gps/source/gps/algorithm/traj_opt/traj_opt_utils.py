@@ -5,6 +5,7 @@ import scipy as sp
 # Constants used in TrajOptLQR.
 DGD_MAX_ITER = 50
 
+
 def traj_distr_kl(new_mu, new_sigma, new_traj_distr, prev_traj_distr):
     """
     Compute KL divergence between new and previous trajectory
@@ -43,25 +44,22 @@ def traj_distr_kl(new_mu, new_sigma, new_traj_distr, prev_traj_distr):
         logdet_prev = 2 * sum(np.log(np.diag(chol_prev)))
         logdet_new = 2 * sum(np.log(np.diag(chol_new)))
         prc_prev = sp.linalg.solve_triangular(
-            chol_prev, sp.linalg.solve_triangular(chol_prev.T, np.eye(dU),
-                                                  lower=True)
+            chol_prev, sp.linalg.solve_triangular(chol_prev.T, np.eye(dU), lower=True)
         )
         prc_new = sp.linalg.solve_triangular(
-            chol_new, sp.linalg.solve_triangular(chol_new.T, np.eye(dU),
-                                                 lower=True)
+            chol_new, sp.linalg.solve_triangular(chol_new.T, np.eye(dU), lower=True)
         )
 
         # Construct matrix, vector, and constants.
         M_prev = np.r_[
             np.c_[K_prev.T.dot(prc_prev).dot(K_prev), -K_prev.T.dot(prc_prev)],
-            np.c_[-prc_prev.dot(K_prev), prc_prev]
+            np.c_[-prc_prev.dot(K_prev), prc_prev],
         ]
         M_new = np.r_[
             np.c_[K_new.T.dot(prc_new).dot(K_new), -K_new.T.dot(prc_new)],
-            np.c_[-prc_new.dot(K_new), prc_new]
+            np.c_[-prc_new.dot(K_new), prc_new],
         ]
-        v_prev = np.r_[K_prev.T.dot(prc_prev).dot(k_prev),
-                       -prc_prev.dot(k_prev)]
+        v_prev = np.r_[K_prev.T.dot(prc_prev).dot(k_prev), -prc_prev.dot(k_prev)]
         v_new = np.r_[K_new.T.dot(prc_new).dot(k_new), -prc_new.dot(k_new)]
         c_prev = 0.5 * k_prev.T.dot(prc_prev).dot(k_prev)
         c_new = 0.5 * k_new.T.dot(prc_new).dot(k_new)
@@ -69,10 +67,13 @@ def traj_distr_kl(new_mu, new_sigma, new_traj_distr, prev_traj_distr):
         # Compute KL divergence at timestep t.
         kl_div[t] = max(
             0,
-            -0.5 * mu_t.T.dot(M_new - M_prev).dot(mu_t) -
-            mu_t.T.dot(v_new - v_prev) - c_new + c_prev -
-            0.5 * np.sum(sigma_t * (M_new-M_prev)) - 0.5 * logdet_new +
-            0.5 * logdet_prev
+            -0.5 * mu_t.T.dot(M_new - M_prev).dot(mu_t)
+            - mu_t.T.dot(v_new - v_prev)
+            - c_new
+            + c_prev
+            - 0.5 * np.sum(sigma_t * (M_new - M_prev))
+            - 0.5 * logdet_new
+            + 0.5 * logdet_prev,
         )
 
     # Add up divergences across time to get total divergence.

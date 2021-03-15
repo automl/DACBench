@@ -7,6 +7,7 @@ RAMP_QUADRATIC = 3
 RAMP_FINAL_ONLY = 4
 RAMP_CUSTOM = 5
 
+
 def get_ramp_multiplier(ramp_option, T, wp_final_multiplier=1.0, wp_custom=None):
     """
     Return a time-varying multiplier.
@@ -21,12 +22,11 @@ def get_ramp_multiplier(ramp_option, T, wp_final_multiplier=1.0, wp_custom=None)
         wpm = ((np.arange(T, dtype=np.float32) + 1) / T) ** 2
     elif ramp_option == RAMP_FINAL_ONLY:
         wpm = np.zeros(T)
-        wpm[T-1] = 1.0
+        wpm[T - 1] = 1.0
     elif ramp_option == RAMP_CUSTOM:
-        assert(wp_custom is not None)
+        assert wp_custom is not None
         wpm = wp_custom
     else:
-        raise ValueError('Unknown cost ramp requested!')
+        raise ValueError("Unknown cost ramp requested!")
     wpm[-1] *= wp_final_multiplier
     return wpm
-

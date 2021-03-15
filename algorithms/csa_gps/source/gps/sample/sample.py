@@ -3,12 +3,14 @@ import numpy as np
 
 from gps.proto.gps_pb2 import ACTION
 
+
 class Sample(object):
     """
     Class that handles the representation of a trajectory and stores a
     single trajectory.
     Note: must be serializable for easy saving, no C++ references!
     """
+
     def __init__(self, agent):
         self.agent = agent
 
@@ -39,14 +41,12 @@ class Sample(object):
         else:
             if sensor_name not in self._data:
                 if sensor_data.size > 1:
-                    self._data[sensor_name] = \
-                        np.empty((self.T,) + sensor_data.shape)
+                    self._data[sensor_name] = np.empty((self.T,) + sensor_data.shape)
 
                 else:
 
-                    self._data[sensor_name] = \
-                        np.empty((self.T,1))
-                    
+                    self._data[sensor_name] = np.empty((self.T, 1))
+
                 self._data[sensor_name].fill(np.nan)
             self._data[sensor_name][t, :] = sensor_data
             self._X[t, :].fill(np.nan)
@@ -54,8 +54,7 @@ class Sample(object):
 
     def get(self, sensor_name, t=None):
         """ Get trajectory data for a particular sensor. """
-        return (self._data[sensor_name] if t is None
-                else self._data[sensor_name][t, :])
+        return self._data[sensor_name] if t is None else self._data[sensor_name][t, :]
 
     def get_X(self, t=None):
         """ Get the state. Put it together if not precomputed. """
@@ -64,8 +63,9 @@ class Sample(object):
             for data_type in self._data:
                 if data_type not in self.agent.x_data_types:
                     continue
-                data = (self._data[data_type] if t is None
-                        else self._data[data_type][t, :])
+                data = (
+                    self._data[data_type] if t is None else self._data[data_type][t, :]
+                )
                 self.agent.pack_data_x(X, data, data_types=[data_type])
         return X
 
@@ -82,8 +82,9 @@ class Sample(object):
                     continue
                 if data_type in self.agent.meta_data_types:
                     continue
-                data = (self._data[data_type] if t is None
-                        else self._data[data_type][t, :])
+                data = (
+                    self._data[data_type] if t is None else self._data[data_type][t, :]
+                )
                 self.agent.pack_data_obs(obs, data, data_types=[data_type])
         return obs
 
@@ -97,29 +98,29 @@ class Sample(object):
                 data = self._data[data_type]
                 self.agent.pack_data_meta(meta, data, data_types=[data_type])
         return meta
-    
+
     def __copy__(self):
         cls = self.__class__
         result = cls.__new__(cls, self.agent)
         result.__dict__.update(self.__dict__)
         return result
-    
+
     def __deepcopy__(self, memo):
         cls = self.__class__
         result = cls.__new__(cls, self.agent)
         memo[id(self)] = result
         for name in self.__dict__:
-            if name != "agent":     # Do not deepcopy self.agent
+            if name != "agent":  # Do not deepcopy self.agent
                 setattr(result, name, copy.deepcopy(self.__dict__[name], memo))
         return result
-    
+
     # For pickling.
     def __getstate__(self):
         state = self.__dict__.copy()
-        state.pop('agent')
+        state.pop("agent")
         return state
 
     # For unpickling.
     def __setstate__(self, state):
         self.__dict__ = state
-        self.__dict__['agent'] = None
+        self.__dict__["agent"] = None
