@@ -9,17 +9,19 @@ from backpack import backpack, extend
 from backpack.extensions import BatchGrad
 from gym.utils import seeding
 from torchvision import datasets, transforms
-
-# Circumvent cloudfare protection
-from six.moves import urllib
-
-opener = urllib.request.build_opener()
-opener.addheaders = [("User-agent", "Mozilla/5.0")]
-urllib.request.install_opener(opener)
-
+import urllib
 from dacbench import AbstractEnv
 
 warnings.filterwarnings("ignore")
+
+
+def set_header_for(url, filename):
+    opener = urllib.request.URLopener()
+    opener.addheader(
+        "User-Agent",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36",
+    )
+    opener.retrieve(url, f"./{filename}")
 
 
 class SGDEnv(AbstractEnv):
@@ -230,6 +232,23 @@ class SGDEnv(AbstractEnv):
         if dataset == "MNIST":
             transform = transforms.Compose(
                 [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
+            )
+
+            set_header_for(
+                "http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz",
+                "train-images-idx3-ubyte.gz",
+            )
+            set_header_for(
+                "http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz",
+                "train-labels-idx1-ubyte.gz",
+            )
+            set_header_for(
+                "http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz",
+                "t10k-images-idx3-ubyte.gz",
+            )
+            set_header_for(
+                "http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz",
+                "t10k-labels-idx1-ubyte.gz",
             )
 
             train_dataset = datasets.MNIST(
