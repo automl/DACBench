@@ -236,13 +236,13 @@ class ModeaEnv(AbstractEnv):
         self.es.parameters.weights = self.es.parameters.getWeights(
             self.es.parameters.weights_option
         )
-        self.es.parameters.mu_eff = 1 / sum(np.square(self.es.parameters.weights))
+        self.es.parameters.mu_eff = 1 / np.sum(np.square(self.es.parameters.weights))
         mu_eff = self.es.parameters.mu_eff  # Local copy
         n = self.es.parameters.n
         self.es.parameters.c_sigma = (mu_eff + 2) / (mu_eff + n + 5)
         self.es.parameters.c_c = (4 + mu_eff / n) / (n + 4 + 2 * mu_eff / n)
         self.es.parameters.c_1 = 2 / ((n + 1.3) ** 2 + mu_eff)
-        self.es.parameters.c_mu = min(
+        self.es.parameters.c_mu = np.min(
             1 - self.es.parameters.c_1,
             self.es.parameters.alpha_mu
             * (
