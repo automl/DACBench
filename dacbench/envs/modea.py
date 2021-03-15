@@ -242,12 +242,12 @@ class ModeaEnv(AbstractEnv):
         self.es.parameters.c_sigma = (mu_eff + 2) / (mu_eff + n + 5)
         self.es.parameters.c_c = (4 + mu_eff / n) / (n + 4 + 2 * mu_eff / n)
         self.es.parameters.c_1 = 2 / ((n + 1.3) ** 2 + mu_eff)
-        self.es.parameters.c_mu = np.min(
+        self.es.parameters.c_mu = min(
             1 - self.es.parameters.c_1,
             self.es.parameters.alpha_mu
             * (
                 (mu_eff - 2 + 1 / mu_eff)
-                / ((n + 2) ** 2 + self.es.parameters.alpha_mu * mu_eff / 2)
+                / ((n + 2) ** 2 + float(self.es.parameters.alpha_mu) * mu_eff / 2)
             ),
         )
         self.es.parameters.damps = (
