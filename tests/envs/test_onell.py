@@ -26,14 +26,17 @@ class TestOneLLEnv(unittest.TestCase):
         return env
 
     def test_setup(self):
-        for config in onell_configs:
+        for i, config in enumerate(onell_configs):
             env = self.make_env(config)
             self.assertTrue(issubclass(type(env), AbstractEnv))
             self.assertFalse(env.rng is None)
 
             for var_name in ["include_xprime", "count_different_inds_only"]:
                 self.assertTrue(vars(env)[var_name] == config[var_name])
-            self.assertTrue(env.problem == globals()[config.problem])
+            print(globals()["onell_configs"][i])
+            self.assertTrue(
+                env.problem.__name__ == globals()["onell_configs"][i]["problem"]
+            )
 
             self.assertTrue(len(env.state_var_names) == len(env.state_functions))
 
