@@ -100,7 +100,7 @@ class AgentCMAES(Agent):
         for t in range(t_length):
             es = self._worlds[condition].es
             f_vals = self._worlds[condition].func_values
-            #f_vals = [max(0, f) for f in f_vals]
+            # f_vals = [max(0, f) for f in f_vals]
             obs_t = new_sample.get_obs(t=t)
             X_t = self.get_vectorized_state(
                 rename_state_keys(self._worlds[condition].get_state(None)), condition
@@ -115,7 +115,7 @@ class AgentCMAES(Agent):
                 next_action = U[t, :]  # * es.sigma
                 state, reward, done, _ = self._worlds[condition].step(next_action)
                 self._set_sample(new_sample, state, t)
-            new_sample.trajectory.append(-reward)#max(0, -reward))
+            new_sample.trajectory.append(-reward)  # max(0, -reward))
         new_sample.set(ACTION, U)
         policy.finalize()
         if save:

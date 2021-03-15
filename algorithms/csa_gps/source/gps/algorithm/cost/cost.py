@@ -63,7 +63,7 @@ class Cost(object):
             # lss[t,:,:] = cur_fcn.hess(x[t,:][:,None])
 
         final_l = final_l * wpm
-        #final_l = [max(0, v) for v in final_l]
+        # final_l = [max(0, v) for v in final_l]
 
         # if not obj_val_only:
         # ls = ls * wpm[:,None]
