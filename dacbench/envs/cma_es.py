@@ -89,7 +89,7 @@ class CMAESEnv(AbstractEnv):
             """Moves forward in time one step"""
             sigma = action
             self.es.tell(self.solutions, self.func_values)
-            self.es.sigma = np.maximum(sigma, 0.05)
+            self.es.sigma = np.maximum(sigma, 0.2)
             self.solutions, self.func_values = self.es.ask_and_eval(self.fcn)
 
         self.f_difference = np.nan_to_num(
