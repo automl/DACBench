@@ -1,6 +1,7 @@
 import tensorflow as tf
 from gps.algorithm.policy_opt.tf_utils import TfMap
-import numpy as np
+
+# import numpy as np
 
 
 def init_weights(shape, name=None):
@@ -24,7 +25,7 @@ def get_input_layer():
     net_input: usually an observation.
     action: mu, the ground truth actions we're trying to learn.
     precision: precision matrix used to compute loss."""
-    
+
     net_input = tf.placeholder("float", [None, None], name="nn_input")  # (N*T) x dO
     action = tf.placeholder("float", [None, None], name="action")  # (N*T) x dU
     precision = tf.placeholder(
