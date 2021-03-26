@@ -9,19 +9,9 @@ from backpack import backpack, extend
 from backpack.extensions import BatchGrad
 from gym.utils import seeding
 from torchvision import datasets, transforms
-import urllib
 from dacbench import AbstractEnv
 
 warnings.filterwarnings("ignore")
-
-
-def set_header_for(url, filename):
-    opener = urllib.request.URLopener()
-    opener.addheader(
-        "User-Agent",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36",
-    )
-    opener.retrieve(url, f"./{filename}")
 
 
 class SGDEnv(AbstractEnv):
@@ -234,22 +224,13 @@ class SGDEnv(AbstractEnv):
                 [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
             )
 
-            set_header_for(
-                "http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz",
-                "train-images-idx3-ubyte.gz",
-            )
-            set_header_for(
-                "http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz",
-                "train-labels-idx1-ubyte.gz",
-            )
-            set_header_for(
-                "http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz",
-                "t10k-images-idx3-ubyte.gz",
-            )
-            set_header_for(
-                "http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz",
-                "t10k-labels-idx1-ubyte.gz",
-            )
+            # hot fix for https://github.com/pytorch/vision/issues/3549
+            # If fix is available in stable version (0.9.1), we should update and be removed this.
+            new_mirror = "https://ossci-datasets.s3.amazonaws.com/mnist"
+            datasets.MNIST.resources = [
+                ("/".join([new_mirror, url.split("/")[-1]]), md5)
+                for url, md5 in datasets.MNIST.resources
+            ]
 
             train_dataset = datasets.MNIST(
                 "../data", train=True, download=True, transform=transform
