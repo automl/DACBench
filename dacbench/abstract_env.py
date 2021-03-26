@@ -1,5 +1,6 @@
 import gym
 from gym.utils import seeding
+import numpy as np
 
 
 class AbstractEnv(gym.Env):
@@ -24,8 +25,9 @@ class AbstractEnv(gym.Env):
         self.instance = self.instance_set[self.inst_id]
 
         self.benchmark_info = config["benchmark_info"]
-
+        self.initial_seed = None
         self.np_random = None
+        self.seed(config.get("seed", None))
 
         self.n_steps = config["cutoff"]
         self.c_step = 0
@@ -213,5 +215,9 @@ class AbstractEnv(gym.Env):
         seed:
             seed for rng
         """
+        self.initial_seed = seed
         self.np_random, seed = seeding.np_random(seed)
+        # uses the uncorrelated seed from seeding but makes sure that no randomness is introduces.
+        np.random.seed(seed)
+        # todo potentially add seeding of spaces here
         return [seed]

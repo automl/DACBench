@@ -132,7 +132,6 @@ class FastDownwardEnv(AbstractEnv):
                 else x
             )
 
-        self.rng = np.random.RandomState(seed=config.seed)
         self.max_rand_steps = config.max_rand_steps
         self.__start_time = None
         self.done = True  # Starts as true as the expected behavior is that before normal resets an episode was done.
@@ -366,7 +365,7 @@ class FastDownwardEnv(AbstractEnv):
         self.conn, address = self.socket.accept()
         s, _, _ = self._process_data()
         if self.max_rand_steps > 1:
-            for _ in range(self.rng.randint(1, self.max_rand_steps + 1)):
+            for _ in range(self.np_random.randint(1, self.max_rand_steps + 1)):
                 s, _, _, _ = self.step(self.action_space.sample())
         else:
             s, _, _, _ = self.step(0)  # hard coded to zero as initial step

@@ -21,6 +21,7 @@ class ModeaEnv(AbstractEnv):
         self.budget = config.budget
         self.total_budget = self.budget
 
+        # np.random.seed(config["seed"])
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
         else:

@@ -138,7 +138,7 @@ class CMAESEnv(AbstractEnv):
         self.es = CMAEvolutionStrategy(
             self.cur_loc,
             self.init_sigma,
-            {"popsize": self.popsize, "bounds": self.bounds},
+            {"popsize": self.popsize, "bounds": self.bounds, "seed": self.initial_seed},
         )
         self.solutions, self.func_values = self.es.ask_and_eval(self.fcn)
         self.fbest = self.func_values[np.argmin(self.func_values)]

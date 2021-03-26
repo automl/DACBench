@@ -17,7 +17,7 @@ class TestSigmoidEnv(unittest.TestCase):
     def test_setup(self):
         env = self.make_env()
         self.assertTrue(issubclass(type(env), AbstractEnv))
-        self.assertFalse(env.rng is None)
+        self.assertFalse(env.np_random is None)
         self.assertTrue(
             np.array_equal(
                 env.shifts, 5 * np.ones(len(SIGMOID_DEFAULTS["action_values"]))

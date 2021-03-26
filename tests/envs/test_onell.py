@@ -29,7 +29,7 @@ class TestOneLLEnv(unittest.TestCase):
         for i, config in enumerate(onell_configs):
             env = self.make_env(config)
             self.assertTrue(issubclass(type(env), AbstractEnv))
-            self.assertFalse(env.rng is None)
+            self.assertFalse(env.np_random is None)
 
             for var_name in ["include_xprime", "count_different_inds_only"]:
                 self.assertTrue(vars(env)[var_name] == config[var_name])

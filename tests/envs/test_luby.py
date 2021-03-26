@@ -17,7 +17,7 @@ class TestLubyEnv(unittest.TestCase):
     def test_setup(self):
         env = self.make_env()
         self.assertTrue(issubclass(type(env), AbstractEnv))
-        self.assertFalse(env.rng is None)
+        self.assertFalse(env.np_random is None)
         self.assertFalse(env._genny is None)
         self.assertFalse(env._next_goal is None)
         self.assertFalse(env._seq is None)

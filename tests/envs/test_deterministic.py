@@ -46,7 +46,26 @@ class TestDeterministic(unittest.TestCase):
         self.run_deterministic_test("SigmoidBenchmark")
 
     def test_FastDownwardBenchmark(self):
-        self.run_deterministic_test("FastDownwardBenchmark")
+        benchmark_name = "FastDownwardBenchmark"
+        seed = 42
+        bench = getattr(benchmarks, benchmark_name)()
+        action = run_baselines.DISCRETE_ACTIONS[benchmark_name][0]
+
+        env1 = bench.get_benchmark(seed=seed)
+        init_state1 = env1.reset()
+        state1, reward1, done1, info1 = env1.step(action)
+        env1.close()
+
+        env2 = bench.get_benchmark(seed=seed)
+        init_state2 = env2.reset()
+        state2, reward2, done2, info2 = env2.step(action)
+        env2.close()
+
+        assert_state_space_equal(init_state1, init_state2)
+        assert_state_space_equal(state1, state2)
+        self.assertEqual(reward1, reward2)
+        self.assertEqual(done1, done2)
+        self.assertEqual(info1, info2)
 
     def test_CMAESBenchmark(self):
         self.run_deterministic_test("CMAESBenchmark")

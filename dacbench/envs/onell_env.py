@@ -325,13 +325,6 @@ class OneLLEnv(AbstractEnv):
                 "Error: invalid action variable name: " + name
             )
 
-        # the random generator used by OneLL-GA
-        if "seed" in config:
-            seed = config.seed
-        else:
-            seed = None
-        self.rng = np.random.default_rng(seed)
-
         # for logging
         self.n_eps = 0  # number of episodes done so far
 
@@ -352,7 +345,7 @@ class OneLLEnv(AbstractEnv):
         self.logger.info("n:%d, max_evals:%d" % (self.n, self.max_evals))
 
         # create an initial solution
-        self.x = self.problem(n=self.instance.size, rng=self.rng)
+        self.x = self.problem(n=self.instance.size, rng=self.np_random)
 
         # total number of evaluations so far
         self.total_evals = 1
@@ -430,7 +423,7 @@ class OneLLEnv(AbstractEnv):
         lbd1, lbd2, p, c = self.get_onell_params(action)
 
         # mutation phase
-        xprime, f_xprime, ne1 = self.x.mutate(p, int(lbd1), self.rng)
+        xprime, f_xprime, ne1 = self.x.mutate(p, int(lbd1), self.np_random)
 
         # crossover phase
         y, f_y, ne2 = self.x.crossover(
@@ -439,7 +432,7 @@ class OneLLEnv(AbstractEnv):
             int(lbd2),
             self.include_xprime,
             self.count_different_inds_only,
-            self.rng,
+            self.np_random,
         )
 
         # update x

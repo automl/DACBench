@@ -35,9 +35,6 @@ class SGDEnv(AbstractEnv):
         self.no_cuda = config.no_cuda
         self.current_batch_size = config.training_batch_size
 
-        self.env_seed = config.seed
-        self.seed(self.env_seed)
-
         self.use_cuda = not self.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
 
