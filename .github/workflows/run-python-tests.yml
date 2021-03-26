@@ -15,6 +15,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
+      - name: Cache MNIST
+        id: cache-mnist
+        uses: actions/cache@v2
+        with:
+          path: ./data/MNIST
+          key: mnist
       - name: Install Python 3
         uses: actions/setup-python@v1
         with:
