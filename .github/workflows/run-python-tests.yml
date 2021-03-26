@@ -21,6 +21,12 @@ jobs:
         with:
           path: ./data/MNIST
           key: mnist
+      - name: Cache Fast-downward build
+            id: cache-fast-downward-build
+            uses: actions/cache@v2
+            with:
+              path: ./dacbench/envs/rl-plan/fast-downward
+              key: fast-downward-build
       - name: Install Python 3
         uses: actions/setup-python@v1
         with:
