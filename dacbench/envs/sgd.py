@@ -3,11 +3,9 @@ import warnings
 import json
 from functools import reduce
 
-import numpy as np
 import torch
 from backpack import backpack, extend
 from backpack.extensions import BatchGrad
-from gym.utils import seeding
 from torchvision import datasets, transforms
 from dacbench import AbstractEnv
 
@@ -113,7 +111,7 @@ class SGDEnv(AbstractEnv):
         else:
             self.get_state = self.get_default_state
 
-    def seed(self, seed=None):
+    def seed(self, seed=None, seed_action_space=False):
         """
         Set rng seed
 
@@ -121,11 +119,12 @@ class SGDEnv(AbstractEnv):
         ----------
         seed:
             seed for rng
+        seed_action_space: bool, default False
+            if to seed the action space as well
         """
-        _, seed = seeding.np_random(seed)
+        (seed,) = super().seed(seed, seed_action_space)
         if seed is not None:
             torch.manual_seed(seed)
-            np.random.seed(seed)
         return [seed]
 
     def step(self, action):
