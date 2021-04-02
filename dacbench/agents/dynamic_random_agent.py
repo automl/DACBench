@@ -15,10 +15,10 @@ class DynamicRandomAgent(AbstractDACBenchAgent):
             self.action = self.action[0]
 
     def act(self, state, reward):
-        self.count += 1
         if self.count >= self.switching_interval:
             self.action = self.sample_action()
             self.count = 0
+        self.count += 1
 
         if self.shortbox:
             return self.action[0]
