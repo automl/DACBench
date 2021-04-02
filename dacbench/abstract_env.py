@@ -208,6 +208,23 @@ class AbstractEnv(gym.Env):
         """
         self.instance = instance
 
+    def seed_action_space(self, seed=None):
+        """
+        Seeds the action space.
+        Parameters
+        ----------
+        seed : int, default None
+            if None self.initial_seed is be used
+
+        Returns
+        -------
+
+        """
+        if seed is None:
+            seed = self.initial_seed
+
+        self.action_space.seed(seed)
+
     def seed(self, seed=None, seed_action_space=False):
         """
         Set rng seed
@@ -227,7 +244,7 @@ class AbstractEnv(gym.Env):
         # uses the uncorrelated seed from seeding but makes sure that no randomness is introduces.
 
         if seed_action_space:
-            self.action_space.seed(self.initial_seed)
+            self.seed_action_space()
 
         # todo potentially add seeding of spaces here
         return [seed]
