@@ -2,6 +2,9 @@ import pytest
 import unittest
 import json
 import os
+import numpy as np
+from gym.spaces import Box, Discrete, Dict, MultiDiscrete, MultiBinary
+
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 import tempfile
 
@@ -90,6 +93,43 @@ class TestAbstractBenchmark(unittest.TestCase):
         bench = AbstractBenchmark()
         empty_warpper_list = bench.jsonify_wrappers()
         assert empty_warpper_list == []
+
+    def test_space_to_list_and_list_to_space(self):
+        def assert_restorable(space):
+            space_restored = bench.list_to_space(bench.space_to_list(space))
+
+            assert space == space_restored
+
+        bench = AbstractBenchmark()
+
+        space = Box(
+            low=np.array([0, 0]),
+            high=np.array([1, 1]),
+        )
+        assert_restorable(space)
+
+        space = Discrete(2)
+        assert_restorable(space)
+
+        space = Dict(
+            {
+                "box": Box(
+                    low=np.array([0, 0]),
+                    high=np.array([1, 1]),
+                )
+            }
+        )
+        assert_restorable(space)
+
+        with self.assertRaises(ValueError):
+            space = Dict({"discrete": Discrete(1)})
+            bench.space_to_list(space)
+
+        space = MultiDiscrete([2, 3])
+        assert_restorable(space)
+
+        space = MultiBinary(3)
+        assert_restorable(space)
 
     def test_objdict(self):
         d = objdict({"dummy": 0})
