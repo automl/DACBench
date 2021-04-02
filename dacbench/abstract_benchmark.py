@@ -21,12 +21,12 @@ class AbstractBenchmark:
         config_path : str
             Path to load configuration from (if read from file)
         """
+        self.wrap_funcs = []
         if config_path:
             self.config_path = config_path
             self.read_config_file(self.config_path)
         else:
             self.config = None
-        self.wrap_funcs = []
 
     def get_config(self):
         """
