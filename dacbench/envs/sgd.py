@@ -32,6 +32,7 @@ class SGDEnv(AbstractEnv):
         self.validation_batch_size = config.validation_batch_size
         self.no_cuda = config.no_cuda
         self.current_batch_size = config.training_batch_size
+        self.on_features = config.features
 
         self.use_cuda = not self.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
@@ -76,7 +77,8 @@ class SGDEnv(AbstractEnv):
         self.t = 0
         self.step_count = torch.zeros(1, device=self.device, requires_grad=False)
 
-        self.prev_descent = None
+        self.prev_direction = None
+        self.current_direction = None
 
         self.learning_rate = 0.001
         self.predictiveChangeVarDiscountedAverage = torch.zeros(
@@ -148,14 +150,14 @@ class SGDEnv(AbstractEnv):
         if not isinstance(action, float) and not isinstance(action, int):
             action = action[0]
 
-        action = torch.Tensor([action]).to(self.device)
-        new_lr = 10 ** (-action)
+        new_lr = torch.Tensor([action]).to(self.device)
+        # new_lr = 10 ** (-action)
         self.current_lr = new_lr
-        delta_w = torch.mul(
-            new_lr,
-            self.firstOrderMomentum
-            / (torch.sqrt(self.secondOrderMomentum) + self.epsilon),
-        )
+
+        direction = self.firstOrderMomentum / (torch.sqrt(self.secondOrderMomentum) + self.epsilon)
+        self.current_direction = direction
+        delta_w = torch.mul(new_lr, direction)
+
         for i, p in enumerate(self.model.parameters()):
             layer_size = self.layer_sizes[i]
             p.data = p.data - delta_w[index : index + layer_size].reshape(
@@ -282,7 +284,10 @@ class SGDEnv(AbstractEnv):
         self.step_count = torch.zeros(1, device=self.device, requires_grad=False)
 
         self.current_lr = self.initial_lr
-        self.prev_descent = torch.zeros(
+        self.prev_direction = torch.zeros(
+            (self.parameter_count,), device=self.device, requires_grad=False
+        )
+        self.current_direction = torch.zeros(
             (self.parameter_count,), device=self.device, requires_grad=False
         )
         self.get_default_reward(self)
@@ -331,23 +336,37 @@ class SGDEnv(AbstractEnv):
         self.firstOrderMomentum, self.secondOrderMomentum = self._get_momentum(
             gradients
         )
-        (
-            predictiveChangeVarDiscountedAverage,
-            predictiveChangeVarUncertainty,
-        ) = self._get_predictive_change_features(
-            self.current_lr, self.firstOrderMomentum, self.secondOrderMomentum
-        )
-        lossVarDiscountedAverage, lossVarUncertainty = self._get_loss_features()
 
-        state = {
-            "predictiveChangeVarDiscountedAverage": predictiveChangeVarDiscountedAverage,
-            "predictiveChangeVarUncertainty": predictiveChangeVarUncertainty,
-            "lossVarDiscountedAverage": lossVarDiscountedAverage,
-            "lossVarUncertainty": lossVarUncertainty,
-            "currentLR": self.current_lr,
-            "trainingLoss": self.current_training_loss,
-            "validationLoss": self.current_validation_loss,
-        }
+        if 'predictiveChangeVarDiscountedAverage' in self.on_features or 'predictiveChangeVarUncertainty' in self.on_features:
+            predictiveChangeVarDiscountedAverage, predictiveChangeVarUncertainty = \
+                self._get_predictive_change_features(self.current_lr, self.firstOrderMomentum, self.secondOrderMomentum)
+
+        if 'lossVarDiscountedAverage' in self.on_features or 'lossVarUncertainty' in self.on_features:
+            lossVarDiscountedAverage, lossVarUncertainty = self._get_loss_features()
+
+        if 'alignment' in self.on_features:
+            alignment = self._get_alignment()
+
+        state = {}
+
+        if 'predictiveChangeVarDiscountedAverage' in self.on_features:
+            state["predictiveChangeVarDiscountedAverage"] = predictiveChangeVarDiscountedAverage
+        if 'predictiveChangeVarUncertainty' in self.on_features:
+            state["predictiveChangeVarUncertainty"] = predictiveChangeVarUncertainty
+        if 'lossVarDiscountedAverage' in self.on_features:
+            state["lossVarDiscountedAverage"] = lossVarDiscountedAverage
+        if 'lossVarUncertainty' in self.on_features:
+            state["lossVarUncertainty"] = lossVarUncertainty
+        if 'currentLR' in self.on_features:
+            state["currentLR"] = self.current_lr
+        if 'trainingLoss' in self.on_features:
+            state["trainingLoss"] = self.current_training_loss
+        if 'validationLoss' in self.on_features:
+            state["validationLoss"] = self.current_validation_loss
+        if 'step' in self.on_features:
+            state["step"] = self.step_count
+        if 'alignment' in self.on_features:
+            state["alignment"] = alignment
 
         return state
 
@@ -492,3 +511,9 @@ class SGDEnv(AbstractEnv):
             self.predictiveChangeVarDiscountedAverage,
             self.predictiveChangeVarUncertainty,
         )
+
+def _get_alignment(self):
+    alignment = torch.mean(torch.sign(torch.mul(self.prev_direction, self.current_direction)))
+    alignment = torch.unsqueeze(alignment, dim=0)
+    self.prev_direction = self.current_direction
+    return alignment
