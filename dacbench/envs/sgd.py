@@ -6,6 +6,7 @@ from functools import reduce
 import torch
 from backpack import backpack, extend
 from backpack.extensions import BatchGrad
+from numpy import float32
 from torchvision import datasets, transforms
 from dacbench import AbstractEnv
 
@@ -147,7 +148,7 @@ class SGDEnv(AbstractEnv):
 
         self.step_count += 1
         index = 0
-        if not isinstance(action, float) and not isinstance(action, int):
+        if not isinstance(action, float32) and not isinstance(action, int) and not isinstance(action, float):
             action = action[0]
 
         new_lr = torch.Tensor([action]).to(self.device)
@@ -512,8 +513,8 @@ class SGDEnv(AbstractEnv):
             self.predictiveChangeVarUncertainty,
         )
 
-def _get_alignment(self):
-    alignment = torch.mean(torch.sign(torch.mul(self.prev_direction, self.current_direction)))
-    alignment = torch.unsqueeze(alignment, dim=0)
-    self.prev_direction = self.current_direction
-    return alignment
+    def _get_alignment(self):
+        alignment = torch.mean(torch.sign(torch.mul(self.prev_direction, self.current_direction)))
+        alignment = torch.unsqueeze(alignment, dim=0)
+        self.prev_direction = self.current_direction
+        return alignment

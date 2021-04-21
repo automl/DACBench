@@ -59,6 +59,15 @@ SGD_DEFAULTS = objdict(
         "seed": 0,
         "instance_set_path": "../instance_sets/sgd/sgd_train.csv",
         "benchmark_info": INFO,
+        "features": ["predictiveChangeVarDiscountedAverage",
+                     "predictiveChangeVarUncertainty",
+                     "lossVarDiscountedAverage",
+                     "lossVarUncertainty",
+                     "currentLR",
+                     "trainingLoss",
+                     "validationLoss",
+                     "step",
+                     "alignment"],
     }
 )
 
@@ -68,7 +77,7 @@ class SGDBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for SGD
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, instance_set_path=None, config_path=None):
         """
         Initialize SGD Benchmark
 
@@ -84,6 +93,9 @@ class SGDBenchmark(AbstractBenchmark):
         for key in SGD_DEFAULTS:
             if key not in self.config:
                 self.config[key] = SGD_DEFAULTS[key]
+
+        if instance_set_path is not None:
+            self.config["instance_set_path"] = instance_set_path
 
     def get_environment(self):
         """
@@ -124,7 +136,7 @@ class SGDBenchmark(AbstractBenchmark):
                 ]
                 self.config["instance_set"][int(row["ID"])] = instance
 
-    def get_benchmark(self, seed=0):
+    def get_benchmark(self, instance_set_path=None, seed=0):
         """
         Get benchmark from the LTO paper
 
@@ -139,6 +151,8 @@ class SGDBenchmark(AbstractBenchmark):
             SGD environment
         """
         self.config = objdict(SGD_DEFAULTS.copy())
+        if instance_set_path is not None:
+            self.config["instance_set_path"] = instance_set_path
         self.config.seed = seed
         self.read_instance_set()
         return SGDEnv(self.config)
