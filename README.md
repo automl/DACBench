@@ -11,8 +11,8 @@ If you use DACBench in you research or application, please cite us:
 @Misc{dacbench,
     author    = {T. Eimer and A. Biedenkapp and M. Reimer and S. Adriaensen and F. Hutter and M. Lindauer},
     title     = {DACBench: A Benchmark Library for Dynamic Algorithm Configuration},
-    howpublished = {\url{https://github.com/automl/DACBench}},
-    year = {2020}
+    booktitle = {Proceedings of the Thirtieth International Joint Conference on Artificial Intelligence, {IJCAI} 2021}
+    year = {2021}
 }
 ```
 
