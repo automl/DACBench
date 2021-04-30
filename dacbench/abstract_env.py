@@ -246,5 +246,4 @@ class AbstractEnv(gym.Env):
         if seed_action_space:
             self.seed_action_space()
 
-        # todo potentially add seeding of spaces here
         return [seed]

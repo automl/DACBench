@@ -21,7 +21,6 @@ class ModeaEnv(AbstractEnv):
         self.budget = config.budget
         self.total_budget = self.budget
 
-        # np.random.seed(config["seed"])
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
         else:
@@ -125,7 +124,7 @@ class ModeaEnv(AbstractEnv):
                 self.lambda_["large"] *= 2
                 parameter_opts["sigma"] = 2
             elif self.regime == "small":
-                rand_val = np.random.random() ** 2
+                rand_val = self.np_random.random() ** 2
                 self.lambda_["small"] = int(
                     np.floor(
                         self.lambda_init
@@ -133,7 +132,7 @@ class ModeaEnv(AbstractEnv):
                         ** rand_val
                     )
                 )
-                parameter_opts["sigma"] = 2e-2 * np.random.random()
+                parameter_opts["sigma"] = 2e-2 * self.np_random.random()
 
             self.es.budget = self.budgets[self.regime]
             self.es.used_budget = 0

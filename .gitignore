@@ -10,7 +10,10 @@ docs/_build/*
 # project spcecific stuff
 TODOS.md
 builds/
-coverage_report/
+
+# coverage
+coverage_report/*
+.coverage
 
 ## results, data or temp files written during runs
 output/
