@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
     <title>Coverage for dacbench/envs/sigmoid.py: 97%</title>
+    <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="jquery.hotkeys.js"></script>
@@ -21,8 +22,8 @@
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
-            71 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">69 run</button>
+            70 statements &nbsp;
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">68 run</button>
             <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">2 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
@@ -87,7 +88,7 @@
     <p id="t34" class="pln"><span class="n"><a href="#t34">34</a></span><span class="t"><span class="str">            Environment configuration</span>&nbsp;</span><span class="r"></span></p>
     <p id="t35" class="pln"><span class="n"><a href="#t35">35</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
     <p id="t36" class="run"><span class="n"><a href="#t36">36</a></span><span class="t">        <span class="nam">super</span><span class="op">(</span><span class="nam">SigmoidEnv</span><span class="op">,</span> <span class="nam">self</span><span class="op">)</span><span class="op">.</span><span class="nam">__init__</span><span class="op">(</span><span class="nam">config</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t37" class="run"><span class="n"><a href="#t37">37</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">rng</span> <span class="op">=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">random</span><span class="op">.</span><span class="nam">RandomState</span><span class="op">(</span><span class="nam">config</span><span class="op">[</span><span class="str">"seed"</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t37" class="pln"><span class="n"><a href="#t37">37</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t38" class="run"><span class="n"><a href="#t38">38</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">shifts</span> <span class="op">=</span> <span class="op">[</span><span class="nam">self</span><span class="op">.</span><span class="nam">n_steps</span> <span class="op">/</span> <span class="num">2</span> <span class="key">for</span> <span class="nam">_</span> <span class="key">in</span> <span class="nam">config</span><span class="op">[</span><span class="str">"action_values"</span><span class="op">]</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p id="t39" class="run"><span class="n"><a href="#t39">39</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">slopes</span> <span class="op">=</span> <span class="op">[</span><span class="op">-</span><span class="num">1</span> <span class="key">for</span> <span class="nam">_</span> <span class="key">in</span> <span class="nam">config</span><span class="op">[</span><span class="str">"action_values"</span><span class="op">]</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p id="t40" class="run"><span class="n"><a href="#t40">40</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">slope_multiplier</span> <span class="op">=</span> <span class="nam">config</span><span class="op">[</span><span class="str">"slope_multiplier"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
@@ -219,8 +220,8 @@
 <div id="footer">
     <div class="content">
         <p>
-            <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.3</a>,
-            created at 2021-03-11 15:34 +0100
+            <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
+            created at 2021-04-02 14:35 +0200
         </p>
     </div>
 </div>
