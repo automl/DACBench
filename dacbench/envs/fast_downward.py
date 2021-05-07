@@ -362,7 +362,15 @@ class FastDownwardEnv(AbstractEnv):
             portfh.write(str(self.port))
 
         self.socket.listen()
-        self.conn, address = self.socket.accept()
+        try:
+            self.conn, address = self.socket.accept()
+        except socket.timeout:
+            raise OSError(
+                "Fast downward subprocess not reachable (time out). "
+                "Did you run './dacbench/envs/rl-plan/fast-downward/build.py' "
+                "in order to build the fd backend?"
+            )
+
         s, _, _ = self._process_data()
         if self.max_rand_steps > 1:
             for _ in range(self.np_random.randint(1, self.max_rand_steps + 1)):
