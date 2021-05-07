@@ -8,7 +8,7 @@ class AbstractEnv(gym.Env):
     Abstract template for environments
     """
 
-    def __init__(self, config, seed_action_space=False):
+    def __init__(self, config):
         """
         Initialize environment
 
@@ -16,7 +16,6 @@ class AbstractEnv(gym.Env):
         -------
         config : dict
             Environment configuration
-        seed_action_space : bool default False
             If to seed the action space as well
         """
         super(AbstractEnv, self).__init__()
@@ -29,7 +28,7 @@ class AbstractEnv(gym.Env):
         self.benchmark_info = config["benchmark_info"]
         self.initial_seed = None
         self.np_random = None
-        self.seed(config.get("seed", None), seed_action_space)
+        self.seed(config.get("seed", None), config.get("seed_action_space", False))
 
         self.n_steps = config["cutoff"]
         self.c_step = 0
