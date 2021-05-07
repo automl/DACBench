@@ -43,5 +43,8 @@ For tests and test coverage:
 3. If you install the 'dev' extras of DACBench, you should have flake8 and the code formatting tool black setup in a pre-commit hook. Both ensure consistent code quality, so ensure that the format is correct.
 4. If you make larger changes to the docs, please build them locally using Sphinx. If you're not familiar with the tool, you can find a guide here: https://docs.readthedocs.io/en/stable/intro/getting-started-with-sphinx.html
 
-If you're adding or extending a benchmark, please also use numpy generators instead of np.random for all your seeding.
+Adding a Benchmark
+############################
+If you're adding or extending a benchmark, please also use the numpy generators provided in 'dacbench.abstract_env.AbstractEnv' the instead of 'np.random' for source of randomness and use the provided seeding function as well. If you need custom source of randomness e.g. for pytorch, please override the seeding function in your environment.
+
 Thank you for your contributions!
