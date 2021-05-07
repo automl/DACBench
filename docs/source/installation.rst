@@ -33,4 +33,7 @@ To also install all dependecies used in the examples, instead run:
 
     pip install -e .[example]
 
+You should now have DACBench installed. 
+In the top level directory, you will find folders for tests, examples, code coverage reporting and documentation.
+The code itself can be found in the 'dacbench' folder.
 If you want to take advantage of our pre-run static and random baselines (10 runs each with 1000 episodes), you can download them `here <https://www.tnt.uni-hannover.de/en/project/dacbench/>`_.

@@ -15,5 +15,6 @@ Welcome to DACBench's documentation!
  source/wrappers
  source/logging
  source/plotting
+ source/contrib
  source/cite
 
