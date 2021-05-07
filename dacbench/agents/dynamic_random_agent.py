@@ -12,9 +12,6 @@ class DynamicRandomAgent(AbstractDACBenchAgent):
             isinstance(env.action_space, spaces.Box) and len(env.action_space.low) == 1
         )
 
-        if self.shortbox:
-            self.action = self.action[0]
-
     def act(self, state, reward):
         if self.count >= self.switching_interval:
             self.action = self.sample_action()
