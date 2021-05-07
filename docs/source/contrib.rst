@@ -12,6 +12,7 @@ Since its conception, we have had several valueable contributions and appreciate
 This document can be a guide on how to get started contributing to DACBench.
 
 In general, there are many ways you can help improve DACBench, including:
+
 * Contributing new benchmarks
 * Extending existing benchmarks (by adding e.g. more hyperparameters, extending the state information or providing interesting instances)
 * Maining the code & fixing bugs
@@ -28,11 +29,15 @@ In order to make the integration as easy as possible, we ask that you follow a f
 
 1. Please describe the changes you made in the PR clearly. This makes reviewing much faster and avoids misunderstandings
 2. Run our tests and ideally also test coverage before submitting so your PR doesn't accidentally introduce new errors. You can use pytest for both of these, to only test, run from the top level DACBench dir:
+
 .. code-block:: bash
+
         pytest tests
 
 For tests and test coverage:
+
 .. code-block:: bash
+
         pytest --cov=dacbench --cov-report html tests
 
 3. If you install the 'dev' extras of DACBench, you should have flake8 and the code formatting tool black setup in a pre-commit hook. Both ensure consistent code quality, so ensure that the format is correct.
