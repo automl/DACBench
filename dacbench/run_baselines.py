@@ -1,5 +1,6 @@
 import argparse
 import itertools
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -126,7 +127,7 @@ def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.aran
         logger.close()
 
 
-def main():
+def main(args):
     parser = argparse.ArgumentParser(
         description="Run simple baselines for DAC benchmarks",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -203,7 +204,7 @@ def main():
         default=0,
         help="Fixes random actions for n steps",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     if args.benchmarks is None:
         benchs = benchmarks.__all__
@@ -246,4 +247,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
