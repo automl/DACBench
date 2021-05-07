@@ -8,9 +8,10 @@ class DynamicRandomAgent(AbstractDACBenchAgent):
         self.switching_interval = switching_interval
         self.count = 0
         self.action = self.sample_action()
-        self.shortbox = isinstance(env.action_space, spaces.Box)
-        if self.shortbox:
-            self.shortbox = self.shortbox and len(env.action_space.low) == 1
+        self.shortbox = (
+            isinstance(env.action_space, spaces.Box) and len(env.action_space.low) == 1
+        )
+
         if self.shortbox:
             self.action = self.action[0]
 
