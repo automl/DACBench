@@ -15,6 +15,7 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 omit = ["dacbench/envs/fast-downward/*", "algorithms"]
+include = ['dacbench/*']
 
 [tool.coverage.html]
 directory = "coverage_report"

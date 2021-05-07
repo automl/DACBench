@@ -38,7 +38,11 @@ jobs:
       - name: Build fast-downward
         run: ./dacbench/envs/rl-plan/fast-downward/build.py
       - name: Run tests with pytest
-        run: pytest --html=test-report.html
+        run: coverage run -m pytest --html=test-report.html
+      - name: Run coverage
+        run: |
+          coverage report
+          coverage html
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         if: ${{ always() }}
