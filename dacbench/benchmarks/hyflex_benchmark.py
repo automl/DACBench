@@ -77,6 +77,10 @@ class HyFlexBenchmark(AbstractBenchmark):
 
         return env
 
+    def get_benchmark(self, seed=0):
+        self.config.seed = seed
+        return self.get_environment()
+    
     def read_instance_set(self):
         """
         Read path of instances from config into list
