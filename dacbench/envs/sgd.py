@@ -55,12 +55,14 @@ class SGDEnv(AbstractEnv):
         self.loss_batch = None
 
         self.model = None
+        self.val_model = None
 
         self.parameter_count = 0
         self.layer_sizes = []
 
         self.loss_function = torch.nn.NLLLoss(reduction="none")
         self.loss_function = extend(self.loss_function)
+        self.val_loss_function = torch.nn.NLLLoss(reduction="none")
 
         self.initial_lr = config.lr * torch.ones(
             1, device=self.device, requires_grad=False
@@ -208,6 +210,7 @@ class SGDEnv(AbstractEnv):
         self.seed(instance_seed)
 
         self.model = construct_model().to(self.device)
+        self.val_model = construct_model().to(self.device)
 
         self.training_validation_ratio = 0.8
 
@@ -274,6 +277,7 @@ class SGDEnv(AbstractEnv):
 
         self._set_zero_grad()
         self.model.train()
+        self.val_model.eval()
 
         self.current_training_loss = None
         self.loss_batch = None
@@ -409,6 +413,11 @@ class SGDEnv(AbstractEnv):
 
         return reward
 
+    def transfer_model_parameters(self):
+        # self.val_model.load_state_dict(self.model.state_dict())
+        for target_param, param in zip(self.val_model.parameters(), self.model.parameters()):
+            target_param.data.copy_(param.data)
+
     def _get_val_loss(self):
         self.model.eval()
         validation_loss = torch.zeros(1, device=self.device, requires_grad=False)
@@ -423,18 +432,19 @@ class SGDEnv(AbstractEnv):
         return validation_loss
 
     def _get_validation_loss_(self):
-        self.model.eval()
+        # self.model.eval()
         (data, target) = self.validation_loader_it.next()
         data, target = data.to(self.device), target.to(self.device)
-        output = self.model(data)
-        validation_loss = self.loss_function(output, target).mean()
+        output = self.val_model(data)
+        validation_loss = self.val_loss_function(output, target).mean()
         validation_loss = torch.unsqueeze(validation_loss.detach(), dim=0)
         self.current_validation_loss = validation_loss
-        self.model.train()
+        # self.model.train()
 
         return -validation_loss.item()  # negative because it is the reward
 
     def _get_validation_loss(self):
+        self.transfer_model_parameters()
         try:
             validation_loss = self._get_validation_loss_()
         except StopIteration:
