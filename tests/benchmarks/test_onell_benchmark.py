@@ -38,7 +38,7 @@ class TestOneLLBenchmark(unittest.TestCase):
         # instance_set is currently dropped, since storing the instance_set in not possible for all benchmarks.
         # see (https://github.com/automl/DACBench/issues/87)
         key_difference = set(bench.config.keys()).difference(set(recovered.keys()))
-        self.assertSetEqual(key_difference, {'instance_set'})
+        self.assertSetEqual(key_difference, {"instance_set"})
 
         os.remove("test_conf.json")
 

@@ -455,13 +455,13 @@ class SGDEnv(AbstractEnv):
             loss_var = torch.log(torch.var(self.loss_batch))
 
             self.lossVarDiscountedAverage = (
-                    self.discount_factor * self.lossVarDiscountedAverage
-                    + (1 - self.discount_factor) * loss_var
+                self.discount_factor * self.lossVarDiscountedAverage
+                + (1 - self.discount_factor) * loss_var
             )
             self.lossVarUncertainty = (
-                    self.discount_factor * self.lossVarUncertainty
-                    + (1 - self.discount_factor)
-                    * (loss_var - self.lossVarDiscountedAverage) ** 2
+                self.discount_factor * self.lossVarUncertainty
+                + (1 - self.discount_factor)
+                * (loss_var - self.lossVarDiscountedAverage) ** 2
             )
 
         return self.lossVarDiscountedAverage, self.lossVarUncertainty
