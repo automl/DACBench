@@ -1,4 +1,5 @@
 import math
+import numbers
 import warnings
 from functools import reduce
 
@@ -149,7 +150,7 @@ class SGDEnv(AbstractEnv):
 
         self.step_count += 1
         index = 0
-        if not isinstance(action, float):
+        if not isinstance(action, numbers.Number):
             action = action[0]
 
         action = torch.Tensor([action]).to(self.device)
@@ -162,7 +163,7 @@ class SGDEnv(AbstractEnv):
         )
         for i, p in enumerate(self.model.parameters()):
             layer_size = self.layer_sizes[i]
-            p.data = p.data - delta_w[index: index + layer_size].reshape(
+            p.data = p.data - delta_w[index : index + layer_size].reshape(
                 shape=p.data.shape
             )
             index += layer_size
@@ -428,13 +429,13 @@ class SGDEnv(AbstractEnv):
             loss_var = torch.log(torch.var(self.loss_batch))
 
             self.lossVarDiscountedAverage = (
-                    self.discount_factor * self.lossVarDiscountedAverage
-                    + (1 - self.discount_factor) * loss_var
+                self.discount_factor * self.lossVarDiscountedAverage
+                + (1 - self.discount_factor) * loss_var
             )
             self.lossVarUncertainty = (
-                    self.discount_factor * self.lossVarUncertainty
-                    + (1 - self.discount_factor)
-                    * (loss_var - self.lossVarDiscountedAverage) ** 2
+                self.discount_factor * self.lossVarUncertainty
+                + (1 - self.discount_factor)
+                * (loss_var - self.lossVarDiscountedAverage) ** 2
             )
 
         return self.lossVarDiscountedAverage, self.lossVarUncertainty
@@ -455,13 +456,13 @@ class SGDEnv(AbstractEnv):
         )
 
         self.predictiveChangeVarDiscountedAverage = (
-                self.discount_factor * self.predictiveChangeVarDiscountedAverage
-                + (1 - self.discount_factor) * predictive_change
+            self.discount_factor * self.predictiveChangeVarDiscountedAverage
+            + (1 - self.discount_factor) * predictive_change
         )
         self.predictiveChangeVarUncertainty = (
-                self.discount_factor * self.predictiveChangeVarUncertainty
-                + (1 - self.discount_factor)
-                * (predictive_change - self.predictiveChangeVarDiscountedAverage) ** 2
+            self.discount_factor * self.predictiveChangeVarUncertainty
+            + (1 - self.discount_factor)
+            * (predictive_change - self.predictiveChangeVarDiscountedAverage) ** 2
         )
 
         return (

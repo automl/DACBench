@@ -1,3 +1,6 @@
+import tempfile
+from pathlib import Path
+
 import pytest
 import unittest
 from gym import spaces
@@ -51,13 +54,14 @@ class TestRunner(unittest.TestCase):
         def make(env):
             return DummyAgent(env)
 
-        run_dacbench("test_run", make, 1)
-        self.assertTrue(os.path.exists("test_run"))
-        self.assertFalse(os.stat("test_run/LubyBenchmark.json") == 0)
-        self.assertFalse(os.stat("test_run/SigmoidBenchmark.json") == 0)
-        self.assertFalse(os.stat("test_run/CMAESBenchmark.json") == 0)
-        self.assertFalse(os.stat("test_run/FastDownwardBenchmark.json") == 0)
-        self.assertFalse(os.stat("test_run/SGDBenchmark.json") == 0)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            run_dacbench(tmp_dir, make, 1)
+            path = Path(tmp_dir)
+            self.assertFalse(os.stat(path / "LubyBenchmark") == 0)
+            self.assertFalse(os.stat(path / "SigmoidBenchmark") == 0)
+            self.assertFalse(os.stat(path / "CMAESBenchmark") == 0)
+            self.assertFalse(os.stat(path / "FastDownwardBenchmark") == 0)
+            self.assertFalse(os.stat(path / "SGDBenchmark") == 0)
 
 
 #    def test_plotting(self):

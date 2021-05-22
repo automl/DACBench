@@ -40,7 +40,8 @@ class TestCMABenchmark(unittest.TestCase):
         bench2 = SGDBenchmark()
         env = bench2.get_environment()
         self.assertTrue(len(env.instance_set.keys()) == 100)
-        self.assertTrue(inst == env.instance_set[0])
+        # [3] instance architecture constructor functionally identical but not comparable
+        self.assertListEqual(inst[:2], env.instance_set[0][:2])
 
     def test_benchmark_env(self):
         bench = SGDBenchmark()
