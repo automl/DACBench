@@ -1,15 +1,13 @@
 import math
 import numbers
 import warnings
+import json
 from functools import reduce
 
-import numpy as np
 import torch
 from backpack import backpack, extend
 from backpack.extensions import BatchGrad
-from gym.utils import seeding
 from torchvision import datasets, transforms
-
 from dacbench import AbstractEnv
 
 warnings.filterwarnings("ignore")
@@ -35,9 +33,6 @@ class SGDEnv(AbstractEnv):
         self.validation_batch_size = config.validation_batch_size
         self.no_cuda = config.no_cuda
         self.current_batch_size = config.training_batch_size
-
-        self.env_seed = config.seed
-        self.seed(self.env_seed)
 
         self.use_cuda = not self.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
@@ -117,7 +112,7 @@ class SGDEnv(AbstractEnv):
         else:
             self.get_state = self.get_default_state
 
-    def seed(self, seed=None):
+    def seed(self, seed=None, seed_action_space=False):
         """
         Set rng seed
 
@@ -125,11 +120,12 @@ class SGDEnv(AbstractEnv):
         ----------
         seed:
             seed for rng
+        seed_action_space: bool, default False
+            if to seed the action space as well
         """
-        _, seed = seeding.np_random(seed)
+        (seed,) = super().seed(seed, seed_action_space)
         if seed is not None:
             torch.manual_seed(seed)
-            np.random.seed(seed)
         return [seed]
 
     def step(self, action):
@@ -150,6 +146,8 @@ class SGDEnv(AbstractEnv):
 
         self.step_count += 1
         index = 0
+        if not isinstance(action, float) and not isinstance(action, int):
+            action = action.item()
         if not isinstance(action, numbers.Number):
             action = action[0]
 
@@ -172,6 +170,26 @@ class SGDEnv(AbstractEnv):
         reward = self.get_reward(self)
         return self.get_state(self), reward, done, {}
 
+    def _architecture_constructor(self, arch_str):
+        layer_specs = []
+        layer_strs = arch_str.split("-")
+        for layer_str in layer_strs:
+            idx = layer_str.find("(")
+            if idx == -1:
+                nn_module_name = layer_str
+                vargs = []
+            else:
+                nn_module_name = layer_str[:idx]
+                vargs_json_str = '{"tmp": [' + layer_str[idx + 1 : -1] + "]}"
+                vargs = json.loads(vargs_json_str)["tmp"]
+            layer_specs.append((getattr(torch.nn, nn_module_name), vargs))
+
+        def model_constructor():
+            layers = [cls(*vargs) for cls, vargs in layer_specs]
+            return torch.nn.Sequential(*layers)
+
+        return model_constructor
+
     def reset(self):
         """
         Reset environment
@@ -185,7 +203,7 @@ class SGDEnv(AbstractEnv):
 
         dataset = self.instance[0]
         instance_seed = self.instance[1]
-        construct_model = self.instance[2]
+        construct_model = self._architecture_constructor(self.instance[2])
 
         self.seed(instance_seed)
 
@@ -204,6 +222,14 @@ class SGDEnv(AbstractEnv):
             transform = transforms.Compose(
                 [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
             )
+
+            # hot fix for https://github.com/pytorch/vision/issues/3549
+            # If fix is available in stable version (0.9.1), we should update and be removed this.
+            new_mirror = "https://ossci-datasets.s3.amazonaws.com/mnist"
+            datasets.MNIST.resources = [
+                ("/".join([new_mirror, url.split("/")[-1]]), md5)
+                for url, md5 in datasets.MNIST.resources
+            ]
 
             train_dataset = datasets.MNIST(
                 "../data", train=True, download=True, transform=transform
@@ -429,13 +455,13 @@ class SGDEnv(AbstractEnv):
             loss_var = torch.log(torch.var(self.loss_batch))
 
             self.lossVarDiscountedAverage = (
-                self.discount_factor * self.lossVarDiscountedAverage
-                + (1 - self.discount_factor) * loss_var
+                    self.discount_factor * self.lossVarDiscountedAverage
+                    + (1 - self.discount_factor) * loss_var
             )
             self.lossVarUncertainty = (
-                self.discount_factor * self.lossVarUncertainty
-                + (1 - self.discount_factor)
-                * (loss_var - self.lossVarDiscountedAverage) ** 2
+                    self.discount_factor * self.lossVarUncertainty
+                    + (1 - self.discount_factor)
+                    * (loss_var - self.lossVarDiscountedAverage) ** 2
             )
 
         return self.lossVarDiscountedAverage, self.lossVarUncertainty

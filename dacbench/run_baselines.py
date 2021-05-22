@@ -1,19 +1,16 @@
+import argparse
+import itertools
+import sys
 from pathlib import Path
 
-from dacbench import benchmarks
-
 import numpy as np
-import argparse
 
-from dacbench.logger import Logger
-from dacbench.wrappers import PerformanceTrackingWrapper
-from dacbench.runner import run_benchmark
+from dacbench import benchmarks
 from dacbench.agents import StaticAgent, GenericAgent, DynamicRandomAgent
-from dacbench.envs.policies.optimal_sigmoid import get_optimum as optimal_sigmoid
-from dacbench.envs.policies.optimal_luby import get_optimum as optimal_luby
-from dacbench.envs.policies.optimal_fd import get_optimum as optimal_fd
-from dacbench.envs.policies.csa_cma import csa
-import itertools
+from dacbench.envs.policies import OPTIMAL_POLICIES, NON_OPTIMAL_POLICIES
+from dacbench.logger import Logger
+from dacbench.runner import run_benchmark
+from dacbench.wrappers import PerformanceTrackingWrapper
 
 modea_actions = [
     np.arange(2),
@@ -87,19 +84,23 @@ def run_static(results_path, benchmark_name, action, num_episodes, seeds=np.aran
         logger.close()
 
 
-def run_optimal(results_path, benchmark_name, num_episodes, seeds=np.arange(10)):
-    bench = getattr(benchmarks, benchmark_name)()
-    if benchmark_name == "LubyBenchmark":
-        policy = optimal_luby
-    elif benchmark_name == "SigmoidBenchmark":
-        policy = optimal_sigmoid
-    elif benchmark_name == "FastDownwardBenchmark":
-        policy = optimal_fd
-    elif benchmark_name == "CMAESBenchmark":
-        policy = csa
-    else:
-        print("No comparison policy found for this benchmark")
+def run_optimal(results_path, benchmark_name, num_episodes, seeds):
+    if benchmark_name not in OPTIMAL_POLICIES:
+        print("No optimal policy found for this benchmark")
         return
+    policy = OPTIMAL_POLICIES[benchmark_name]
+    run_policy(results_path, benchmark_name, num_episodes, policy, seeds)
+
+
+def run_dynamic_policy(results_path, benchmark_name, num_episodes, seeds=np.arange(10)):
+    if benchmark_name not in NON_OPTIMAL_POLICIES:
+        print("No dynamic policy found for this benchmark")
+    policy = NON_OPTIMAL_POLICIES[benchmark_name]
+    run_policy(results_path, benchmark_name, num_episodes, policy, seeds)
+
+
+def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.arange(10)):
+    bench = getattr(benchmarks, benchmark_name)()
 
     for s in seeds:
         if benchmark_name == "CMAESBenchmark":
@@ -126,17 +127,19 @@ def run_optimal(results_path, benchmark_name, num_episodes, seeds=np.arange(10))
         logger.close()
 
 
-def main():
+def main(args):
     parser = argparse.ArgumentParser(
-        description="Run simple baselines for DAC benchmarks"
+        description="Run simple baselines for DAC benchmarks",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--outdir", type=str, default="output", help="Output directory")
     parser.add_argument(
         "--benchmarks",
         nargs="+",
         type=str,
+        choices=benchmarks.__all__,
         default=None,
-        help="Benchmarks to run baselines for",
+        help="Benchmarks to run baselines for, if not provides all benchmarks are run.",
     )
     parser.add_argument(
         "--num_episodes",
@@ -144,24 +147,49 @@ def main():
         default=10,
         help="Number of episodes to evaluate policy on",
     )
-    parser.add_argument("--random", action="store_true", help="Run random policy")
+    parser.add_argument(
+        "--random",
+        action="store_true",
+        help="Run random policy. Use '--fixed_random' to fix the "
+        "random action for a number of steps",
+    )
     parser.add_argument("--static", action="store_true", help="Run static policy")
+
     parser.add_argument(
         "--optimal",
         action="store_true",
-        help="Run optimal policy. Not available for all benchmarks!",
+        help=f"Run optimal policy. Only available for {', '.join(OPTIMAL_POLICIES.keys())}",
     )
     parser.add_argument(
         "--dyna_baseline",
         action="store_true",
-        help="Run dynamic baseline. Not available for all benchmarks!",
+        help=f"Run dynamic baseline. Only available for {', '.join(NON_OPTIMAL_POLICIES.keys())}",
+    )
+
+    shortened_possible_actions = {
+        benchmark: ", ".join(
+            (
+                map(str, actions)
+                if len(actions) < 4
+                else map(str, [*actions[:3], "...", actions[-1]])
+            )
+        )
+        for benchmark, actions in DISCRETE_ACTIONS.items()
+    }
+
+    possible_actions = ", ".join(
+        [
+            f"{benchmark} : {actions}"
+            for benchmark, actions in shortened_possible_actions.items()
+        ]
     )
     parser.add_argument(
         "--actions",
         nargs="+",
         type=float,
         default=None,
-        help="Action(s) for static policy",
+        help="Action(s) for static policy. Make sure, that the actions correspond to the benchmarks. Available action "
+        f"are {possible_actions}",
     )
     parser.add_argument(
         "--seeds",
@@ -171,9 +199,12 @@ def main():
         help="Seeds for evaluation",
     )
     parser.add_argument(
-        "--fixed_random", type=int, default=0, help="Fixes random actions for n steps",
+        "--fixed_random",
+        type=int,
+        default=0,
+        help="Fixes random actions for n steps",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     if args.benchmarks is None:
         benchs = benchmarks.__all__
@@ -198,19 +229,22 @@ def main():
             for a in actions:
                 run_static(args.outdir, b, a, args.num_episodes, args.seeds)
 
-    if args.optimal or args.dyna_baseline:
+    if args.optimal:
         for b in benchs:
-            if b not in [
-                "LubyBenchmark",
-                "SigmoidBenchmark",
-                "FastDownwardBenchmark",
-                "CMAESBenchmark",
-            ]:
+            if b not in OPTIMAL_POLICIES:
                 print("Option not available!")
                 break
 
             run_optimal(args.outdir, b, args.num_episodes, args.seeds)
 
+    if args.dyna_baseline:
+        for b in benchs:
+            if b not in NON_OPTIMAL_POLICIES:
+                print("Option not available!")
+                break
+
+            run_dynamic_policy(args.outdir, b, args.num_episodes, args.seeds)
+
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

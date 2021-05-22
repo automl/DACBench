@@ -15,8 +15,8 @@ from dacbench import AbstractEnv
 import resource
 import sys
 
-resource.setrlimit(resource.RLIMIT_STACK, (2 ** 29, -1))
-sys.setrecursionlimit(10 ** 6)
+resource.setrlimit(resource.RLIMIT_STACK, (2 ** 35, -1))
+sys.setrecursionlimit(10 ** 9)
 
 warnings.filterwarnings("ignore")
 
@@ -89,7 +89,7 @@ class CMAESEnv(AbstractEnv):
             """Moves forward in time one step"""
             sigma = action
             self.es.tell(self.solutions, self.func_values)
-            self.es.sigma = np.maximum(sigma, 0.05)
+            self.es.sigma = np.maximum(sigma, 0.2)
             self.solutions, self.func_values = self.es.ask_and_eval(self.fcn)
 
         self.f_difference = np.nan_to_num(
@@ -106,7 +106,10 @@ class CMAESEnv(AbstractEnv):
         self.past_sigma.append(self.cur_sigma)
         self.cur_ps = _norm(self.es.adapt_sigma.ps)
         self.cur_loc = self.es.best.x
-        self.cur_sigma = self.es.sigma
+        try:
+            self.cur_sigma = [self.es.sigma[0]]
+        except:
+            self.cur_sigma = [self.es.sigma]
         self.cur_obj_val = self.es.best.f
 
         return self.get_state(self), self.get_reward(self), done, {}
@@ -135,7 +138,7 @@ class CMAESEnv(AbstractEnv):
         self.es = CMAEvolutionStrategy(
             self.cur_loc,
             self.init_sigma,
-            {"popsize": self.popsize, "bounds": self.bounds},
+            {"popsize": self.popsize, "bounds": self.bounds, "seed": self.initial_seed},
         )
         self.solutions, self.func_values = self.es.ask_and_eval(self.fcn)
         self.fbest = self.func_values[np.argmin(self.func_values)]
@@ -184,8 +187,8 @@ class CMAESEnv(AbstractEnv):
             Reward
 
         """
-        self.fbest = min(self.reward_range[1], max(self.reward_range[0], -self.fbest))
-        return self.fbest
+        reward = min(self.reward_range[1], max(self.reward_range[0], -self.fbest))
+        return reward
 
     def get_default_state(self, _):
         """

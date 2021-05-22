@@ -30,7 +30,6 @@ class LubyEnv(AbstractEnv):
             Environment configuration
         """
         super().__init__(config)
-        self.rng = np.random.RandomState(config["seed"])
 
         self._hist_len = config["hist_length"]
         self._ms = self.n_steps

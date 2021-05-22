@@ -124,7 +124,7 @@ class ModeaEnv(AbstractEnv):
                 self.lambda_["large"] *= 2
                 parameter_opts["sigma"] = 2
             elif self.regime == "small":
-                rand_val = np.random.random() ** 2
+                rand_val = self.np_random.random() ** 2
                 self.lambda_["small"] = int(
                     np.floor(
                         self.lambda_init
@@ -132,7 +132,7 @@ class ModeaEnv(AbstractEnv):
                         ** rand_val
                     )
                 )
-                parameter_opts["sigma"] = 2e-2 * np.random.random()
+                parameter_opts["sigma"] = 2e-2 * self.np_random.random()
 
             self.es.budget = self.budgets[self.regime]
             self.es.used_budget = 0
@@ -153,13 +153,15 @@ class ModeaEnv(AbstractEnv):
             self.regime = "small"
 
     def get_default_state(self, _):
-        return [
-            self.es.gen_size,
-            self.es.parameters.sigma,
-            self.budget - self.es.used_budget,
-            self.function_id,
-            self.instance_id,
-        ]
+        return np.array(
+            [
+                self.es.gen_size,
+                self.es.parameters.sigma,
+                self.budget - self.es.used_budget,
+                self.function_id,
+                self.instance_id,
+            ]
+        )
 
     def get_default_reward(self, _):
         return max(
@@ -234,7 +236,7 @@ class ModeaEnv(AbstractEnv):
         self.es.parameters.weights = self.es.parameters.getWeights(
             self.es.parameters.weights_option
         )
-        self.es.parameters.mu_eff = 1 / sum(np.square(self.es.parameters.weights))
+        self.es.parameters.mu_eff = 1 / np.sum(np.square(self.es.parameters.weights))
         mu_eff = self.es.parameters.mu_eff  # Local copy
         n = self.es.parameters.n
         self.es.parameters.c_sigma = (mu_eff + 2) / (mu_eff + n + 5)
@@ -245,7 +247,7 @@ class ModeaEnv(AbstractEnv):
             self.es.parameters.alpha_mu
             * (
                 (mu_eff - 2 + 1 / mu_eff)
-                / ((n + 2) ** 2 + self.es.parameters.alpha_mu * mu_eff / 2)
+                / ((n + 2) ** 2 + float(self.es.parameters.alpha_mu) * mu_eff / 2)
             ),
         )
         self.es.parameters.damps = (

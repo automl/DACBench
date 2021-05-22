@@ -21,12 +21,12 @@ class AbstractBenchmark:
         config_path : str
             Path to load configuration from (if read from file)
         """
+        self.wrap_funcs = []
         if config_path:
             self.config_path = config_path
             self.read_config_file(self.config_path)
         else:
             self.config = None
-        self.wrap_funcs = []
 
     def get_config(self):
         """
@@ -86,6 +86,8 @@ class AbstractBenchmark:
                             and -np.inf not in conf[k][i]
                         ):
                             conf[k][i] = list(map(int, conf[k][i]))
+                elif isinstance(conf[k], np.ndarray):
+                    conf[k] = conf[k].tolist()
 
         conf["wrappers"] = self.jsonify_wrappers()
 
@@ -144,7 +146,7 @@ class AbstractBenchmark:
         if isinstance(space, spaces.Box):
             res.append("Box")
             res.append([space.low.tolist(), space.high.tolist()])
-            res.append(np.float32)
+            res.append("numpy.float32")
         elif isinstance(space, spaces.Discrete):
             res.append("Discrete")
             res.append([space.n])
@@ -168,7 +170,8 @@ class AbstractBenchmark:
         else:
             typestring = space_list[2].split(".")[1]
             dt = getattr(np, typestring)
-            space = getattr(spaces, space_list[0])(*space_list[1], dtype=dt)
+            args = [np.array(arg) for arg in space_list[1]]
+            space = getattr(spaces, space_list[0])(*args, dtype=dt)
         return space
 
     def jsonify_dict_space(self, dict_space):
@@ -178,8 +181,8 @@ class AbstractBenchmark:
             keys.append(k)
             value = dict_space[k]
             if not isinstance(value, spaces.Box):
-                print("Only Dict spaces made up of Boxes are supported")
-                break
+                raise ValueError("Only Dict spaces made up of Boxes are supported")
+
             low = value.low.tolist()
             high = value.high.tolist()
             arguments.append([low, high])
@@ -188,7 +191,8 @@ class AbstractBenchmark:
     def dictify_json(self, dict_list):
         dict_space = {}
         for i in range(len(dict_list[0])):
-            dict_space[dict_list[0][i]] = spaces.Box(*dict_list[1][i], dtype=np.float32)
+            args = [np.array(arg) for arg in dict_list[1][i]]
+            dict_space[dict_list[0][i]] = spaces.Box(*args, dtype=np.float32)
         return dict_space
 
     def read_config_file(self, path):
@@ -205,9 +209,14 @@ class AbstractBenchmark:
         if "observation_space_type" in self.config:
             # Types have to be numpy dtype (for gym spaces)s
             if type(self.config["observation_space_type"]) == str:
-                typestring = self.config["observation_space_type"].split(" ")[1][:-2]
-                typestring = typestring.split(".")[1]
-                self.config["observation_space_type"] = getattr(np, typestring)
+                if self.config["observation_space_type"] == "None":
+                    self.config["observation_space_type"] = None
+                else:
+                    typestring = self.config["observation_space_type"].split(" ")[1][
+                        :-2
+                    ]
+                    typestring = typestring.split(".")[1]
+                    self.config["observation_space_type"] = getattr(np, typestring)
         if "observation_space" in self.config:
             self.config["observation_space"] = self.list_to_space(
                 self.config["observation_space"]

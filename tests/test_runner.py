@@ -16,7 +16,7 @@ matplotlib.use("Agg")
 
 
 class TestRunner(unittest.TestCase):
-    def test_abstract_agen(self):
+    def test_abstract_agent(self):
         agent = AbstractDACBenchAgent("dummy")
 
         with pytest.raises(NotImplementedError):
