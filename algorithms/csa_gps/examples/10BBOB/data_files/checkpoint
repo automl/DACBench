@@ -1,2 +1,0 @@
-model_checkpoint_path: "/home/eimer/Dokumente/git/DACBench/algorithms/csa_gps/source/../examples/10BBOB/data_files/policy_itr_00_tf_data.ckpt"
-all_model_checkpoint_paths: "/home/eimer/Dokumente/git/DACBench/algorithms/csa_gps/source/../examples/10BBOB/data_files/policy_itr_00_tf_data.ckpt"
