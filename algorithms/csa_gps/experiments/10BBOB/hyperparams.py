@@ -3,12 +3,9 @@ import tensorflow as tf
 import os.path
 from datetime import datetime
 import numpy as np
-import cma
 from cma import bbobbenchmarks as bn
-import gps
 from gps import __file__ as gps_filepath
 from gps.agent.lto.agent_cmaes import AgentCMAES
-from gps.agent.lto.cmaes_world import CMAESWorld
 from gps.algorithm.algorithm import Algorithm
 from gps.algorithm.cost.cost import Cost
 from gps.algorithm.dynamics.dynamics_lr_prior import DynamicsLRPrior
@@ -19,30 +16,23 @@ from gps.algorithm.policy_opt.policy_opt import PolicyOpt
 from gps.algorithm.policy_opt.lto_model import fully_connected_tf_network
 from gps.algorithm.policy.lin_gauss_init import init_cmaes_controller
 from gps.proto.gps_pb2 import (
-    CUR_LOC,
     PAST_OBJ_VAL_DELTAS,
     CUR_SIGMA,
     CUR_PS,
-    PAST_LOC_DELTAS,
     PAST_SIGMA,
     ACTION,
 )
 from gps.algorithm.cost.cost_utils import RAMP_CONSTANT
-
-try:
-    import cPickle as pickle
-except:
-    import pickle
-import copy
-
+import csv
+import _pickle as pickle
 
 session = tf.Session()
 history_len = 40
 
-num_fcns = 100
-train_fcns = range(num_fcns)
-test_fcns = range(num_fcns - 20, num_fcns)
-
+input_dim = 10
+num_fcns = 200
+train_fcns = range(100)
+test_fcns = range(100, 200)
 fcn_ids = [12, 11, 2, 23, 15, 8, 17, 20, 1, 16]
 fcn_names = [
     "BentCigar",
@@ -57,39 +47,43 @@ fcn_names = [
     "Weierstrass",
 ]
 
-input_dim = 10
-num_inits_per_fcn = 1
-cur_dir = os.path.dirname(os.path.abspath(__file__))
-
-init_sigma_test = [1.28, 0.38, 1.54, 1.18, 0.1, 1.66, 0.33, 0.1, 1.63, 0.1]
-
-# initialize the initial locations of the optimization trajectories
-init_locs = list(np.random.randn(num_fcns - 10, input_dim))
-# append the initial locations of the conditions in the test set
-for i in range(20):
-    init_locs.append([0] * 10)
-
-# initialize the initial sigma(step size) values
-init_sigmas = list(np.random.rand(num_fcns - 10)) + [0.5] * 10
-
 fcn_objs = []
 fcns = []
-for i in range(num_fcns // len(fcn_ids)):
-    # for k in range(7,9):
-    for i in fcn_ids:
-        fcn_objs.append(bn.instantiate(i)[0])
+with open("../../../../dacbench/instance_sets/cma/cma_train.csv", "r") as fh:
+    reader = csv.DictReader(fh)
+    for row in reader:
+        init_locs = [float(row[f"init_loc{i}"]) for i in range(int(row["dim"]))]
+        function = bn.instantiate(int(row["fcn_index"]))[0]
+        fcn_objs.append(function)
+        fcns.append(
+            {
+                "fcn_obj": function,
+                "dim": input_dim,
+                "init_loc": init_locs,
+                "init_sigma": float(row["init_sigma"]),
+            }
+        )
+with open("../../../../dacbench/instance_sets/cma/cma_test.csv", "r") as fh:
+    reader = csv.DictReader(fh)
+    for row in reader:
+        init_locs = [float(row[f"init_loc{i}"]) for i in range(int(row["dim"]))]
+        function = bn.instantiate(int(row["fcn_index"]))[0]
+        fcn_objs.append(function)
+        fcns.append(
+            {
+                "fcn_obj": function,
+                "dim": input_dim,
+                "init_loc": init_locs,
+                "init_sigma": float(row["init_sigma"]),
+            }
+        )
 
-for i, function in enumerate(fcn_objs):
-    fcns.append(
-        {
-            "fcn_obj": function,
-            "dim": input_dim,
-            "init_loc": list(init_locs[i]),
-            "init_sigma": init_sigmas[i],
-        }
-    )
 
 SENSOR_DIMS = {
+    "past_deltas": history_len,
+    "current_ps": 1,
+    "current_sigma": 1,
+    "past_sigma_deltas": history_len,
     PAST_OBJ_VAL_DELTAS: history_len,
     CUR_PS: 1,
     CUR_SIGMA: 1,
@@ -118,7 +112,7 @@ if not os.path.exists(common["data_files_dir"]):
 
 agent = {
     "type": AgentCMAES,
-    "world": CMAESWorld,
+    # "world": CMAESWorld,
     "init_sigma": 0.3,
     "popsize": 10,
     "n_min": 10,
@@ -126,9 +120,15 @@ agent = {
     "substeps": 1,
     "conditions": common["conditions"],
     "dt": 0.05,
+    "dim": input_dim,
     "T": 50,
     "sensor_dims": SENSOR_DIMS,
-    "state_include": [PAST_OBJ_VAL_DELTAS, CUR_SIGMA, CUR_PS, PAST_SIGMA],
+    "state_include": [
+        "past_deltas",
+        "current_sigma",
+        "current_ps",
+        "past_sigma_deltas",
+    ],  # [PAST_OBJ_VAL_DELTAS, CUR_SIGMA, CUR_PS, PAST_SIGMA],
     "obs_include": [PAST_OBJ_VAL_DELTAS, CUR_PS, PAST_SIGMA, CUR_SIGMA],
     "history_len": history_len,
     "fcns": fcns,

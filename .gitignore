@@ -21,6 +21,8 @@ port_*.txt
 tests/data/
 test/*.json
 test_run
+/data/
 
 # pycharm specific stuff
 .idea
+

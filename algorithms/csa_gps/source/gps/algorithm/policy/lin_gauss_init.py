@@ -1,12 +1,11 @@
 """ Initializations for linear Gaussian controllers. """
 import copy
 import numpy as np
-import scipy as sp
 from gps.algorithm.policy.config import INIT_LG
 from gps.algorithm.policy.csa_policy import CSAPolicy
 from gps.algorithm.policy.lin_gauss_policy import LinearGaussianPolicy
 from dacbench.benchmarks import CMAESBenchmark
-from gps.agent.lto.agent_cmaes import rename_state_keys
+from gym import spaces
 
 
 def init_cmaes_controller(hyperparams, agent):
@@ -17,24 +16,33 @@ def init_cmaes_controller(hyperparams, agent):
     dX, dU = config["dX"], config["dU"]
     T = config["T"]
     cur_cond_idx = config["cur_cond_idx"]
-    history_len = agent.history_len
-    fcn = agent.fcns[cur_cond_idx]
-    popsize = agent.popsize
-    if "fcn_obj" in fcn:
-        fcn_obj = fcn["fcn_obj"]
-    else:
-        fcn_obj = None
-    hpolib = False
-    if "hpolib" in fcn:
-        hpolib = True
-    benchmark = None
-    if "benchmark" in fcn:
-        benchmark = fcn["benchmark"]
-    # Create new world to avoiding changing the state of the original world
     bench = CMAESBenchmark()
-    env = bench.get_environment()
-    bench.instance_set = {0: env.instance_set[cur_cond_idx]}
-    # world = CMAESWorld(dim=fcn['dim'], init_loc=fcn['init_loc'], init_sigma=fcn['init_sigma'], init_popsize=popsize, history_len=history_len, fcn=fcn_obj, hpolib=hpolib, benchmark=benchmark)
+    bench.config.popsize = agent.popsize
+    bench.config.hist_length = agent.history_len
+    bench.config.observation_space_args = [
+        {
+            "current_loc": spaces.Box(
+                low=-np.inf, high=np.inf, shape=np.arange(agent.input_dim).shape
+            ),
+            "past_deltas": spaces.Box(
+                low=-np.inf,
+                high=np.inf,
+                shape=np.arange(bench.config.hist_length).shape,
+            ),
+            "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+            "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+            "history_deltas": spaces.Box(
+                low=-np.inf,
+                high=np.inf,
+                shape=np.arange(bench.config.hist_length * 2).shape,
+            ),
+            "past_sigma_deltas": spaces.Box(
+                low=-np.inf,
+                high=np.inf,
+                shape=np.arange(bench.config.hist_length).shape,
+            ),
+        }
+    ]
     world = bench.get_environment()
 
     if config["verbose"]:
@@ -47,11 +55,11 @@ def init_cmaes_controller(hyperparams, agent):
 
         state = world.reset()
         for t in range(T):
-            X_t = agent.get_vectorized_state(rename_state_keys(state), cur_cond_idx)
+            X_t = agent.get_vectorized_state(state, cur_cond_idx)
             es = world.es
             f_vals = world.func_values
             U_t = cur_policy.act(X_t, None, t, np.zeros((dU,)), es, f_vals)
-            state, reward, done, _ = world.step(U_t)
+            world.step(U_t)
             f_values.append(U_t)
         action_mean.append(f_values)  # np.mean(f_values, axis=0))
         action_var.append(f_values)  # np.mean(f_values, axis=0))

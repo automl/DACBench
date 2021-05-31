@@ -200,7 +200,7 @@ class TrajOpt(object):
 
         traj_distr = prev_traj_distr.nans_like()
 
-        # pol_wt = algorithm.cur[m].pol_info.pol_wt
+        pol_wt = algorithm.cur[m].pol_info.pol_wt
 
         idx_x = slice(dX)
         idx_u = slice(dX, dX + dU)
@@ -262,19 +262,11 @@ class TrajOpt(object):
                 traj_distr.chol_pol_covar[t, :, :] = sp.linalg.cholesky(
                     traj_distr.pol_covar[t, :, :]
                 )
-                U = np.nan_to_num(U)
-                U[U == 0] = 0.001
-                L = np.nan_to_num(L)
-                L[L == 0] = 0.001
-                Qt = np.nan_to_num(Qt)
-                Qt[Qt == 0] = 0.001
-                Qtt = np.nan_to_num(Qtt)
-                Qtt[Qtt == 0] = 0.001
+
                 # Compute mean terms.
                 traj_distr.k[t, :] = -sp.linalg.solve_triangular(
                     U, sp.linalg.solve_triangular(L, Qt[idx_u], lower=True)
                 )
-
                 traj_distr.K[t, :, :] = -sp.linalg.solve_triangular(
                     U, sp.linalg.solve_triangular(L, Qtt[idx_u, idx_x], lower=True)
                 )

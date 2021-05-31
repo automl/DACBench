@@ -222,8 +222,6 @@ class Algorithm(object):
             m: Condition
             init: Whether this is the initial fitting of the policy.
         """
-        print(m)
-        print(self.cur[m].sample_list)
         dX, dU, T = self.dX, self.dU, self.T
         # Choose samples to use.
         samples = self.cur[m].sample_list
@@ -247,8 +245,6 @@ class Algorithm(object):
         pol_info.pol_K, pol_info.pol_k, pol_info.pol_S = policy_prior.fit(
             X, pol_mu, pol_sig
         )
-        pol_info.pol_S = np.nan_to_num(pol_info.pol_S)
-        pol_info.pol_S[pol_info.pol_S == 0] = 0.001
         for t in range(T):
             pol_info.chol_pol_S[t, :, :] = sp.linalg.cholesky(pol_info.pol_S[t, :, :])
 

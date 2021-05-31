@@ -9,7 +9,7 @@ import numpy as np
 import random
 
 # Add gps/python to path so that imports work.
-sys.path.append("/home/eimer/Dokumente/git/DACBench/algorithms/csa_gps/source")
+sys.path.append("/".join(str.split(__file__, "/")[:-2]))
 import gps as gps_globals
 from gps.utility.display import Display
 from gps.sample.sample_list import SampleList

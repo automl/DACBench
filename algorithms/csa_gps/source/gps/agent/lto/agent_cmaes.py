@@ -4,18 +4,7 @@ from gps.agent.agent import Agent
 from gps.proto.gps_pb2 import ACTION
 from gps.sample.sample import Sample
 from dacbench.benchmarks import CMAESBenchmark
-
-
-def rename_state_keys(state):
-    state = {
-        1: state["current_loc"][0],
-        2: state["past_deltas"],
-        3: state["current_ps"][0],
-        4: state["current_sigma"][0],
-        5: state["history_deltas"],
-        6: state["past_sigma_deltas"],
-    }
-    return state
+from gym import spaces
 
 
 class AgentCMAES(Agent):
@@ -27,37 +16,63 @@ class AgentCMAES(Agent):
 
     def _setup_conditions(self):
         self.conds = self._hyperparams["conditions"]
-        self.fcns = self._hyperparams["fcns"]
         self.history_len = self._hyperparams["history_len"]
-        self.init_sigma = self._hyperparams["init_sigma"]
         self.popsize = self._hyperparams["popsize"]
+        self.input_dim = self._hyperparams["dim"]
+        if "config_file" in self._hyperparams.keys():
+            self.config = self._hyperparams["config_file"]
+        else:
+            self.config = None
 
     def _setup_worlds(self):
-        fcn = []
-        hpolib = False
-        for i in range(self.conds):
-            if "fcn_obj" in self.fcns[i]:
-                fcn.append(self.fcns[i]["fcn_obj"])
-            else:
-                fcn.append(None)
-            if "hpolib" in self.fcns[i]:
-                hpolib = True
-        benchmark = None
-        bench = CMAESBenchmark()
-        env = bench.get_environment()
-        inst_set = env.instance_set
+        if self.config:
+            bench = CMAESBenchmark(self.config)
+        else:
+            bench = CMAESBenchmark()
+        bench.read_instance_set()
+        instances = bench.config.instance_set.values()
+        bench.config.popsize = self.popsize
+        bench.config.hist_length = self.history_len
+        bench.config.observation_space_args = [
+            {
+                "current_loc": spaces.Box(
+                    low=-np.inf, high=np.inf, shape=np.arange(self.input_dim).shape
+                ),
+                "past_deltas": spaces.Box(
+                    low=-np.inf,
+                    high=np.inf,
+                    shape=np.arange(bench.config.hist_length).shape,
+                ),
+                "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+                "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+                "history_deltas": spaces.Box(
+                    low=-np.inf,
+                    high=np.inf,
+                    shape=np.arange(bench.config.hist_length * 2).shape,
+                ),
+                "past_sigma_deltas": spaces.Box(
+                    low=-np.inf,
+                    high=np.inf,
+                    shape=np.arange(bench.config.hist_length).shape,
+                ),
+            }
+        ]
         self._worlds = []
-        for i in inst_set.values():
-            bench.instance_set = {0: i}
+        for i in instances:
+            bench.config.instance_set = {0: i}
             self._worlds.append(bench.get_environment())
-        # if 'benchmark' in self.fcns[0]:
-        #    benchmark = self.fcns[0]['benchmark']
-        # self._worlds = [CMAESWorld(self.fcns[i]['dim'], self.fcns[i]['init_loc'], self.fcns[i]['init_sigma'], self.popsize, self.history_len, fcn=fcn[i], hpolib=hpolib, benchmark=benchmark) for i in range(self.conds)]
         self.x0 = []
+
+        bench.instance_set = {}
+        bench.instance_set_path = "../instance_sets/cma/cma_test.csv"
+        bench.read_instance_set()
+        instances = bench.config.instance_set.values()
+        for i in instances:
+            bench.config.instance_set = {0: i}
+            self._worlds.append(bench.get_environment())
+
         for i in range(self.conds):
-            state = self._worlds[i].reset()
-            state = rename_state_keys(state)
-            # self._worlds[i].run()      # Get noiseless initial state
+            state = self._worlds[i].reset()  # Get noiseless initial state
             x0 = self.get_vectorized_state(state)
             self.x0.append(x0)
 
@@ -87,10 +102,12 @@ class AgentCMAES(Agent):
         if t_length == None:
             t_length = self.T
         state = self._worlds[condition].reset()
-        state = rename_state_keys(state)
         new_sample = self._init_sample(state)
-        # self._set_sample(new_sample, self._worlds[condition].get_state(), t=0)
-        new_sample.trajectory.append(self._worlds[condition].fbest)
+        new_sample.trajectory.append(
+            self._worlds[condition].func_values[
+                np.argmin(self._worlds[condition].func_values)
+            ]
+        )
         U = np.zeros([t_length, self.dU])
         if noisy:
             noise = np.random.randn(t_length, self.dU)
@@ -100,11 +117,8 @@ class AgentCMAES(Agent):
         for t in range(t_length):
             es = self._worlds[condition].es
             f_vals = self._worlds[condition].func_values
-            # f_vals = [max(0, f) for f in f_vals]
             obs_t = new_sample.get_obs(t=t)
-            X_t = self.get_vectorized_state(
-                rename_state_keys(self._worlds[condition].get_state(None)), condition
-            )
+            X_t = self.get_vectorized_state(state, condition)
             if np.any(np.isnan(X_t)):
                 print("X_t: %s" % X_t)
             if ltorun and t < guided_steps * t_length and start_policy != None:
@@ -115,7 +129,12 @@ class AgentCMAES(Agent):
                 next_action = U[t, :]  # * es.sigma
                 state, reward, done, _ = self._worlds[condition].step(next_action)
                 self._set_sample(new_sample, state, t)
-            new_sample.trajectory.append(-reward)  # max(0, -reward))
+            new_sample.trajectory.append(
+                min(
+                    self._worlds[condition].es.best.f,
+                    np.amin(self._worlds[condition].func_values),
+                )
+            )
         new_sample.set(ACTION, U)
         policy.finalize()
         if save:
