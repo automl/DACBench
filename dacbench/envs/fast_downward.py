@@ -426,12 +426,11 @@ class FastDownwardEnv(AbstractEnv):
         """
         if self.socket is None:
             return True
-
-        self.kill_connection()
-
         fp = joinpath(self._config_dir, f"port_{self.port}.txt")
         if os.path.exists(fp):
             remove(fp)
+
+        self.kill_connection()
         return True
 
     def render(self, mode: str = "human") -> None:
