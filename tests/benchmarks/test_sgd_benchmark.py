@@ -6,7 +6,7 @@ from dacbench.benchmarks import SGDBenchmark
 from dacbench.envs import SGDEnv
 
 
-class TestCMABenchmark(unittest.TestCase):
+class TestSGDBenchmark(unittest.TestCase):
     def test_get_env(self):
         bench = SGDBenchmark()
         env = bench.get_environment()
@@ -40,7 +40,8 @@ class TestCMABenchmark(unittest.TestCase):
         bench2 = SGDBenchmark()
         env = bench2.get_environment()
         self.assertTrue(len(env.instance_set.keys()) == 100)
-        self.assertTrue(inst == env.instance_set[0])
+        self.assertTrue(inst[0] == env.instance_set[0][0])
+        self.assertTrue(inst[1] == env.instance_set[0][1])
 
     def test_benchmark_env(self):
         bench = SGDBenchmark()

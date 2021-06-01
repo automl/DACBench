@@ -1,20 +1,24 @@
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs.onell_env import OneLLEnv
 
-import numpy as np
 import os
 import pandas as pd
+
 
 class OneLLBenchmark(AbstractBenchmark):
     """
     Benchmark with various settings for (1+(lbd, lbd))-GA
     """
 
-    def __init__(self, config_path=os.path.dirname(os.path.abspath(__file__)) + '/../additional_configs/onell/lbd_theory.json'):
+    def __init__(
+        self,
+        config_path=os.path.dirname(os.path.abspath(__file__))
+        + "/../additional_configs/onell/lbd_theory.json",
+    ):
         """
         Initialize OneLL benchmark
 
-        Parameters            
+        Parameters
         -------
         config_name: str
             OneLL's config name
@@ -25,16 +29,18 @@ class OneLLBenchmark(AbstractBenchmark):
 
         """
         if config_path is None:
-            config_path = os.path.dirname(os.path.abspath(__file__)) + '/../additional_configs/onell/lbd_theory.json'
+            config_path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/../additional_configs/onell/lbd_theory.json"
+            )
         super(OneLLBenchmark, self).__init__(config_path)
 
-        self.read_instance_set()                   
-
+        self.read_instance_set()
 
     def get_environment(self):
         """
-        Return an environment with current configuration        
-        """        
+        Return an environment with current configuration
+        """
 
         env = OneLLEnv(self.config)
         for func in self.wrap_funcs:
@@ -42,7 +48,6 @@ class OneLLBenchmark(AbstractBenchmark):
 
         return env
 
-    
     def read_instance_set(self):
         """Read instance set from file"""
         path = (
@@ -50,7 +55,7 @@ class OneLLBenchmark(AbstractBenchmark):
             + "/"
             + self.config.instance_set_path
         )
-        self.config["instance_set"] = pd.read_csv(path,index_col=0).to_dict('id')
+        self.config["instance_set"] = pd.read_csv(path, index_col=0).to_dict("id")
 
-        for key, val in self.config['instance_set'].items():
-            self.config['instance_set'][key] = objdict(val)
+        for key, val in self.config["instance_set"].items():
+            self.config["instance_set"][key] = objdict(val)

@@ -1,8 +1,18 @@
-
 import unittest
 import json
 import os
+import numpy as np
+from gym.spaces import Box, Discrete, Dict, MultiDiscrete, MultiBinary
+
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+import tempfile
+
+from dacbench.challenge_benchmarks.reward_quality_challenge.reward_functions import (
+    random_reward,
+)
+from dacbench.challenge_benchmarks.state_space_challenge.random_states import (
+    small_random_sigmoid_state,
+)
 
 
 class TestAbstractBenchmark(unittest.TestCase):
@@ -60,13 +70,73 @@ class TestAbstractBenchmark(unittest.TestCase):
         self.assertTrue(bench.config.observation_space_args[0] == [1])
         self.assertTrue(bench.config.observation_space_type == float)
 
+    def test_reading_and_saving_config(self):
+        bench1 = AbstractBenchmark(config_path="tests/test_config.json")
+        with tempfile.TemporaryDirectory() as temp_dir:
+            config_file = os.path.join(temp_dir, "config.json")
+            bench1.save_config(config_file)
+
+            bench2 = AbstractBenchmark()
+            bench2.read_config_file(config_file)
+
+            assert bench1.config["state_method"] == bench2.config["state_method"]
+            assert bench1.config["state_method"] == small_random_sigmoid_state
+
+            assert bench1.config["reward_function"] == bench2.config["reward_function"]
+            assert bench1.config["reward_function"] == random_reward
+
+            assert bench1.jsonify_wrappers() == bench2.jsonify_wrappers()
+            assert bench1.jsonify_wrappers() == [["RewardNoiseWrapper", []]]
+
+    def test_jsonify_wrappers_and_dejson_wrappers(self):
+        bench = AbstractBenchmark()
+        empty_warpper_list = bench.jsonify_wrappers()
+        assert empty_warpper_list == []
+
+    def test_space_to_list_and_list_to_space(self):
+        def assert_restorable(space):
+            space_restored = bench.list_to_space(bench.space_to_list(space))
+
+            assert space == space_restored
+
+        bench = AbstractBenchmark()
+
+        space = Box(
+            low=np.array([0, 0]),
+            high=np.array([1, 1]),
+        )
+        assert_restorable(space)
+
+        space = Discrete(2)
+        assert_restorable(space)
+
+        space = Dict(
+            {
+                "box": Box(
+                    low=np.array([0, 0]),
+                    high=np.array([1, 1]),
+                )
+            }
+        )
+        assert_restorable(space)
+
+        with self.assertRaises(ValueError):
+            space = Dict({"discrete": Discrete(1)})
+            bench.space_to_list(space)
+
+        space = MultiDiscrete([2, 3])
+        assert_restorable(space)
+
+        space = MultiBinary(3)
+        assert_restorable(space)
+
     def test_objdict(self):
         d = objdict({"dummy": 0})
 
         self.assertTrue(d["dummy"] == d.dummy)
         with self.assertRaises(KeyError):
             d["error"]
-        with self.assertRaises(KeyError):
+        with self.assertRaises(AttributeError):
             d.error
 
         d["error"] = 12
@@ -76,5 +146,5 @@ class TestAbstractBenchmark(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             del d["error"]
-        with self.assertRaises(KeyError):
+        with self.assertRaises(AttributeError):
             del d.error

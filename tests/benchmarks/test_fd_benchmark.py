@@ -19,11 +19,11 @@ class TestFDBenchmark(unittest.TestCase):
     def test_scenarios(self):
         scenarios = [
             "fd_barman.json",
-            "fd_blocksworld.json",
-            "fd_visitall.json",
-            "fd_childsnack.json",
-            "fd_sokoban.json",
-            "fd_rovers.json",
+            # "fd_blocksworld.json",
+            # "fd_visitall.json",
+            # "fd_childsnack.json",
+            # "fd_sokoban.json",
+            # "fd_rovers.json",
         ]
         for s in scenarios:
             path = os.path.join("dacbench/additional_configs/fast_downward/", s)

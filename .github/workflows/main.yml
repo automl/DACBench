@@ -1,0 +1,19 @@
+name: adding issue to project
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+env:
+  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+jobs:
+  assign_one_project:
+    runs-on: ubuntu-latest
+    name: Assign to One Project
+    steps:
+    - name: Assign new issues & PRs to TODO
+      uses: srggrs/assign-one-project-github-action@1.2.0
+      if: github.event.action == 'opened'
+      with:
+        project: 'https://github.com/automl/DACBench/projects/1'

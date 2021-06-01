@@ -76,7 +76,7 @@ class FastDownwardEnv(AbstractEnv):
         self.host = config.host
         self.port = config.port
         if config["parallel"]:
-            self.port += np.random.randint(200)
+            self.port += self.np_random.randint(200)
 
         self.fd_seed = config.fd_seed
         self.control_interval = config.control_interval
@@ -132,7 +132,6 @@ class FastDownwardEnv(AbstractEnv):
                 else x
             )
 
-        self.rng = np.random.RandomState(seed=config.seed)
         self.max_rand_steps = config.max_rand_steps
         self.__start_time = None
         self.done = True  # Starts as true as the expected behavior is that before normal resets an episode was done.
@@ -363,10 +362,18 @@ class FastDownwardEnv(AbstractEnv):
             portfh.write(str(self.port))
 
         self.socket.listen()
-        self.conn, address = self.socket.accept()
+        try:
+            self.conn, address = self.socket.accept()
+        except socket.timeout:
+            raise OSError(
+                "Fast downward subprocess not reachable (time out). "
+                "Did you run './dacbench/envs/rl-plan/fast-downward/build.py' "
+                "in order to build the fd backend?"
+            )
+
         s, _, _ = self._process_data()
         if self.max_rand_steps > 1:
-            for _ in range(self.rng.randint(1, self.max_rand_steps + 1)):
+            for _ in range(self.np_random.randint(1, self.max_rand_steps + 1)):
                 s, _, _, _ = self.step(self.action_space.sample())
         else:
             s, _, _, _ = self.step(0)  # hard coded to zero as initial step

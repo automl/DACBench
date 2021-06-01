@@ -1,4 +1,3 @@
-from os import fdatasync
 import numpy as np
 from copy import deepcopy
 import logging
@@ -7,36 +6,31 @@ from collections import deque
 import chainerrl
 import chainer
 
-import sys
-import os
-
 from dacbench import AbstractEnv
+
 
 class BinaryProblem:
     """
     An abstract class for an individual in binary representation
     """
+
     def __init__(self, n, val=None, rng=np.random.default_rng()):
         if val is not None:
             assert isinstance(val, bool)
             self.data = np.array([val] * n)
         else:
-            self.data = rng.choice([True,False], size=n) 
+            self.data = rng.choice([True, False], size=n)
         self.n = n
         self.fitness = self.eval()
-        
 
     def is_optimal(self):
         pass
 
-
     def get_optimal(self):
         pass
 
-
     def eval(self):
-        pass        
-
+        pass
 
     def get_fitness_change_after_mutation(self, locs):
         """
@@ -52,7 +46,6 @@ class BinaryProblem:
             objective after mutation - objective before mutation
         """
         raise NotImplementedError
-
 
     def get_fitness_after_crossover(self, xprime, locs_x, locs_xprime):
         """
@@ -74,7 +67,6 @@ class BinaryProblem:
         """
         raise NotImplementedError
 
-
     def mutate(self, p, n_offsprings, rng=np.random.default_rng()):
         """
         Draw l ~ binomial(n, p), l>0
@@ -88,27 +80,27 @@ class BinaryProblem:
                 number of mutated children
 
         Returns
-        ----------- 
-            the best child (maximum fitness), its fitness and number of evaluations used        
+        -----------
+            the best child (maximum fitness), its fitness and number of evaluations used
         """
 
-        assert p>=0
+        assert p >= 0
 
-        if p==0:
+        if p == 0:
             return self, self.fitness, 0
 
         l = 0
-        while l==0:
-            l = rng.binomial(self.n, p)                
-        
+        while l == 0:
+            l = rng.binomial(self.n, p)
+
         best_delta = -self.n
         best_locs = None
         for i in range(n_offsprings):
-            locs = rng.choice(self.n, size=l, replace=False)        
+            locs = rng.choice(self.n, size=l, replace=False)
             delta = self.get_fitness_change_after_mutation(locs)
             if delta > best_delta:
                 best_locs = locs
-                best_delta = delta                       
+                best_delta = delta
 
         best_child = deepcopy(self)
         best_child.data[best_locs] = ~best_child.data[best_locs]
@@ -116,10 +108,15 @@ class BinaryProblem:
 
         return best_child, best_child.fitness, n_offsprings
 
-
-    def crossover(self, xprime, p, n_offsprings, 
-                    include_xprime=True, count_different_inds_only=True,
-                    rng=np.random.default_rng()):
+    def crossover(
+        self,
+        xprime,
+        p,
+        n_offsprings,
+        include_xprime=True,
+        count_different_inds_only=True,
+        rng=np.random.default_rng(),
+    ):
         """
         Generate n_offsprings children using crossover on self and xprime, and return the best one
             Crossover operator: for each bit, taking value from xprime with probability p and from self with probability 1-p
@@ -134,45 +131,47 @@ class BinaryProblem:
                 if True, include xprime in the selection for the best individual after all crossovers
             count_different_inds_only: boolean
                 if True, only count an evaluation of a child if it is different from both of its parents (self and xprime)
-            rng: numpy random generator   
+            rng: numpy random generator
 
         Returns
-        ---------  
-            the best child (maximum fitness), its fitness and number of evaluations used 
+        ---------
+            the best child (maximum fitness), its fitness and number of evaluations used
 
         """
         assert p <= 1
-        
+
         if p == 0:
             if include_xprime:
                 return xprime, xprime.fitness, 0
             else:
-                return self, self.fitness, 0            
+                return self, self.fitness, 0
 
         if include_xprime:
             best_val = xprime.fitness
         else:
-            best_val = -1            
+            best_val = -1
         best_locs = None
 
         n_evals = 0
         ls = rng.binomial(self.n, p, size=n_offsprings)
-        locs_x = np.empty(self.n, dtype=np.bool)        
-        for l in ls:                   
+        locs_x = np.empty(self.n, dtype=np.bool)
+        for l in ls:
             locs_xprime = rng.choice(self.n, l, replace=False)
-            locs_x.fill(True)            
+            locs_x.fill(True)
             locs_x[locs_xprime] = False
-            val = self.get_fitness_after_crossover(xprime, locs_x, locs_xprime)            
+            val = self.get_fitness_after_crossover(xprime, locs_x, locs_xprime)
 
-            if (val != self.fitness) and (val!=xprime.fitness):
+            if (val != self.fitness) and (val != xprime.fitness):
                 n_evals += 1
-            elif (not np.array_equal(xprime.data[locs_xprime], self.data[locs_xprime])) and (not np.array_equal(self.data[locs_x], xprime.data[locs_x])):            
-                n_evals += 1            
+            elif (
+                not np.array_equal(xprime.data[locs_xprime], self.data[locs_xprime])
+            ) and (not np.array_equal(self.data[locs_x], xprime.data[locs_x])):
+                n_evals += 1
 
             if val > best_val:
                 best_val = val
                 best_locs = locs_xprime
-                        
+
         if best_locs is not None:
             child = deepcopy(self)
             child.data[best_locs] = xprime.data[best_locs]
@@ -202,15 +201,15 @@ class OneMax(BinaryProblem):
     def get_optimal(self):
         return self.n
 
-    def get_fitness_change_after_mutation(self, locs):        
+    def get_fitness_change_after_mutation(self, locs):
         # f(x_new) = f(x) + l - 2 * sum_of_flipped_block
         return len(locs) - 2 * self.data[locs].sum()
 
-    def get_fitness_after_crossover(self, xprime, locs_x, locs_xprime):        
+    def get_fitness_after_crossover(self, xprime, locs_x, locs_xprime):
         return self.data[locs_x].sum() + xprime.data[locs_xprime].sum()
-        
 
-class LeadingOne(BinaryProblem):    
+
+class LeadingOne(BinaryProblem):
     """
     An individual for LeadingOne problem
     The aim is to maximise the number of leading (and consecutive) 1 bits in the string
@@ -225,12 +224,12 @@ class LeadingOne(BinaryProblem):
         return self.fitness
 
     def is_optimal(self):
-        return self.data.all()  
+        return self.data.all()
 
     def get_optimal(self):
         return self.n
 
-    def get_fitness_change_after_mutation(self, locs):        
+    def get_fitness_change_after_mutation(self, locs):
         min_loc = locs.min()
         if min_loc < self.fitness:
             return min_loc - self.fitness
@@ -245,7 +244,7 @@ class LeadingOne(BinaryProblem):
             self.fitness = old_fitness
             return delta_fitness
 
-    def get_fitness_after_crossover(self, xprime, locs_x, locs_xprime):        
+    def get_fitness_after_crossover(self, xprime, locs_x, locs_xprime):
         """
         this implementation should be improved
         """
@@ -254,7 +253,9 @@ class LeadingOne(BinaryProblem):
         child.eval()
         return child.fitness
 
+
 HISTORY_LENGTH = 5
+
 
 class OneLLEnv(AbstractEnv):
     """
@@ -271,56 +272,61 @@ class OneLLEnv(AbstractEnv):
         config : objdict
             Environment configuration
         """
-        super(OneLLEnv, self).__init__(config)        
-        self.logger = logging.getLogger(self.__str__())     
+        super(OneLLEnv, self).__init__(config)
+        self.logger = logging.getLogger(self.__str__())
 
-        self.name = config.name   
-        
+        self.name = config.name
+
         # parameters of OneLL-GA
         self.problem = globals()[config.problem]
         self.include_xprime = config.include_xprime
         self.count_different_inds_only = config.count_different_inds_only
-      
+
         # names of all variables in a state
         self.state_description = config.observation_description
-        self.state_var_names = [s.strip() for s in config.observation_description.split(',')]
+        self.state_var_names = [
+            s.strip() for s in config.observation_description.split(",")
+        ]
 
-        # functions to get values of the current state from histories 
-        # (see reset() function for those history variables)        
+        # functions to get values of the current state from histories
+        # (see reset() function for those history variables)
         self.state_functions = []
         for var_name in self.state_var_names:
-            if var_name == 'n':
+            if var_name == "n":
                 self.state_functions.append(lambda: self.n)
-            elif var_name in ['lbd','lbd1','lbd2', 'p', 'c']:
-                self.state_functions.append(lambda: vars(self)['history_' + var_name][-1])
+            elif var_name in ["lbd", "lbd1", "lbd2", "p", "c"]:
+                self.state_functions.append(
+                    lambda: vars(self)["history_" + var_name][-1]
+                )
             elif "_{t-" in var_name:
-                k = int(var_name.split("_{t-")[1][:-1]) # get the number in _{t-<number>}
-                name = var_name.split("_{t-")[0] # get the variable name (lbd, lbd1, etc)
-                self.state_functions.append(lambda: vars(self)['history_' + name][-k])
+                k = int(
+                    var_name.split("_{t-")[1][:-1]
+                )  # get the number in _{t-<number>}
+                name = var_name.split("_{t-")[
+                    0
+                ]  # get the variable name (lbd, lbd1, etc)
+                self.state_functions.append(lambda: vars(self)["history_" + name][-k])
             elif var_name == "f(x)":
                 self.state_functions.append(lambda: self.history_fx[-1])
             elif var_name == "delta f(x)":
-                self.state_functions.append(lambda: self.history_fx[-1] - self.history_fx[-2])
+                self.state_functions.append(
+                    lambda: self.history_fx[-1] - self.history_fx[-2]
+                )
             else:
                 raise Exception("Error: invalid state variable name: " + var_name)
-        
+
         # names of all variables in an action
         self.action_description = config.action_description
-        self.action_var_names = [s.strip() for s in config.action_description.split(',')] # names of 
+        self.action_var_names = [
+            s.strip() for s in config.action_description.split(",")
+        ]  # names of
         for name in self.action_var_names:
-            assert name in ['lbd', 'lbd1', 'lbd2', 'p', 'c'], "Error: invalid action variable name: " + name
-
-        # the random generator used by OneLL-GA
-        if 'seed' in config:
-            seed = config.seed
-        else:
-            seed = None
-        self.rng = np.random.default_rng(seed)   
+            assert name in ["lbd", "lbd1", "lbd2", "p", "c"], (
+                "Error: invalid action variable name: " + name
+            )
 
         # for logging
-        self.n_eps = 0 # number of episodes done so far        
-             
-
+        self.n_eps = 0  # number of episodes done so far
 
     def reset(self):
         """
@@ -330,8 +336,8 @@ class OneLLEnv(AbstractEnv):
         -------
         numpy.array
             Environment state
-        """        
-        super(OneLLEnv, self).reset_()        
+        """
+        super(OneLLEnv, self).reset_()
 
         # current problem size (n) & evaluation limit (max_evals)
         self.n = self.instance.size
@@ -339,25 +345,27 @@ class OneLLEnv(AbstractEnv):
         self.logger.info("n:%d, max_evals:%d" % (self.n, self.max_evals))
 
         # create an initial solution
-        self.x = self.problem(n=self.instance.size, rng=self.rng)
+        self.x = self.problem(n=self.instance.size, rng=self.np_random)
 
         # total number of evaluations so far
-        self.total_evals = 1        
+        self.total_evals = 1
 
-        # reset histories (not all of those are used at the moment)        
-        self.history_lbd = deque([-1]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH) # either this one or the next two (history_lbd1, history_lbd2) are used, depending on our configuration
-        self.history_lbd1 = deque([-1]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)
-        self.history_lbd2 = deque([-1]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)
-        self.history_p = deque([-1]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)
-        self.history_c = deque([-1]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)
-        self.history_fx = deque([self.x.fitness]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)        
-        
+        # reset histories (not all of those are used at the moment)
+        self.history_lbd = deque(
+            [-1] * HISTORY_LENGTH, maxlen=HISTORY_LENGTH
+        )  # either this one or the next two (history_lbd1, history_lbd2) are used, depending on our configuration
+        self.history_lbd1 = deque([-1] * HISTORY_LENGTH, maxlen=HISTORY_LENGTH)
+        self.history_lbd2 = deque([-1] * HISTORY_LENGTH, maxlen=HISTORY_LENGTH)
+        self.history_p = deque([-1] * HISTORY_LENGTH, maxlen=HISTORY_LENGTH)
+        self.history_c = deque([-1] * HISTORY_LENGTH, maxlen=HISTORY_LENGTH)
+        self.history_fx = deque(
+            [self.x.fitness] * HISTORY_LENGTH, maxlen=HISTORY_LENGTH
+        )
+
         return self.get_state()
-
 
     def get_state(self):
         return np.asarray([f() for f in self.state_functions])
-
 
     def get_onell_params(self, action):
         """
@@ -378,23 +386,22 @@ class OneLLEnv(AbstractEnv):
         if not isinstance(action, np.ndarray):
             action = [action]
         for var_name in self.action_var_names:
-            if var_name == 'lbd':
-                rs['lbd1'] = rs['lbd2'] = np.clip(action[i], 1, self.n)
-            elif 'lbd' in var_name: # lbd1 or lbd2 
+            if var_name == "lbd":
+                rs["lbd1"] = rs["lbd2"] = np.clip(action[i], 1, self.n)
+            elif "lbd" in var_name:  # lbd1 or lbd2
                 rs[var_name] = np.clip(action[i], 1, self.n)
-            else: # must be p or c
+            else:  # must be p or c
                 rs[var_name] = np.clip(action[i], 0, 1)
-            i+=1
+            i += 1
 
         # if p and c are not set, use the default formula
-        if not 'p' in rs.keys():
-            rs['p'] = rs['lbd1'] / self.n
-        if not 'c' in rs.keys():
-            rs['c'] = 1 / rs['lbd1']
+        if "p" not in rs.keys():
+            rs["p"] = rs["lbd1"] / self.n
+        if "c" not in rs.keys():
+            rs["c"] = 1 / rs["lbd1"]
 
-        return rs['lbd1'], rs['lbd2'], rs['p'], rs['c']
+        return rs["lbd1"], rs["lbd2"], rs["p"], rs["c"]
 
-    
     def step(self, action):
         """
         Execute environment step
@@ -405,34 +412,41 @@ class OneLLEnv(AbstractEnv):
             action to execute
 
         Returns
-        -------            
+        -------
             state, reward, done, info
             np.array, float, bool, dict
         """
-        super(OneLLEnv, self).step_()                
-                
+        super(OneLLEnv, self).step_()
+
         fitness_before_update = self.x.fitness
 
         lbd1, lbd2, p, c = self.get_onell_params(action)
 
         # mutation phase
-        xprime, f_xprime, ne1 = self.x.mutate(p, int(lbd1), self.rng)
+        xprime, f_xprime, ne1 = self.x.mutate(p, int(lbd1), self.np_random)
 
         # crossover phase
-        y, f_y, ne2 = self.x.crossover(xprime, c, int(lbd2), self.include_xprime, self.count_different_inds_only, self.rng)        
-        
+        y, f_y, ne2 = self.x.crossover(
+            xprime,
+            c,
+            int(lbd2),
+            self.include_xprime,
+            self.count_different_inds_only,
+            self.np_random,
+        )
+
         # update x
         if self.x.fitness <= y.fitness:
             self.x = y
-        
+
         # update total number of evaluations
         n_evals = ne1 + ne2
         self.total_evals += n_evals
 
-        # check stopping criteria        
-        done = (self.total_evals>=self.instance.max_evals) or (self.x.is_optimal())        
-        
-        # calculate reward        
+        # check stopping criteria
+        done = (self.total_evals >= self.instance.max_evals) or (self.x.is_optimal())
+
+        # calculate reward
         reward = self.x.fitness - fitness_before_update - n_evals
 
         # update histories
@@ -442,13 +456,15 @@ class OneLLEnv(AbstractEnv):
         self.history_lbd.append(lbd1)
         self.history_p.append(p)
         self.history_c.append(c)
-        
+
         if done:
             self.n_eps += 1
-            self.logger.info("Episode done: ep:%d, n:%d, obj:%d, evals:%d" % (self.n_eps, self.n, self.x.fitness, self.total_evals))            
-        
-        return self.get_state(), reward, done, {}
+            self.logger.info(
+                "Episode done: ep:%d, n:%d, obj:%d, evals:%d"
+                % (self.n_eps, self.n, self.x.fitness, self.total_evals)
+            )
 
+        return self.get_state(), reward, done, {}
 
     def plot_agent_prediction(self, agent, dirname):
         """
@@ -457,17 +473,16 @@ class OneLLEnv(AbstractEnv):
 
         # plot 1: f(x) as x-axis, optimal and predicted lbd values as y-axis
         agent.load(dirname)
-        obss = np.asarray([[self.n,i] for i in range(self.n)], dtype=np.float32)
+        obss = np.asarray([[self.n, i] for i in range(self.n)], dtype=np.float32)
         b_state = chainerrl.misc.batch_states(obss, agent.xp, agent.phi)
 
         if agent.obs_normalizer:
             b_state = agent.obs_normalizer(b_state, update=False)
 
-        with chainer.using_config('train', False), chainer.no_backprop_mode():        
-            action_distrib, values = agent.model(b_state)                                
+        with chainer.using_config("train", False), chainer.no_backprop_mode():
+            action_distrib, values = agent.model(b_state)
 
-        print(action_distrib['mean'].array)
-            
+        print(action_distrib["mean"].array)
 
     def close(self) -> bool:
         """
@@ -479,8 +494,5 @@ class OneLLEnv(AbstractEnv):
         -------
         bool
             Closing confirmation
-        """        
+        """
         return True
-
-
-

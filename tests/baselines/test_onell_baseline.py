@@ -1,5 +1,6 @@
+# from dacbench.envs import OneLLEnv
 from dacbench.benchmarks import OneLLBenchmark
-from dacbench.envs.onell_env import OneMax
+from dacbench.envs.onell_env import OneMax  # , LeadingOne
 from dacbench.envs.policies.bestknown_onell import get_dyn_theory, get_dyn_onefifth
 
 import numpy as np
@@ -23,7 +24,6 @@ def onell_dynamic_theory(
     """
     (1+LL)-GA, dynamic version with theoretical results
     lbd = sqrt(n*(n-f(x))), p = lbd/n, c=1/lbd
-
     """
     rng = get_default_rng(seed)
 
@@ -54,7 +54,7 @@ def onell_dynamic_theory(
         )
 
         # selection phase
-        # old_f_x = f_x
+        #    old_f_x = f_x
         if f_x <= f_y:
             x = y
             f_x = f_y

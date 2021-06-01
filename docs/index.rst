@@ -5,23 +5,16 @@
 
 Welcome to DACBench's documentation!
 ====================================
-
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+ :maxdepth: 1
+ :caption: Contents:
 
-   source/installation
-   source/benchmarks
-   source/modifications
-   source/wrappers
-   source/logging
-   source/plotting
-   source/cite
+ source/installation
+ source/benchmarks
+ source/modifications
+ source/wrappers
+ source/logging
+ source/plotting
+ source/contrib
+ source/cite
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

@@ -34,7 +34,7 @@ class TestModCMAEnv(unittest.TestCase):
     def test_step(self):
         env = self.make_env()
         env.reset()
-        state, reward, done, meta = env.step(np.ones(14))
+        state, reward, done, meta = env.step(np.ones(11, dtype=int))
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertFalse(done)

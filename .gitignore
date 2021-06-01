@@ -2,18 +2,26 @@
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints
-tox.ini
+.flake8
 *.egg-info/
 
+# docs
+docs/_build/*
 # project spcecific stuff
 TODOS.md
 builds/
+
+# coverage
+coverage_report/*
+.coverage
 
 ## results, data or temp files written during runs
 output/
 port_*.txt
 tests/data/
 test/*.json
+test_run
+/data/
 
 # pycharm specific stuff
 .idea
@@ -22,3 +30,5 @@ test/*.json
 venv
 settings.json
 *egg
+
+

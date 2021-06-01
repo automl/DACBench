@@ -1,15 +1,21 @@
 # DACBench
+[![Documentation Status](https://readthedocs.org/projects/dacbench/badge/?version=latest)](https://dacbench.readthedocs.io/en/latest/?badge=latest)
+[![Run Python Tests](https://github.com/automl/DACBench/actions/workflows/run-python-tests.yml/badge.svg)](https://github.com/automl/DACBench/actions/workflows/run-python-tests.yml)
+
 DACBench is a benchmark library for Dynamic Algorithm Configuration.
 Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
 If you use DACBench in you research or application, please cite us:
 
 ```bibtex
-@Misc{dacbench,
-    author    = {T. Eimer and A. Biedenkapp and M. Reimer and S. Adriaensen and F. Hutter and M. Lindauer},
-    title     = {DACBench: A Benchmark Library for Dynamic Algorithm Configuration},
-    howpublished = {\url{https://github.com/automl/DACBench}},
-    year = {2020}
+@inproceedings{eimer-ijcai21,
+  author    = {T. Eimer and A. Biedenkapp and M. Reimer and S. Adriaensen and F. Hutter and M. Lindauer},
+  title     = {DACBench: A Benchmark Library for Dynamic Algorithm Configuration},
+  booktitle = {Proceedings of the Thirtieth International Joint Conference on
+               Artificial Intelligence ({IJCAI}'21)},
+  year      = {2021},
+  month     = aug,
+  publisher = {ijcai.org},
 }
 ```
 
@@ -40,9 +46,9 @@ If want to work on DACBench as a developer you can use the `dev` extra option in
 pip install -e .[dev]
 ```
 
-To install all extras (`dev` and `example`) run:
+To install all extras (`dev`, `example` and `docs`) run:
 ```bash
-pip install -e .[dev,example]
+pip install -e .[dev,example,docs]
 ```
 
 ## Using DACBench
@@ -51,3 +57,4 @@ For an introduction to the interface and structure of DACBench, see the
 ["Getting Started"](https://github.com/automl/DACBench/blob/main/Getting%20started.ipynb) jupyter notebook.
 You can also take a look at our [examples](https://github.com/automl/DACBench/tree/main/examples) in the repository 
 or our [documentation](https://dacbench.readthedocs.io).
+You can find baseline data of static and random policies for a given version of DACBench on our [TNT project site](https://www.tnt.uni-hannover.de/en/project/dacbench/).

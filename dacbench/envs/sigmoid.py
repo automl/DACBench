@@ -34,7 +34,7 @@ class SigmoidEnv(AbstractEnv):
             Environment configuration
         """
         super(SigmoidEnv, self).__init__(config)
-        self.rng = np.random.RandomState(config["seed"])
+
         self.shifts = [self.n_steps / 2 for _ in config["action_values"]]
         self.slopes = [-1 for _ in config["action_values"]]
         self.slope_multiplier = config["slope_multiplier"]

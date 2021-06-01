@@ -16,5 +16,5 @@ __all__ = [
     "StateTrackingWrapper",
     "PerformanceTrackingWrapper",
     "PolicyProgressWrapper",
-    "ObservationWrapper"
+    "ObservationWrapper",
 ]
