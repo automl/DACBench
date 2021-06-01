@@ -26,3 +26,9 @@ test_run
 # pycharm specific stuff
 .idea
 
+
+venv
+settings.json
+*egg
+
+

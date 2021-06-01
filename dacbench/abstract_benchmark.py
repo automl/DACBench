@@ -331,3 +331,6 @@ class objdict(dict):
             del self[name]
         else:
             raise AttributeError("No such attribute: " + name)
+
+    def copy(self):
+        return objdict(**super().copy())

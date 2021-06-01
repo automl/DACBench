@@ -1,4 +1,3 @@
-import pytest
 import unittest
 
 import numpy as np
@@ -70,5 +69,5 @@ class TestLubyEnv(unittest.TestCase):
     def test_render(self):
         env = self.make_env()
         env.render("human")
-        with pytest.raises(NotImplementedError):
+        with self.assertRaises(NotImplementedError):
             env.render("random")

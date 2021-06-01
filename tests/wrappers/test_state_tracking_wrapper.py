@@ -5,7 +5,7 @@ from pathlib import Path
 
 import gym
 import numpy as np
-import pytest
+
 
 from dacbench.agents import StaticAgent
 from dacbench.benchmarks import LubyBenchmark, CMAESBenchmark
@@ -172,7 +172,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
         env = bench.get_environment()
         wrapped = StateTrackingWrapper(env)
         wrapped.reset()
-        with pytest.raises(NotImplementedError):
+        with self.assertRaises(NotImplementedError):
             wrapped.render_state_tracking()
 
         bench = CMAESBenchmark()
@@ -190,7 +190,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
         env = bench.get_environment()
         wrapped = StateTrackingWrapper(env)
         wrapped.reset()
-        with pytest.raises(NotImplementedError):
+        with self.assertRaises(NotImplementedError):
             wrapped.render_state_tracking()
 
         def dummy2(_):

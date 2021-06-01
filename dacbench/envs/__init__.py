@@ -5,6 +5,7 @@ from dacbench.envs.cma_es import CMAESEnv
 from dacbench.envs.modea import ModeaEnv
 from dacbench.envs.sgd import SGDEnv
 from dacbench.envs.onell_env import OneLLEnv
+from dacbench.envs.modcma import ModCMAEnv
 
 __all__ = [
     "LubyEnv",
@@ -15,4 +16,5 @@ __all__ = [
     "ModeaEnv",
     "SGDEnv",
     "OneLLEnv",
+    "ModCMAEnv",
 ]

@@ -1,4 +1,4 @@
-import pytest
+
 import unittest
 
 from sklearn.metrics import mutual_info_score
@@ -12,7 +12,7 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
         bench = LubyBenchmark()
         env = bench.get_environment()
 
-        with pytest.raises(Exception):
+        with self.assertRaises(Exception):
             wrapped = InstanceSamplingWrapper(env)
 
         def sample():
