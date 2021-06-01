@@ -1,4 +1,5 @@
 import math
+import numbers
 import warnings
 import json
 from functools import reduce
@@ -150,7 +151,10 @@ class SGDEnv(AbstractEnv):
 
         self.step_count += 1
         index = 0
-        if not isinstance(action, float32) and not isinstance(action, int) and not isinstance(action, float):
+
+        if not isinstance(action, int) and not isinstance(action, float):
+            action = action.item()
+        if not isinstance(action, numbers.Number):
             action = action[0]
 
         new_lr = torch.Tensor([action]).to(self.device)

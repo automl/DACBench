@@ -50,6 +50,7 @@ def run_dacbench(results_path, agent_method, num_episodes, bench=None):
 
     Parameters
     -------
+    bench
     results_path : str
         Path to where results should be saved
     agent_method : function

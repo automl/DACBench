@@ -5,7 +5,7 @@ from pathlib import Path
 import gym
 import numpy as np
 import pandas as pd
-import pytest
+
 
 from dacbench.agents import RandomAgent
 from dacbench.benchmarks import (
@@ -420,7 +420,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
         env = dict_action_env()
         wrapped = ActionFrequencyWrapper(env)
         wrapped.reset()
-        with pytest.raises(NotImplementedError):
+        with self.assertRaises(NotImplementedError):
             wrapped.render_action_tracking()
 
         class tuple_action_env:
@@ -444,7 +444,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
         env = tuple_action_env()
         wrapped = ActionFrequencyWrapper(env)
         wrapped.reset()
-        with pytest.raises(NotImplementedError):
+        with self.assertRaises(NotImplementedError):
             wrapped.render_action_tracking()
 
         class multi_discrete_action_env:

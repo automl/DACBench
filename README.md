@@ -8,11 +8,14 @@ Its focus is on reproducibility and comparability of different DAC methods as we
 If you use DACBench in you research or application, please cite us:
 
 ```bibtex
-@Misc{dacbench,
-    author    = {T. Eimer and A. Biedenkapp and M. Reimer and S. Adriaensen and F. Hutter and M. Lindauer},
-    title     = {DACBench: A Benchmark Library for Dynamic Algorithm Configuration},
-    howpublished = {\url{https://github.com/automl/DACBench}},
-    year = {2020}
+@inproceedings{eimer-ijcai21,
+  author    = {T. Eimer and A. Biedenkapp and M. Reimer and S. Adriaensen and F. Hutter and M. Lindauer},
+  title     = {DACBench: A Benchmark Library for Dynamic Algorithm Configuration},
+  booktitle = {Proceedings of the Thirtieth International Joint Conference on
+               Artificial Intelligence ({IJCAI}'21)},
+  year      = {2021},
+  month     = aug,
+  publisher = {ijcai.org},
 }
 ```
 

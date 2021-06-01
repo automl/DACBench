@@ -34,8 +34,12 @@ class TestOneLLBenchmark(unittest.TestCase):
         bench.save_config("test_conf.json")
         with open("test_conf.json", "r") as fp:
             recovered = json.load(fp)
-        for k in bench.config.keys():
-            self.assertTrue(k in recovered.keys())
+
+        # instance_set is currently dropped, since storing the instance_set in not possible for all benchmarks.
+        # see (https://github.com/automl/DACBench/issues/87)
+        key_difference = set(bench.config.keys()).difference(set(recovered.keys()))
+        self.assertSetEqual(key_difference, {"instance_set"})
+
         os.remove("test_conf.json")
 
     def test_read_instances(self):

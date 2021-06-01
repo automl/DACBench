@@ -11,12 +11,24 @@ docs/_build/*
 TODOS.md
 builds/
 
+# coverage
+coverage_report/*
+.coverage
+
 ## results, data or temp files written during runs
 output/
 port_*.txt
 tests/data/
 test/*.json
 test_run
+/data/
 
 # pycharm specific stuff
 .idea
+
+
+venv
+settings.json
+*egg
+
+

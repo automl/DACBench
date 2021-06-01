@@ -1,4 +1,3 @@
-import pytest
 import unittest
 import json
 import os
@@ -19,7 +18,7 @@ from dacbench.challenge_benchmarks.state_space_challenge.random_states import (
 class TestAbstractBenchmark(unittest.TestCase):
     def test_not_implemented_method(self):
         bench = AbstractBenchmark()
-        with pytest.raises(NotImplementedError):
+        with self.assertRaises(NotImplementedError):
             bench.get_environment()
 
     def test_setup(self):
@@ -135,9 +134,9 @@ class TestAbstractBenchmark(unittest.TestCase):
         d = objdict({"dummy": 0})
 
         self.assertTrue(d["dummy"] == d.dummy)
-        with pytest.raises(KeyError):
+        with self.assertRaises(KeyError):
             d["error"]
-        with pytest.raises(AttributeError):
+        with self.assertRaises(AttributeError):
             d.error
 
         d["error"] = 12
@@ -145,7 +144,7 @@ class TestAbstractBenchmark(unittest.TestCase):
         del d.error
         self.assertFalse("error" in d.keys())
 
-        with pytest.raises(KeyError):
+        with self.assertRaises(KeyError):
             del d["error"]
-        with pytest.raises(AttributeError):
+        with self.assertRaises(AttributeError):
             del d.error

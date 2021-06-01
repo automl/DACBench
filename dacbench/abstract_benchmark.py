@@ -91,6 +91,10 @@ class AbstractBenchmark:
 
         conf["wrappers"] = self.jsonify_wrappers()
 
+        # can be recovered from instance_set_path, and could contain function that are not serializable
+        if "instance_set" in conf:
+            del conf["instance_set"]
+
         with open(path, "w") as fp:
             json.dump(conf, fp)
 
@@ -331,3 +335,6 @@ class objdict(dict):
             del self[name]
         else:
             raise AttributeError("No such attribute: " + name)
+
+    def copy(self):
+        return objdict(**super().copy())

@@ -40,6 +40,7 @@ class TestSGDBenchmark(unittest.TestCase):
         bench2 = SGDBenchmark()
         env = bench2.get_environment()
         self.assertTrue(len(env.instance_set.keys()) == 100)
+        # [3] instance architecture constructor functionally identical but not comparable
         self.assertTrue(inst[0] == env.instance_set[0][0])
         self.assertTrue(inst[1] == env.instance_set[0][1])
 
