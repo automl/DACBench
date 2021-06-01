@@ -77,7 +77,7 @@ class SGDBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for SGD
     """
 
-    def __init__(self, instance_set_path=None, config_path=None):
+    def __init__(self, config_path=None, **kwargs):
         """
         Initialize SGD Benchmark
 
@@ -94,8 +94,8 @@ class SGDBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = SGD_DEFAULTS[key]
 
-        if instance_set_path is not None:
-            self.config["instance_set_path"] = instance_set_path
+        for k in kwargs:
+            self.config[k] = kwargs[k]
 
     def get_environment(self):
         """
