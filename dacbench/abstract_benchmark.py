@@ -86,7 +86,7 @@ class AbstractBenchmark:
                             and -np.inf not in conf[k][i]
                         ):
                             conf[k][i] = list(map(int, conf[k][i]))
-                elif isinstance(conf[k],np.ndarray):                    
+                elif isinstance(conf[k], np.ndarray):
                     conf[k] = conf[k].tolist()
 
         conf["wrappers"] = self.jsonify_wrappers()
@@ -206,7 +206,9 @@ class AbstractBenchmark:
                 if self.config["observation_space_type"] == "None":
                     self.config["observation_space_type"] = None
                 else:
-                    typestring = self.config["observation_space_type"].split(" ")[1][:-2]
+                    typestring = self.config["observation_space_type"].split(" ")[1][
+                        :-2
+                    ]
                     typestring = typestring.split(".")[1]
                     self.config["observation_space_type"] = getattr(np, typestring)
         if "observation_space" in self.config:
@@ -312,15 +314,21 @@ class objdict(dict):
     """
     Modified dict to make config changes more flexible
     """
-    
-    __getattr__ = dict.__getitem__
-    __setattr__ = dict.__setitem__
-    __delattr__ = dict.__delitem__
-    
+
+    def __getattr__(self, name):
+        if name in self:
+            return self[name]
+        else:
+            raise AttributeError("No such attribute: " + name)
+
+    def __setattr__(self, name, value):
+        self[name] = value
+
+    def __delattr__(self, name):
+        if name in self:
+            del self[name]
+        else:
+            raise AttributeError("No such attribute: " + name)
+
     def copy(self):
         return objdict(**super().copy())
-
-
-    
-
-

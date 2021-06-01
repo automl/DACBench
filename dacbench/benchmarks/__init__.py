@@ -4,6 +4,7 @@ from dacbench.benchmarks.fast_downward_benchmark import FastDownwardBenchmark
 from dacbench.benchmarks.cma_benchmark import CMAESBenchmark
 from dacbench.benchmarks.sgd_benchmark import SGDBenchmark
 from dacbench.benchmarks.modcma_benchmark import ModCMABenchmark
+from dacbench.benchmarks.onell_benchmark import OneLLBenchmark
 
 __all__ = [
     "LubyBenchmark",
@@ -11,5 +12,6 @@ __all__ = [
     "FastDownwardBenchmark",
     "CMAESBenchmark",
     "SGDBenchmark",
-    "ModCMABenchmark"
+    "ModCMABenchmark",
+    "OneLLBenchmark",
 ]
