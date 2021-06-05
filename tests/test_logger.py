@@ -33,7 +33,6 @@ class TestLogger(unittest.TestCase):
         env_logger = logger.add_module(env)
         for seed in seeds:
             env.seed(seed)
-            logger.set_additional_info(seed=seed)
             logger.reset_episode()
 
             for episode in range(episodes):
@@ -47,6 +46,10 @@ class TestLogger(unittest.TestCase):
                         "logged_step",
                         step,
                     )
+                    env_logger.log("logged_seed", env.initial_seed)
+
+                    env_logger.log("logged_instance", env.get_inst_id())
+
                     env_logger.log(
                         "logged_episode",
                         episode,
@@ -86,6 +89,17 @@ class TestLogger(unittest.TestCase):
                 self.assertEqual(log["logged_step"]["values"][0], log["step"])
             if "logged_episode" in log:
                 self.assertEqual(log["logged_episode"]["values"][0], log["episode"])
+            # check of only one seed occurs per episode
+            seeds = set(log["logged_seed"]["values"])
+            self.assertEqual(len(seeds), 1)
+            (seed,) = seeds
+            self.assertEqual(seed, log["seed"])
+
+            # check of only one instance occurs per episode
+            instances = set(log["logged_instance"]["values"])
+            self.assertEqual(len(seeds), 1)
+            (instance,) = instances
+            self.assertEqual(instance, log["instance"])
 
     def test_data_loading(self):
         with open(self.log_file, "r") as log_file:
