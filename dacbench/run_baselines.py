@@ -54,7 +54,6 @@ def run_random(results_path, benchmark_name, num_episodes, seeds, fixed):
         logger.add_agent(agent)
         logger.add_benchmark(bench)
         logger.set_env(env)
-        logger.set_additional_info(seed=s)
 
         run_benchmark(env, agent, num_episodes, logger)
 
@@ -77,7 +76,7 @@ def run_static(results_path, benchmark_name, action, num_episodes, seeds=np.aran
         logger.add_agent(agent)
         logger.add_benchmark(bench)
         logger.set_env(env)
-        logger.set_additional_info(seed=s, action=action)
+        logger.set_additional_info(action=action)
 
         run_benchmark(env, agent, num_episodes, logger)
 
@@ -120,7 +119,6 @@ def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.aran
         logger.add_agent(agent)
         logger.add_benchmark(bench)
         logger.set_env(env)
-        logger.set_additional_info(seed=s)
 
         run_benchmark(env, agent, num_episodes, logger)
 

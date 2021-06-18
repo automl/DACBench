@@ -51,7 +51,6 @@ for b in args.benchmarks:
     for s in args.seeds:
         logger = Logger(experiment_name=f"PPO_{b}_s{s}", output_path=Path(args.outdir))
         perf_logger = logger.add_module(PerformanceTrackingWrapper)
-        logger.set_additional_info(seed=s)
         config = {"seed": s, "logger": perf_logger, "benchmark": b}
         env = make_benchmark(config)
         model = PPO2("MlpPolicy", env)

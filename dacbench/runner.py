@@ -81,7 +81,6 @@ def run_dacbench(results_path, agent_method, num_episodes, bench=None):
             perf_logger = logger.add_module(PerformanceTrackingWrapper)
             logger.add_benchmark(bench)
             logger.set_env(env)
-            logger.set_additional_info(seed=i)
 
             env = PerformanceTrackingWrapper(env, logger=perf_logger)
             agent = agent_method(env)
