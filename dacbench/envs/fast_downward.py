@@ -388,8 +388,11 @@ class FastDownwardEnv(AbstractEnv):
         except socket.timeout:
             raise OSError(
                 "Fast downward subprocess not reachable (time out). "
-                "Did you run './dacbench/envs/rl-plan/fast-downward/build.py' "
-                "in order to build the fd backend?"
+                "Possible solutions:\n"
+                " (1) Did you run './dacbench/envs/rl-plan/fast-downward/build.py' "
+                "in order to build the fd backend?\n"
+                " (2) Try to fix this by setting OPENBLAS_NUM_THREADS=1. "
+                "For more details see https://github.com/automl/DACBench/issues/96"
             )
 
         s, _, _ = self._process_data()
