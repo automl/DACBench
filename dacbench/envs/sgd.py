@@ -57,7 +57,17 @@ class SGDEnv(AbstractEnv):
 
         self.model = None
         self.val_model = None
-
+        # TODO:
+        """ 
+        TODO: Samuel Mueller (PhD student in our group) also uses backpack and has ran into a similar memory leak.
+        He solved it calling this custom made RECURSIVE memory_cleanup function:
+        # from backpack import memory_cleanup
+        # def recursive_backpack_memory_cleanup(module: torch.nn.Module):
+        #   memory_cleanup(module)
+        #   for m in module.modules():
+        #      memory_cleanup(m)
+        (calling this after computing the training loss/gradients and after validation loss should suffice)
+        """
         self.parameter_count = 0  # TODO: Verify that we still need this if we use pytorch.optim
         self.layer_sizes = []  # TODO: Verify that we still need this if we use pytorch.optim
 
