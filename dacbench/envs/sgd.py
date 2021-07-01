@@ -35,11 +35,12 @@ class SGDEnv(AbstractEnv):
         self.no_cuda = config.no_cuda
         self.current_batch_size = config.training_batch_size
         self.on_features = config.features
+        self.cd_paper_reconstruction = config.cd_paper_reconstruction
 
         self.use_cuda = not self.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
 
-        self.training_validation_ratio = 0.8
+        self.training_validation_ratio = config.train_validation_ratio
         # self.test_dataset = None
         self.train_dataset = None
         self.validation_dataset = None
@@ -54,6 +55,13 @@ class SGDEnv(AbstractEnv):
 
         self.current_training_loss = None
         self.loss_batch = None
+        self.prev_training_loss = None
+        self.current_validation_loss = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.prev_validation_loss = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
 
         self.model = None
         self.val_model = None
@@ -72,12 +80,20 @@ class SGDEnv(AbstractEnv):
             1, device=self.device, requires_grad=False
         )
 
+        self.optimizer_name = config.optimizer
         # Adam parameters
         self.beta1 = config.beta1
         self.beta2 = config.beta2
         self.m = 0
         self.v = 0
-        self.epsilon = 1.0e-08
+        self.epsilon = 1.0e-06
+        # RMSprop parameters
+        self.beta1 = config.beta1
+        self.v = 0
+        # Momentum parameters
+        self.sgd_momentum_v = 0
+        self.sgd_rho = 0.9
+
         self.t = 0
         self.step_count = torch.zeros(1, device=self.device, requires_grad=False)
 
@@ -107,15 +123,70 @@ class SGDEnv(AbstractEnv):
 
         self.writer = None
 
+        if self.optimizer_name=="adam":
+            self.get_optimizer_direction = self.get_adam_direction
+        elif self.optimizer_name=="rmsprop":
+            self.get_optimizer_direction = self.get_rmsprop_direction
+        elif self.optimizer_name=="momentum":
+            self.get_optimizer_direction = self.get_momentum_direction
+        else:
+            raise NotImplementedError
+
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
         else:
-            self.get_reward = self.get_default_reward
+            if config.reward_type == "training":
+                self.get_reward = self.get_training_reward
+            elif config.reward_type == "validation":
+                self.get_reward = self.get_validation_reward
+            elif config.reward_type == "log training":
+                self.get_reward = self.get_log_training_reward
+            elif config.reward_type == "log validation":
+                self.get_reward = self.get_log_validation_reward
+            elif config.reward_type == "log diff training":
+                self.get_reward = self.get_log_diff_training_reward
+            elif config.reward_type == "log diff validation":
+                self.get_reward = self.get_log_diff_validation_reward
+            elif config.reward_type == "diff training":
+                self.get_reward = self.get_diff_training_reward
+            elif config.reward_type == "diff validation":
+                self.get_reward = self.get_diff_validation_reward
+            elif config.reward_type == "full training":
+                self.get_reward = self.get_full_training_reward
+            else:
+                raise NotImplementedError
 
         if "state_method" in config.keys():
             self.get_state = config["state_method"]
         else:
             self.get_state = self.get_default_state
+
+    def get_training_reward(self):
+        return -self.current_training_loss
+
+    def get_validation_reward(self):
+        return -self._get_validation_loss()
+
+    def get_log_training_reward(self):
+        return torch.log(self.current_training_loss)
+
+    def get_log_validation_reward(self):
+        return torch.log(self._get_validation_loss())
+
+    def get_log_diff_training_reward(self):
+        return (torch.log(self.current_training_loss) - torch.log(self.prev_training_loss))
+
+    def get_log_diff_validation_reward(self):
+        return (torch.log(self._get_validation_loss()) - torch.log(self.prev_validation_loss))
+
+    def get_diff_training_reward(self):
+        return (self.current_training_loss - self.prev_training_loss)
+
+    def get_diff_validation_reward(self):
+        return (self._get_validation_loss() - self.prev_validation_loss)
+
+    def get_full_training_reward(self):
+        return self._get_full_training_loss()
 
     def seed(self, seed=None, seed_action_space=False):
         """
@@ -158,10 +229,10 @@ class SGDEnv(AbstractEnv):
             action = action[0]
 
         new_lr = torch.Tensor([action]).to(self.device)
-        # new_lr = 10 ** (-action)
         self.current_lr = new_lr
 
-        direction = self.firstOrderMomentum / (torch.sqrt(self.secondOrderMomentum) + self.epsilon)
+        direction = self.get_optimizer_direction()
+
         self.current_direction = direction
         delta_w = torch.mul(new_lr, direction)
 
@@ -173,7 +244,12 @@ class SGDEnv(AbstractEnv):
             index += layer_size
 
         self._set_zero_grad()
-        reward = self.get_reward(self)
+        self.train_network()
+        reward = self.get_reward()
+
+        self.prev_training_loss = self.current_training_loss
+        self.prev_validation_loss = self.current_validation_loss
+
         return self.get_state(self), reward, done, {}
 
     def _architecture_constructor(self, arch_str):
@@ -216,7 +292,13 @@ class SGDEnv(AbstractEnv):
         self.model = construct_model().to(self.device)
         self.val_model = construct_model().to(self.device)
 
-        self.training_validation_ratio = 0.8
+        def init_weights(m):
+            if type(m) == torch.nn.Linear or type(m) == torch.nn.Conv2d:
+                torch.nn.init.xavier_normal(m.weight)
+                m.bias.data.fill_(0.0)
+
+        if self.cd_paper_reconstruction:
+            self.model.apply(init_weights)
 
         train_dataloader_args = {"batch_size": self.batch_size}
         validation_dataloader_args = {"batch_size": self.validation_batch_size}
@@ -226,9 +308,10 @@ class SGDEnv(AbstractEnv):
             validation_dataloader_args.update(param)
 
         if dataset == "MNIST":
-            transform = transforms.Compose(
-                [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
-            )
+            transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize((0.1307,), (0.3081,))
+            ])
 
             # hot fix for https://github.com/pytorch/vision/issues/3549
             # If fix is available in stable version (0.9.1), we should update and be removed this.
@@ -239,6 +322,37 @@ class SGDEnv(AbstractEnv):
             ]
 
             train_dataset = datasets.MNIST(
+                "../data", train=True, download=True, transform=transform
+            )
+            # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
+        elif dataset == "MNISTsmall":
+            transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize((0.1307,), (0.3081,))
+            ])
+
+            # hot fix for https://github.com/pytorch/vision/issues/3549
+            # If fix is available in stable version (0.9.1), we should update and be removed this.
+            new_mirror = "https://ossci-datasets.s3.amazonaws.com/mnist"
+            datasets.MNIST.resources = [
+                ("/".join([new_mirror, url.split("/")[-1]]), md5)
+                for url, md5 in datasets.MNIST.resources
+            ]
+
+            train_dataset = datasets.MNIST(
+                "../data", train=True, download=True, transform=transform
+            )
+            train_dataset = torch.utils.data.Subset(
+                train_dataset, range(0, len(train_dataset) // 2)
+            )
+            # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
+        elif dataset == "CIFAR":
+            transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+            ])
+
+            train_dataset = datasets.CIFAR10(
                 "../data", train=True, download=True, transform=transform
             )
             # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
@@ -289,6 +403,11 @@ class SGDEnv(AbstractEnv):
         # Adam parameters
         self.m = 0
         self.v = 0
+        # RMSprop parameters
+        self.v = 0
+        # Momentum parameters
+        self.sgd_momentum_v = 0
+
         self.t = 0
         self.step_count = torch.zeros(1, device=self.device, requires_grad=False)
 
@@ -299,7 +418,11 @@ class SGDEnv(AbstractEnv):
         self.current_direction = torch.zeros(
             (self.parameter_count,), device=self.device, requires_grad=False
         )
-        self.get_default_reward(self)
+        self.train_network()
+        self.get_reward()
+
+        self.prev_training_loss = self.current_training_loss
+        self.prev_validation_loss = self.current_validation_loss
 
         return self.get_state(self)
 
@@ -341,14 +464,12 @@ class SGDEnv(AbstractEnv):
             Environment state
 
         """
-        gradients = self._get_gradients()
-        self.firstOrderMomentum, self.secondOrderMomentum = self._get_momentum(
-            gradients
-        )
+        self.gradients = self._get_gradients()
+        self.firstOrderMomentum, self.secondOrderMomentum, self.sgdMomentum = self._get_momentum(self.gradients)
 
         if 'predictiveChangeVarDiscountedAverage' in self.on_features or 'predictiveChangeVarUncertainty' in self.on_features:
             predictiveChangeVarDiscountedAverage, predictiveChangeVarUncertainty = \
-                self._get_predictive_change_features(self.current_lr, self.firstOrderMomentum, self.secondOrderMomentum)
+                self._get_predictive_change_features(self.current_lr)
 
         if 'lossVarDiscountedAverage' in self.on_features or 'lossVarUncertainty' in self.on_features:
             lossVarDiscountedAverage, lossVarUncertainty = self._get_loss_features()
@@ -399,41 +520,51 @@ class SGDEnv(AbstractEnv):
             loss.mean().backward()
 
         loss_value = loss.mean()
-        reward = self._get_validation_loss()
         self.loss_batch = loss
         self.current_training_loss = torch.unsqueeze(loss_value.detach(), dim=0)
         self.train_batch_index += 1
 
-        return reward
-
-    def get_default_reward(self, _):
+    def train_network(self):
         try:
-            reward = self._train_batch_()
+            self._train_batch_()
         except StopIteration:
             self.train_batch_index = 0
             self.epoch_index += 1
             self.train_loader_it = iter(self.train_loader)
-            reward = self._train_batch_()
-
-        return reward
+            self._train_batch_()
 
     def transfer_model_parameters(self):
         # self.val_model.load_state_dict(self.model.state_dict())
         for target_param, param in zip(self.val_model.parameters(), self.model.parameters()):
             target_param.data.copy_(param.data)
 
-    def _get_val_loss(self):
-        self.model.eval()
+    def _get_full_training_loss(self):
+        self.transfer_model_parameters()
+        # self.model.eval()
+        loss = torch.zeros(1, device=self.device, requires_grad=False)
+        with torch.no_grad():
+            for data, target in self.train_loader:
+                data, target = data.to(self.device), target.to(self.device)
+                output = self.val_model(data)
+                loss += self.val_loss_function(output, target).sum().detach().detach()
+
+        loss /= len(self.train_loader.dataset)
+        # self.model.train()
+        return loss
+
+    def _get_full_validation_loss(self):
+        self.transfer_model_parameters()
+        # self.model.eval()
         validation_loss = torch.zeros(1, device=self.device, requires_grad=False)
         with torch.no_grad():
             for data, target in self.validation_loader:
                 data, target = data.to(self.device), target.to(self.device)
-                output = self.model(data)
-                validation_loss += self.loss_function(output, target).mean()
+                output = self.val_model(data)
+                validation_loss += self.val_loss_function(output, target).sum().detach()
 
         validation_loss /= len(self.validation_loader.dataset)
-        self.model.train()
-        return validation_loss
+        # self.model.train()
+        return -validation_loss.item()
 
     def _get_validation_loss_(self):
         # self.model.eval()
@@ -445,7 +576,7 @@ class SGDEnv(AbstractEnv):
         self.current_validation_loss = validation_loss
         # self.model.train()
 
-        return -validation_loss.item()  # negative because it is the reward
+        return -validation_loss  # negative because it is the reward
 
     def _get_validation_loss(self):
         self.transfer_model_parameters()
@@ -475,11 +606,18 @@ class SGDEnv(AbstractEnv):
         bias_corrected_m = self.m / (1 - self.beta1 ** self.t)
         bias_corrected_v = self.v / (1 - self.beta2 ** self.t)
 
-        return bias_corrected_m, bias_corrected_v
+        self.sgd_momentum_v = self.sgd_rho * self.sgd_momentum_v + gradients
 
-    def _get_adam_feature(self, learning_rate, m, v):
-        epsilon = 1.0e-8
-        return torch.mul(learning_rate, m / (torch.sqrt(v) + epsilon))
+        return bias_corrected_m, bias_corrected_v, self.sgd_momentum_v
+
+    def get_adam_direction(self):
+        return self.firstOrderMomentum / (torch.sqrt(self.secondOrderMomentum) + self.epsilon)
+
+    def get_rmsprop_direction(self):
+        return self.gradients / (torch.sqrt(self.secondOrderMomentum) + self.epsilon)
+
+    def get_momentum_direction(self):
+        return self.sgd_momentum_v
 
     def _get_loss_features(self):
         with torch.no_grad():
@@ -497,7 +635,7 @@ class SGDEnv(AbstractEnv):
 
         return self.lossVarDiscountedAverage, self.lossVarUncertainty
 
-    def _get_predictive_change_features(self, lr, m, v):
+    def _get_predictive_change_features(self, lr):
         batch_gradients = []
         for i, (name, param) in enumerate(self.model.named_parameters()):
             grad_batch = param.grad_batch.reshape(
@@ -507,7 +645,8 @@ class SGDEnv(AbstractEnv):
 
         batch_gradients = torch.cat(batch_gradients, dim=1)
 
-        update_value = self._get_adam_feature(lr, m, v)
+        update_value = torch.mul(lr, self.get_optimizer_direction())
+
         predictive_change = torch.log(
             torch.var(-1 * torch.matmul(batch_gradients, update_value))
         )
