@@ -5,6 +5,7 @@ from dacbench.benchmarks.cma_benchmark import CMAESBenchmark
 from dacbench.benchmarks.modea_benchmark import ModeaBenchmark
 from dacbench.benchmarks.sgd_benchmark import SGDBenchmark
 from dacbench.benchmarks.onell_benchmark import OneLLBenchmark
+from dacbench.benchmarks.geometric_benchmark import GeometricBenchmark
 
 __all__ = [
     "LubyBenchmark",
@@ -14,4 +15,5 @@ __all__ = [
     "ModeaBenchmark",
     "SGDBenchmark",
     "OneLLBenchmark",
+    "GeometricBenchmark",
 ]
