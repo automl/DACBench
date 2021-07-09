@@ -13,7 +13,7 @@ INPUT_DIM = 10
 INFO = {
     "identifier": "LR",
     "name": "Learning Rate Adaption for Neural Networks",
-    "reward": "Validation Loss",
+    "reward": "Negative Log Differential Validation Loss",
     "state_description": [
         "Predictive Change Variance (Discounted Average)",
         "Predictive Change Variance (Uncertainty)",
@@ -51,7 +51,7 @@ SGD_DEFAULTS = objdict(
             }
         ],
         "reward_type": "log diff validation",
-        "reward_range": (-(10 ** 9), 0),
+        "reward_range": (-(10 ** 9), (10 ** 9)),
         "cutoff": 1e3,
         "lr": 1e-3,
         "optimizer": "rmsprop",

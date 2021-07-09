@@ -14,7 +14,7 @@ class TestSGDEnv(unittest.TestCase):
     def test_setup(self):
         env = self.make_env()
         self.assertTrue(issubclass(type(env), AbstractEnv))
-        self.assertTrue(env.no_cuda)
+        self.assertFalse(env.no_cuda)
         self.assertTrue(env.model is None)
         self.assertTrue(env.current_training_loss is None)
         self.assertTrue(env.batch_size == SGD_DEFAULTS["training_batch_size"])
@@ -52,10 +52,12 @@ class TestSGDEnv(unittest.TestCase):
                     "currentLR",
                     "trainingLoss",
                     "validationLoss",
+                    "step",
+                    "alignment"
                 ],
             )
         )
-        self.assertTrue(state["currentLR"] == 10 ** -0.5)
+        self.assertTrue(state["currentLR"] == 0.5)
         self.assertTrue(state["trainingLoss"] > 0)
         self.assertTrue(state["validationLoss"] > 0)
 

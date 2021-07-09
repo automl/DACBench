@@ -182,16 +182,16 @@ class SGDEnv(AbstractEnv):
         return -self._get_validation_loss().item()
 
     def get_log_training_reward(self):
-        return torch.log(self.current_training_loss).item()
+        return -torch.log(self.current_training_loss).item()
 
     def get_log_validation_reward(self):
-        return torch.log(self._get_validation_loss()).item()
+        return -torch.log(self._get_validation_loss()).item()
 
     def get_log_diff_training_reward(self):
-        return (torch.log(self.current_training_loss) - torch.log(self.prev_training_loss)).item()
+        return -(torch.log(self.current_training_loss) - torch.log(self.prev_training_loss)).item()
 
     def get_log_diff_validation_reward(self):
-        return (torch.log(self._get_validation_loss()) - torch.log(self.prev_validation_loss)).item()
+        return -(torch.log(self._get_validation_loss()) - torch.log(self.prev_validation_loss)).item()
 
     def get_diff_training_reward(self):
         return (self.current_training_loss - self.prev_training_loss).item()
