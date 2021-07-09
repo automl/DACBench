@@ -2,6 +2,11 @@ from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import GeometricEnv
 
 import numpy as np
+import os
+import csv
+
+
+ACTION_VALUES = (5, 10)
 
 
 INFO = {
@@ -22,13 +27,18 @@ INFO = {
 GEOMETRIC_DEFAULTS = objdict(
     {
         "action_space_class": "Discrete",
+        "action_space_args": [[2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3]],
         "observation_space_class": "Box",
         "observation_space_type": np.float32,
+        "observation_space_args": [
+            np.array([-np.inf for _ in range(1 + len(ACTION_VALUES) * 3)]),
+            np.array([np.inf for _ in range(1 + len(ACTION_VALUES) * 3)]),
+        ],
         "reward_range": (0, 1),
         "cutoff": 10,
-        "slope_multiplier": 2.0,
+        "action_values": ACTION_VALUES,
         "seed": 0,
-        "instance_set_path": "../instance_sets/sigmoid/sigmoid_2D3M_train.csv",
+        "instance_set_path": "../instance_sets/geometric/geometric_train.csv",
         "benchmark_info": INFO,
     }
 )
@@ -75,7 +85,41 @@ class GeometricBenchmark(AbstractBenchmark):
 
         return env
 
-    def set_action_values(self, values):
+    def read_instance_set(self):
+        """Read instance set from file"""
+        path = (
+            os.path.dirname(os.path.abspath(__file__))
+            + "/"
+            + self.config.instance_set_path
+        )
+        self.config["instance_set"] = {}
+        with open(path, "r") as fh:
+            reader = csv.DictReader(fh)
+            for row in reader:
+                # TODO: - first create instance set for different configurations
+                pass
+
+    def get_benchmark(self, dimension=None, seed=0):
+        self.config = objdict(GEOMETRIC_DEFAULTS.copy())
+        # TODO: wie wird instance_set generiert? Dynamisch statisch? Welche Vorgaben? Generator oder json?
+
+        if dimension == 1:
+            self._set_action_values([3])
+            self.config.instance_set_path = (
+                "../instance_sets/geometric/geometric_XY_train.csv"
+            )
+            self.config.benchmark_info["state_description"] = [
+                "Remaining Budget",
+                "tba",
+                "Action",
+            ]
+
+        self.config.seed = seed
+        self.read_instance_set()
+        env = GeometricEnv(self.config)
+        return env
+
+    def _set_action_values(self, values):
         """
         Adapt action values and update dependencies
 
@@ -84,11 +128,9 @@ class GeometricBenchmark(AbstractBenchmark):
         values: list
             A list of possible actions per dimension
         """
-        pass
-
-    def read_instance_set(self):
-        """Read instance set from file"""
-        pass
-
-    def get_benchmark(self, dimension=None, seed=0):
-        pass
+        self.config.action_values = values
+        self.config.action_space_args = [int(np.prod(values))]
+        self.config.observation_space_args = [
+            np.array([-np.inf for _ in range(1 + len(values) * 3)]),
+            np.array([np.inf for _ in range(1 + len(values) * 3)]),
+        ]
