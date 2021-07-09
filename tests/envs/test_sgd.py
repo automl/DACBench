@@ -1,45 +1,45 @@
-
+import pickle
 import unittest
+import os
+
 import numpy as np
 from dacbench import AbstractEnv
+from dacbench.envs.sgd import SGDEnv
 from dacbench.benchmarks.sgd_benchmark import SGDBenchmark, SGD_DEFAULTS
+from dacbench.wrappers import ObservationWrapper
 
 
 class TestSGDEnv(unittest.TestCase):
-    def make_env(self):
+    def setUp(self):
         bench = SGDBenchmark()
-        env = bench.get_environment()
-        return env
+        self.env = bench.get_environment()
+        self.data_path = os.path.join(os.path.dirname(__file__), 'data')
 
     def test_setup(self):
-        env = self.make_env()
-        self.assertTrue(issubclass(type(env), AbstractEnv))
-        self.assertFalse(env.no_cuda)
-        self.assertTrue(env.model is None)
-        self.assertTrue(env.current_training_loss is None)
-        self.assertTrue(env.batch_size == SGD_DEFAULTS["training_batch_size"])
-        self.assertTrue(env.initial_lr == env.current_lr)
+        self.assertTrue(issubclass(type(self.env), AbstractEnv))
+        self.assertFalse(self.env.no_cuda)
+        self.assertTrue(self.env.model is None)
+        self.assertTrue(self.env.current_training_loss is None)
+        self.assertTrue(self.env.batch_size == SGD_DEFAULTS["training_batch_size"])
+        self.assertTrue(self.env.initial_lr == self.env.current_lr)
 
     def test_reset(self):
-        env = self.make_env()
-        env.reset()
-        self.assertFalse(env.model is None)
-        self.assertFalse(env.train_dataset is None)
-        self.assertFalse(env.validation_dataset is None)
+        self.env.reset()
+        self.assertFalse(self.env.model is None)
+        self.assertFalse(self.env.train_dataset is None)
+        self.assertFalse(self.env.validation_dataset is None)
 
     def test_step(self):
-        env = self.make_env()
-        env.reset()
-        state, reward, done, meta = env.step(1.0)
-        self.assertTrue(reward >= env.reward_range[0])
-        self.assertTrue(reward <= env.reward_range[1])
+        self.env.reset()
+        state, reward, done, meta = self.env.step(1.0)
+        self.assertTrue(reward >= self.env.reward_range[0])
+        self.assertTrue(reward <= self.env.reward_range[1])
         self.assertFalse(done)
         self.assertTrue(len(meta.keys()) == 0)
 
     def test_get_default_state(self):
-        env = self.make_env()
-        env.reset()
-        state, _, _, _ = env.step(0.5)
+        self.env.reset()
+        state, _, _, _ = self.env.step(0.5)
         self.assertTrue(issubclass(type(state), dict))
         self.assertTrue(
             np.array_equal(
@@ -61,12 +61,48 @@ class TestSGDEnv(unittest.TestCase):
         self.assertTrue(state["trainingLoss"] > 0)
         self.assertTrue(state["validationLoss"] > 0)
 
+    def get_pickled_config(self):
+        with open(os.path.join(self.data_path, 'sgd_benchmark_config.pickle'), 'rb') as f:
+            benchmark = SGDBenchmark()
+            benchmark.config = pickle.load(f)
+            env = SGDEnv(benchmark.config)
+            env = ObservationWrapper(env)
+        return env
+
+    def test_functional_static(self):
+        env = self.get_pickled_config()
+        env.reset()
+        done = False
+        mem = []
+        step = 0
+        while not done and step < 50:
+            state, reward, done, _ = env.step(0.001)
+            mem.append(np.concatenate([state, [reward, int(done)]]))
+            step += 1
+
+        with open(os.path.join(self.data_path, 'sgd_static_test.pickle'), 'rb') as f:
+            prev_mem = pickle.load(f)
+            np.testing.assert_allclose(prev_mem, np.array(mem))
+
+    def test_functional_dynamic(self):
+        with open(os.path.join(self.data_path, 'sgd_dynamic_test.pickle'), 'rb') as f:
+            prev_mem = pickle.load(f)
+        env = self.get_pickled_config()
+        env.reset()
+        done = False
+        mem = []
+        step = 0
+        while not done and step < 50:
+            action = prev_mem[step][-1]
+            state, reward, done, _ = env.step(action)
+            mem.append(np.concatenate([state, [reward, int(done), action]]))
+            step += 1
+        np.testing.assert_allclose(prev_mem, np.array(mem))
+
     def test_close(self):
-        env = self.make_env()
-        self.assertTrue(env.close())
+        self.assertTrue(self.env.close())
 
     def test_render(self):
-        env = self.make_env()
-        env.render("human")
+        self.env.render("human")
         with self.assertRaises(NotImplementedError):
-            env.render("random")
+            self.env.render("random")
