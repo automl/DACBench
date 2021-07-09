@@ -69,35 +69,23 @@ class TestSGDEnv(unittest.TestCase):
             env = ObservationWrapper(env)
         return env
 
-    def test_functional_static(self):
-        env = self.get_pickled_config()
-        env.reset()
-        done = False
-        mem = []
-        step = 0
-        while not done and step < 50:
-            state, reward, done, _ = env.step(0.001)
-            mem.append(np.concatenate([state, [reward, int(done)]]))
-            step += 1
+    def test_functional(self):
+        for test_case in [os.path.join(self.data_path, 'sgd_static_test.pickle'),
+                          os.path.join(self.data_path, 'sgd_dynamic_test.pickle')]:
+            with open(test_case, 'rb') as f:
+                prev_mem = pickle.load(f)
+            env = self.get_pickled_config()
+            env.reset()
+            done = False
+            mem = []
+            step = 0
+            while not done and step < 50:
+                action = prev_mem[step][-1]
+                state, reward, done, _ = env.step(action)
+                mem.append(np.concatenate([state, [reward, int(done), action]]))
+                step += 1
 
-        with open(os.path.join(self.data_path, 'sgd_static_test.pickle'), 'rb') as f:
-            prev_mem = pickle.load(f)
             np.testing.assert_allclose(prev_mem, np.array(mem))
-
-    def test_functional_dynamic(self):
-        with open(os.path.join(self.data_path, 'sgd_dynamic_test.pickle'), 'rb') as f:
-            prev_mem = pickle.load(f)
-        env = self.get_pickled_config()
-        env.reset()
-        done = False
-        mem = []
-        step = 0
-        while not done and step < 50:
-            action = prev_mem[step][-1]
-            state, reward, done, _ = env.step(action)
-            mem.append(np.concatenate([state, [reward, int(done), action]]))
-            step += 1
-        np.testing.assert_allclose(prev_mem, np.array(mem))
 
     def test_close(self):
         self.assertTrue(self.env.close())

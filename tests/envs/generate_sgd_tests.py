@@ -38,12 +38,7 @@ while not done and step < 50:
     if args.type == 'dynamic':
         action = np.exp(np.random.uniform(-10, 1))
     state, reward, done, _ = env.step(action)
-
-    if args.type == 'dynamic':
-        params = [reward, int(done), action]
-    else:
-        params = [reward, int(done)]
-    mem.append(np.concatenate([state, params]))
+    mem.append(np.concatenate([state, [reward, int(done), action]]))
     step += 1
 
 with open(os.path.join(data_path, f'sgd_{args.type}_test.pickle'), 'wb') as f:
