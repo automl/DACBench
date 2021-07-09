@@ -1,13 +1,14 @@
 """
-This script can be used to generate test cases for SGD benchmark. Config file is saved seperately and then it is used to generate test cases so that config file can be regenerated after a refactoring without touching the test case files.
+This script can be used to generate test cases for SGD benchmark.
+Config file is saved seperately and then it is used to generate test cases so that,
+config file can be regenerated after a refactoring without touching the test case files.
 """
 import argparse
 import os
-import json
 import pickle
 import numpy as np
 
-from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.abstract_benchmark import objdict
 from dacbench.envs import SGDEnv
 from dacbench.benchmarks.sgd_benchmark import SGD_DEFAULTS
 from dacbench.benchmarks import SGDBenchmark
