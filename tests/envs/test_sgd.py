@@ -61,20 +61,18 @@ class TestSGDEnv(unittest.TestCase):
         self.assertTrue(state["trainingLoss"] > 0)
         self.assertTrue(state["validationLoss"] > 0)
 
-    def get_pickled_config(self):
-        with open(os.path.join(self.data_path, 'sgd_benchmark_config.pickle'), 'rb') as f:
-            benchmark = SGDBenchmark()
-            benchmark.config = pickle.load(f)
-            env = SGDEnv(benchmark.config)
-            env = ObservationWrapper(env)
-        return env
-
     def test_functional(self):
         for test_case in [os.path.join(self.data_path, 'sgd_static_test.pickle'),
                           os.path.join(self.data_path, 'sgd_dynamic_test.pickle')]:
+            with open(os.path.join(self.data_path, 'sgd_benchmark_config.pickle'), 'rb') as f:
+                benchmark = SGDBenchmark()
+                benchmark.config = pickle.load(f)
+                env = SGDEnv(benchmark.config)
+                env = ObservationWrapper(env)
+
             with open(test_case, 'rb') as f:
                 prev_mem = pickle.load(f)
-            env = self.get_pickled_config()
+
             env.reset()
             done = False
             mem = []
