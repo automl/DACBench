@@ -33,7 +33,7 @@ def save_geometric_instances(filename: str):
 
     with open(csv_path, "a") as fh:
         id_string = (
-            "ID,fcn_name,param1,param2,param3,param4,param5,param6,param7,param8"
+            "ID,fcn_name,param1,param2,param3,param4,param5,param6,param7,param8\n"
         )
         fh.write(id_string)
 
