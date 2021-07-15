@@ -5,13 +5,14 @@ FILE_PATH = os.path.dirname(__file__)
 
 # Configure amount of different layers
 FUNCTION_CONFIG = {
-    "sigmoid": 2,
-    "linear": 4,
-    "polynomial2D": 3,
-    "polynomial3D": 2,
+    "sigmoid": 1,
+    "linear": 1,
+    "polynomial2D": 1,
+    "polynomial3D": 1,
     "polynomial7D": 1,
-    "exponential": 2,
-    "logarithmic": 2,
+    "exponential": 1,
+    "logarithmic": 1,
+    "constant": 1,
 }
 
 # Each function needs fix number of parameters
@@ -23,6 +24,7 @@ FUNCTION_PARAMETER_NUMBERS = {
     "polynomial7D": 8,
     "exponential": 1,
     "logarithmic": 1,
+    "constant": 1,
 }
 
 SAMPLE_SIZE = 100
