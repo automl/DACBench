@@ -22,7 +22,6 @@ class ObservationWrapper(Wrapper):
         super(ObservationWrapper, self).__init__(env)
         obs_sample = self.flatten(self.env.observation_space.sample())
         size = len(obs_sample)
-        print(obs_sample)
         self.observation_space = spaces.Box(
             low=-np.inf * np.ones(size), high=np.inf * np.ones(size)
         )
