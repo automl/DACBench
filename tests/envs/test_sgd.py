@@ -4,7 +4,8 @@ import os
 
 import numpy as np
 from dacbench import AbstractEnv
-from dacbench.envs.sgd import SGDEnv
+from dacbench.envs.sgd import SGDEnv, Reward
+from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.benchmarks.sgd_benchmark import SGDBenchmark, SGD_DEFAULTS
 from dacbench.wrappers import ObservationWrapper
 
@@ -30,12 +31,21 @@ class TestSGDEnv(unittest.TestCase):
         self.assertFalse(self.env.validation_dataset is None)
 
     def test_step(self):
-        self.env.reset()
-        state, reward, done, meta = self.env.step(1.0)
-        self.assertTrue(reward >= self.env.reward_range[0])
-        self.assertTrue(reward <= self.env.reward_range[1])
-        self.assertFalse(done)
-        self.assertTrue(len(meta.keys()) == 0)
+        benchmark = SGDBenchmark()
+        benchmark.config = objdict(SGD_DEFAULTS.copy())
+        benchmark.read_instance_set()
+
+        for reward_type in Reward:
+            benchmark.config.reward_type = reward_type
+            env = SGDEnv(benchmark.config)
+            env = ObservationWrapper(env)
+
+            self.env.reset()
+            state, reward, done, meta = self.env.step(1.0)
+            self.assertTrue(reward >= self.env.reward_range[0])
+            self.assertTrue(reward <= self.env.reward_range[1])
+            self.assertFalse(done)
+            self.assertTrue(len(meta.keys()) == 0)
 
     def test_get_default_state(self):
         self.env.reset()

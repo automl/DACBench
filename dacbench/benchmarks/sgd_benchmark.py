@@ -3,9 +3,12 @@ import os
 
 import numpy as np
 from gym import spaces
+from torch.nn import NLLLoss
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import SGDEnv
+from dacbench.envs.sgd import Reward
+
 
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
@@ -22,8 +25,11 @@ INFO = {
         "Current Learning Rate",
         "Training Loss",
         "Validation Loss",
+        "Step",
+        "Alignment"
     ],
 }
+
 
 SGD_DEFAULTS = objdict(
     {
@@ -50,11 +56,14 @@ SGD_DEFAULTS = objdict(
                 "alignment": spaces.Box(low=0, high=1, shape=(1,)),
             }
         ],
-        "reward_type": "log diff validation",
-        "reward_range": (-(10 ** 9), (10 ** 9)),
+        "reward_type": Reward.LogDiffValidation,
         "cutoff": 1e3,
         "lr": 1e-3,
         "optimizer": "rmsprop",
+        "loss_function": NLLLoss,
+        "loss_function_kwargs": {"reduction": 'none'},
+        "val_loss_function": NLLLoss,
+        "val_loss_function_kwargs": {"reduction": 'none'},
         "training_batch_size": 64,
         "validation_batch_size": 64,
         "train_validation_ratio": 0.8,
@@ -78,6 +87,9 @@ SGD_DEFAULTS = objdict(
         ],
     }
 )
+
+# Set reward range based on the chosen reward type
+SGD_DEFAULTS.reward_range = SGD_DEFAULTS['reward_type'].func.frange
 
 
 class SGDBenchmark(AbstractBenchmark):
