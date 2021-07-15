@@ -28,9 +28,9 @@ class Reward(IntEnum):
     ValidationLoss = auto()
     LogTrainingLoss = auto()
     LogValidationLoss = auto()
-    # DiffTraining = auto()
+    DiffTraining = auto()
     DiffValidation = auto()
-    # LogDiffTraining = auto()
+    LogDiffTraining = auto()
     LogDiffValidation = auto()
     FullTraining = auto()
 
@@ -208,8 +208,8 @@ class SGDEnv(AbstractEnv):
     def get_log_validation_reward(self):
         return -torch.log(self._get_validation_loss()).item()
 
-    # @reward_range([-(10**9), (10**9)])
-    # @Reward.LogDiffTraining
+    @reward_range([-(10**9), (10**9)])
+    @Reward.LogDiffTraining
     def get_log_diff_training_reward(self):
         return -(torch.log(self.current_training_loss) - torch.log(self.prev_training_loss)).item()
 
@@ -218,8 +218,8 @@ class SGDEnv(AbstractEnv):
     def get_log_diff_validation_reward(self):
         return -(torch.log(self._get_validation_loss()) - torch.log(self.prev_validation_loss)).item()
 
-    # @reward_range([-(10**9), (10**9)])
-    # @Reward.DiffTraining
+    @reward_range([-(10**9), (10**9)])
+    @Reward.DiffTraining
     def get_diff_training_reward(self):
         return (self.current_training_loss - self.prev_training_loss).item()
 
@@ -467,9 +467,11 @@ class SGDEnv(AbstractEnv):
             (self.parameter_count,), device=self.device, requires_grad=False
         )
         self.train_network()
-        self.get_reward()
 
         self.prev_training_loss = self.current_training_loss
+
+        self.get_reward()
+
         self.prev_validation_loss = self.current_validation_loss
 
         return self.get_state(self)
