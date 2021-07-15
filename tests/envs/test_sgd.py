@@ -39,11 +39,12 @@ class TestSGDEnv(unittest.TestCase):
             benchmark.config.reward_type = reward_type
             env = SGDEnv(benchmark.config)
             env = ObservationWrapper(env)
+            self.assertTrue(env.reward_range == reward_type.func.frange)
 
-            self.env.reset()
-            state, reward, done, meta = self.env.step(1.0)
-            self.assertTrue(reward >= self.env.reward_range[0])
-            self.assertTrue(reward <= self.env.reward_range[1])
+            env.reset()
+            state, reward, done, meta = env.step(1.0)
+            self.assertTrue(reward >= env.reward_range[0])
+            self.assertTrue(reward <= env.reward_range[1])
             self.assertFalse(done)
             self.assertTrue(len(meta.keys()) == 0)
 
