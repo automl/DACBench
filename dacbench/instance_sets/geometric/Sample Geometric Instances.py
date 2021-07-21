@@ -63,6 +63,7 @@ def _create_csv_string(index, func_name: str) -> str:
     str
         comma separated string
     """
+    # TODO extra conditions for logarithmic and exponential
     count = FUNCTION_PARAMETER_NUMBERS[func_name]
     max_count = max(list(FUNCTION_PARAMETER_NUMBERS.values()))
 
@@ -70,7 +71,7 @@ def _create_csv_string(index, func_name: str) -> str:
 
     for i in range(max_count):
         if i < count:
-            csv_string += "," + str(np.random.uniform(low=-1.0, high=1.0))
+            csv_string += "," + str(np.random.uniform(low=-10.0, high=10.0))
         else:
             csv_string += ",0"
 
