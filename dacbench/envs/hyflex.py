@@ -10,13 +10,145 @@ import numpy as np
 
 import requests
 
+HeuristicType = Enum('HeuristicType', 'CROSSOVER LOCAL_SEARCH MUTATION OTHER RUIN_RECREATE')
+H_TYPE = HeuristicType
 
-class ProblemDomain:
+class ToyProblemDomain:
+    """
+    This class is a toy domain
+
+    Example code for creating a toy environment:
+        bench = HyFlexBenchmark(config_path='dacbench/additional_configs/hyflex/toy.json')
+        env = bench.get_environment()
+    """
+
+    def __init__(self, seed: int):
+        """
+        Creates a new problem domain and creates a new random number generator using the seed provided. If
+        the seed takes the value -1, the seed is generated taking the current System time. The random number generator
+        is used for all stochastic operations, so the problem will be initialised in the same way if the seed is the
+        same. Sets the solution memory size to 2.
+
+        :param domain: the unqualified class name of the HyFlex domain to be wrapped, e.g., SAT, BinPacking, etc.
+        :param seed: a random seed
+        """
+        # raise NotImplementedError
+        self.heuristics = [lambda x: x-2,
+                           lambda x: x+1,
+                           lambda x: x+2,
+                           lambda x: x / 2 if x % 2 == 0 else 2 * x]
+        self.heuristics_of_type = {HeuristicType.CROSSOVER: [],
+                                   HeuristicType.LOCAL_SEARCH: [0],
+                                   HeuristicType.MUTATION: [1, 2],
+                                   HeuristicType.OTHER: [],
+                                   HeuristicType.RUIN_RECREATE: [3]
+                                   }
+        self.mem_size = 2
+        self.mem = None
+        self.base = None
+
+    def getHeuristicsOfType(self, heuristicType: HeuristicType) -> List[int]:
+        """
+        Gets an array of heuristicIDs of the type specified by heuristicType.
+
+        :param heuristicType: the heuristic type.
+        :return: An list containing the indices of the heuristics of the type specified. If there are no heuristics of
+            this type it returns None.
+        """
+        return self.heuristics_of_type[heuristicType]
+
+    def loadInstance(self, instanceID: int) -> None:
+        """
+        Loads the instance specified by instanceID.
+
+        :param instanceID: Specifies the instance to load. The ID's start at zero.
+        :return: None
+        """
+        self.base = 1024 + 2**instanceID
+        self.mem = [-1] * self.mem_size
+
+    def setMemorySize(self, size: int) -> None:
+        """
+        Sets the size of the array where the solutions are stored. The default size is 2.
+
+        :param size: The new size of the solution array.
+        :return: None
+        """
+        self.mem_size = size
+        self.mem = [-1] * self.mem_size
+
+    def initialiseSolution(self, index: int) -> None:
+        """
+        Create an initial solution at a specified position in the memory array. The method of initialising the solution
+        depends on the specific problem domain, but it is a random process, which will produce a different solution
+        each time. The initialisation process may randomise all of the elements of the problem, or it may use a
+        constructive heuristic with a randomised input.
+
+        :param index: The index of the memory array at which the solution should be initialised.
+        :return: None
+        """
+        self.mem[index] = self.base
+
+    def getNumberOfHeuristics(self) -> int:
+        """
+        Gets the number of heuristics available in this problem domain
+
+        :return: The number of heuristics available in this problem domain
+        """
+        return len(self.heuristics) 
+
+    def applyHeuristicUnary(self, heuristicID: int, solutionSourceIndex: int, solutionDestinationIndex: int) -> float:
+        """
+        Applies the heuristic specified by heuristicID to the solution at position solutionSourceIndex and places the
+        resulting solution at position solutionDestinationIndex in the solution array. If the heuristic is a
+        CROSSOVER type then the solution at solutionSourceIndex is just copied to solutionDestinationIndex.
+
+        :param heuristicID: The ID of the heuristic to apply (starts at zero)
+        :param solutionSourceIndex: The index of the solution in the memory array to which to apply the heuristic
+        :param solutionDestinationIndex: The index in the memory array at which to store the resulting solution
+        :return: the objective function value of the solution created by applying the heuristic
+        """
+        s = self.heuristics[heuristicID](self.mem[solutionSourceIndex])
+        self.mem[solutionDestinationIndex] = s if s >= 0 else self.mem[solutionSourceIndex]
+        return self.mem[solutionDestinationIndex]
+
+
+    def copySolution(self, solutionSourceIndex: int, solutionDestinationIndex: int) -> None:
+        """
+        Copies a solution from one position in the solution array to another
+
+        :param solutionSourceIndex: The position of the solution to copy
+        :param solutionDestinationIndex: The position in the array to copy the solution to.
+        :return: None
+        """
+        self.mem[solutionDestinationIndex] = self.mem[solutionSourceIndex]
+
+    def toString(self) -> str:
+        """
+        Gets the name of the problem domain. For example, "Bin Packing"
+
+        :return: the name of the ProblemDomain
+        """
+        return "Toy"
+
+    def getFunctionValue(self, solutionIndex: int) -> float:
+        """
+        Gets the objective function value of the solution at index solutionIndex
+
+        :param solutionIndex: The index of the solution from which the objective function is required
+        :return: A double value of the solution's objective function value.
+        """
+        return self.mem[solutionIndex]
+
+
+class HyflexProblemDomain:
     """
     This class implements a generic python wrapper for HyFlex problem domains.
+    
+    Example code for creating a Hyflex environment:
+        bench = HyFlexBenchmark() # use the HYFLEX_DEFAULTS default configuration in dacbench/benchmarks/hyflex_benchmark.py
+        env = bench.get_environment()
     """
-
-    HeuristicType = Enum('HeuristicType', 'CROSSOVER LOCAL_SEARCH MUTATION OTHER RUIN_RECREATE')
 
     def __init__(self, domain: str, seed: int, host: str = "http://127.0.0.1:8080"):
         """
@@ -297,9 +429,6 @@ Gym Environment for HyFlex
 """
 from dacbench import AbstractEnv
 
-H_TYPE = ProblemDomain.HeuristicType
-
-
 class HyFlexEnv(AbstractEnv):
     """
     Environment to control the step size of CMA-ES
@@ -392,7 +521,10 @@ class HyFlexEnv(AbstractEnv):
 
         domain, instance_index = self.instance
         # create problem domain
-        self.problem = ProblemDomain(domain, self.seed)
+        if domain=="Toy":
+            self.problem = ToyProblemDomain(self.seed)
+        else:
+            self.problem = HyflexProblemDomain(domain, self.seed)
         # classify heuristics as unary/binary
         self.unary_heuristics = self.problem.getHeuristicsOfType(H_TYPE.LOCAL_SEARCH)
         self.unary_heuristics += self.problem.getHeuristicsOfType(H_TYPE.MUTATION)
