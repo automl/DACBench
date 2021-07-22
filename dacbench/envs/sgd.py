@@ -3,6 +3,7 @@ import numbers
 import warnings
 import json
 from functools import reduce
+from enum import IntEnum, auto
 
 import torch
 from backpack import backpack, extend
@@ -13,6 +14,31 @@ from dacbench import AbstractEnv
 import random
 
 warnings.filterwarnings("ignore")
+
+
+def reward_range(frange):
+    def wrapper(f):
+        f.frange = frange
+        return f
+    return wrapper
+
+
+class Reward(IntEnum):
+    TrainingLoss = auto()
+    ValidationLoss = auto()
+    LogTrainingLoss = auto()
+    LogValidationLoss = auto()
+    DiffTraining = auto()
+    DiffValidation = auto()
+    LogDiffTraining = auto()
+    LogDiffValidation = auto()
+    FullTraining = auto()
+
+    def __call__(self, f):
+        if hasattr(self, 'func'):
+            raise ValueError('Can not assign the same reward to a different function!')
+        self.func = f
+        return f
 
 
 class SGDEnv(AbstractEnv):
@@ -80,9 +106,9 @@ class SGDEnv(AbstractEnv):
         self.parameter_count = 0  # TODO: Verify that we still need this if we use pytorch.optim
         self.layer_sizes = []  # TODO: Verify that we still need this if we use pytorch.optim
 
-        self.loss_function = torch.nn.NLLLoss(reduction="none")  # TODO: Make this part of the config
+        self.loss_function = config.loss_function(**config.loss_function_kwargs)
         self.loss_function = extend(self.loss_function)
-        self.val_loss_function = torch.nn.NLLLoss(reduction="none")  # TODO: Make this part of the config
+        self.val_loss_function = config.loss_function(**config.val_loss_function_kwargs)
 
         # TODO: Verify that we still need this if we use pytorch.optim (initial lr is just an optimizer_kwargs)
         self.initial_lr = config.lr * torch.ones(
@@ -148,60 +174,64 @@ class SGDEnv(AbstractEnv):
             raise NotImplementedError
 
         if "reward_function" in config.keys():
-            self.get_reward = config["reward_function"]
+            self._get_reward = config["reward_function"]
         else:
-            if config.reward_type == "training":
-                self.get_reward = self.get_training_reward
-            elif config.reward_type == "validation":
-                self.get_reward = self.get_validation_reward
-            elif config.reward_type == "log training":
-                self.get_reward = self.get_log_training_reward
-            elif config.reward_type == "log validation":
-                self.get_reward = self.get_log_validation_reward
-            elif config.reward_type == "log diff training":
-                self.get_reward = self.get_log_diff_training_reward
-            elif config.reward_type == "log diff validation":
-                self.get_reward = self.get_log_diff_validation_reward
-            elif config.reward_type == "diff training":
-                self.get_reward = self.get_diff_training_reward
-            elif config.reward_type == "diff validation":
-                self.get_reward = self.get_diff_validation_reward
-            elif config.reward_type == "full training":
-                self.get_reward = self.get_full_training_reward
-            else:
-                raise NotImplementedError
+            self._get_reward = config.reward_type.func
 
         if "state_method" in config.keys():
             self.get_state = config["state_method"]
         else:
             self.get_state = self.get_default_state
 
+        self.reward_range = config.reward_type.func.frange
+
+    def get_reward(self):
+        return self._get_reward(self)
+
+    @reward_range([-(10**9), 0])
+    @Reward.TrainingLoss
     def get_training_reward(self):
         return -self.current_training_loss.item()
 
+    @reward_range([-(10**9), 0])
+    @Reward.ValidationLoss
     def get_validation_reward(self):
         return -self._get_validation_loss().item()
 
+    @reward_range([-(10**9), (10**9)])
+    @Reward.LogTrainingLoss
     def get_log_training_reward(self):
         return -torch.log(self.current_training_loss).item()
 
+    @reward_range([-(10**9), (10**9)])
+    @Reward.LogValidationLoss
     def get_log_validation_reward(self):
         return -torch.log(self._get_validation_loss()).item()
 
+    @reward_range([-(10**9), (10**9)])
+    @Reward.LogDiffTraining
     def get_log_diff_training_reward(self):
         return -(torch.log(self.current_training_loss) - torch.log(self.prev_training_loss)).item()
 
+    @reward_range([-(10**9), (10**9)])
+    @Reward.LogDiffValidation
     def get_log_diff_validation_reward(self):
         return -(torch.log(self._get_validation_loss()) - torch.log(self.prev_validation_loss)).item()
 
+    @reward_range([-(10**9), (10**9)])
+    @Reward.DiffTraining
     def get_diff_training_reward(self):
         return (self.current_training_loss - self.prev_training_loss).item()
 
+    @reward_range([-(10**9), (10**9)])
+    @Reward.DiffValidation
     def get_diff_validation_reward(self):
         return (self._get_validation_loss() - self.prev_validation_loss).item()
 
+    @reward_range([-(10**9), 0])
+    @Reward.FullTraining
     def get_full_training_reward(self):
-        return self._get_full_training_loss().item()
+        return -self._get_full_training_loss().item()
 
     def seed(self, seed=None, seed_action_space=False):
         """
@@ -396,7 +426,6 @@ class SGDEnv(AbstractEnv):
         self.train_loader_it = iter(self.train_loader)
         self.validation_loader_it = iter(self.validation_loader)
 
-        # TODO: Are these still nescessary if we use torch.optim?
         self.parameter_count = 0
         self.layer_sizes = []
         for p in self.model.parameters():
@@ -438,9 +467,11 @@ class SGDEnv(AbstractEnv):
             (self.parameter_count,), device=self.device, requires_grad=False
         )
         self.train_network()
-        self.get_reward()
 
         self.prev_training_loss = self.current_training_loss
+
+        self.get_reward()
+
         self.prev_validation_loss = self.current_validation_loss
 
         return self.get_state(self)
@@ -500,23 +531,23 @@ class SGDEnv(AbstractEnv):
         state = {}
 
         if 'predictiveChangeVarDiscountedAverage' in self.on_features:
-            state["predictiveChangeVarDiscountedAverage"] = predictiveChangeVarDiscountedAverage
+            state["predictiveChangeVarDiscountedAverage"] = predictiveChangeVarDiscountedAverage.item()
         if 'predictiveChangeVarUncertainty' in self.on_features:
-            state["predictiveChangeVarUncertainty"] = predictiveChangeVarUncertainty
+            state["predictiveChangeVarUncertainty"] = predictiveChangeVarUncertainty.item()
         if 'lossVarDiscountedAverage' in self.on_features:
-            state["lossVarDiscountedAverage"] = lossVarDiscountedAverage
+            state["lossVarDiscountedAverage"] = lossVarDiscountedAverage.item()
         if 'lossVarUncertainty' in self.on_features:
-            state["lossVarUncertainty"] = lossVarUncertainty
+            state["lossVarUncertainty"] = lossVarUncertainty.item()
         if 'currentLR' in self.on_features:
-            state["currentLR"] = self.current_lr
+            state["currentLR"] = self.current_lr.item()
         if 'trainingLoss' in self.on_features:
-            state["trainingLoss"] = self.current_training_loss
+            state["trainingLoss"] = self.current_training_loss.item()
         if 'validationLoss' in self.on_features:
-            state["validationLoss"] = self.current_validation_loss
+            state["validationLoss"] = self.current_validation_loss.item()
         if 'step' in self.on_features:
-            state["step"] = self.step_count
+            state["step"] = self.step_count.item()
         if 'alignment' in self.on_features:
-            state["alignment"] = alignment
+            state["alignment"] = alignment.item()
 
         return state
 
