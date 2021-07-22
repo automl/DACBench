@@ -10,6 +10,7 @@ from backpack.extensions import BatchGrad
 from numpy import float32
 from torchvision import datasets, transforms
 from dacbench import AbstractEnv
+import random
 
 warnings.filterwarnings("ignore")
 
@@ -311,6 +312,8 @@ class SGDEnv(AbstractEnv):
         dataset = self.instance[0]
         instance_seed = self.instance[1]
         construct_model = self._architecture_constructor(self.instance[2])
+        self.n_steps = self.instance[3]
+        dataset_size = self.instance[4]
 
         self.seed(instance_seed)
 
@@ -350,27 +353,6 @@ class SGDEnv(AbstractEnv):
                 "../data", train=True, download=True, transform=transform
             )
             # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
-        elif dataset == "MNISTsmall":
-            transform = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize((0.1307,), (0.3081,))
-            ])
-
-            # hot fix for https://github.com/pytorch/vision/issues/3549
-            # If fix is available in stable version (0.9.1), we should update and be removed this.
-            new_mirror = "https://ossci-datasets.s3.amazonaws.com/mnist"
-            datasets.MNIST.resources = [
-                ("/".join([new_mirror, url.split("/")[-1]]), md5)
-                for url, md5 in datasets.MNIST.resources
-            ]
-
-            train_dataset = datasets.MNIST(
-                "../data", train=True, download=True, transform=transform
-            )
-            train_dataset = torch.utils.data.Subset(
-                train_dataset, range(0, len(train_dataset) // 2)
-            )
-            # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
         elif dataset == "CIFAR":
             transform = transforms.Compose([
                 transforms.ToTensor(),
@@ -383,6 +365,11 @@ class SGDEnv(AbstractEnv):
             # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
         else:
             raise NotImplementedError
+
+        if dataset_size is not None:
+            train_dataset = torch.utils.data.Subset(
+                train_dataset, range(0, dataset_size)
+            )
 
         training_dataset_limit = math.floor(
             len(train_dataset) * self.training_validation_ratio
@@ -715,3 +702,135 @@ class SGDEnv(AbstractEnv):
         alignment = torch.unsqueeze(alignment, dim=0)
         self.prev_direction = self.current_direction
         return alignment
+
+    def generate_instance_file(self, file_name, mode='test', n=100):
+        header = ['ID', 'dataset', 'architecture', 'seed', 'steps']
+
+        # dataset name, architecture, dataset size, sample dimension, number of max pool layers, hidden layers, test architecture convolutional layers
+        architectures = [
+            ('MNIST',
+             'Conv2d(1, {0}, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d({0}, {1}, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d({1}, {2}, 3, 1, 1)-ReLU-Flatten-Linear({3}, 10)-LogSoftmax(1)',
+             60000,
+             28,
+             2,
+             3,
+             [20, 50, 500]
+            ),
+            ('CIFAR',
+             'Conv2d(3, {0}, 3, 1, 1)-MaxPool2d(2, 2)-ReLU-Conv2d({0}, {1}, 3, 1, 1)-ReLU-MaxPool2d(2, 2)-Conv2d({1}, {2}, 3, 1, 1)-ReLU-MaxPool2d(2, 2)-Conv2d({2}, {3}, 3, 1, 1)-ReLU-Flatten-Linear({4}, 10)-LogSoftmax(1)',
+             60000,
+             32,
+             3,
+             4,
+             [32, 32, 64, 64]
+            )
+        ]
+        if mode is 'test':
+
+            seed_list = [random.randrange(start=0, stop=1e9) for _ in range(n)]
+
+            for i in range(len(architectures)):
+
+                fname = file_name + "_" + architectures[i][0].lower() + ".csv"
+
+                steps = int(1e8)
+
+                conv = architectures[i][6]
+                hidden_layers = architectures[i][5]
+
+                sample_size = architectures[i][3]
+                pool_layer_count = architectures[i][4]
+                linear_layer_size = conv[-1] * pow(sample_size / pow(2, pool_layer_count), 2)
+                linear_layer_size = int(round(linear_layer_size))
+
+                dataset = architectures[i][0]
+
+                if hidden_layers == 3:
+                    architecture = architectures[i][1].format(conv[0], conv[1], conv[2], linear_layer_size)
+                else:
+                    architecture = architectures[i][1].format(conv[0], conv[1], conv[2], conv[3], linear_layer_size)
+
+                # args = conv
+                # args.append(linear_layer_size)
+                # # architecture = architectures[i][1].format(**conv)
+                # args = {0: conv[0], 1: conv[1], 2: conv[2], 3: linear_layer_size}
+                # architecture = architectures[i][1].format(**args)
+
+                with open(fname, 'w', encoding='UTF8') as f:
+                    for h in header:
+                        f.write(h + ";")
+
+                    f.write("\n")
+
+                    for id in range(0, n):
+                        f.write(str(id) + ";")
+
+                        f.write(dataset + ";")
+                        f.write(architecture + ";")
+
+                        seed = seed_list[id]
+                        f.write(str(seed) + ";")
+
+                        f.write(str(steps) + ";")
+
+                        f.write("\n")
+                    f.close()
+
+        else:
+            dataset_index = 0
+
+            dataset_size_start = 0.1
+            dataset_size_stop = 0.5
+
+            steps_start = 300
+            steps_stop = 1000
+
+            conv1_start = 2
+            conv1_stop = 10
+            conv2_start = 5
+            conv2_stop = 25
+            conv3_start = 50
+            conv3_stop = 250
+
+            dataset_list = [dataset_index for _ in range(n)]
+
+            dataset_size_list = [random.uniform(dataset_size_start, dataset_size_stop) for _ in range(n)]
+
+            seed_list = [random.randrange(start=0, stop=1e9) for _ in range(n)]
+
+            steps_list = [random.randrange(start=steps_start, stop=steps_stop) for _ in range(n)]
+
+            conv1_list = [random.randrange(start=conv1_start, stop=conv1_stop) for _ in range(n)]
+            conv2_list = [random.randrange(start=conv2_start, stop=conv2_stop) for _ in range(n)]
+            conv3_list = [random.randrange(start=conv3_start, stop=conv3_stop) for _ in range(n)]
+
+            fname = file_name + ".csv"
+            with open(fname, 'w', encoding='UTF8') as f:
+                for h in header:
+                    f.write(h + ";")
+
+                f.write("\n")
+
+                for id in range(0, n):
+                    f.write(str(id) + ";")
+
+                    sample_size = architectures[dataset_list[id]][3]
+                    pool_layer_count = architectures[dataset_list[id]][4]
+                    linear_layer_size = conv3_list[id] * pow(sample_size / pow(2, pool_layer_count), 2)
+                    linear_layer_size = int(round(linear_layer_size))
+
+                    dataset_size = int(dataset_size_list[id] * architectures[dataset_list[id]][2])
+                    dataset = architectures[dataset_list[id]][0] + "_" + str(dataset_size)
+                    architecture = architectures[dataset_list[id]][1].format(conv1_list[id], conv2_list[id], conv3_list[id], linear_layer_size)
+
+                    f.write(dataset + ";")
+                    f.write(architecture + ";")
+
+                    seed = seed_list[id]
+                    f.write(str(seed) + ";")
+
+                    steps = steps_list[id]
+                    f.write(str(steps) + ";")
+
+                    f.write("\n")
+                f.close()

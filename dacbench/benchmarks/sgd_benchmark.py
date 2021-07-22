@@ -63,7 +63,7 @@ SGD_DEFAULTS = objdict(
         "beta2": 0.999,
         "seed": 0,
         "cd_paper_reconstruction": False,
-        "instance_set_path": "../instance_sets/sgd/sgd_train.csv",
+        "instance_set_path": "../instance_sets/sgd/sgd_train_100instances.csv",
         "benchmark_info": INFO,
         "features": [
             "predictiveChangeVarDiscountedAverage",
@@ -137,10 +137,19 @@ class SGDBenchmark(AbstractBenchmark):
         with open(path, "r") as fh:
             reader = csv.DictReader(fh, delimiter=";")
             for row in reader:
+                if "_" in row["dataset"]:
+                    dataset_info = row["dataset"].split("_")
+                    dataset_name = dataset_info[0]
+                    dataset_size = int(dataset_info[1])
+                else:
+                    dataset_name = row["dataset"]
+                    dataset_size = None
                 instance = [
-                    row["dataset"],
+                    dataset_name,
                     int(row["seed"]),
                     row["architecture"],
+                    int(row["steps"]),
+                    dataset_size
                 ]
                 self.config["instance_set"][int(row["ID"])] = instance
 

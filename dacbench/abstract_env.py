@@ -30,7 +30,7 @@ class AbstractEnv(gym.Env):
         self.np_random = None
         self.seed(config.get("seed", None), config.get("seed_action_space", False))
 
-        self.n_steps = config["cutoff"]
+        self.n_steps = None
         self.c_step = 0
 
         self.reward_range = config["reward_range"]
