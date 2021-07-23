@@ -6,17 +6,16 @@ import os
 import csv
 
 FILE_PATH = os.path.dirname(__file__)
-
+ACTION_VALUES = (5, 10)
 
 INFO = {
     "identifier": "Geometric",
-    "name": "High Dimensional Geometric Curve Approximation",
-    "reward": "Multiplied Differences between Function and Action in each Dimension",
+    "name": "High Dimensional Geometric Curve Approximation. Curves are geometrical orthogonal.",
+    "reward": "Overall Euclidean Distance between Point on Curve and Action Vector for all Dimensions",
     "state_description": [
         "Remaining Budget",
         "Derivative",
-        "Trajectories",
-        "Coordiantes",
+        "Trajectory",
         "Action",
     ],
 }
@@ -31,24 +30,23 @@ GEOMETRIC_DEFAULTS = objdict(
         "reward_range": (0, 1),
         "cutoff": 10,
         "action_values": [],
+        "action_value_default": 4,
+        "action_values_variable": False,  # if True action value mapping will be used
+        "action_value_mapping": {  # defines number of action values for differnet functions
+            "sigmoid": 3,
+            "linear": 3,
+            "polynomial2D": 5,
+            "polynomial3D": 7,
+            "polynomial7D": 11,
+            "exponential": 4,
+            "logarithmic": 4,
+        },
+        "action_interval_mapping": {},  # maps actions to equally sized intervalls in [-1, 1]
         "seed": 0,
-        "variable_action_values": True,
-        "default_action_value": 4,
+        "derivative_interval": 2,  # NOTIMPLEMENTED defines how many values are used for derivative calculation
+        "max_function_value": 10000,  # clip function value if it is higher than this number
         "instance_set_path": "../instance_sets/geometric/geometric_train.csv",
         "benchmark_info": INFO,
-    }
-)
-
-# apply if "variable_action_value" is set to True
-ACTION_VALUE_MAPPING = objdict(
-    {
-        "sigmoid": 3,
-        "linear": 3,
-        "polynomial2D": 5,
-        "polynomial3D": 7,
-        "polynomial7D": 11,
-        "exponential": 4,
-        "logarithmic": 4,
     }
 )
 
@@ -89,6 +87,7 @@ class GeometricBenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         env = GeometricEnv(self.config)
+
         for func in self.wrap_funcs:
             env = func(env)
 
@@ -109,13 +108,13 @@ class GeometricBenchmark(AbstractBenchmark):
 
             for row in reader:
                 function_list = []
+                id = int(row["ID"])
 
-                if row["ID"] not in known_ids:
-                    self.config.instance_set[row["ID"]] = []
-                    known_ids.append(row["ID"])
+                if id not in known_ids:
+                    self.config.instance_set[id] = []
+                    known_ids.append(id)
 
                 for index, element in enumerate(row.values()):
-
                     if element == "0" and index != 0:
                         break
 
@@ -124,7 +123,7 @@ class GeometricBenchmark(AbstractBenchmark):
 
                     function_list.append(element)
 
-                self.config.instance_set[row["ID"]].append(function_list)
+                self.config.instance_set[id].append(function_list)
 
     def get_benchmark(self, dimension=None, seed=0):
         """
@@ -144,48 +143,59 @@ class GeometricBenchmark(AbstractBenchmark):
         """
         self.config = objdict(GEOMETRIC_DEFAULTS.copy())
 
-        # Call generator from here, if data not available
-
-        self.config.instance_set_path = "../instance_sets/geometric/geometric_train.csv"
         self.config.benchmark_info["state_description"] = [
             "Remaining Budget",
             "Derivative",
-            "Trajectories",
-            "Coordinates",
+            "Trajectory",
             "Action",
         ]
 
         self.config.seed = seed
         self.read_instance_set()
 
-        self._set_action_values()
+        self.set_action_values()
 
         env = GeometricEnv(self.config)
         return env
 
-    def _set_action_values(self):
+    def set_action_values(self):
         """
         Adapt action values and update dependencies
         Number of actions can differ between functions if configured in DefaultDict
         """
         # create mapping for discretization of each function type
         map_action_number = {}
-        if self.config.variable_action_values:
-            map_action_number = ACTION_VALUE_MAPPING
+        if self.config.action_values_variable:
+            map_action_number = self.config.action_value_mapping
 
-        # set action values based on function layers
+        # set action values based on mapping, if not existent set default
         values = []
-        for function_info in self.config.instance_set["0"]:
-            values.append(
-                map_action_number.get(
-                    function_info[1], self.config.default_action_value
-                )
+
+        for function_info in self.config.instance_set[0]:
+            function_name = function_info[1]
+
+            value = map_action_number.get(
+                function_name, self.config.action_value_default
             )
+            values.append(value)
+
+            # map intervall [-1, 1] to action values
+            if function_name not in self.config.action_interval_mapping:
+                action_interval = []
+                step_size = 2 / value
+
+                for step in np.arange(-1, 1, step_size):
+                    lower_bound = step
+                    upper_bound = step + step_size
+                    middle = (lower_bound + upper_bound) / 2
+
+                    action_interval.append(middle)
+
+                self.config.action_interval_mapping[function_name] = action_interval
 
         self.config.action_values = values
         self.config.action_space_args = [int(np.prod(values))]
 
-        # TODO check if observation space is correct in dimension and value
         self.config.observation_space_args = [
             np.array([-1 for _ in range(1 + np.sum(values))]),
             np.array([self.config["cutoff"] for _ in range(1 + np.sum(values))]),
@@ -193,5 +203,17 @@ class GeometricBenchmark(AbstractBenchmark):
 
 
 if __name__ == "__main__":
-    geo_env = GeometricBenchmark()
-    geo_env.get_benchmark()
+    geo_bench = GeometricBenchmark()
+    geo_bench.read_instance_set()
+    geo_bench.set_action_values()
+
+    config = GEOMETRIC_DEFAULTS
+    config["instance_set"] = geo_bench.config.instance_set
+    config["action_values"] = geo_bench.config.action_values
+    config["action_space_args"] = geo_bench.config.action_space_args
+    config["observation_space_args"] = geo_bench.config.observation_space_args
+
+    env = GeometricEnv(config)
+    env.reset()
+    env.step(3)
+    print("HAllo")
