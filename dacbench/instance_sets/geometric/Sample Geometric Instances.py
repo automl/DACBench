@@ -80,5 +80,5 @@ def _create_csv_string(index, func_name: str) -> str:
 
 
 if __name__ == "__main__":
-    save_geometric_instances("geometric_train.csv")
-    save_geometric_instances("geometric_test.csv")
+    save_geometric_instances("geometric_unit_test.csv")
+    # save_geometric_instances("geometric_test.csv")
