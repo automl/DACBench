@@ -29,6 +29,8 @@ class GeometricEnv(AbstractEnv):
         super(GeometricEnv, self).__init__(config)
 
         self.action_vals = config["action_values"]
+        self.action_interval_mapping = config["action_interval_mapping"]
+        self.max_function_value = config["max_function_value"]
         self.n_actions = len(self.action_vals)
         self.action_mapper = {}
 
@@ -39,7 +41,7 @@ class GeometricEnv(AbstractEnv):
         self.derivative = []
         self.derivative_interval = []
 
-        # Map actions to differnet actions to differnet action configurations
+        # map actions from int to vector representation
         for idx, prod_idx in zip(
             range(np.prod(config["action_values"])),
             itertools.product(*[np.arange(val) for val in config["action_values"]]),
@@ -48,6 +50,7 @@ class GeometricEnv(AbstractEnv):
 
         self._prev_state = None
         self.action = None
+        self._calculate_norm_value()
 
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
@@ -88,7 +91,31 @@ class GeometricEnv(AbstractEnv):
         """ Constant function """
         return c
 
-    def _calculate_function_value(self, function_infos: List) -> float:
+    def _calculate_norm_value(self):
+        """
+        Norm Functions to Intervall between -1 and 1
+        """
+        for key, instance in self.instance_set.items():
+
+            for dim, function_info in enumerate(instance):
+                value_list = []
+
+                for step in range(self.n_steps):
+                    value_list.append(
+                        self._calculate_function_value(step, function_info, True)
+                    )
+
+                # set first item of every function_list in instance as norm factor
+                if abs(min(value_list)) > max(value_list):
+                    norm_factor = abs(min(value_list))
+                else:
+                    norm_factor = max(value_list)
+
+                self.instance_set[key][dim][0] = norm_factor
+
+    def _calculate_function_value(
+        self, time_step: int, function_infos: List, calculate_norm=False
+    ) -> float:
         """
         Call differnet functions with their speicifc parameters.
 
@@ -96,34 +123,46 @@ class GeometricEnv(AbstractEnv):
         ----------
         function_infos : List
             Consists of function name and the coefficients
+        time_step: int
+            time step for each function
+        calculate_norm : bool, optional
+            True if norm gets calculated, by default False
 
         Returns
         -------
         float
             coordinate in dimension of function
         """
-        function_name = function_infos[0]
-        coefficients = function_infos[1:]
+        norm_value = function_infos[0] if not calculate_norm else 1
+        function_name = function_infos[1]
+        coefficients = function_infos[2:]
+
+        function_value = 0
 
         if "sigmoid" == function_name:
-            return self._sigmoid(self.c_step, coefficients[0], coefficients[1])
+            function_value = self._sigmoid(time_step, coefficients[0], coefficients[1])
 
         elif "linear" == function_name:
-            return self._linear(self.c_step, coefficients[0], coefficients[1])
+            function_value = self._linear(time_step, coefficients[0], coefficients[1])
 
         elif "constant" == function_name:
-            return self._constant(self.c_step, coefficients[0])
+            function_value = self._constant(time_step, coefficients[0])
 
         elif "exponential" == function_name:
-            return self._exponential(self.c_step, coefficients[0])
+            function_value = self._exponential(time_step, coefficients[0])
 
         elif "logarithmic" == function_name:
-            return self._logarithmic(self.c_step, coefficients[0])
+            function_value = self._logarithmic(time_step, coefficients[0])
 
         elif "polynomial" in function_name:
-            return self._polynom(self.c_step, coefficients)
+            function_value = self._polynom(time_step, coefficients)
 
-    def _calculate_derivatives(self) -> np.array:
+        else:
+            raise NameError
+
+        return min(function_value, self.max_function_value) / norm_value
+
+    def _calculate_derivative(self) -> np.array:
         """
         Calculate derivatives of each dimension, based on trajectories.
 
@@ -134,8 +173,9 @@ class GeometricEnv(AbstractEnv):
         """
         # TODO: interval of derivatives, smooth derivative relative to action size and epochs?
         if self.c_step > 0:
-            der = np.substract(
-                self.trajectory[self.c_step], self.trajectory[self.c_step - 1]
+            der = np.subtract(
+                np.array(self.trajectory[self.c_step], dtype=np.float),
+                np.array(self.trajectory[self.c_step - 1], dtype=np.float),
             )
         else:
             der = np.zeros(self.n_actions)
@@ -159,15 +199,19 @@ class GeometricEnv(AbstractEnv):
         self.done = super(GeometricEnv, self).step_()
 
         # map integer action to vector
-        action = self.action_mapper[action]
+        action_vec = self.action_mapper[action]
         assert self.n_actions == len(
-            action
+            action_vec
         ), f"action should be of length {self.n_actions}."
-        self.action = action
+        self.action = action_vec
 
         # add trajectory and calculate derivatives
-        self.trajectory.append(action)
-        self._calculate_derivatives()
+        # TODO: return action or action vector?
+        self.trajectory.append(np.array(action_vec))
+        self.trajectory_set[self.inst_id] = self.trajectory
+
+        self.derivative = self._calculate_derivative()
+        self.derivative_set[self.inst_id] = self.derivative
 
         next_state = self.get_state(self)
         self._prev_state = next_state
@@ -184,8 +228,11 @@ class GeometricEnv(AbstractEnv):
         """
         super(GeometricEnv, self).reset_()
 
-        self.trajectory = self.trajectory_set.get(self.inst_id)
-        self.derivative = self.derivative_set.get(self.inst_id)
+        self.trajectory = self.trajectory_set.get(
+            self.inst_id, [np.zeros(self.n_actions)]
+        )
+        self.derivative = self.derivative_set.get(self.inst_id, 0)
+
         self._prev_state = None
 
         return self.get_state(self)
@@ -205,14 +252,28 @@ class GeometricEnv(AbstractEnv):
             Euclidean distance
         """
         # get coordinates for all dimensions of the curve
-        coordinates = np.empty(self.n_actions)
+        coordinates = np.zeros(self.n_actions)
+
         for dim, function_info in enumerate(self.instance):
-            coordinates[dim] = self._calculate_function_value(function_info[1:])
+            coordinates[dim] = self._calculate_function_value(
+                self.c_step, function_info
+            )
+
+        # map action values to their interval mean
+        mapping_list = list(self.action_interval_mapping.values())
+        action_intervall = [
+            mapping_list[count][index] for count, index in enumerate(self.action)
+        ]
 
         # calculate euclidean norm
-        # TODO: normalize function values to intervall (0, 1) -> timestepwise? dimensionwise?
-        dist = np.linalg.norm(self.action - coordinates)
-        reward = 1 - dist
+        dist = np.linalg.norm(action_intervall - coordinates)
+
+        # norm reward to (0, 1)
+        highest_coords = np.ones(max(self.action_vals))
+        lowest_actions = np.full((max(self.action_vals)), np.min(mapping_list))
+        max_dist = np.linalg.norm(highest_coords - lowest_actions)
+
+        reward = 1 - (dist / max_dist)
 
         return reward
 
@@ -239,7 +300,6 @@ class GeometricEnv(AbstractEnv):
 
         # append multi-dim action vector
         if self.c_step == 0:
-            # TODO: whichnumber makes sence?
             next_state += [0 for _ in range(self.n_actions)]
         else:
             next_state += self.action
