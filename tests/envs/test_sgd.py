@@ -1,6 +1,7 @@
-import pickle
 import unittest
 import os
+import json
+import hashlib
 
 import numpy as np
 from dacbench import AbstractEnv
@@ -13,8 +14,11 @@ from dacbench.wrappers import ObservationWrapper
 class TestSGDEnv(unittest.TestCase):
     def setUp(self):
         bench = SGDBenchmark()
-        self.env = bench.get_environment()
-        self.data_path = os.path.join(os.path.dirname(__file__), 'data')
+        self.env = bench.get_benchmark(seed=123)
+
+    @staticmethod
+    def data_path(path):
+        return os.path.join(os.path.dirname(__file__), 'data', path)
 
     def test_setup(self):
         self.assertTrue(issubclass(type(self.env), AbstractEnv))
@@ -72,29 +76,32 @@ class TestSGDEnv(unittest.TestCase):
         self.assertTrue(state["trainingLoss"] > 0)
         self.assertTrue(state["validationLoss"] > 0)
 
-    def test_functional(self):
-        for test_case in [os.path.join(self.data_path, 'sgd_static_test.pickle'),
-                          os.path.join(self.data_path, 'sgd_dynamic_test.pickle')]:
-            with open(os.path.join(self.data_path, 'sgd_benchmark_config.pickle'), 'rb') as f:
-                benchmark = SGDBenchmark()
-                benchmark.config = pickle.load(f)
-                env = SGDEnv(benchmark.config)
-                env = ObservationWrapper(env)
+    def test_hash(self):
+        string_config = {k: str(v) for (k, v) in SGD_DEFAULTS.items()}
+        h = hashlib.sha1(json.dumps(string_config).encode()).hexdigest()
+        with open(self.data_path('sgd_config.hash'), 'r') as f:
+            self.assertEqual(h, f.read())
 
-            with open(test_case, 'rb') as f:
-                prev_mem = pickle.load(f)
+    @staticmethod
+    def replay(env, prev_mem):
+        env = ObservationWrapper(env)
+        env.reset()
+        mem = []
+        for x in prev_mem:
+            action = x[-1]
+            state, reward, done, _ = env.step(action)
+            mem.append(np.concatenate([state, [reward, int(done), action]]))
+        return np.array(mem)
 
-            env.reset()
-            done = False
-            mem = []
-            step = 0
-            while not done and step < 50:
-                action = prev_mem[step][-1]
-                state, reward, done, _ = env.step(action)
-                mem.append(np.concatenate([state, [reward, int(done), action]]))
-                step += 1
+    def test_functional_static(self):
+        prev_mem = np.load(self.data_path('sgd_static_test.npy'))
+        mem = self.replay(self.env, prev_mem)
+        np.testing.assert_allclose(prev_mem, mem)
 
-            np.testing.assert_allclose(prev_mem, np.array(mem))
+    def test_functional_dynamic(self):
+        prev_mem = np.load(self.data_path('sgd_dynamic_test.npy'))
+        mem = self.replay(self.env, prev_mem)
+        np.testing.assert_allclose(prev_mem, mem)
 
     def test_close(self):
         self.assertTrue(self.env.close())
