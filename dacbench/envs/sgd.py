@@ -94,7 +94,7 @@ class SGDEnv(AbstractEnv):
         self.model = None
         self.val_model = None
         # TODO:
-        """ 
+        """
         TODO: Samuel Mueller (PhD student in our group) also uses backpack and has ran into a similar memory leak.
         He solved it calling this custom made RECURSIVE memory_cleanup function:
         # from backpack import memory_cleanup
@@ -488,8 +488,13 @@ class SGDEnv(AbstractEnv):
             1, device=self.device, requires_grad=False
         )
 
-        self.prev_training_loss = self.current_training_loss
-        self.prev_validation_loss = self.current_validation_loss
+        self._current_validation_loss = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self._current_validation_loss.calculated = False
+        self.prev_validation_loss = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
 
         self.train_network()
 

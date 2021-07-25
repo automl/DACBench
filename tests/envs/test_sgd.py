@@ -52,42 +52,42 @@ class TestSGDEnv(unittest.TestCase):
             self.assertFalse(done)
             self.assertTrue(len(meta.keys()) == 0)
 
-    # def test_stateless(self):
-    #     env = ObservationWrapper(self.env)
-    #     rng = np.random.default_rng(123)
-    #     mems = []
-    #     instance_idxs = []
-    #     for _ in range(3):
-    #         env.reset()
-    #         instance_idxs.append(env.instance_index)
+    def test_stateless(self):
+        env = ObservationWrapper(self.env)
+        rng = np.random.default_rng(123)
+        mems = []
+        instance_idxs = []
+        for _ in range(3):
+            env.reset()
+            instance_idxs.append(env.instance_index)
 
-    #         done = False
-    #         mem = []
-    #         step = 0
-    #         while not done and step < 50:
-    #             action = np.exp(rng.integers(low=-10, high=1))
-    #             state, reward, done, _ = env.step(action)
-    #             mem.append(np.concatenate([state, [reward, int(done), action]]))
-    #             step += 1
-    #         mems.append(np.array(mem))
+            done = False
+            mem = []
+            step = 0
+            while not done and step < 5:
+                action = np.exp(rng.integers(low=-10, high=1))
+                state, reward, done, _ = env.step(action)
+                mem.append(np.concatenate([state, [reward, int(done), action]]))
+                step += 1
+            mems.append(np.array(mem))
 
-    #     for i, idx in enumerate(reversed(instance_idxs)):
-    #         env.instance_index = idx - 1
-    #         env.reset()
-    #         self.assertTrue(env.instance_index == idx)
+        rng = np.random.default_rng(123)
+        for i, idx in enumerate(reversed(instance_idxs)):
+            env.instance_index = idx - 1
+            env.reset()
+            self.assertTrue(env.instance_index == idx)
 
-    #         done = False
-    #         mem = []
-    #         step = 0
-    #         while not done and step < 50:
-    #             action = mems[-(i + 1)][step][-1]
-    #             state, reward, done, _ = env.step(action)
-    #             mem.append(np.concatenate([state, [reward, int(done), action]]))
-    #             step += 1
-    #         np.testing.assert_allclose(mems[-(i + 1)], np.array(mem))
+            done = False
+            mem = []
+            step = 0
+            while not done and step < 5:
+                action = mems[-(i + 1)][step][-1]
+                state, reward, done, _ = env.step(action)
+                mem.append(np.concatenate([state, [reward, int(done), action]]))
+                step += 1
+            np.testing.assert_allclose(mems[-(i + 1)], np.array(mem))
 
     def test_reproducibility(self):
-        import copy
         mems = []
         instances = []
         env = ObservationWrapper(self.env)
@@ -95,7 +95,6 @@ class TestSGDEnv(unittest.TestCase):
             rng = np.random.default_rng(123)
             env.seed(123)
             env.instance_index = 0
-            # env = copy.deepcopy(self.env)
             instances.append(env.get_instance_set())
 
             env.reset()
@@ -103,7 +102,7 @@ class TestSGDEnv(unittest.TestCase):
             done = False
             mem = []
             step = 0
-            while not done and step < 50:
+            while not done and step < 5:
                 action = np.exp(rng.integers(low=-10, high=1))
                 state, reward, done, _ = env.step(action)
                 mem.append(np.concatenate([state, [reward, int(done), action]]))
