@@ -81,7 +81,10 @@ class GeometricEnv(AbstractEnv):
 
     def _logarithmic(self, t: float, a: int):
         """ Logarithmic function """
-        return a * np.log(t)
+        if t != 0:
+            return a * np.log(t)
+        else:
+            return self.max_function_value
 
     def _exponential(self, t: float, a: int):
         """ Exponential function """
@@ -146,7 +149,7 @@ class GeometricEnv(AbstractEnv):
             function_value = self._linear(time_step, coefficients[0], coefficients[1])
 
         elif "constant" == function_name:
-            function_value = self._constant(time_step, coefficients[0])
+            function_value = self._constant(coefficients[0])
 
         elif "exponential" == function_name:
             function_value = self._exponential(time_step, coefficients[0])
@@ -156,9 +159,6 @@ class GeometricEnv(AbstractEnv):
 
         elif "polynomial" in function_name:
             function_value = self._polynom(time_step, coefficients)
-
-        else:
-            raise NameError
 
         return min(function_value, self.max_function_value) / norm_value
 
@@ -315,4 +315,4 @@ class GeometricEnv(AbstractEnv):
         bool
             Closing confirmation
         """
-        True
+        return True
