@@ -40,6 +40,7 @@ GEOMETRIC_DEFAULTS = objdict(
             "polynomial7D": 11,
             "exponential": 4,
             "logarithmic": 4,
+            "constant": 1,
         },
         "action_interval_mapping": {},  # maps actions to equally sized intervalls in [-1, 1]
         "seed": 0,
@@ -73,6 +74,9 @@ class GeometricBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = GEOMETRIC_DEFAULTS[key]
 
+        if self.config["observation_space_type"] == None:
+            self.config["observation_space_type"] = np.float32
+
     def get_environment(self):
         """
         Return Sigmoid env with current configuration
@@ -85,6 +89,7 @@ class GeometricBenchmark(AbstractBenchmark):
         """
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
+            self.set_action_values()
 
         env = GeometricEnv(self.config)
 
@@ -202,6 +207,7 @@ class GeometricBenchmark(AbstractBenchmark):
         ]
 
 
+"""
 if __name__ == "__main__":
     geo_bench = GeometricBenchmark()
     geo_bench.read_instance_set()
@@ -217,3 +223,4 @@ if __name__ == "__main__":
     env.reset()
     env.step(3)
     print("HAllo")
+"""
