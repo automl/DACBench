@@ -172,7 +172,7 @@ class SGDEnv(AbstractEnv):
             self.get_optimizer_direction = self.get_momentum_direction
         else:
             raise NotImplementedError
-
+        
         if "reward_function" in config.keys():
             self._get_reward = config["reward_function"]
         else:
@@ -466,6 +466,26 @@ class SGDEnv(AbstractEnv):
         self.current_direction = torch.zeros(
             (self.parameter_count,), device=self.device, requires_grad=False
         )
+
+        self.predictiveChangeVarDiscountedAverage = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.predictiveChangeVarUncertainty = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.lossVarDiscountedAverage = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.lossVarUncertainty = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.firstOrderMomentum = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.secondOrderMomentum = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+
         self.train_network()
 
         self.prev_training_loss = self.current_training_loss
