@@ -16,7 +16,6 @@ INFO = {
         "Remaining Budget",
         "Derivative",
         "Trajectory",
-        "Action",
     ],
 }
 
@@ -54,12 +53,12 @@ GEOMETRIC_DEFAULTS = objdict(
 
 class GeometricBenchmark(AbstractBenchmark):
     """
-    Benchmark with default configuration & relevant functions for Sigmoid
+    Benchmark with default configuration & relevant functions for Geometric
     """
 
     def __init__(self, config_path=None):
         """
-        Initialize Sigmoid Benchmark
+        Initialize Geometric Benchmark
 
         Parameters
         -------
@@ -79,17 +78,18 @@ class GeometricBenchmark(AbstractBenchmark):
 
     def get_environment(self):
         """
-        Return Sigmoid env with current configuration
+        Return Geometric env with current configuration
 
         Returns
         -------
-        SigmoidEnv
-            Sigmoid environment
+        GeometricEnv
+            Geometric environment
 
         """
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
             self.set_action_values()
+            self.set_action_description()
 
         env = GeometricEnv(self.config)
 
@@ -159,6 +159,7 @@ class GeometricBenchmark(AbstractBenchmark):
         self.read_instance_set()
 
         self.set_action_values()
+        self.set_action_description()
 
         env = GeometricEnv(self.config)
         return env
@@ -205,6 +206,12 @@ class GeometricBenchmark(AbstractBenchmark):
             np.array([-1 for _ in range(1 + np.sum(values))]),
             np.array([self.config["cutoff"] for _ in range(1 + np.sum(values))]),
         ]
+
+    def set_action_description(self):
+        for index, _ in enumerate(self.config.action_values):
+            self.config.benchmark_info["state_description"].append(
+                "Action" + str(index)
+            )
 
 
 """
