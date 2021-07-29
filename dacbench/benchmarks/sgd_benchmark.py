@@ -72,6 +72,7 @@ SGD_DEFAULTS = objdict(
         "beta2": 0.999,
         "seed": 0,
         "cd_paper_reconstruction": False,
+        "cd_bias_correction": True,
         "instance_set_path": "../instance_sets/sgd/sgd_train_100instances.csv",
         "benchmark_info": INFO,
         "features": [
