@@ -63,6 +63,7 @@ class SGDEnv(AbstractEnv):
         self.current_batch_size = config.training_batch_size
         self.on_features = config.features
         self.cd_paper_reconstruction = config.cd_paper_reconstruction
+        self.cd_bias_correction = config.cd_bias_correction
 
         self.use_cuda = not self.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
@@ -537,7 +538,6 @@ class SGDEnv(AbstractEnv):
             Environment state
 
         """
-
         self.gradients = self._get_gradients() # TODO: Should not need these anymore if we use torch.optim
         self.firstOrderMomentum, self.secondOrderMomentum, self.sgdMomentum = self._get_momentum(self.gradients) # TODO: Should not need these anymore if we use torch.optim
 
@@ -702,9 +702,9 @@ class SGDEnv(AbstractEnv):
         return self.sgd_momentum_v
 
     def _get_loss_features(self):
+        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
         with torch.no_grad():
             loss_var = torch.log(torch.var(self.loss_batch))
-
             self.lossVarDiscountedAverage = (
                 self.discount_factor * self.lossVarDiscountedAverage
                 + (1 - self.discount_factor) * loss_var
@@ -712,10 +712,10 @@ class SGDEnv(AbstractEnv):
             self.lossVarUncertainty = (
                 self.discount_factor * self.lossVarUncertainty
                 + (1 - self.discount_factor)
-                * (loss_var - self.lossVarDiscountedAverage) ** 2
+                * (loss_var - self.lossVarDiscountedAverage/bias_correction) ** 2
             )
 
-        return self.lossVarDiscountedAverage, self.lossVarUncertainty
+        return self.lossVarDiscountedAverage/bias_correction, self.lossVarUncertainty/bias_correction
 
     def _get_predictive_change_features(self, lr):
         # TODO: This must be done differently/more generically when using pytorch.optim.
@@ -727,6 +727,7 @@ class SGDEnv(AbstractEnv):
         # In particular, when using a static lr, the trajectory should be exactly the same with/without 1+2+3
         # Note: This is the way suggested here: https://discuss.pytorch.org/t/revert-optimizer-step/70692/6
         # Note: that you also need (2) for the gradient direction every step so best implement this in a separate function
+        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
         batch_gradients = []
         for i, (name, param) in enumerate(self.model.named_parameters()):
             grad_batch = param.grad_batch.reshape(
@@ -749,12 +750,12 @@ class SGDEnv(AbstractEnv):
         self.predictiveChangeVarUncertainty = (
             self.discount_factor * self.predictiveChangeVarUncertainty
             + (1 - self.discount_factor)
-            * (predictive_change - self.predictiveChangeVarDiscountedAverage) ** 2
+            * (predictive_change - self.predictiveChangeVarDiscountedAverage/bias_correction) ** 2
         )
 
         return (
-            self.predictiveChangeVarDiscountedAverage,
-            self.predictiveChangeVarUncertainty,
+            self.predictiveChangeVarDiscountedAverage/bias_correction,
+            self.predictiveChangeVarUncertainty/bias_correction,
         )
 
     def _get_alignment(self):
