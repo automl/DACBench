@@ -147,3 +147,12 @@ class TestGeometricBenchmark(unittest.TestCase):
         self.assertTrue(bench.config.action_values[4] == 11)
         self.assertTrue(bench.config.action_space_args[0] == 55440)
         self.assertTrue(len(bench.config.observation_space_args[0]) == 39)
+
+    def test_set_action_description(self):
+        bench = self.load_bench(DEFAULTS_DYNAMIC)
+        bench.read_instance_set()
+        bench.set_action_values()
+        self.assertTrue(
+            "Action"
+            in bench.config.action_values_variable.benchmark_info["state_description"]
+        )
