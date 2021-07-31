@@ -88,8 +88,9 @@ class GeometricBenchmark(AbstractBenchmark):
         """
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
-            self.set_action_values()
-            self.set_action_description()
+
+        self.set_action_values()
+        self.set_action_description()
 
         env = GeometricEnv(self.config)
 

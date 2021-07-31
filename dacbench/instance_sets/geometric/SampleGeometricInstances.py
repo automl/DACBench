@@ -1,3 +1,4 @@
+from typing import Dict
 import numpy as np
 import os
 
@@ -30,7 +31,7 @@ FUNCTION_PARAMETER_NUMBERS = {
 SAMPLE_SIZE = 100
 
 
-def save_geometric_instances(filename: str):
+def save_geometric_instances(filename: str, config: Dict = FUNCTION_CONFIG):
     csv_path = os.path.join(FILE_PATH, filename)
 
     with open(csv_path, "a") as fh:
@@ -40,7 +41,7 @@ def save_geometric_instances(filename: str):
         fh.write(id_string)
 
         for index in range(SAMPLE_SIZE):
-            for func_name, count in FUNCTION_CONFIG.items():
+            for func_name, count in config.items():
                 for _ in range(count):
                     instance_string = _create_csv_string(index, func_name)
                     fh.write(instance_string)
@@ -80,5 +81,5 @@ def _create_csv_string(index, func_name: str) -> str:
 
 
 if __name__ == "__main__":
-    save_geometric_instances("geometric_unit_test.csv")
-    # save_geometric_instances("geometric_test.csv")
+    save_geometric_instances("geometric_unit_test.csv", FUNCTION_CONFIG)
+    # save_geometric_instances("geometric_test.csv", FUNCTION_CONFIG)
