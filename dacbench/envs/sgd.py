@@ -259,6 +259,10 @@ class SGDEnv(AbstractEnv):
         (seed,) = super().seed(seed, seed_action_space)
         if seed is not None:
             torch.manual_seed(seed)
+            torch.cuda.manual_seed(seed)
+            torch.cuda.manual_seed_all(seed)
+            torch.backends.cudnn.benchmark = False
+            torch.backends.cudnn.deterministic = True
         return [seed]
 
     def step(self, action):
