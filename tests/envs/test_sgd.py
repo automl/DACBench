@@ -28,6 +28,26 @@ class TestSGDEnv(unittest.TestCase):
         self.assertTrue(self.env.batch_size == SGD_DEFAULTS["training_batch_size"])
         self.assertTrue(self.env.initial_lr == self.env.current_lr)
 
+    def test_reward_type(self):
+        benchmark = SGDBenchmark()
+        benchmark.config = objdict(SGD_DEFAULTS.copy())
+        benchmark.read_instance_set()
+
+        env = SGDEnv(benchmark.config)
+        self.assertEqual(env.reward_type, SGD_DEFAULTS.reward_type)
+
+        benchmark.config.reward_type = SGD_DEFAULTS.reward_type.name
+        env = SGDEnv(benchmark.config)
+        self.assertEqual(env.reward_type, SGD_DEFAULTS.reward_type)
+
+        benchmark.config.reward_type = 'invalid_reward'
+        with self.assertRaises(ValueError):
+            env = SGDEnv(benchmark.config)
+
+        benchmark.config.reward_type = 0
+        with self.assertRaises(ValueError):
+            env = SGDEnv(benchmark.config)
+
     def test_reset(self):
         self.env.reset()
         self.assertFalse(self.env.model is None)
