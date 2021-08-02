@@ -304,7 +304,8 @@ class SGDEnv(AbstractEnv):
         # 2) return self.get_state(self), self.get_reward(self), done, {}
 
         self.prev_training_loss = self.current_training_loss
-        self.prev_validation_loss = self.current_validation_loss
+        if self._current_validation_loss.calculated:
+            self.prev_validation_loss = self.current_validation_loss
 
         self.train_network()
         reward = self.get_reward()
