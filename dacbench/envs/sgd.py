@@ -65,6 +65,16 @@ class SGDEnv(AbstractEnv):
         self.cd_paper_reconstruction = config.cd_paper_reconstruction
         self.cd_bias_correction = config.cd_bias_correction
 
+        if isinstance(config.reward_type, Reward):
+            self.reward_type = config.reward_type
+        elif isinstance(config.reward_type, str):
+            try:
+                self.reward_type = getattr(Reward, config.reward_type)
+            except AttributeError:
+                raise ValueError(f'{config.reward_type} is not a valid reward type!')
+        else:
+            raise ValueError(f'Type {type(config.reward_type)} is not valid!')
+
         self.use_cuda = not self.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
 
@@ -178,14 +188,14 @@ class SGDEnv(AbstractEnv):
         if "reward_function" in config.keys():
             self._get_reward = config["reward_function"]
         else:
-            self._get_reward = config.reward_type.func
+            self._get_reward = self.reward_type.func
 
         if "state_method" in config.keys():
             self.get_state = config["state_method"]
         else:
             self.get_state = self.get_default_state
 
-        self.reward_range = config.reward_type.func.frange
+        self.reward_range = self.reward_type.func.frange
 
     def get_reward(self):
         return self._get_reward(self)
@@ -249,6 +259,10 @@ class SGDEnv(AbstractEnv):
         (seed,) = super().seed(seed, seed_action_space)
         if seed is not None:
             torch.manual_seed(seed)
+            torch.cuda.manual_seed(seed)
+            torch.cuda.manual_seed_all(seed)
+            torch.backends.cudnn.benchmark = False
+            torch.backends.cudnn.deterministic = True
         return [seed]
 
     def step(self, action):
@@ -601,6 +615,7 @@ class SGDEnv(AbstractEnv):
         self.loss_batch = loss
         self.current_training_loss = torch.unsqueeze(loss_value.detach(), dim=0)
         self.train_batch_index += 1
+        self._current_validation_loss.calculated = False
 
     def train_network(self):
         try:
@@ -610,7 +625,6 @@ class SGDEnv(AbstractEnv):
             self.epoch_index += 1
             self.train_loader_it = iter(self.train_loader)
             self._train_batch_()
-        self._current_validation_loss.calculated = False
 
     def transfer_model_parameters(self):  # TODO: If this is only used in validation loss calculation you can probably hide it there.
         # self.val_model.load_state_dict(self.model.state_dict())
