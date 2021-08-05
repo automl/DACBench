@@ -42,7 +42,7 @@ class HyFlexBenchmark(AbstractBenchmark):
     Benchmark for learning a selection hyper-heuristic for HyFlex
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize CMA Benchmark
 
@@ -58,6 +58,10 @@ class HyFlexBenchmark(AbstractBenchmark):
         for key in HYFLEX_DEFAULTS:
             if key not in self.config:
                 self.config[key] = HYFLEX_DEFAULTS[key]
+
+        if config:
+            for key in config:
+                self.config[key] = config[key]
 
     def get_environment(self):
         """
@@ -97,5 +101,6 @@ class HyFlexBenchmark(AbstractBenchmark):
                 instance = [
                     row["domain"],
                     int(row["instance"]),
+                    int(row["seed"])
                 ]
                 self.config["instance_set"][int(row["ID"])] = instance

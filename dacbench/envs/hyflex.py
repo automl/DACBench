@@ -22,7 +22,10 @@ class ToyProblemDomain:
         env = bench.get_environment()
     """
 
-    def __init__(self, seed: int):
+    def _diff(self, l, exclude):
+        return [i for i in l if i not in exclude]
+
+    def __init__(self, seed: int, exclude={3}):
         """
         Creates a new problem domain and creates a new random number generator using the seed provided. If
         the seed takes the value -1, the seed is generated taking the current System time. The random number generator
@@ -33,15 +36,16 @@ class ToyProblemDomain:
         :param seed: a random seed
         """
         # raise NotImplementedError
-        self.heuristics = [lambda x: x - 2,
-                           lambda x: x + 1,
-                           lambda x: x + 2,
-                           lambda x: x / 2 if x % 2 == 0 else 2 * x]
-        self.heuristics_of_type = {HeuristicType.CROSSOVER: [],
-                                   HeuristicType.LOCAL_SEARCH: [0],
-                                   HeuristicType.MUTATION: [1, 2],
-                                   HeuristicType.OTHER: [],
-                                   HeuristicType.RUIN_RECREATE: [3]
+        h = [lambda x: x - 2,
+             lambda x: x + 1,
+             lambda x: x + 2,
+             lambda x: x / 2 if x % 2 == 0 else 2 * x]
+        self.heuristics = [h[i] for i in range(len(h)) if i not in exclude]
+        self.heuristics_of_type = {self.HeuristicType.CROSSOVER: [],
+                                   self.HeuristicType.LOCAL_SEARCH: self._diff([0], exclude),
+                                   self.HeuristicType.MUTATION: self._diff([1, 2], exclude),
+                                   self.HeuristicType.OTHER: [],
+                                   self.HeuristicType.RUIN_RECREATE: self._diff([3], exclude)
                                    }
         self.mem_size = 2
         self.mem = None
@@ -432,8 +436,6 @@ class HyFlexEnv(AbstractEnv):
         self.reject = 0  # action corresponding to reject
         self.accept = 1  # action corresponding to accept
 
-        self.seed = config["seed"]
-
         # The following variables are (re)set at reset
         self.problem = None  # HyFlex ProblemDomain object ~ current DAC instance
         self.unary_heuristics = None  # indices for unary heuristics
@@ -482,7 +484,7 @@ class HyFlexEnv(AbstractEnv):
         # update best
         self._update_best()
 
-        return self.get_state(self), reward, done, {}
+        return self.get_state(self), reward, done, {'f_best': self.f_best}
 
     def reset(self):
         """
@@ -495,12 +497,16 @@ class HyFlexEnv(AbstractEnv):
         """
         super(HyFlexEnv, self).reset_()
 
-        domain, instance_index = self.instance
+        domain, instance_index, seed = self.instance
+
         # create problem domain
         if domain == "Toy":
-            self.problem = ToyProblemDomain(self.seed)
+            self.problem = ToyProblemDomain(seed)
         else:
-            self.problem = HyflexProblemDomain(domain, self.seed)
+            self.problem = HyflexProblemDomain(domain, seed)
+
+        self.np_random = np.random.RandomState(seed)
+
         # classify heuristics as unary/binary
         self.unary_heuristics = self.problem.getHeuristicsOfType(H_TYPE.LOCAL_SEARCH)
         self.unary_heuristics += self.problem.getHeuristicsOfType(H_TYPE.MUTATION)
