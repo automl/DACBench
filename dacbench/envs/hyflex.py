@@ -7,15 +7,22 @@ from enum import Enum
 from typing import List
 
 import numpy as np
+import requests
 
-class ProblemDomain:
+HeuristicType = Enum('HeuristicType', 'CROSSOVER LOCAL_SEARCH MUTATION OTHER RUIN_RECREATE')
+H_TYPE = HeuristicType
+
+
+class ToyProblemDomain:
     """
-    This class implements a generic python wrapper for HyFlex problem domains.
+    This class is a toy domain
+
+    Example code for creating a toy environment:
+        bench = HyFlexBenchmark(config_path='dacbench/additional_configs/hyflex/toy.json')
+        env = bench.get_environment()
     """
 
-    HeuristicType = Enum('HeuristicType', 'CROSSOVER LOCAL_SEARCH MUTATION OTHER RUIN_RECREATE')
-
-    def __init__(self, domain: str, seed: int):
+    def __init__(self, seed: int):
         """
         Creates a new problem domain and creates a new random number generator using the seed provided. If
         the seed takes the value -1, the seed is generated taking the current System time. The random number generator
@@ -26,19 +33,136 @@ class ProblemDomain:
         :param seed: a random seed
         """
         # raise NotImplementedError
-        self.heuristics = [lambda x: x-2,
-                           lambda x: x+1,
-                           lambda x: x+2,
+        self.heuristics = [lambda x: x - 2,
+                           lambda x: x + 1,
+                           lambda x: x + 2,
                            lambda x: x / 2 if x % 2 == 0 else 2 * x]
-        self.heuristics_of_type = {self.HeuristicType.CROSSOVER: [],
-                                   self.HeuristicType.LOCAL_SEARCH: [0],
-                                   self.HeuristicType.MUTATION: [1, 2],
-                                   self.HeuristicType.OTHER: [],
-                                   self.HeuristicType.RUIN_RECREATE: [3]
+        self.heuristics_of_type = {HeuristicType.CROSSOVER: [],
+                                   HeuristicType.LOCAL_SEARCH: [0],
+                                   HeuristicType.MUTATION: [1, 2],
+                                   HeuristicType.OTHER: [],
+                                   HeuristicType.RUIN_RECREATE: [3]
                                    }
         self.mem_size = 2
         self.mem = None
         self.base = None
+
+    def getHeuristicsOfType(self, heuristicType: HeuristicType) -> List[int]:
+        """
+        Gets an array of heuristicIDs of the type specified by heuristicType.
+
+        :param heuristicType: the heuristic type.
+        :return: An list containing the indices of the heuristics of the type specified. If there are no heuristics of
+            this type it returns None.
+        """
+        return self.heuristics_of_type[heuristicType]
+
+    def loadInstance(self, instanceID: int) -> None:
+        """
+        Loads the instance specified by instanceID.
+
+        :param instanceID: Specifies the instance to load. The ID's start at zero.
+        :return: None
+        """
+        self.base = 1024 + 2 ** instanceID
+        self.mem = [-1] * self.mem_size
+
+    def setMemorySize(self, size: int) -> None:
+        """
+        Sets the size of the array where the solutions are stored. The default size is 2.
+
+        :param size: The new size of the solution array.
+        :return: None
+        """
+        self.mem_size = size
+        self.mem = [-1] * self.mem_size
+
+    def initialiseSolution(self, index: int) -> None:
+        """
+        Create an initial solution at a specified position in the memory array. The method of initialising the solution
+        depends on the specific problem domain, but it is a random process, which will produce a different solution
+        each time. The initialisation process may randomise all of the elements of the problem, or it may use a
+        constructive heuristic with a randomised input.
+
+        :param index: The index of the memory array at which the solution should be initialised.
+        :return: None
+        """
+        self.mem[index] = self.base
+
+    def getNumberOfHeuristics(self) -> int:
+        """
+        Gets the number of heuristics available in this problem domain
+
+        :return: The number of heuristics available in this problem domain
+        """
+        return len(self.heuristics)
+
+    def applyHeuristicUnary(self, heuristicID: int, solutionSourceIndex: int, solutionDestinationIndex: int) -> float:
+        """
+        Applies the heuristic specified by heuristicID to the solution at position solutionSourceIndex and places the
+        resulting solution at position solutionDestinationIndex in the solution array. If the heuristic is a
+        CROSSOVER type then the solution at solutionSourceIndex is just copied to solutionDestinationIndex.
+
+        :param heuristicID: The ID of the heuristic to apply (starts at zero)
+        :param solutionSourceIndex: The index of the solution in the memory array to which to apply the heuristic
+        :param solutionDestinationIndex: The index in the memory array at which to store the resulting solution
+        :return: the objective function value of the solution created by applying the heuristic
+        """
+        s = self.heuristics[heuristicID](self.mem[solutionSourceIndex])
+        self.mem[solutionDestinationIndex] = s if s >= 0 else self.mem[solutionSourceIndex]
+        return self.mem[solutionDestinationIndex]
+
+    def copySolution(self, solutionSourceIndex: int, solutionDestinationIndex: int) -> None:
+        """
+        Copies a solution from one position in the solution array to another
+
+        :param solutionSourceIndex: The position of the solution to copy
+        :param solutionDestinationIndex: The position in the array to copy the solution to.
+        :return: None
+        """
+        self.mem[solutionDestinationIndex] = self.mem[solutionSourceIndex]
+
+    def toString(self) -> str:
+        """
+        Gets the name of the problem domain. For example, "Bin Packing"
+
+        :return: the name of the ProblemDomain
+        """
+        return "Toy"
+
+    def getFunctionValue(self, solutionIndex: int) -> float:
+        """
+        Gets the objective function value of the solution at index solutionIndex
+
+        :param solutionIndex: The index of the solution from which the objective function is required
+        :return: A double value of the solution's objective function value.
+        """
+        return self.mem[solutionIndex]
+
+
+class HyflexProblemDomain:
+    """
+    This class implements a generic python wrapper for HyFlex problem domains.
+    
+    Example code for creating a Hyflex environment:
+        bench = HyFlexBenchmark() # use the HYFLEX_DEFAULTS default configuration in dacbench/benchmarks/hyflex_benchmark.py
+        env = bench.get_environment()
+    """
+
+    def __init__(self, domain: str, seed: int, host: str = "http://127.0.0.1:8080"):
+        """
+        Creates a new problem domain and creates a new random number generator using the seed provided. If
+        the seed takes the value -1, the seed is generated taking the current System time. The random number generator
+        is used for all stochastic operations, so the problem will be initialised in the same way if the seed is the
+        same. Sets the solution memory size to 2.
+
+        :param domain: the unqualified class name of the HyFlex domain to be wrapped, e.g., SAT, BinPacking, etc.
+        :param seed: a random seed
+        """
+        self.domain = domain
+        self.seed = seed
+        self.host = host
+        self.token = requests.put(self.host + "/instantiate/" + domain + "/" + str(seed)).text
 
     def getHeuristicCallRecord(self) -> List[int]:
         """
@@ -47,7 +171,7 @@ class ProblemDomain:
         :return: A list which contains an integer value for each low level heuristic, representing the number of times
             that heuristic has been called by the HyperHeuristic object.
         """
-        raise NotImplementedError
+        return requests.get(self.host + "/heuristic/record/call/" + self.token).json()
 
     def getHeuristicCallTimeRecord(self) -> List[int]:
         """
@@ -56,7 +180,7 @@ class ProblemDomain:
         :return: A list which contains an integer value representing the total number of milliseconds used by each low
             level heuristic.
         """
-        raise NotImplementedError
+        return requests.get(self.host + "/heuristic/record/callTime/" + self.token).json()
 
     def setDepthOfSearch(self, depthOfSearch: float) -> None:
         """
@@ -67,7 +191,7 @@ class ProblemDomain:
             the low level heuristic.
         :return: None
         """
-        raise NotImplementedError
+        requests.post(self.host + "/search/depth/" + self.token + "/" + str(depthOfSearch))
 
     def setIntensityOfMutation(self, intensityOfMutation: float) -> None:
         """
@@ -83,7 +207,7 @@ class ProblemDomain:
             operation of the low level heuristic.
         :return: None
         """
-        raise NotImplementedError
+        requests.post(self.host + "/mutationIntensity/" + self.token + "/" + str(intensityOfMutation))
 
     def getDepthOfSearch(self) -> float:
         """
@@ -91,7 +215,7 @@ class ProblemDomain:
 
         :return: the current value of the intensity of mutation parameter.
         """
-        raise NotImplementedError
+        return requests.get(self.host + "/search/depth/" + self.token).text
 
     def getIntensityOfMutation(self) -> float:
         """
@@ -99,18 +223,17 @@ class ProblemDomain:
 
         :return: the current value of the intensity of mutation parameter.
         """
-        raise NotImplementedError
+        return float(requests.get(self.host + "/mutationIntensity/" + self.token).text)
 
     def getHeuristicsOfType(self, heuristicType: HeuristicType) -> List[int]:
         """
         Gets an array of heuristicIDs of the type specified by heuristicType.
 
         :param heuristicType: the heuristic type.
-        :return: An list containing the indices of the heuristics of the type specified. If there are no heuristics of
+        :return: A list containing the indices of the heuristics of the type specified. If there are no heuristics of
             this type it returns None.
         """
-        # raise NotImplementedError
-        return self.heuristics_of_type[heuristicType]
+        return list(requests.get(self.host + "/heuristic/" + self.token + "/" + str(heuristicType.name)).json())
 
     def getHeuristicsThatUseIntensityOfMutation(self) -> List[int]:
         """
@@ -120,7 +243,7 @@ class ProblemDomain:
         :return: An array containing the indexes of the heuristics that use the intensityOfMutation parameter, or None
             if there are no heuristics of this type.
         """
-        raise NotImplementedError
+        return requests.get(self.host + "/heuristic/mutationIntensity/" + self.token).json()
 
     def getHeuristicsThatUseDepthOfSearch(self) -> List[int]:
         """
@@ -130,7 +253,7 @@ class ProblemDomain:
         :return: An array containing the indexes of the heuristics that use the depthOfSearch parameter, or None if
             there are no heuristics of this type.
         """
-        raise NotImplementedError
+        return requests.get(self.host + "/heuristic/depth/" + self.token).json()
 
     def loadInstance(self, instanceID: int) -> None:
         """
@@ -139,9 +262,7 @@ class ProblemDomain:
         :param instanceID: Specifies the instance to load. The ID's start at zero.
         :return: None
         """
-        # raise NotImplementedError
-        self.base = 1024 + 2**instanceID
-        self.mem = [-1] * self.mem_size
+        requests.post(self.host + "/instance/" + self.token + "/" + str(instanceID))
 
     def setMemorySize(self, size: int) -> None:
         """
@@ -150,9 +271,7 @@ class ProblemDomain:
         :param size: The new size of the solution array.
         :return: None
         """
-        # raise NotImplementedError
-        self.mem_size = size
-        self.mem = [-1] * self.mem_size
+        requests.post(self.host + "/memorySize/" + self.token + "/" + str(size))
 
     def initialiseSolution(self, index: int) -> None:
         """
@@ -165,7 +284,7 @@ class ProblemDomain:
         :return: None
         """
         # raise NotImplementedError
-        self.mem[index] = self.base
+        requests.put(self.host + "/solution/init/" + self.token + "/" + str(index))
 
     def getNumberOfHeuristics(self) -> None:
         """
@@ -173,7 +292,7 @@ class ProblemDomain:
 
         :return: The number of heuristics available in this problem domain
         """
-        raise NotImplementedError
+        return int(requests.get(self.host + "/heuristic/num/" + self.token).text)
 
     def applyHeuristicUnary(self, heuristicID: int, solutionSourceIndex: int, solutionDestinationIndex: int) -> float:
         """
@@ -186,10 +305,8 @@ class ProblemDomain:
         :param solutionDestinationIndex: The index in the memory array at which to store the resulting solution
         :return: the objective function value of the solution created by applying the heuristic
         """
-        # raise NotImplementedError
-        s = self.heuristics[heuristicID](self.mem[solutionSourceIndex])
-        self.mem[solutionDestinationIndex] = s if s >= 0 else self.mem[solutionSourceIndex]
-        return self.mem[solutionDestinationIndex]
+        return float(requests.post(self.host + "/heuristic/apply/" + self.token + "/" + str(heuristicID) + "/" + str(
+            solutionSourceIndex) + "/" + str(solutionDestinationIndex)).text)
 
     def applyHeuristicBinary(self, heuristicID: int, solutionSourceIndex1: int, solutionSourceIndex2: int,
                              solutionDestinationIndex: int) -> float:
@@ -204,7 +321,8 @@ class ProblemDomain:
         :param solutionDestinationIndex: The index in the memory array at which to store the resulting solution
         :return: the objective function value of the solution created by applying the heuristic
         """
-        raise NotImplementedError
+        return float(requests.post(self.host + "/heuristic/apply/" + self.token + "/" + str(heuristicID) + "/" + str(
+            solutionSourceIndex1) + "/" + str(solutionSourceIndex2) + "/" + str(solutionDestinationIndex)).text)
 
     def copySolution(self, solutionSourceIndex: int, solutionDestinationIndex: int) -> None:
         """
@@ -214,8 +332,8 @@ class ProblemDomain:
         :param solutionDestinationIndex: The position in the array to copy the solution to.
         :return: None
         """
-        # raise NotImplementedError
-        self.mem[solutionDestinationIndex] = self.mem[solutionSourceIndex]
+        requests.post(self.host + "/solution/copy/" + self.token + "/" + str(solutionSourceIndex) + "/" + str(
+            solutionDestinationIndex))
 
     def toString(self) -> str:
         """
@@ -223,7 +341,7 @@ class ProblemDomain:
 
         :return: the name of the ProblemDomain
         """
-        raise NotImplementedError
+        return requests.get(self.host + "/toString/" + self.token).text
 
     def getNumberOfInstances(self) -> int:
         """
@@ -231,7 +349,7 @@ class ProblemDomain:
 
         :return: the number of instances available
         """
-        raise NotImplementedError
+        return int(requests.get(self.host + "/instances/" + self.token).text)
 
     def bestSolutionToString(self) -> str:
         """
@@ -239,7 +357,7 @@ class ProblemDomain:
 
         :return: The objective function value of the best solution.
         """
-        raise NotImplementedError
+        return requests.get(self.host + "/solution/best/toString/" + self.token).text
 
     def getBestSolutionValue(self) -> float:
         """
@@ -247,6 +365,7 @@ class ProblemDomain:
 
         :return: The objective function value of the best solution.
         """
+        return float(requests.get(self.host + "/solution/best/value/" + self.token).text)
 
     def solutionToString(self, solutionIndex: int) -> str:
         """
@@ -255,7 +374,7 @@ class ProblemDomain:
         :param solutionIndex: The index of the solution of which a String representation is required
         :return: A String representation of the solution at solutionIndex in the solution memory
         """
-        raise NotImplementedError
+        return requests.get(self.host + "/solution/toString/" + self.token + "/" + str(solutionIndex)).text
 
     def getFunctionValue(self, solutionIndex: int) -> float:
         """
@@ -265,7 +384,7 @@ class ProblemDomain:
         :return: A double value of the solution's objective function value.
         """
         # raise NotImplementedError
-        return self.mem[solutionIndex]
+        return float(requests.get(self.host + "/solution/functionValue/" + self.token + "/" + str(solutionIndex)).text)
 
     def compareSolutions(self, solutionIndex1: int, solutionIndex2: int) -> bool:
         """
@@ -276,15 +395,14 @@ class ProblemDomain:
         :param solutionIndex2: The index of the second solution in the comparison
         :return: true if the solutions are identical, false otherwise.
         """
-        raise NotImplementedError
+        return bool(requests.get(
+            self.host + "/solution/compare/" + self.token + "/" + str(solutionIndex1) + "/" + str(solutionIndex2)).text)
 
 
 """
 Gym Environment for HyFlex
 """
 from dacbench import AbstractEnv
-
-H_TYPE = ProblemDomain.HeuristicType
 
 
 class HyFlexEnv(AbstractEnv):
@@ -379,7 +497,10 @@ class HyFlexEnv(AbstractEnv):
 
         domain, instance_index = self.instance
         # create problem domain
-        self.problem = ProblemDomain(domain, self.seed)
+        if domain == "Toy":
+            self.problem = ToyProblemDomain(self.seed)
+        else:
+            self.problem = HyflexProblemDomain(domain, self.seed)
         # classify heuristics as unary/binary
         self.unary_heuristics = self.problem.getHeuristicsOfType(H_TYPE.LOCAL_SEARCH)
         self.unary_heuristics += self.problem.getHeuristicsOfType(H_TYPE.MUTATION)
@@ -413,7 +534,7 @@ class HyFlexEnv(AbstractEnv):
         else:
             h = self.np_random.choice(self.binary_heuristics)
             # note: the best solution found thus far is used as 2nd argument for crossover
-            f_prop = self.problem.applyHeuristicUnary(h, self.s_inc, self.s_best, self.s_prop)
+            f_prop = self.problem.applyHeuristicBinary(h, self.s_inc, self.s_best, self.s_prop)
         return f_prop
 
     def _update_best(self):
