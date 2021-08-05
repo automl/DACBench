@@ -41,11 +41,11 @@ class ToyProblemDomain:
              lambda x: x + 2,
              lambda x: x / 2 if x % 2 == 0 else 2 * x]
         self.heuristics = [h[i] for i in range(len(h)) if i not in exclude]
-        self.heuristics_of_type = {self.HeuristicType.CROSSOVER: [],
-                                   self.HeuristicType.LOCAL_SEARCH: self._diff([0], exclude),
-                                   self.HeuristicType.MUTATION: self._diff([1, 2], exclude),
-                                   self.HeuristicType.OTHER: [],
-                                   self.HeuristicType.RUIN_RECREATE: self._diff([3], exclude)
+        self.heuristics_of_type = {H_TYPE.CROSSOVER: [],
+                                   H_TYPE.LOCAL_SEARCH: self._diff([0], exclude),
+                                   H_TYPE.MUTATION: self._diff([1, 2], exclude),
+                                   H_TYPE.OTHER: [],
+                                   H_TYPE.RUIN_RECREATE: self._diff([3], exclude)
                                    }
         self.mem_size = 2
         self.mem = None
@@ -497,7 +497,7 @@ class HyFlexEnv(AbstractEnv):
         """
         super(HyFlexEnv, self).reset_()
 
-        domain, instance_index, seed = self.instance
+        domain, instance_index, seed, self.n_steps = self.instance
 
         # create problem domain
         if domain == "Toy":
