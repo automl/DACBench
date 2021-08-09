@@ -1,5 +1,5 @@
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import SigmoidEnv
+from dacbench.envs import SigmoidEnv, ContinuousSigmoidEnv, ContinuousStateSigmoidEnv
 
 import numpy as np
 import os
@@ -78,7 +78,20 @@ class SigmoidBenchmark(AbstractBenchmark):
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
-        env = SigmoidEnv(self.config)
+        if 'env_type' in self.config:  # The env_type determines which Sigmoid environment to use.
+            if self.config['env_type'].lower() in ['continuous', 'cont']:  # Either continuous ...
+                if self.config['action_space'] == 'Box':  # ... in both actions and x-axis state, only ...
+                    env = ContinuousSigmoidEnv(self.config)
+                elif self.config['action_space'] == 'Discrete':  # ... continuous in the x-axis state or ...
+                    env = ContinuousStateSigmoidEnv(self.config)
+                else:
+                    raise Exception(f'The given environment type \"{self.config["env_type"]}\" does not support the'
+                                    f' chosen action_space \"{self.config["action_space"]}\". The action space has to'
+                                    f' be either of type "Box" for continuous actions or "Discrete".')
+            else:  # ... discrete.
+                env = SigmoidEnv(self.config)
+        else:  # If the type is not specified we the simplest, fully discrete version.
+            env = SigmoidEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
 
