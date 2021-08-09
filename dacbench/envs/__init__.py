@@ -6,6 +6,7 @@ from dacbench.envs.modea import ModeaEnv
 from dacbench.envs.sgd import SGDEnv
 from dacbench.envs.onell_env import OneLLEnv
 from dacbench.envs.modcma import ModCMAEnv
+from dacbench.envs.toysgd import ToySGDEnv
 
 __all__ = [
     "LubyEnv",
