@@ -10,6 +10,10 @@ from dacbench.envs import SGDEnv
 from dacbench.envs.sgd import Reward
 
 
+def __default_loss_function(**kwargs):
+    return NLLLoss(reduction = 'none', **kwargs)
+
+
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
 
@@ -60,10 +64,10 @@ SGD_DEFAULTS = objdict(
         "cutoff": 1e3,
         "lr": 1e-3,
         "optimizer": "rmsprop",
-        "loss_function": NLLLoss,
-        "loss_function_kwargs": {"reduction": 'none'},
-        "val_loss_function": NLLLoss,
-        "val_loss_function_kwargs": {"reduction": 'none'},
+        "loss_function": __default_loss_function,
+        "loss_function_kwargs": {},
+        "val_loss_function": __default_loss_function,
+        "val_loss_function_kwargs": {},
         "training_batch_size": 64,
         "validation_batch_size": 64,
         "train_validation_ratio": 0.8,
