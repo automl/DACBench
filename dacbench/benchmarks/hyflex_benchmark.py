@@ -60,6 +60,7 @@ class HyFlexBenchmark(AbstractBenchmark):
                 self.config[key] = HYFLEX_DEFAULTS[key]
 
         for key in kwargs:
+            assert(key in HYFLEX_DEFAULTS)
             self.config[key] = kwargs[key]
 
     def get_environment(self):

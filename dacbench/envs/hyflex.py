@@ -25,7 +25,7 @@ class ToyProblemDomain:
     def _diff(self, l, exclude):
         return [i for i in l if i not in exclude]
 
-    def __init__(self, seed: int, exclude={3}):
+    def __init__(self, seed: int, exclude={}):
         """
         Creates a new problem domain and creates a new random number generator using the seed provided. If
         the seed takes the value -1, the seed is generated taking the current System time. The random number generator
@@ -498,7 +498,6 @@ class HyFlexEnv(AbstractEnv):
         super(HyFlexEnv, self).reset_()
 
         domain, instance_index, seed, self.n_steps = self.instance
-
         # create problem domain
         if domain == "Toy":
             self.problem = ToyProblemDomain(seed)
