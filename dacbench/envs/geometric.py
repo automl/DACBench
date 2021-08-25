@@ -31,14 +31,19 @@ class GeometricEnv(AbstractEnv):
         self.action_vals = config["action_values"]
         self.action_interval_mapping = config["action_interval_mapping"]
         self.max_function_value = config["max_function_value"]
+        self.realistic_trajectory = config["realistic_trajectory"]
         self.n_actions = len(self.action_vals)
         self.action_mapper = {}
 
         # state variables
+        self.trajectory = []  # multi dimensional representation of action space
+        self.agent_trajectory = []  # one dimensional representation of action space
+        self.coord_trajectory = []
         self.trajectory_set = {}
-        self.derivative_set = {}
-        self.trajectory = []
+        self.coord_trajectory_set = {}
+
         self.derivative = []
+        self.derivative_set = {}
         self.derivative_interval = []
 
         # map actions from int to vector representation
@@ -120,7 +125,7 @@ class GeometricEnv(AbstractEnv):
         self, time_step: int, function_infos: List, calculate_norm=False
     ) -> float:
         """
-        Call differnet functions with their speicifc parameters.
+        Call different functions with their speicifc parameters.
 
         Parameters
         ----------
@@ -162,9 +167,14 @@ class GeometricEnv(AbstractEnv):
 
         return min(function_value, self.max_function_value) / norm_value
 
-    def _calculate_derivative(self) -> np.array:
+    def _calculate_derivative(self, trajectory: List) -> np.array:
         """
         Calculate derivatives of each dimension, based on trajectories.
+
+        Parameters
+        ----------
+        trajectory: List
+            List of actions or coordinates already taken
 
         Returns
         -------
@@ -174,8 +184,8 @@ class GeometricEnv(AbstractEnv):
         # TODO: interval of derivatives, smooth derivative relative to action size and epochs?
         if self.c_step > 0:
             der = np.subtract(
-                np.array(self.trajectory[self.c_step], dtype=np.float),
-                np.array(self.trajectory[self.c_step - 1], dtype=np.float),
+                np.array(trajectory[self.c_step], dtype=np.float),
+                np.array(trajectory[self.c_step - 1], dtype=np.float),
             )
         else:
             der = np.zeros(self.n_actions)
@@ -205,12 +215,18 @@ class GeometricEnv(AbstractEnv):
         ), f"action should be of length {self.n_actions}."
         self.action = action_vec
 
-        # add trajectory and calculate derivatives
-        # TODO: return action or action vector?
         self.trajectory.append(np.array(action_vec))
+        self.agent_trajectory.append(np.array(action))
+        self.coord_trajectory.append(np.array())
+
+        self.coord_trajectory_set[self.inst_id] = self.coord_trajectory
         self.trajectory_set[self.inst_id] = self.trajectory
 
-        self.derivative = self._calculate_derivative()
+        if self.realistic_trajectory:
+            self.derivative = self._calculate_derivative(self.coord_trajectory)
+        else:
+            self.derivative = self._calculate_derivative(self.trajectory)
+
         self.derivative_set[self.inst_id] = self.derivative
 
         next_state = self.get_state(self)
@@ -231,6 +247,10 @@ class GeometricEnv(AbstractEnv):
         self.trajectory = self.trajectory_set.get(
             self.inst_id, [np.zeros(self.n_actions)]
         )
+        self.coord_trajectory = self.coord_trajectory_set.get(
+            self.inst_id, [np.zeros(self.n_actions)]
+        )
+
         self.derivative = self.derivative_set.get(self.inst_id, 0)
 
         self._prev_state = None
@@ -316,3 +336,6 @@ class GeometricEnv(AbstractEnv):
             Closing confirmation
         """
         return True
+
+    def get_optimal_policy():
+        pass

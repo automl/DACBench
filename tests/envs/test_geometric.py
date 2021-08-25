@@ -100,7 +100,15 @@ class TestGeometricEnv(unittest.TestCase):
 
     def test_calculate_derivative(self):
         env = self.make_env(DEFAULTS_STATIC)
-        self.assertTrue((env._calculate_derivative() == np.zeros(env.n_actions)).all())
+        trajectory1 = [np.zeros(7)]
+        self.assertTrue(
+            (env._calculate_derivative(trajectory1) == np.zeros(env.n_actions)).all()
+        )
         env.c_step = 1
-        env.trajectory = [np.zeros(7), np.ones(7)]
-        self.assertTrue((env._calculate_derivative() == np.ones(env.n_actions)).all())
+        trajectory2 = [np.zeros(7), np.ones(7)]
+        self.assertTrue(
+            (env._calculate_derivative(trajectory2) == np.ones(env.n_actions)).all()
+        )
+
+    def test_get_optimal_policy(self):
+        pass
