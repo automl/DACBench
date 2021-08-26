@@ -37,7 +37,9 @@ DEFAULTS_DYNAMIC = objdict(
         },
         "action_interval_mapping": {},  # maps actions to equally sized intervalls in [-1, 1]
         "seed": 0,
+        "derivative_interval": 3,
         "max_function_value": 10000,  # clip function value if it is higher than this number
+        "realistic_trajectory": True,
         "instance_set_path": "../instance_sets/geometric/geometric_unit_test.csv",
         "benchmark_info": "Hallo",
     }
@@ -61,6 +63,8 @@ DEFAULTS_STATIC = objdict(
         "action_values_variable": False,  # if True action value mapping will be used
         "action_interval_mapping": {},  # maps actions to equally sized intervalls in [-1, 1]
         "max_function_value": 10000,  # clip function value if it is higher than this number
+        "derivative_interval": 3,
+        "realistic_trajectory": True,
         "instance_set_path": "../instance_sets/geometric/geometric_unit_test.csv",
         "benchmark_info": "Hallo",
     }

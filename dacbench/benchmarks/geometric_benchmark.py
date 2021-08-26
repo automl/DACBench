@@ -230,6 +230,6 @@ if __name__ == "__main__":
 
     env = GeometricEnv(config)
     env.reset()
-    env.step(3)
-    print("HAllo")
+    for step in range(env.n_steps):
+        env.step(3)
 """
