@@ -32,6 +32,8 @@ class GeometricEnv(AbstractEnv):
         self.action_interval_mapping = config["action_interval_mapping"]
         self.max_function_value = config["max_function_value"]
         self.realistic_trajectory = config["realistic_trajectory"]
+        self.derivative_interval = config["derivative_interval"]
+
         self.n_actions = len(self.action_vals)
         self.action_mapper = {}
 
@@ -44,7 +46,6 @@ class GeometricEnv(AbstractEnv):
 
         self.derivative = []
         self.derivative_set = {}
-        self.derivative_interval = []
 
         # map actions from int to vector representation
         for idx, prod_idx in zip(
@@ -55,6 +56,8 @@ class GeometricEnv(AbstractEnv):
 
         self._prev_state = None
         self.action = None
+
+        self._calculate_norm = True
         self._calculate_norm_value()
 
         if "reward_function" in config.keys():
@@ -104,26 +107,20 @@ class GeometricEnv(AbstractEnv):
         Norm Functions to Intervall between -1 and 1
         """
         for key, instance in self.instance_set.items():
+            instance_values = self.get_optimal_policy(instance)
 
-            for dim, function_info in enumerate(instance):
-                value_list = []
-
-                for step in range(self.n_steps):
-                    value_list.append(
-                        self._calculate_function_value(step, function_info, True)
-                    )
+            for dim, function_values in enumerate(instance_values.transpose()):
+                if abs(min(function_values)) > max(function_values):
+                    norm_factor = abs(min(function_values))
+                else:
+                    norm_factor = max(function_values)
 
                 # set first item of every function_list in instance as norm factor
-                if abs(min(value_list)) > max(value_list):
-                    norm_factor = abs(min(value_list))
-                else:
-                    norm_factor = max(value_list)
-
                 self.instance_set[key][dim][0] = norm_factor
 
-    def _calculate_function_value(
-        self, time_step: int, function_infos: List, calculate_norm=False
-    ) -> float:
+        self._calculate_norm = False
+
+    def _calculate_function_value(self, time_step: int, function_infos: List) -> float:
         """
         Call different functions with their speicifc parameters.
 
@@ -141,7 +138,7 @@ class GeometricEnv(AbstractEnv):
         float
             coordinate in dimension of function
         """
-        norm_value = function_infos[0] if not calculate_norm else 1
+        norm_value = function_infos[0] if not self._calculate_norm else 1
         function_name = function_infos[1]
         coefficients = function_infos[2:]
 
@@ -181,16 +178,67 @@ class GeometricEnv(AbstractEnv):
         np.array
             derivatives for each dimension
         """
-        # TODO: interval of derivatives, smooth derivative relative to action size and epochs?
-        if self.c_step > 0:
-            der = np.subtract(
+        if self.c_step > 1:
+            upper_bound = self.c_step + 1
+            lower_bound = max(upper_bound - self.derivative_interval, 1)
+
+            derrivative = np.zeros(self.n_actions)
+            for step in range(lower_bound, upper_bound):
+                der = np.subtract(
+                    np.array(trajectory[step], dtype=np.float),
+                    np.array(trajectory[step - 1], dtype=np.float),
+                )
+                derrivative = np.add(derrivative, der)
+
+            derrivative /= upper_bound - lower_bound
+
+        elif self.c_step == 1:
+            derrivative = np.subtract(
                 np.array(trajectory[self.c_step], dtype=np.float),
                 np.array(trajectory[self.c_step - 1], dtype=np.float),
             )
-        else:
-            der = np.zeros(self.n_actions)
 
-        return der
+        else:
+            derrivative = np.zeros(self.n_actions)
+
+        return derrivative
+
+    def _get_optimal_policy_at_time_step(
+        self, instance: List, time_step: int
+    ) -> np.array:
+        """ calculate optimal policy at time_step """
+        value_array = np.zeros(self.n_actions)
+        for index, function_info in enumerate(instance):
+            value_array[index] = self._calculate_function_value(
+                time_step, function_info
+            )
+
+        return value_array
+
+    def get_optimal_policy(self, instance: List = None) -> List[np.array]:
+        """
+        Calculates optimal policy for instance over all time_steps
+
+        Parameters
+        ----------
+        instance : List, optional
+            Instance that holds information about functions, by default None
+
+        Returns
+        -------
+        List[np.array]
+            Index of List refers to time step
+        """
+        if not instance:
+            instance = self.instance
+
+        optimal_policy = np.zeros((self.n_steps, self.n_actions))
+        for time_step in range(self.n_steps):
+            optimal_policy[time_step, :] = self._get_optimal_policy_at_time_step(
+                instance, time_step
+            )
+
+        return optimal_policy
 
     def step(self, action: int):
         """
@@ -217,7 +265,9 @@ class GeometricEnv(AbstractEnv):
 
         self.trajectory.append(np.array(action_vec))
         self.agent_trajectory.append(np.array(action))
-        self.coord_trajectory.append(np.array())
+        self.coord_trajectory.append(
+            self._get_optimal_policy_at_time_step(self.instance, self.c_step)
+        )
 
         self.coord_trajectory_set[self.inst_id] = self.coord_trajectory
         self.trajectory_set[self.inst_id] = self.trajectory
@@ -336,6 +386,3 @@ class GeometricEnv(AbstractEnv):
             Closing confirmation
         """
         return True
-
-    def get_optimal_policy():
-        pass
