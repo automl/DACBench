@@ -22,6 +22,8 @@ DEFAULTS_STATIC = objdict(
         "action_values_variable": False,  # if True action value mapping will be used
         "action_interval_mapping": {},  # maps actions to equally sized intervalls in [-1, 1]
         "max_function_value": 10000,  # clip function value if it is higher than this number
+        "derivative_interval": 3,
+        "realistic_trajectory": True,
         "instance_set_path": "../instance_sets/geometric/geometric_unit_test.csv",
         "benchmark_info": "Hallo",
     }
@@ -110,5 +112,32 @@ class TestGeometricEnv(unittest.TestCase):
             (env._calculate_derivative(trajectory2) == np.ones(env.n_actions)).all()
         )
 
+        trajectory2 = [np.zeros(7), np.ones(7), np.ones(7) * 2]
+        env.c_step = 2
+        self.assertTrue(
+            (env._calculate_derivative(trajectory2) == np.ones(env.n_actions)).all()
+        )
+
+        trajectory3 = [
+            np.zeros(7),
+            np.ones(7),
+            np.ones(7) * 2,
+            np.ones(7) * 4,
+            np.ones(7) * 7,
+        ]
+        env.c_step = 4
+        self.assertTrue(
+            (env._calculate_derivative(trajectory3) == np.ones(env.n_actions) * 2).all()
+        )
+
     def test_get_optimal_policy(self):
-        pass
+        env = self.make_env(DEFAULTS_STATIC)
+        self.assertTrue(
+            (env.get_optimal_policy()).shape == (env.n_steps, env.n_actions)
+        )
+
+    def test_get_optimal_policy_at_time_step(self):
+        env = self.make_env(DEFAULTS_STATIC)
+        self.assertTrue(
+            len(env._get_optimal_policy_at_time_step(env.instance, 0)) == env.n_actions
+        )
