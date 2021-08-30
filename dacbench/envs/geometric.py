@@ -114,7 +114,7 @@ class GeometricEnv(AbstractEnv):
         Norm Functions to Intervall between -1 and 1
         """
         for key, instance in self.instance_set.items():
-            instance_values = self.get_optimal_coordinates(instance)
+            instance_values = self.get_coordinates(instance)
 
             for dim, function_values in enumerate(instance_values.transpose()):
                 if abs(min(function_values)) > max(function_values):
@@ -223,7 +223,7 @@ class GeometricEnv(AbstractEnv):
 
         return value_array
 
-    def get_optimal_coordinates(self, instance: List = None) -> List[np.array]:
+    def get_coordinates(self, instance: List = None) -> List[np.array]:
         """
         Calculates optimal policy for instance over all time_steps
 
@@ -255,7 +255,7 @@ class GeometricEnv(AbstractEnv):
         if not instance:
             instance = self.instance
 
-        optimal_policy_coords = self.get_optimal_coordinates(instance)
+        optimal_policy_coords = self.get_coordinates(instance)
         # dimension_dict = {dim: func[1] for dim, func in enumerate(instance)}
         optimal_policy = np.zeros(((self.n_steps, self.n_actions)))
 
@@ -430,7 +430,7 @@ class GeometricEnv(AbstractEnv):
         instance = (
             self.instance_set[instance_number] if instance_number else self.instance
         )
-        coordinates = self.get_optimal_coordinates().transpose()
+        coordinates = self.get_coordinates().transpose()
 
         for dim in dimensions:
             function_info = instance[dim]

@@ -132,9 +132,7 @@ class TestGeometricEnv(unittest.TestCase):
 
     def test_get_optimal_policy(self):
         env = self.make_env(DEFAULTS_STATIC)
-        self.assertTrue(
-            (env.get_optimal_coordinates()).shape == (env.n_steps, env.n_actions)
-        )
+        self.assertTrue((env.get_coordinates()).shape == (env.n_steps, env.n_actions))
         self.assertTrue(
             (env.get_optimal_policy()).shape == (env.n_steps, env.n_actions)
         )
