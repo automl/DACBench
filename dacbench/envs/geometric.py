@@ -2,9 +2,16 @@
 Geometric environment.
 Original environment authors: Rasmus von Glahn
 """
-import numpy as np
+import bisect
+import os
 import itertools
 from typing import List
+
+from matplotlib import pyplot as plt
+import numpy as np
+import seaborn as sns
+
+sns.set_theme(style="darkgrid")
 
 from dacbench import AbstractEnv
 
@@ -107,7 +114,7 @@ class GeometricEnv(AbstractEnv):
         Norm Functions to Intervall between -1 and 1
         """
         for key, instance in self.instance_set.items():
-            instance_values = self.get_optimal_policy(instance)
+            instance_values = self.get_optimal_coordinates(instance)
 
             for dim, function_values in enumerate(instance_values.transpose()):
                 if abs(min(function_values)) > max(function_values):
@@ -122,7 +129,7 @@ class GeometricEnv(AbstractEnv):
 
     def _calculate_function_value(self, time_step: int, function_infos: List) -> float:
         """
-        Call different functions with their speicifc parameters.
+        Call different functions with their speicifc parameters and norm them.
 
         Parameters
         ----------
@@ -162,6 +169,7 @@ class GeometricEnv(AbstractEnv):
         elif "polynomial" in function_name:
             function_value = self._polynom(time_step, coefficients)
 
+        function_value = max(function_value, -self.max_function_value)
         return min(function_value, self.max_function_value) / norm_value
 
     def _calculate_derivative(self, trajectory: List) -> np.array:
@@ -215,7 +223,7 @@ class GeometricEnv(AbstractEnv):
 
         return value_array
 
-    def get_optimal_policy(self, instance: List = None) -> List[np.array]:
+    def get_optimal_coordinates(self, instance: List = None) -> List[np.array]:
         """
         Calculates optimal policy for instance over all time_steps
 
@@ -232,11 +240,40 @@ class GeometricEnv(AbstractEnv):
         if not instance:
             instance = self.instance
 
-        optimal_policy = np.zeros((self.n_steps, self.n_actions))
+        optimal_policy_coord = np.zeros((self.n_steps, self.n_actions))
+
         for time_step in range(self.n_steps):
-            optimal_policy[time_step, :] = self._get_optimal_policy_at_time_step(
+            optimal_policy_coord[time_step, :] = self._get_optimal_policy_at_time_step(
                 instance, time_step
             )
+
+        return optimal_policy_coord
+
+    def get_optimal_policy(
+        self, instance: List = None, vector_action: bool = True
+    ) -> List[np.array]:
+        if not instance:
+            instance = self.instance
+
+        optimal_policy_coords = self.get_optimal_coordinates(instance)
+        # dimension_dict = {dim: func[1] for dim, func in enumerate(instance)}
+        optimal_policy = np.zeros(((self.n_steps, self.n_actions)))
+
+        for step in range(self.n_steps):
+            for dimension in range(self.n_actions):
+                step_size = 2 / self.action_vals[dimension]
+                interval = [step for step in np.arange(-1, 1, step_size)][1:]
+
+                optimal_policy[step, dimension] = bisect.bisect_left(
+                    interval, optimal_policy_coords[step, dimension]
+                )
+
+        optimal_policy = optimal_policy.astype(int)
+        if not vector_action:
+            reverse_action_mapper = {v: k for k, v in self.action_mapper.items()}
+            optimal_policy = [
+                reverse_action_mapper[tuple(vec)] for vec in optimal_policy
+            ]
 
         return optimal_policy
 
@@ -386,3 +423,26 @@ class GeometricEnv(AbstractEnv):
             Closing confirmation
         """
         return True
+
+    def render_dimension(
+        self, dimensions: List[int], path: str, instance_number: int = None
+    ):
+        instance = (
+            self.instance_set[instance_number] if instance_number else self.instance
+        )
+        coordinates = self.get_optimal_coordinates().transpose()
+
+        for dim in dimensions:
+            function_info = instance[dim]
+            title = function_info[1] + " - Dimension " + str(dim)
+
+            fig = plt.figure(figsize=(14, 5))
+            plt.title(title)
+            plt.xlabel("time steps", fontsize=16)
+            plt.ylim(-1.1, 1.1)
+            plt.xlim(-0.1, self.n_steps - 0.9)
+            plt.yticks(np.arange(-1, 1.1, 2 / self.action_vals[dim]))
+            plt.xticks(np.arange(0, self.n_steps, 1))
+            axes = plt.plot(coordinates[dim], marker="o")[0].axes
+            axes.xaxis.grid(False)
+            fig.savefig(os.path.join(path, title + ".jpg"))

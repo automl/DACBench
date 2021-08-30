@@ -216,7 +216,6 @@ class GeometricBenchmark(AbstractBenchmark):
             )
 
 
-"""
 if __name__ == "__main__":
     geo_bench = GeometricBenchmark()
     geo_bench.read_instance_set()
@@ -229,7 +228,9 @@ if __name__ == "__main__":
     config["observation_space_args"] = geo_bench.config.observation_space_args
 
     env = GeometricEnv(config)
+    opt_policy = env.get_optimal_policy()
+    env.render_dimension([3], "master")
     env.reset()
+
     for step in range(env.n_steps):
         env.step(3)
-"""
