@@ -72,7 +72,9 @@ def _create_csv_string(index, func_name: str) -> str:
 
     for i in range(max_count):
         if i < count:
-            csv_string += "," + str(np.random.uniform(low=-10.0, high=10.0))
+            csv_string += "," + str(
+                np.round(np.random.uniform(low=-10.0, high=10.0), 3)
+            )
         else:
             csv_string += ",0"
 
