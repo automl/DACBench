@@ -158,7 +158,8 @@ class GeometricBenchmark(AbstractBenchmark):
         ]
 
         self.config.seed = seed
-        self.read_instance_set()
+        if "instance_set" not in self.config.keys():
+            self.read_instance_set()
 
         self.set_action_values()
         self.set_action_description()
