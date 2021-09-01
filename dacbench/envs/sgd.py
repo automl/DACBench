@@ -5,6 +5,7 @@ import json
 from functools import reduce
 from enum import IntEnum, auto
 
+import numpy as np
 import torch
 from backpack import backpack, extend
 from backpack.extensions import BatchGrad
@@ -323,6 +324,8 @@ class SGDEnv(AbstractEnv):
 
         self.train_network()
         reward = self.get_reward()
+        if np.isnan(reward):
+            return self.get_state(self), self.reward_range[0], True, {}
 
         return self.get_state(self), reward, done, {}
 
