@@ -16,8 +16,6 @@ sns.set_theme(style="darkgrid")
 
 from dacbench import AbstractEnv
 
-FILE_PATH = os.path.dirname(__file__)
-
 
 class GeometricEnv(AbstractEnv):
     """
@@ -427,7 +425,7 @@ class GeometricEnv(AbstractEnv):
         """
         return True
 
-    def render_dimensions(self, dimensions: List):
+    def render_dimensions(self, dimensions: List, absolute_path: str):
         """
         Multiplot for specific dimensions of benchmark with policy actions.
 
@@ -457,9 +455,9 @@ class GeometricEnv(AbstractEnv):
             axes[idx].legend(bbox_to_anchor=(1.0, 1), loc="upper left")
 
         fig_title = f"GeoBench-Dimensions{len(dimensions)}"
-        fig.savefig(os.path.join(FILE_PATH, fig_title + ".jpg"))
+        fig.savefig(os.path.join(absolute_path, fig_title + ".jpg"))
 
-    def render_3d_dimensions(self, dimensions: List):
+    def render_3d_dimensions(self, dimensions: List, absolute_path: str):
         """
         Plot 2 Dimensions in 3D space
 
@@ -488,4 +486,4 @@ class GeometricEnv(AbstractEnv):
         ax.set_yticklabels([])
         ax.set_yticks([])
         ax.view_init(elev=0, azim=-90)
-        fig.savefig(os.path.join("3D-90side.jpg"))
+        fig.savefig(os.path.join(absolute_path, "3D-90side.jpg"))
