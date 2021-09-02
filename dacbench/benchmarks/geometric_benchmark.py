@@ -44,7 +44,7 @@ GEOMETRIC_DEFAULTS = objdict(
         "action_interval_mapping": {},  # maps actions to equally sized intervalls in [-1, 1]
         "seed": 0,
         "derivative_interval": 3,  # defines how many values are used for derivative calculation
-        "max_function_value": 10000,  # clip function value if it is higher than this number
+        "max_function_value": 100000,  # clip function value if it is higher than this number
         "realistic_trajectory": True,  # True: coordiantes are used as trajectory, False: Actions are used as trajectories
         "instance_set_path": "../instance_sets/geometric/geometric_train.csv",
         "benchmark_info": INFO,
@@ -230,7 +230,7 @@ if __name__ == "__main__":
 
     env = GeometricEnv(config)
     opt_policy = env.get_optimal_policy()
-    env.render_dimension([3], "master")
+    env.render_3d_dimensions([1, 3])
     env.reset()
 
     for step in range(env.n_steps):

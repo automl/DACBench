@@ -7,6 +7,7 @@ import os
 import itertools
 from typing import List
 
+from mpl_toolkits import mplot3d
 from matplotlib import pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -14,6 +15,8 @@ import seaborn as sns
 sns.set_theme(style="darkgrid")
 
 from dacbench import AbstractEnv
+
+FILE_PATH = os.path.dirname(__file__)
 
 
 class GeometricEnv(AbstractEnv):
@@ -424,25 +427,66 @@ class GeometricEnv(AbstractEnv):
         """
         return True
 
-    def render_dimension(
-        self, dimensions: List[int], path: str, instance_number: int = None
-    ):
-        instance = (
-            self.instance_set[instance_number] if instance_number else self.instance
-        )
-        coordinates = self.get_coordinates().transpose()
+    def render_dimensions(self, dimensions: List):
+        """
+        Multiplot for specific dimensions of benchmark with policy actions.
 
-        for dim in dimensions:
+        Parameters
+        ----------
+        dimensions : List
+            List of dimensions that get plotted
+        """
+        coordinates = self.get_coordinates().transpose()
+        instance = self.instance
+
+        fig, axes = plt.subplots(4, sharex=True, sharey=True, figsize=(20, 15))
+        plt.xlabel("time steps", fontsize=16)
+        plt.ylim(-1.1, 1.1)
+        plt.xlim(-0.1, self.n_steps - 0.9)
+        plt.xticks(np.arange(0, self.n_steps, 1))
+
+        for idx, dim in zip(range(len(dimensions)), dimensions):
             function_info = instance[dim]
             title = function_info[1] + " - Dimension " + str(dim)
 
-            fig = plt.figure(figsize=(14, 5))
-            plt.title(title)
-            plt.xlabel("time steps", fontsize=16)
-            plt.ylim(-1.1, 1.1)
-            plt.xlim(-0.1, self.n_steps - 0.9)
-            plt.yticks(np.arange(-1, 1.1, 2 / self.action_vals[dim]))
-            plt.xticks(np.arange(0, self.n_steps, 1))
-            axes = plt.plot(coordinates[dim], marker="o")[0].axes
-            axes.xaxis.grid(False)
-            fig.savefig(os.path.join(path, title + ".jpg"))
+            axes[idx].set_yticks((np.arange(-1, 1.1, 2 / self.action_vals[dim])))
+            axes[idx].set_title(title)
+            axes[idx].plot(coordinates[dim], label="Function", marker="o")[0].axes
+            axes[idx].xaxis.grid(False)
+            axes[idx].vlines(x=[3.5, 7.5], ymin=-1, ymax=1, colors="white", ls="--")
+            axes[idx].legend(bbox_to_anchor=(1.0, 1), loc="upper left")
+
+        fig_title = f"GeoBench-Dimensions{len(dimensions)}"
+        fig.savefig(os.path.join(FILE_PATH, fig_title + ".jpg"))
+
+    def render_3d_dimensions(self, dimensions: List):
+        """
+        Plot 2 Dimensions in 3D space
+
+        Parameters
+        ----------
+        dimensions : List
+            List of dimensions that get plotted. Max 2
+        """
+        assert len(dimensions) == 2
+
+        coordinates = self.get_coordinates().transpose()
+
+        fig = plt.figure(15, 15)
+        ax = plt.axes(projection="3d")
+
+        x = list(range(self.n_steps))
+        z = coordinates[dimensions[0]][x]
+        y = coordinates[dimensions[1]][x]
+
+        ax.set_title("3D line plot")
+
+        ax.plot3D(x, y, z, "blue")
+        ax.view_init()
+        fig.savefig(os.path.join("3D.jpg"))
+
+        ax.view_init(elev=0, azim=-90)
+        fig.savefig(os.path.join("3D-90side.jpg"))
+        #
+        ax.view_init(elev=90, azim=0)
+        fig.savefig(os.path.join("3D-90top.jpg"))
