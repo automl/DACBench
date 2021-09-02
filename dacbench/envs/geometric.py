@@ -472,7 +472,7 @@ class GeometricEnv(AbstractEnv):
 
         coordinates = self.get_coordinates().transpose()
 
-        fig = plt.figure(15, 15)
+        fig = plt.figure(figsize=(10, 10))
         ax = plt.axes(projection="3d")
 
         x = list(range(self.n_steps))
@@ -485,8 +485,7 @@ class GeometricEnv(AbstractEnv):
         ax.view_init()
         fig.savefig(os.path.join("3D.jpg"))
 
+        ax.set_yticklabels([])
+        ax.set_yticks([])
         ax.view_init(elev=0, azim=-90)
         fig.savefig(os.path.join("3D-90side.jpg"))
-        #
-        ax.view_init(elev=90, azim=0)
-        fig.savefig(os.path.join("3D-90top.jpg"))
