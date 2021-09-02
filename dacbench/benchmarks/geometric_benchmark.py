@@ -230,7 +230,8 @@ if __name__ == "__main__":
 
     env = GeometricEnv(config)
     opt_policy = env.get_optimal_policy()
-    env.render_3d_dimensions([1, 3])
+    env.render_dimensions([0, 1, 2, 3, 4, 5, 6], "/home/rasmus/master")
+    env.render_3d_dimensions([1, 3], "/home/rasmus/master")
     env.reset()
 
     for step in range(env.n_steps):

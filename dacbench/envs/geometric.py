@@ -437,7 +437,9 @@ class GeometricEnv(AbstractEnv):
         coordinates = self.get_coordinates().transpose()
         instance = self.instance
 
-        fig, axes = plt.subplots(4, sharex=True, sharey=True, figsize=(20, 15))
+        fig, axes = plt.subplots(
+            len(dimensions), sharex=True, sharey=True, figsize=(15, 4 * len(dimensions))
+        )
         plt.xlabel("time steps", fontsize=16)
         plt.ylim(-1.1, 1.1)
         plt.xlim(-0.1, self.n_steps - 0.9)
@@ -481,7 +483,7 @@ class GeometricEnv(AbstractEnv):
 
         ax.plot3D(x, y, z, "blue")
         ax.view_init()
-        fig.savefig(os.path.join("3D.jpg"))
+        fig.savefig(os.path.join(absolute_path, "3D.jpg"))
 
         ax.set_yticklabels([])
         ax.set_yticks([])
