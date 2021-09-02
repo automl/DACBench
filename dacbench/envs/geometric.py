@@ -361,14 +361,16 @@ class GeometricEnv(AbstractEnv):
         """
         # get coordinates for all dimensions of the curve
         coordinates = np.zeros(self.n_actions)
+        function_names = []
 
         for dim, function_info in enumerate(self.instance):
             coordinates[dim] = self._calculate_function_value(
                 self.c_step, function_info
             )
+            function_names.append(function_info[1])
 
         # map action values to their interval mean
-        mapping_list = list(self.action_interval_mapping.values())
+        mapping_list = [self.action_interval_mapping[name] for name in function_names]
         action_intervall = [
             mapping_list[count][index] for count, index in enumerate(self.action)
         ]
