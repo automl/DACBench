@@ -440,9 +440,26 @@ class HyFlexEnv(AbstractEnv):
         self.problem = None  # HyFlex ProblemDomain object ~ current DAC instance
         self.unary_heuristics = None  # indices for unary heuristics
         self.binary_heuristics = None  # indices for binary heuristics
+        self.heuristic_indices = None  # indices for all heuristics
+        self.heuristic_arities = None  # the # solutions the heuristic with index i takes as input
         self.f_best = None  # fitness of current best
         self.f_prop = None  # fitness of proposal
         self.f_inc = None  # fitness of incumbent
+
+        # action parser
+        def value_of(action):
+            try:
+                return action[0]
+            except (TypeError, IndexError):
+                return action
+        if config["learn_select"] and config["learn_accept"]:
+            self._parse_action = lambda action: (action[0], action[1])
+        elif config["learn_select"]:
+            self._parse_action = lambda action: (None, value_of(action))
+        elif config["learn_accept"]:
+            self._parse_action = lambda action: (value_of(action), None)
+        else:
+            raise Exception("No learning target: Either selection and/or acceptance must be learned!")
 
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
@@ -470,13 +487,15 @@ class HyFlexEnv(AbstractEnv):
         """
         done = super(HyFlexEnv, self).step_()
 
-        if action == self.accept:
+        prev_accept_action, next_select_action = self._parse_action(action)
+
+        if prev_accept_action is None or prev_accept_action == self.accept:
             # accept previous proposal as new incumbent
             self.problem.copySolution(self.s_prop, self.s_inc)
             self.f_inc = self.f_prop
 
         # generate a new proposal
-        self.f_prop = self._generate_proposal()
+        self.f_prop = self._generate_proposal(next_select_action)
 
         # calculate reward (note: assumes f_best is not yet updated!)
         reward = self.get_reward(self)
@@ -512,6 +531,10 @@ class HyFlexEnv(AbstractEnv):
         self.unary_heuristics += self.problem.getHeuristicsOfType(H_TYPE.RUIN_RECREATE)
         self.unary_heuristics += self.problem.getHeuristicsOfType(H_TYPE.OTHER)
         self.binary_heuristics = self.problem.getHeuristicsOfType(H_TYPE.CROSSOVER)
+        self.heuristic_indices = list(range(-1, len(self.unary_heuristics) + len(self.binary_heuristics)))
+        self.heuristic_arities = {**{-1: 0},
+                                  **{h: 1 for h in self.unary_heuristics},
+                                  **{h: 2 for h in self.binary_heuristics}}
         # load instance
         self.problem.loadInstance(instance_index)
         # initialise solution memory
@@ -527,19 +550,17 @@ class HyFlexEnv(AbstractEnv):
         self._update_best()
         return self.get_state(self)
 
-    def _generate_proposal(self):
-        # select uniformly at random between 0-ary (re-init), 1-ary, 2-ary heuristics
-        nary = self.np_random.choice([0] + [1] * len(self.unary_heuristics) + [2] * len(self.binary_heuristics))
-        if nary == 0:
+    def _generate_proposal(self, select_action=None):
+        if select_action is None:
+            select_action = self.np_random.choice(self.heuristic_indices)
+        if self.heuristic_arities[select_action] == 0:
             self.problem.initialiseSolution(self.s_prop)
             f_prop = self.problem.getFunctionValue(self.s_prop)
-        elif nary == 1:
-            h = self.np_random.choice(self.unary_heuristics)
-            f_prop = self.problem.applyHeuristicUnary(h, self.s_inc, self.s_prop)
+        elif self.heuristic_arities[select_action] == 1:
+            f_prop = self.problem.applyHeuristicUnary(select_action, self.s_inc, self.s_prop)
         else:
-            h = self.np_random.choice(self.binary_heuristics)
             # note: the best solution found thus far is used as 2nd argument for crossover
-            f_prop = self.problem.applyHeuristicBinary(h, self.s_inc, self.s_best, self.s_prop)
+            f_prop = self.problem.applyHeuristicBinary(select_action, self.s_inc, self.s_best, self.s_prop)
         return f_prop
 
     def _update_best(self):
