@@ -31,7 +31,8 @@ class ProblemDomain:
         self.domain = domain
         self.seed = seed
         self.host = host
-        self.token = requests.put(self.host + "/instantiate/" + domain + "/" + str(seed)).text
+        self.session = requests.Session()
+        self.token = self.session.put(self.host + "/instantiate/" + domain + "/" + str(seed)).text
 
 
     def getHeuristicCallRecord(self) -> List[int]:
@@ -41,7 +42,7 @@ class ProblemDomain:
         :return: A list which contains an integer value for each low level heuristic, representing the number of times
             that heuristic has been called by the HyperHeuristic object.
         """
-        return requests.get(self.host + "/heuristic/record/call/" + self.token).json()
+        return self.session.get(self.host + "/heuristic/record/call/" + self.token).json()
 
 
     def getHeuristicCallTimeRecord(self) -> List[int]:
@@ -51,7 +52,7 @@ class ProblemDomain:
         :return: A list which contains an integer value representing the total number of milliseconds used by each low
             level heuristic.
         """
-        return requests.get(self.host + "/heuristic/record/callTime/" + self.token).json()
+        return self.session.get(self.host + "/heuristic/record/callTime/" + self.token).json()
 
 
     def setDepthOfSearch(self, depthOfSearch: float) -> None:
@@ -63,7 +64,7 @@ class ProblemDomain:
             the low level heuristic.
         :return: None
         """
-        requests.post(self.host + "/search/depth/" + self.token + "/" + str(depthOfSearch))
+        self.session.post(self.host + "/search/depth/" + self.token + "/" + str(depthOfSearch))
 
 
     def setIntensityOfMutation(self, intensityOfMutation: float) -> None:
@@ -80,7 +81,7 @@ class ProblemDomain:
             operation of the low level heuristic.
         :return: None
         """
-        requests.post(self.host + "/mutationIntensity/" + self.token + "/" + str(intensityOfMutation))
+        self.session.post(self.host + "/mutationIntensity/" + self.token + "/" + str(intensityOfMutation))
 
 
     def getDepthOfSearch(self) -> float:
@@ -89,7 +90,7 @@ class ProblemDomain:
 
         :return: the current value of the intensity of mutation parameter.
         """
-        return requests.get(self.host + "/search/depth/" + self.token).text
+        return self.session.get(self.host + "/search/depth/" + self.token).text
 
 
     def getIntensityOfMutation(self) -> float:
@@ -98,7 +99,7 @@ class ProblemDomain:
 
         :return: the current value of the intensity of mutation parameter.
         """
-        return float(requests.get(self.host + "/mutationIntensity/" + self.token).text)
+        return float(self.session.get(self.host + "/mutationIntensity/" + self.token).text)
 
 
     def getHeuristicsOfType(self, heuristicType: HeuristicType) -> List[int]:
@@ -109,7 +110,7 @@ class ProblemDomain:
         :return: A list containing the indices of the heuristics of the type specified. If there are no heuristics of
             this type it returns None.
         """
-        return list(requests.get(self.host + "/heuristic/" + self.token + "/" + str(heuristicType.name)).json())
+        return list(self.session.get(self.host + "/heuristic/" + self.token + "/" + str(heuristicType.name)).json())
 
 
     def getHeuristicsThatUseIntensityOfMutation(self) -> List[int]:
@@ -120,7 +121,7 @@ class ProblemDomain:
         :return: An array containing the indexes of the heuristics that use the intensityOfMutation parameter, or None
             if there are no heuristics of this type.
         """
-        return requests.get(self.host + "/heuristic/mutationIntensity/" + self.token).json()
+        return self.session.get(self.host + "/heuristic/mutationIntensity/" + self.token).json()
 
 
     def getHeuristicsThatUseDepthOfSearch(self) -> List[int]:
@@ -131,7 +132,7 @@ class ProblemDomain:
         :return: An array containing the indexes of the heuristics that use the depthOfSearch parameter, or None if
             there are no heuristics of this type.
         """
-        return requests.get(self.host + "/heuristic/depth/" + self.token).json()
+        return self.session.get(self.host + "/heuristic/depth/" + self.token).json()
 
 
     def loadInstance(self, instanceID: int) -> None:
@@ -141,7 +142,7 @@ class ProblemDomain:
         :param instanceID: Specifies the instance to load. The ID's start at zero.
         :return: None
         """
-        requests.post(self.host + "/instance/" + self.token + "/" + str(instanceID))
+        self.session.post(self.host + "/instance/" + self.token + "/" + str(instanceID))
 
 
     def setMemorySize(self, size: int) -> None:
@@ -151,7 +152,7 @@ class ProblemDomain:
         :param size: The new size of the solution array.
         :return: None
         """
-        requests.post(self.host + "/memorySize/" + self.token + "/" + str(size))
+        self.session.post(self.host + "/memorySize/" + self.token + "/" + str(size))
 
 
     def initialiseSolution(self, index: int) -> None:
@@ -164,7 +165,7 @@ class ProblemDomain:
         :param index: The index of the memory array at which the solution should be initialised.
         :return: None
         """
-        requests.put(self.host + "/solution/init/" + self.token + "/" + str(index))
+        self.session.put(self.host + "/solution/init/" + self.token + "/" + str(index))
 
 
     def getNumberOfHeuristics(self) -> int:
@@ -173,7 +174,7 @@ class ProblemDomain:
 
         :return: The number of heuristics available in this problem domain
         """
-        return int(requests.get(self.host + "/heuristic/num/" + self.token).text)
+        return int(self.session.get(self.host + "/heuristic/num/" + self.token).text)
 
 
     def applyHeuristicUnary(self, heuristicID: int, solutionSourceIndex: int, solutionDestinationIndex: int) -> float:
@@ -187,7 +188,7 @@ class ProblemDomain:
         :param solutionDestinationIndex: The index in the memory array at which to store the resulting solution
         :return: the objective function value of the solution created by applying the heuristic
         """
-        return float(requests.post(self.host + "/heuristic/apply/" + self.token + "/" + str(heuristicID) + "/" + str(
+        return float(self.session.post(self.host + "/heuristic/apply/" + self.token + "/" + str(heuristicID) + "/" + str(
             solutionSourceIndex) + "/" + str(solutionDestinationIndex)).text)
 
 
@@ -204,7 +205,7 @@ class ProblemDomain:
         :param solutionDestinationIndex: The index in the memory array at which to store the resulting solution
         :return: the objective function value of the solution created by applying the heuristic
         """
-        return float(requests.post(self.host + "/heuristic/apply/" + self.token + "/" + str(heuristicID) + "/" + str(
+        return float(self.session.post(self.host + "/heuristic/apply/" + self.token + "/" + str(heuristicID) + "/" + str(
             solutionSourceIndex1) + "/" + str(solutionSourceIndex2) + "/" + str(solutionDestinationIndex)).text)
 
 
@@ -216,7 +217,7 @@ class ProblemDomain:
         :param solutionDestinationIndex: The position in the array to copy the solution to.
         :return: None
         """
-        requests.post(self.host + "/solution/copy/" + self.token + "/" + str(solutionSourceIndex) + "/" + str(
+        self.session.post(self.host + "/solution/copy/" + self.token + "/" + str(solutionSourceIndex) + "/" + str(
             solutionDestinationIndex))
 
 
@@ -226,7 +227,7 @@ class ProblemDomain:
 
         :return: the name of the ProblemDomain
         """
-        return requests.get(self.host + "/toString/" + self.token).text
+        return self.session.get(self.host + "/toString/" + self.token).text
 
 
     def getNumberOfInstances(self) -> int:
@@ -235,7 +236,7 @@ class ProblemDomain:
 
         :return: the number of instances available
         """
-        return int(requests.get(self.host + "/instances/" + self.token).text)
+        return int(self.session.get(self.host + "/instances/" + self.token).text)
 
 
     def bestSolutionToString(self) -> str:
@@ -244,7 +245,7 @@ class ProblemDomain:
 
         :return: The objective function value of the best solution.
         """
-        return requests.get(self.host + "/solution/best/toString/" + self.token).text
+        return self.session.get(self.host + "/solution/best/toString/" + self.token).text
 
 
     def getBestSolutionValue(self) -> float:
@@ -253,7 +254,7 @@ class ProblemDomain:
 
         :return: The objective function value of the best solution.
         """
-        return float(requests.get(self.host + "/solution/best/value/" + self.token).text)
+        return float(self.session.get(self.host + "/solution/best/value/" + self.token).text)
 
 
     def solutionToString(self, solutionIndex: int) -> str:
@@ -263,7 +264,7 @@ class ProblemDomain:
         :param solutionIndex: The index of the solution of which a String representation is required
         :return: A String representation of the solution at solutionIndex in the solution memory
         """
-        return requests.get(self.host + "/solution/toString/" + self.token + "/" + str(solutionIndex)).text
+        return self.session.get(self.host + "/solution/toString/" + self.token + "/" + str(solutionIndex)).text
 
 
     def getFunctionValue(self, solutionIndex: int) -> float:
@@ -274,7 +275,7 @@ class ProblemDomain:
         :return: A double value of the solution's objective function value.
         """
         # raise NotImplementedError
-        return float(requests.get(self.host + "/solution/functionValue/" + self.token + "/" + str(solutionIndex)).text)
+        return float(self.session.get(self.host + "/solution/functionValue/" + self.token + "/" + str(solutionIndex)).text)
 
 
     # return self.mem[solutionIndex]
@@ -288,7 +289,7 @@ class ProblemDomain:
         :param solutionIndex2: The index of the second solution in the comparison
         :return: true if the solutions are identical, false otherwise.
         """
-        return bool(requests.get(
+        return bool(self.session.get(
             self.host + "/solution/compare/" + self.token + "/" + str(solutionIndex1) + "/" + str(solutionIndex2)).text)
 
 
