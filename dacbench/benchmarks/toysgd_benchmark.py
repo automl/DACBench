@@ -9,8 +9,6 @@ import importlib
 import dacbench.envs.toysgd
 importlib.reload(dacbench.envs.toysgd)
 
-HISTORY_LENGTH = 40
-
 INFO = {
     "identifier": "toy_sgd",
     "name": "Learning Rate and Momentum Adaption for SGD on Toy Functions",
