@@ -147,9 +147,15 @@ class ToySGDEnv(AbstractEnv):
         self.x_cur = None
         self.f_cur = None
         self.momentum = 0
-        self.learning_rate = None
+        self.learning_rate = 0
         self.n_steps = 0
         self.build_objective_function()
+        return {
+            "remaining_budget": self.n_steps_max,
+            "gradient": self.gradient,
+            "learning_rate": self.learning_rate,
+            "momentum": self.momentum
+        }
 
     def render(self, **kwargs):
         import matplotlib.pyplot as plt

@@ -26,7 +26,7 @@ INFO = {
 DEFAULTS = objdict(
     {
         "action_space_class": "Box",
-        "action_space_args": [-np.inf * np.ones((2,)), np.inf * np.ones((2,))],
+        "action_space_args": [-np.inf * np.ones((2,)), np.ones((2,))],
         "observation_space_class": "Dict",
         "observation_space_type": None,
         "observation_space_args": [
