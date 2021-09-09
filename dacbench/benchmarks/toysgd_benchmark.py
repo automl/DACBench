@@ -7,6 +7,7 @@ from gym import spaces
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 import importlib
 import dacbench.envs.toysgd
+
 importlib.reload(dacbench.envs.toysgd)
 
 INFO = {
@@ -17,14 +18,14 @@ INFO = {
         "Remaining Budget",
         "Gradient",
         "Current Learning Rate",
-        "Current Momentum"
+        "Current Momentum",
     ],
 }
 
 DEFAULTS = objdict(
     {
         "action_space_class": "Box",
-        "action_space_args": [-np.inf * np.ones((2,)), np.ones((2,))],
+        "action_space_args": [-np.inf * np.ones((2,)), np.inf * np.ones((2,))],
         "observation_space_class": "Dict",
         "observation_space_type": None,
         "observation_space_args": [
@@ -117,7 +118,7 @@ class ToySGDBenchmark(AbstractBenchmark):
         return dacbench.envs.toysgd.ToySGDEnv(self.config)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     benchmark = ToySGDBenchmark()
     env = benchmark.get_environment()
     log_learning_rate = -10
