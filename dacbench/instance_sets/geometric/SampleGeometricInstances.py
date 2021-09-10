@@ -14,6 +14,7 @@ FUNCTION_CONFIG = {
     "exponential": 1,
     "logarithmic": 1,
     "constant": 1,
+    "sinus": 1,
 }
 
 # Each function needs fix number of parameters
@@ -26,6 +27,7 @@ FUNCTION_PARAMETER_NUMBERS = {
     "exponential": 1,
     "logarithmic": 1,
     "constant": 1,
+    "sinus": 1,
 }
 
 SAMPLE_SIZE = 100

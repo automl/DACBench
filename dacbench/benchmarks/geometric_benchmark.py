@@ -40,6 +40,7 @@ GEOMETRIC_DEFAULTS = objdict(
             "exponential": 4,
             "logarithmic": 4,
             "constant": 1,
+            "sinus": 9,
         },
         "action_interval_mapping": {},  # maps actions to equally sized intervalls in [-1, 1]
         "seed": 0,
