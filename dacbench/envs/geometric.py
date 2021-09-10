@@ -95,7 +95,7 @@ class GeometricEnv(AbstractEnv):
 
         return pol_value
 
-    def _logarithmic(self, t: float, a: int):
+    def _logarithmic(self, t: float, a: float):
         """ Logarithmic function """
         if t != 0:
             return a * np.log(t)
@@ -109,6 +109,10 @@ class GeometricEnv(AbstractEnv):
     def _constant(self, c: float):
         """ Constant function """
         return c
+
+    def _sinus(self, t: float, scale: float):
+        """ Sinus function """
+        return np.sin(scale * t)
 
     def _calculate_norm_value(self):
         """
@@ -169,6 +173,9 @@ class GeometricEnv(AbstractEnv):
 
         elif "polynomial" in function_name:
             function_value = self._polynom(time_step, coefficients)
+
+        elif "sinus" in function_name:
+            function_value = self._sinus(time_step, coefficients[0])
 
         function_value = max(function_value, -self.max_function_value)
         return min(function_value, self.max_function_value) / norm_value

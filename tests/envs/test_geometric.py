@@ -1,5 +1,6 @@
+import os
 import unittest
-from typing import Dict, List
+from typing import Dict
 
 import numpy as np
 from dacbench import AbstractEnv
@@ -7,6 +8,7 @@ from dacbench.abstract_benchmark import objdict
 from dacbench.benchmarks import GeometricBenchmark
 from dacbench.envs import GeometricEnv
 
+FILE_PATH = os.path.dirname(__file__)
 
 DEFAULTS_STATIC = objdict(
     {
@@ -89,11 +91,13 @@ class TestGeometricEnv(unittest.TestCase):
         self.assertAlmostEqual(env._polynom(4, [1, 2, 3]), 57, places=2)
         self.assertAlmostEqual(env._polynom(3, [1, 2, 3, 2, 1]), 169, places=2)
         self.assertAlmostEqual(env._polynom(2, [1, 2, 3, 6, 7, 1, 1]), 273, places=2)
+        self.assertAlmostEqual(env._sinus(4, 0.5), 0.91, places=2)
 
     def test_calculate_norm_value(self):
         env = self.make_env(DEFAULTS_STATIC)
         env._calculate_norm_value()
         self.assertTrue(type(env.instance_set[0][0][0]) == np.float64)
+        self.assertFalse(env._calculate_norm)
 
     def test_calculate_function_value(self):
         env = self.make_env(DEFAULTS_STATIC)
@@ -143,3 +147,19 @@ class TestGeometricEnv(unittest.TestCase):
         self.assertTrue(
             len(env._get_optimal_policy_at_time_step(env.instance, 0)) == env.n_actions
         )
+
+    def test_render_dimensions(self):
+        env = self.make_env(DEFAULTS_STATIC)
+        dimensions = [1, 2]
+        env.render_dimensions(dimensions, FILE_PATH)
+        fig_title = f"GeoBench-Dimensions{len(dimensions)}.jpg"
+        self.assertTrue(os.path.exists(os.path.join(FILE_PATH, fig_title)))
+        os.remove(fig_title)
+
+    def test_render_3d_dimensions(self):
+        env = self.make_env(DEFAULTS_STATIC)
+        env.render_3d_dimensions([0, 1], FILE_PATH)
+        self.assertTrue(os.path.exists(os.path.join(FILE_PATH, "3D.jpg")))
+        self.assertTrue(os.path.exists(os.path.join(FILE_PATH, "3D-90side.jpg")))
+        os.remove("3D.jpg")
+        os.remove("3D-90side.jpg")
