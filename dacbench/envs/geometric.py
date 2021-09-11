@@ -366,7 +366,6 @@ class GeometricEnv(AbstractEnv):
         float
             Euclidean distance
         """
-        # get coordinates for all dimensions of the curve
         coordinates = np.zeros(self.n_actions)
         function_names = []
 
@@ -382,7 +381,6 @@ class GeometricEnv(AbstractEnv):
             mapping_list[count][index] for count, index in enumerate(self.action)
         ]
 
-        # calculate euclidean norm
         dist = np.linalg.norm(action_intervall - coordinates)
 
         # norm reward to (0, 1)
@@ -392,7 +390,7 @@ class GeometricEnv(AbstractEnv):
 
         reward = 1 - (dist / max_dist)
 
-        return reward
+        return abs(reward)
 
     def get_default_state(self, _) -> np.array:
         """
