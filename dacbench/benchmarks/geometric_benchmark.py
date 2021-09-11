@@ -47,7 +47,7 @@ GEOMETRIC_DEFAULTS = objdict(
         "derivative_interval": 3,  # defines how many values are used for derivative calculation
         "max_function_value": 10000000,  # clip function value if it is higher than this number
         "realistic_trajectory": True,  # True: coordiantes are used as trajectory, False: Actions are used as trajectories
-        "instance_set_path": "../instance_sets/geometric/geometric_train.csv",
+        "instance_set_path": "../instance_sets/geometric/geometric_test.csv",
         "benchmark_info": INFO,
     }
 )
