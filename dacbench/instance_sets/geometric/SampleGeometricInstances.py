@@ -34,7 +34,19 @@ SAMPLE_SIZE = 100
 
 
 def save_geometric_instances(filename: str, config: Dict = FUNCTION_CONFIG):
+    """
+    First delete old isntance_set.
+    Create new instances based on config.
+
+    Parameters
+    ----------
+    filename : str
+        name of instance set
+    config : Dict, optional
+        config that has info about which functions will get selected, by default FUNCTION_CONFIG
+    """
     csv_path = os.path.join(FILE_PATH, filename)
+    os.remove(csv_path)
 
     with open(csv_path, "a") as fh:
         id_string = (
