@@ -4,6 +4,9 @@ import warnings
 import json
 from functools import reduce
 from enum import IntEnum, auto
+import copy
+from contextlib import contextmanager
+
 
 import torch
 from backpack import backpack, extend
@@ -14,6 +17,17 @@ from dacbench import AbstractEnv
 import random
 
 warnings.filterwarnings("ignore")
+
+
+@contextmanager
+def fake_step(model, optimizer):
+    optimizer_state = copy.deepcopy(optimizer.state_dict())
+    model_state = copy.deepcopy(model.state_dict())
+    try:
+        yield optimizer
+    finally:
+        model.load_state_dict(model_state)
+        optimizer.load_state_dict(optimizer_state)
 
 
 def reward_range(frange):
@@ -57,6 +71,8 @@ class SGDEnv(AbstractEnv):
         """
         super(SGDEnv, self).__init__(config)
 
+        self.optimizer_name = config.optimizer
+
         self.batch_size = config.training_batch_size
         self.validation_batch_size = config.validation_batch_size
         self.no_cuda = config.no_cuda
@@ -64,6 +80,7 @@ class SGDEnv(AbstractEnv):
         self.on_features = config.features
         self.cd_paper_reconstruction = config.cd_paper_reconstruction
         self.cd_bias_correction = config.cd_bias_correction
+        self.config = config
 
         if isinstance(config.reward_type, Reward):
             self.reward_type = config.reward_type
@@ -104,17 +121,6 @@ class SGDEnv(AbstractEnv):
 
         self.model = None
         self.val_model = None
-        # TODO:
-        """
-        TODO: Samuel Mueller (PhD student in our group) also uses backpack and has ran into a similar memory leak.
-        He solved it calling this custom made RECURSIVE memory_cleanup function:
-        # from backpack import memory_cleanup
-        # def recursive_backpack_memory_cleanup(module: torch.nn.Module):
-        #   memory_cleanup(module)
-        #   for m in module.modules():
-        #      memory_cleanup(m)
-        (calling this after computing the training loss/gradients and after validation loss should suffice)
-        """
         self.parameter_count = 0  # TODO: Verify that we still need this if we use pytorch.optim
         self.layer_sizes = []  # TODO: Verify that we still need this if we use pytorch.optim
 
@@ -129,26 +135,6 @@ class SGDEnv(AbstractEnv):
         self.current_lr = config.lr * torch.ones(
             1, device=self.device, requires_grad=False
         )
-
-        self.optimizer_name = config.optimizer
-
-        # TODO: Make this part of the config (optimizer_kwargs)
-        # TODO: m, v and t should not be stored here but in the param_group of the optimizer (if Adam is used)
-        # Adam parameters
-        self.beta1 = config.beta1
-        self.beta2 = config.beta2
-        self.m = 0
-        self.v = 0
-        self.epsilon = 1.0e-06
-        # RMSprop parameters
-        self.beta1 = config.beta1
-        self.v = 0
-        # Momentum parameters
-        self.sgd_momentum_v = 0
-        self.sgd_rho = 0.9
-
-        self.t = 0
-        self.step_count = torch.zeros(1, device=self.device, requires_grad=False)
 
         self.prev_direction = None
         self.current_direction = None
@@ -167,23 +153,6 @@ class SGDEnv(AbstractEnv):
             1, device=self.device, requires_grad=False
         )
         self.discount_factor = 0.9  # TODO: Make this part of the config
-        self.firstOrderMomentum = torch.zeros(
-            1, device=self.device, requires_grad=False
-        )
-        self.secondOrderMomentum = torch.zeros(
-            1, device=self.device, requires_grad=False
-        )
-
-        self.writer = None  # TODO: Is this used?
-
-        if self.optimizer_name=="adam":
-            self.get_optimizer_direction = self.get_adam_direction
-        elif self.optimizer_name=="rmsprop":
-            self.get_optimizer_direction = self.get_rmsprop_direction
-        elif self.optimizer_name=="momentum":
-            self.get_optimizer_direction = self.get_momentum_direction
-        else:
-            raise NotImplementedError
 
         if "reward_function" in config.keys():
             self._get_reward = config["reward_function"]
@@ -290,38 +259,22 @@ class SGDEnv(AbstractEnv):
             action = action[0]
 
         new_lr = torch.Tensor([action]).to(self.device)
+
+        self.current_direction = -self.update_value / self.current_lr
+
         self.current_lr = new_lr
 
-        # TODO: (BEGIN) This update should be done by self.optimizer.step()
-        direction = self.get_optimizer_direction()
+        for g in self.optimizer.param_groups:
+            g['lr'] = action
 
-        self.current_direction = direction  # TODO: See note below this todo
-
-        delta_w = torch.mul(new_lr, direction)
-
-        for i, p in enumerate(self.model.parameters()):
-            layer_size = self.layer_sizes[i]
-            p.data = p.data - delta_w[index : index + layer_size].reshape(
-                shape=p.data.shape
-            )
-            index += layer_size
-
-        # TODO: (END)
-        # Note: Computing directions becomes more difficult and involves comparing parameters before/after the update
-        # You will also need similar calculations to calculate the predictiveChange features, so probably best to write
-        # this as a separate function (in fact, for every optimizer.step() you need the (direction of the) update vector
-        # (in predictiveChange you must store the state before / restore it after to reverse the step, more info below)
-
-        self._set_zero_grad()  # TODO: This could also be done by a call to self.optimizer.zero_grad?
-        # TODO: Seperate the forward/backward pass on train from the caclulation of the reward (forward on val) so the following this can be (roughly) be rewritten as:
-        # 1) self.compute_forward_backward()
-        # 2) return self.get_state(self), self.get_reward(self), done, {}
+        self.optimizer.step()
+        self.optimizer.zero_grad()
 
         self.prev_training_loss = self.current_training_loss
         if self._current_validation_loss.calculated:
             self.prev_validation_loss = self.current_validation_loss
 
-        self.train_network()
+        self.fake_train()
         reward = self.get_reward()
 
         return self.get_state(self), reward, done, {}
@@ -362,6 +315,7 @@ class SGDEnv(AbstractEnv):
         construct_model = self._architecture_constructor(self.instance[2])
         self.n_steps = self.instance[3]
         dataset_size = self.instance[4]
+        self.step_count = 0
 
         self.seed(instance_seed)
 
@@ -379,7 +333,7 @@ class SGDEnv(AbstractEnv):
         train_dataloader_args = {"batch_size": self.batch_size}
         validation_dataloader_args = {"batch_size": self.validation_batch_size}
         if self.use_cuda:
-            param = {"num_workers": 1, "pin_memory": True, "shuffle": True}
+            param = {"num_workers": 1, "pin_memory": True}
             train_dataloader_args.update(param)
             validation_dataloader_args.update(param)
 
@@ -453,29 +407,30 @@ class SGDEnv(AbstractEnv):
 
         self.model = extend(self.model)
 
-        # TODO: Somewhere here self.optimizer should be initialised based on the benchmark config
-        # config.optimizer_class: Specifying a pytorch.optim classname, e.g. 'Adam'
-        # config.optimizer_kwargs: Specifying a dict of optimizer arguments, e.g. {lr: 0.01, betas=(0.5,0.5), eps=0.0000001}
-        # i.e. ~ self.optimizer_class(self.model.parameters(), **self.optimizer_kwargs)
-
-        self._set_zero_grad()  # TODO: call to self.optimizer
         self.model.train()
         self.val_model.eval()
 
         self.current_training_loss = None
         self.loss_batch = None
 
-        # Adam parameters
-        self.m = 0 # TODO: Should not need these anymore if we use torch.optim
-        self.v = 0 # TODO: Should not need these anymore if we use torch.optim
-        # RMSprop parameters
-        self.v = 0
-        # Momentum parameters
-        self.sgd_momentum_v = 0
+        def construct_optimizer(optimizer, **kwargs):
+            return optimizer(self.model.parameters(),
+                    lr=self.initial_lr.item(), **kwargs)
 
-        self.t = 0 # TODO: Should not need these anymore if we use torch.optim
 
-        self.step_count = torch.zeros(1, device=self.device, requires_grad=False)
+        # NOTE: Support every optimizer in the config
+        if self.optimizer_name=="adam":
+            self.optimizer = construct_optimizer(torch.optim.Adam,
+                    betas=[self.config.beta1, self.config.beta2])
+        elif self.optimizer_name=="rmsprop":
+            self.optimizer = construct_optimizer(torch.optim.RMSprop,
+                    alpha=self.config.beta2)
+        elif self.optimizer_name=="momentum":
+            self.optimizer = construct_optimizer(torch.optim.SGD, momentum=0.9)
+        else:
+            raise NotImplementedError
+
+        self.optimizer.zero_grad()
 
         self.current_lr = self.initial_lr  # TODO: Should not need these anymore if we use torch.optim as the initial LR is specified in config.optimizer_kwargs
         self.prev_direction = torch.zeros(
@@ -512,12 +467,26 @@ class SGDEnv(AbstractEnv):
             1, device=self.device, requires_grad=False
         )
 
-        self.train_network()
+        self.fake_train()
 
         return self.get_state(self)
 
-    def set_writer(self, writer):
-        self.writer = writer
+    def fake_train(self):
+        loss = self.epoch()
+        self.optimizer.zero_grad()
+        with backpack(BatchGrad()):
+            loss.mean().backward()
+
+        # for i, param in enumerate(self.model.parameters()):
+        #     print(param.grad)
+        #     break
+
+        with fake_step(self.optimizer, self.model):
+            prev_values = torch.nn.utils.parameters_to_vector(self.model.parameters())
+            self.optimizer.step()
+            current_values = torch.nn.utils.parameters_to_vector(self.model.parameters())
+            # print(prev_values, current_values)
+            self.update_value = current_values - prev_values
 
     def close(self):
         """
@@ -554,9 +523,6 @@ class SGDEnv(AbstractEnv):
             Environment state
 
         """
-        self.gradients = self._get_gradients() # TODO: Should not need these anymore if we use torch.optim
-        self.firstOrderMomentum, self.secondOrderMomentum, self.sgdMomentum = self._get_momentum(self.gradients) # TODO: Should not need these anymore if we use torch.optim
-
         if 'predictiveChangeVarDiscountedAverage' in self.on_features or 'predictiveChangeVarUncertainty' in self.on_features:
             predictiveChangeVarDiscountedAverage, predictiveChangeVarUncertainty = \
                 self._get_predictive_change_features(self.current_lr)
@@ -584,31 +550,18 @@ class SGDEnv(AbstractEnv):
         if 'validationLoss' in self.on_features:
             state["validationLoss"] = self.current_validation_loss.item()
         if 'step' in self.on_features:
-            state["step"] = self.step_count.item()
+            state["step"] = self.step_count
         if 'alignment' in self.on_features:
             state["alignment"] = alignment.item()
 
         return state
 
-    def _set_zero_grad(self):
-        # TODO: I think this can be replaced by a self.optimizer call
-        index = 0
-        for i, p in enumerate(self.model.parameters()):
-            if p.grad is None:
-                continue
-            layer_size = self.layer_sizes[i]
-            p.grad.zero_()
-            index += layer_size
-
-    def _train_batch_(self):
+    def _epoch(self):
         (data, target) = self.train_loader_it.next()
         data, target = data.to(self.device), target.to(self.device)
         self.current_batch_size = data.size()[0]
         output = self.model(data)
         loss = self.loss_function(output, target)
-
-        with backpack(BatchGrad()):
-            loss.mean().backward()
 
         loss_value = loss.mean()
 
@@ -617,14 +570,17 @@ class SGDEnv(AbstractEnv):
         self.train_batch_index += 1
         self._current_validation_loss.calculated = False
 
-    def train_network(self):
+        return loss
+
+    def epoch(self):
         try:
-            self._train_batch_()
+            loss = self._epoch()
         except StopIteration:
             self.train_batch_index = 0
             self.epoch_index += 1
             self.train_loader_it = iter(self.train_loader)
-            self._train_batch_()
+            loss = self._epoch()
+        return loss
 
     def transfer_model_parameters(self):  # TODO: If this is only used in validation loss calculation you can probably hide it there.
         # self.val_model.load_state_dict(self.model.state_dict())
@@ -686,37 +642,6 @@ class SGDEnv(AbstractEnv):
 
         return validation_loss
 
-    def _get_gradients(self):  # TODO: Not needed when using pytorch.optim?
-        gradients = []
-        for p in self.model.parameters():
-            if p.grad is None:
-                continue
-            gradients.append(p.grad.flatten())
-
-        gradients = torch.cat(gradients, dim=0)
-
-        return gradients
-
-    def _get_momentum(self, gradients):  # TODO: Not needed when using pytorch.optim?
-        self.t += 1
-        self.m = self.beta1 * self.m + (1 - self.beta1) * gradients
-        self.v = self.beta2 * self.v + (1 - self.beta2) * torch.square(gradients)
-        bias_corrected_m = self.m / (1 - self.beta1 ** self.t)
-        bias_corrected_v = self.v / (1 - self.beta2 ** self.t)
-
-        self.sgd_momentum_v = self.sgd_rho * self.sgd_momentum_v + gradients
-
-        return bias_corrected_m, bias_corrected_v, self.sgd_momentum_v
-
-    def get_adam_direction(self): # TODO: Not needed when using pytorch.optim?
-        return self.firstOrderMomentum / (torch.sqrt(self.secondOrderMomentum) + self.epsilon)
-
-    def get_rmsprop_direction(self):
-        return self.gradients / (torch.sqrt(self.secondOrderMomentum) + self.epsilon)
-
-    def get_momentum_direction(self):
-        return self.sgd_momentum_v
-
     def _get_loss_features(self):
         bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
         with torch.no_grad():
@@ -734,29 +659,19 @@ class SGDEnv(AbstractEnv):
         return self.lossVarDiscountedAverage/bias_correction, self.lossVarUncertainty/bias_correction
 
     def _get_predictive_change_features(self, lr):
-        # TODO: This must be done differently/more generically when using pytorch.optim.
-        # A costly but general way would
-        # 1) store the full state of the model and optimizer param_groups (storing things like m, v), etc.
-        # 2) perform a step to determine the update_value
-        # 3) restore the full state from (1)
-        # Here we have to take care that the performing 1+2+3 does not affect the (future) optimisation!
-        # In particular, when using a static lr, the trajectory should be exactly the same with/without 1+2+3
-        # Note: This is the way suggested here: https://discuss.pytorch.org/t/revert-optimizer-step/70692/6
-        # Note: that you also need (2) for the gradient direction every step so best implement this in a separate function
         bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
         batch_gradients = []
-        for i, (name, param) in enumerate(self.model.named_parameters()):
+        for i, param in enumerate(self.model.parameters()):
             grad_batch = param.grad_batch.reshape(
                 self.current_batch_size, self.layer_sizes[i]
             )
             batch_gradients.append(grad_batch)
 
         batch_gradients = torch.cat(batch_gradients, dim=1)
-
-        update_value = torch.mul(lr, self.get_optimizer_direction())
+        # print(batch_gradients)
 
         predictive_change = torch.log(
-            torch.var(-1 * torch.matmul(batch_gradients, update_value))
+            torch.var(-1 * torch.matmul(batch_gradients, self.update_value))
         )
 
         self.predictiveChangeVarDiscountedAverage = (
@@ -775,9 +690,10 @@ class SGDEnv(AbstractEnv):
         )
 
     def _get_alignment(self):
+        a = torch.mul(self.prev_direction, self.current_direction)
         alignment = torch.mean(torch.sign(torch.mul(self.prev_direction, self.current_direction)))
         alignment = torch.unsqueeze(alignment, dim=0)
-        self.prev_direction = self.current_direction
+        self.prev_direction.data.copy_(self.current_direction)
         return alignment
 
     def generate_instance_file(self, file_name, mode='test', n=100):
@@ -786,7 +702,15 @@ class SGDEnv(AbstractEnv):
         # dataset name, architecture, dataset size, sample dimension, number of max pool layers, hidden layers, test architecture convolutional layers
         architectures = [
             ('MNIST',
-             'Conv2d(1, {0}, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d({0}, {1}, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d({1}, {2}, 3, 1, 1)-ReLU-Flatten-Linear({3}, 10)-LogSoftmax(1)',
+             'Conv2d(1, {0}, 3, 1, 1)-'
+             'MaxPool2d(2, 2)-'
+             'Conv2d({0}, {1}, 3, 1, 1)-'
+             'MaxPool2d(2, 2)-'
+             'Conv2d({1}, {2}, 3, 1, 1)-'
+             'ReLU-'
+             'Flatten-'
+             'Linear({3}, 10)-'
+             'LogSoftmax(1)',
              60000,
              28,
              2,
@@ -794,7 +718,20 @@ class SGDEnv(AbstractEnv):
              [20, 50, 500]
             ),
             ('CIFAR',
-             'Conv2d(3, {0}, 3, 1, 1)-MaxPool2d(2, 2)-ReLU-Conv2d({0}, {1}, 3, 1, 1)-ReLU-MaxPool2d(2, 2)-Conv2d({1}, {2}, 3, 1, 1)-ReLU-MaxPool2d(2, 2)-Conv2d({2}, {3}, 3, 1, 1)-ReLU-Flatten-Linear({4}, 10)-LogSoftmax(1)',
+             'Conv2d(3, {0}, 3, 1, 1)-'
+             'MaxPool2d(2, 2)-'
+             'ReLU-'
+             'Conv2d({0}, {1}, 3, 1, 1)-'
+             'ReLU-'
+             'MaxPool2d(2, 2)-'
+             'Conv2d({1}, {2}, 3, 1, 1)-'
+             'ReLU-'
+             'MaxPool2d(2, 2)-'
+             'Conv2d({2}, {3}, 3, 1, 1)-'
+             'ReLU-'
+             'Flatten-'
+             'Linear({4}, 10)-'
+             'LogSoftmax(1)',
              60000,
              32,
              3,
