@@ -1,7 +1,5 @@
 import unittest
 import os
-import json
-import hashlib
 
 import numpy as np
 from dacbench import AbstractEnv
