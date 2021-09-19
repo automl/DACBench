@@ -56,7 +56,7 @@ SGD_DEFAULTS = objdict(
                 "alignment": spaces.Box(low=0, high=1, shape=(1,)),
             }
         ],
-        "reward_type": Reward.LogDiffValidation,
+        "reward_type": Reward.LogDiffTraining,
         "cutoff": 1e3,
         "lr": 1e-3,
         "optimizer": "rmsprop",

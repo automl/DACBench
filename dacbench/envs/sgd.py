@@ -83,9 +83,10 @@ class SGDEnv(AbstractEnv):
         self.current_training_loss = None
         self.loss_batch = None
         self.prev_training_loss = None
-        self.current_validation_loss = torch.zeros(
+        self._current_validation_loss = torch.zeros(
             1, device=self.device, requires_grad=False
         )
+        self._current_validation_loss.calculated = False
         self.prev_validation_loss = torch.zeros(
             1, device=self.device, requires_grad=False
         )
@@ -196,7 +197,7 @@ class SGDEnv(AbstractEnv):
     @reward_range([-(10**9), 0])
     @Reward.ValidationLoss
     def get_validation_reward(self):
-        return -self._get_validation_loss().item()
+        return -self.current_validation_loss.item()
 
     @reward_range([-(10**9), (10**9)])
     @Reward.LogTrainingLoss
@@ -206,7 +207,7 @@ class SGDEnv(AbstractEnv):
     @reward_range([-(10**9), (10**9)])
     @Reward.LogValidationLoss
     def get_log_validation_reward(self):
-        return -torch.log(self._get_validation_loss()).item()
+        return -torch.log(self.current_validation_loss).item()
 
     @reward_range([-(10**9), (10**9)])
     @Reward.LogDiffTraining
@@ -216,7 +217,7 @@ class SGDEnv(AbstractEnv):
     @reward_range([-(10**9), (10**9)])
     @Reward.LogDiffValidation
     def get_log_diff_validation_reward(self):
-        return -(torch.log(self._get_validation_loss()) - torch.log(self.prev_validation_loss)).item()
+        return -(torch.log(self.current_validation_loss) - torch.log(self.prev_validation_loss)).item()
 
     @reward_range([-(10**9), (10**9)])
     @Reward.DiffTraining
@@ -226,7 +227,7 @@ class SGDEnv(AbstractEnv):
     @reward_range([-(10**9), (10**9)])
     @Reward.DiffValidation
     def get_diff_validation_reward(self):
-        return (self._get_validation_loss() - self.prev_validation_loss).item()
+        return (self.current_validation_loss - self.prev_validation_loss).item()
 
     @reward_range([-(10**9), 0])
     @Reward.FullTraining
@@ -300,11 +301,12 @@ class SGDEnv(AbstractEnv):
         # TODO: Seperate the forward/backward pass on train from the caclulation of the reward (forward on val) so the following this can be (roughly) be rewritten as:
         # 1) self.compute_forward_backward()
         # 2) return self.get_state(self), self.get_reward(self), done, {}
-        self.train_network()
-        reward = self.get_reward()
 
         self.prev_training_loss = self.current_training_loss
         self.prev_validation_loss = self.current_validation_loss
+
+        self.train_network()
+        reward = self.get_reward()
 
         return self.get_state(self), reward, done, {}
 
@@ -466,6 +468,7 @@ class SGDEnv(AbstractEnv):
         self.current_direction = torch.zeros(
             (self.parameter_count,), device=self.device, requires_grad=False
         )
+<<<<<<< HEAD
 
         self.predictiveChangeVarDiscountedAverage = torch.zeros(
             1, device=self.device, requires_grad=False
@@ -487,12 +490,13 @@ class SGDEnv(AbstractEnv):
         )
 
         self.train_network()
+=======
+>>>>>>> 7bd915bd (current_validation_loss as property)
 
         self.prev_training_loss = self.current_training_loss
-
-        self.get_reward()
-
         self.prev_validation_loss = self.current_validation_loss
+
+        self.train_network()
 
         return self.get_state(self)
 
@@ -605,6 +609,7 @@ class SGDEnv(AbstractEnv):
             self.epoch_index += 1
             self.train_loader_it = iter(self.train_loader)
             self._train_batch_()
+        self._current_validation_loss.calculated = False
 
     def transfer_model_parameters(self):  # TODO: If this is only used in validation loss calculation you can probably hide it there.
         # self.val_model.load_state_dict(self.model.state_dict())
@@ -639,15 +644,20 @@ class SGDEnv(AbstractEnv):
         # self.model.train()
         return -validation_loss.item()
 
+    @property
+    def current_validation_loss(self):
+        if not self._current_validation_loss.calculated:
+            self._current_validation_loss = self._get_validation_loss()
+            self._current_validation_loss.calculated = True
+        return self._current_validation_loss
+
     def _get_validation_loss_(self):
-        # self.model.eval()
-        (data, target) = self.validation_loader_it.next()
-        data, target = data.to(self.device), target.to(self.device)
-        output = self.val_model(data)
-        validation_loss = self.val_loss_function(output, target).mean()
-        validation_loss = torch.unsqueeze(validation_loss.detach(), dim=0)
-        self.current_validation_loss = validation_loss
-        # self.model.train()
+        with torch.no_grad():
+            (data, target) = self.validation_loader_it.next()
+            data, target = data.to(self.device), target.to(self.device)
+            output = self.val_model(data)
+            validation_loss = self.val_loss_function(output, target).mean()
+            validation_loss = torch.unsqueeze(validation_loss.detach(), dim=0)
 
         return validation_loss
 
