@@ -63,6 +63,7 @@ SGD_DEFAULTS = objdict(
         "reward_type": Reward.LogDiffTraining,
         "cutoff": 1e3,
         "lr": 1e-3,
+        "discount_factor": 0.9,
         "optimizer": "rmsprop",
         "loss_function": __default_loss_function,
         "loss_function_kwargs": {},
