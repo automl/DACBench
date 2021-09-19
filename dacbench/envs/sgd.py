@@ -185,7 +185,7 @@ class SGDEnv(AbstractEnv):
             self.get_optimizer_direction = self.get_momentum_direction
         else:
             raise NotImplementedError
-        
+
         if "reward_function" in config.keys():
             self._get_reward = config["reward_function"]
         else:
@@ -293,8 +293,14 @@ class SGDEnv(AbstractEnv):
         new_lr = torch.Tensor([action]).to(self.device)
         self.current_lr = new_lr
 
+        nan_state = {}
+        for feature in self.on_features:
+            nan_state[feature] = np.nan
+
         # TODO: (BEGIN) This update should be done by self.optimizer.step()
         direction = self.get_optimizer_direction()
+        if any(np.isnan(direction)) or np.isnan(action):
+            return nan_state, self.reward_range[0], True, {}
 
         self.current_direction = direction  # TODO: See note below this todo
 
@@ -325,7 +331,7 @@ class SGDEnv(AbstractEnv):
         self.train_network()
         reward = self.get_reward()
         if np.isnan(reward):
-            return self.get_state(self), self.reward_range[0], True, {}
+            return nan_state, self.reward_range[0], True, {}
 
         return self.get_state(self), reward, done, {}
 
