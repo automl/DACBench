@@ -468,7 +468,6 @@ class SGDEnv(AbstractEnv):
         self.current_direction = torch.zeros(
             (self.parameter_count,), device=self.device, requires_grad=False
         )
-<<<<<<< HEAD
 
         self.predictiveChangeVarDiscountedAverage = torch.zeros(
             1, device=self.device, requires_grad=False
@@ -489,13 +488,13 @@ class SGDEnv(AbstractEnv):
             1, device=self.device, requires_grad=False
         )
 
-        self.train_network()
-=======
->>>>>>> 7bd915bd (current_validation_loss as property)
-
-        self.prev_training_loss = self.current_training_loss
-        self.prev_validation_loss = self.current_validation_loss
-
+        self._current_validation_loss = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self._current_validation_loss.calculated = False
+        self.prev_validation_loss = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
         self.train_network()
 
         return self.get_state(self)
