@@ -94,7 +94,7 @@ class SGDEnv(AbstractEnv):
         self.model = None
         self.val_model = None
         # TODO:
-        """ 
+        """
         TODO: Samuel Mueller (PhD student in our group) also uses backpack and has ran into a similar memory leak.
         He solved it calling this custom made RECURSIVE memory_cleanup function:
         # from backpack import memory_cleanup

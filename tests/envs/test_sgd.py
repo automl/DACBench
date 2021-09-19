@@ -64,13 +64,14 @@ class TestSGDEnv(unittest.TestCase):
             done = False
             mem = []
             step = 0
-            while not done and step < 50:
+            while not done and step < 5:
                 action = np.exp(rng.integers(low=-10, high=1))
                 state, reward, done, _ = env.step(action)
                 mem.append(np.concatenate([state, [reward, int(done), action]]))
                 step += 1
             mems.append(np.array(mem))
 
+        rng = np.random.default_rng(123)
         for i, idx in enumerate(reversed(instance_idxs)):
             env.instance_index = idx - 1
             env.reset()
@@ -79,7 +80,7 @@ class TestSGDEnv(unittest.TestCase):
             done = False
             mem = []
             step = 0
-            while not done and step < 50:
+            while not done and step < 5:
                 action = mems[-(i + 1)][step][-1]
                 state, reward, done, _ = env.step(action)
                 mem.append(np.concatenate([state, [reward, int(done), action]]))
@@ -87,7 +88,6 @@ class TestSGDEnv(unittest.TestCase):
             np.testing.assert_allclose(mems[-(i + 1)], np.array(mem))
 
     def test_reproducibility(self):
-        import copy
         mems = []
         instances = []
         env = ObservationWrapper(self.env)
@@ -95,7 +95,6 @@ class TestSGDEnv(unittest.TestCase):
             rng = np.random.default_rng(123)
             env.seed(123)
             env.instance_index = 0
-            # env = copy.deepcopy(self.env)
             instances.append(env.get_instance_set())
 
             env.reset()
@@ -103,7 +102,7 @@ class TestSGDEnv(unittest.TestCase):
             done = False
             mem = []
             step = 0
-            while not done and step < 50:
+            while not done and step < 5:
                 action = np.exp(rng.integers(low=-10, high=1))
                 state, reward, done, _ = env.step(action)
                 mem.append(np.concatenate([state, [reward, int(done), action]]))
