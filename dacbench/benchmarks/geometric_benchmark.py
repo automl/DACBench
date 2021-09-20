@@ -204,20 +204,20 @@ class GeometricBenchmark(AbstractBenchmark):
         self.config.action_space_args = [int(np.prod(values))]
 
         self.config.observation_space_args = [
-            np.array([-1 for _ in range(2 + 2 * self.n_actions)]),
-            np.array([self.config["cutoff"] for _ in range(2 + 2 * self.n_actions)]),
+            np.array([-1 for _ in range(2 + 2 * len(values))]),
+            np.array([self.config["cutoff"] for _ in range(2 + 2 * len(values))]),
         ]
 
     def set_action_description(self):
         """
         Add Information about Derivative and Action to Description.
         """
-        for index in range(self.n_actions):
+        for index in range(len(self.config.action_values)):
             self.config.benchmark_info["state_description"].append(
                 "Derivative" + str(index)
             )
 
-        for index in range(self.n_actions):
+        for index in range(len(self.config.action_values)):
             self.config.benchmark_info["state_description"].append(
                 "Action" + str(index)
             )
