@@ -428,7 +428,7 @@ class GeometricEnv(AbstractEnv):
             next_state += [0 for _ in range(self.n_actions)]
             next_state += [0 for _ in range(self.n_actions)]
         else:
-            next_state.append += list(self.derivative)
+            next_state += list(self.derivative)
             next_state += list(self.action)
 
         return np.array(next_state, dtype="float32")
