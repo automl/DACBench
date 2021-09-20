@@ -422,7 +422,7 @@ class GeometricEnv(AbstractEnv):
         """
         remaining_budget = self.n_steps - self.c_step
         next_state = [remaining_budget]
-        next_state = [self.n_actions]
+        next_state += [self.n_actions]
 
         if self.c_step == 0:
             next_state += [0 for _ in range(self.n_actions)]
