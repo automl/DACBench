@@ -233,7 +233,7 @@ class GeometricEnv(AbstractEnv):
 
     def get_coordinates(self, instance: List = None) -> List[np.array]:
         """
-        Calculates optimal policy for instance over all time_steps
+        Calculates coordinates for instance over all time_steps
 
         Parameters
         ----------
@@ -260,11 +260,25 @@ class GeometricEnv(AbstractEnv):
     def get_optimal_policy(
         self, instance: List = None, vector_action: bool = True
     ) -> List[np.array]:
+        """
+        Calculates the optimal policy for an instance
+
+        Parameters
+        ----------
+        instance : List, optional
+            instance with information about function config.
+        vector_action : bool, optional
+            if True return multidim actions else return onedimensional action, by default True
+
+        Returns
+        -------
+        List[np.array]
+            List with entry for each timestep that holds all optimal values in an array or as int
+        """
         if not instance:
             instance = self.instance
 
         optimal_policy_coords = self.get_coordinates(instance)
-        # dimension_dict = {dim: func[1] for dim, func in enumerate(instance)}
         optimal_policy = np.zeros(((self.n_steps, self.n_actions)))
 
         for step in range(self.n_steps):
@@ -408,18 +422,16 @@ class GeometricEnv(AbstractEnv):
         """
         remaining_budget = self.n_steps - self.c_step
         next_state = [remaining_budget]
+        next_state = [self.n_actions]
 
-        # append trajectories and derivatives and coordinates
-        next_state.append(self.trajectory)
-        next_state.append(self.derivative)
-
-        # append multi-dim action vector
         if self.c_step == 0:
             next_state += [0 for _ in range(self.n_actions)]
+            next_state += [0 for _ in range(self.n_actions)]
         else:
-            next_state += self.action
+            next_state.append += list(self.derivative)
+            next_state += list(self.action)
 
-        return np.array(next_state)
+        return np.array(next_state, dtype="float32")
 
     def close(self) -> bool:
         """

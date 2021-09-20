@@ -14,8 +14,7 @@ INFO = {
     "reward": "Overall Euclidean Distance between Point on Curve and Action Vector for all Dimensions",
     "state_description": [
         "Remaining Budget",
-        "Derivative",
-        "Trajectory",
+        "Dimensions",
     ],
 }
 
@@ -153,9 +152,7 @@ class GeometricBenchmark(AbstractBenchmark):
 
         self.config.benchmark_info["state_description"] = [
             "Remaining Budget",
-            "Derivative",
-            "Trajectory",
-            "Action",
+            "Dimensions",
         ]
 
         self.config.seed = seed
@@ -207,12 +204,20 @@ class GeometricBenchmark(AbstractBenchmark):
         self.config.action_space_args = [int(np.prod(values))]
 
         self.config.observation_space_args = [
-            np.array([-1 for _ in range(1 + np.sum(values))]),
-            np.array([self.config["cutoff"] for _ in range(1 + np.sum(values))]),
+            np.array([-1 for _ in range(2 + 2 * self.n_actions)]),
+            np.array([self.config["cutoff"] for _ in range(2 + 2 * self.n_actions)]),
         ]
 
     def set_action_description(self):
-        for index, _ in enumerate(self.config.action_values):
+        """
+        Add Information about Derivative and Action to Description.
+        """
+        for index in range(self.n_actions):
+            self.config.benchmark_info["state_description"].append(
+                "Derivative" + str(index)
+            )
+
+        for index in range(self.n_actions):
             self.config.benchmark_info["state_description"].append(
                 "Action" + str(index)
             )
