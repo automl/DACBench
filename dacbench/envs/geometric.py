@@ -7,7 +7,7 @@ import os
 import itertools
 from typing import List
 
-from mpl_toolkits import mplot3d
+# from mpl_toolkits import mplot3d
 from matplotlib import pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -79,15 +79,15 @@ class GeometricEnv(AbstractEnv):
             self.get_state = self.get_default_state
 
     def _sigmoid(self, t: float, scaling: float, inflection: float):
-        """ Simple sigmoid function """
+        """Simple sigmoid function"""
         return 1 / (1 + np.exp(-scaling * (t - inflection)))
 
     def _linear(self, t: float, a: float, b: float):
-        """ Linear function """
+        """Linear function"""
         return a * t + b
 
     def _polynom(self, t: float, coeff_list: List[float]):
-        """ Polynomial function. Dimension depends on length of coefficient list. """
+        """Polynomial function. Dimension depends on length of coefficient list."""
         pol_value = 0
 
         for dim, coeff in enumerate(coeff_list):
@@ -96,22 +96,22 @@ class GeometricEnv(AbstractEnv):
         return pol_value
 
     def _logarithmic(self, t: float, a: float):
-        """ Logarithmic function """
+        """Logarithmic function"""
         if t != 0:
             return a * np.log(t)
         else:
             return self.max_function_value
 
     def _exponential(self, t: float, a: int):
-        """ Exponential function """
+        """Exponential function"""
         return a * np.exp(t)
 
     def _constant(self, c: float):
-        """ Constant function """
+        """Constant function"""
         return c
 
     def _sinus(self, t: float, scale: float):
-        """ Sinus function """
+        """Sinus function"""
         return np.sin(scale * t)
 
     def _calculate_norm_value(self):
@@ -222,7 +222,7 @@ class GeometricEnv(AbstractEnv):
     def _get_optimal_policy_at_time_step(
         self, instance: List, time_step: int
     ) -> np.array:
-        """ calculate optimal policy at time_step """
+        """calculate optimal policy at time_step"""
         value_array = np.zeros(self.n_actions)
         for index, function_info in enumerate(instance):
             value_array[index] = self._calculate_function_value(
@@ -298,6 +298,23 @@ class GeometricEnv(AbstractEnv):
             ]
 
         return optimal_policy
+
+    def add_correlation_between_dimensions(self, correlation_table: np.array):
+        """
+        Adds correlation between dimensions.
+        Correlation table holds numbers between -1 and 1.
+        e.g. correlation_table[0][2] = 0.5 if dimension 1 changes dimension 3 changes about 50% of dimension one
+
+        Parameters
+        ----------
+        correlation_table : np.array
+            table that holds all values of correlation between dimensions [n,n]
+        """
+        # TODO:
+        #   - load correlation table from json or load it from array
+        #   - add correlation table to default and make it configurable
+        #   - add depth of domino-effekt
+        pass
 
     def step(self, action: int):
         """
