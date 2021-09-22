@@ -48,7 +48,8 @@ def save_geometric_instances(filename: str, config: Dict = FUNCTION_CONFIG):
     csv_path = os.path.join(FILE_PATH, filename)
 
     if os.path.exists(csv_path):
-        os.remove(csv_path)
+        # os.remove(csv_path)
+        pass
 
     with open(csv_path, "a") as fh:
         id_string = (
