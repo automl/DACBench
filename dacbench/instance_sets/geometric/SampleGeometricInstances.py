@@ -46,7 +46,9 @@ def save_geometric_instances(filename: str, config: Dict = FUNCTION_CONFIG):
         config that has info about which functions will get selected, by default FUNCTION_CONFIG
     """
     csv_path = os.path.join(FILE_PATH, filename)
-    os.remove(csv_path)
+
+    if os.path.exists(csv_path):
+        os.remove(csv_path)
 
     with open(csv_path, "a") as fh:
         id_string = (
