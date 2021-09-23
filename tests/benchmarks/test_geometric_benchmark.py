@@ -1,13 +1,21 @@
-from posixpath import abspath
-from typing import Dict
 import unittest
 import json
 import os
 
-import numpy as np
 from dacbench.abstract_benchmark import objdict
 from dacbench.benchmarks import GeometricBenchmark
 from dacbench.envs import GeometricEnv
+
+
+INFO = {
+    "identifier": "Geometric",
+    "name": "High Dimensional Geometric Curve Approximation. Curves are geometrical orthogonal.",
+    "reward": "Overall Euclidean Distance between Point on Curve and Action Vector for all Dimensions",
+    "state_description": [
+        "Remaining Budget",
+        "Dimensions",
+    ],
+}
 
 
 DEFAULTS_DYNAMIC = objdict(
@@ -16,10 +24,7 @@ DEFAULTS_DYNAMIC = objdict(
         "action_space_args": [1],
         "observation_space_class": "Box",
         "observation_space_type": None,
-        "observation_space_args": [
-            1,
-            1,
-        ],
+        "observation_space_args": [1, 1],
         "reward_range": (0, 1),
         "cutoff": 10,
         "action_values": [1],
@@ -40,8 +45,8 @@ DEFAULTS_DYNAMIC = objdict(
         "derivative_interval": 3,
         "max_function_value": 10000,  # clip function value if it is higher than this number
         "realistic_trajectory": True,
-        "instance_set_path": "../instance_sets/geometric/geometric_unit_test.csv",
-        "benchmark_info": "Hallo",
+        "instance_set_path": "../instance_sets/geometric/geometric_test.csv",
+        "benchmark_info": INFO,
     }
 )
 
@@ -52,10 +57,7 @@ DEFAULTS_STATIC = objdict(
         "action_space_args": [1],
         "observation_space_class": "Box",
         "observation_space_type": None,
-        "observation_space_args": [
-            1,
-            1,
-        ],
+        "observation_space_args": [1, 1],
         "reward_range": (0, 1),
         "cutoff": 10,
         "action_values": [1],
@@ -65,8 +67,44 @@ DEFAULTS_STATIC = objdict(
         "max_function_value": 10000,  # clip function value if it is higher than this number
         "derivative_interval": 3,
         "realistic_trajectory": True,
-        "instance_set_path": "../instance_sets/geometric/geometric_unit_test.csv",
-        "benchmark_info": "Hallo",
+        "instance_set_path": "../instance_sets/geometric/geometric_test.csv",
+        "benchmark_info": INFO,
+    }
+)
+
+DEFAULTS_CORRELATION = objdict(
+    {
+        "action_space_class": "Discrete",
+        "action_space_args": [1],
+        "observation_space_class": "Box",
+        "observation_space_type": None,
+        "observation_space_args": [1, 1],
+        "reward_range": (0, 1),
+        "seed": 0,
+        "cutoff": 10,
+        "action_values": [1],
+        "action_value_default": 4,
+        "action_values_variable": False,
+        "action_interval_mapping": {},  # maps actions to equally sized intervalls in interval [-1, 1]
+        "derivative_interval": 3,  # defines how many values are used for derivative calculation
+        "max_function_value": 1000000,  # clip function value if it is higher than this number
+        "realistic_trajectory": True,  # True: coordiantes are used as trajectory, False: Actions are used as trajectories
+        "instance_set_path": "../instance_sets/geometric/geometric_test.csv",
+        # correlation table to chain dimensions -> if dim x changes dim y changes as well
+        # either assign numpy array to correlation table or use create_correlation_table()
+        "correlation_table": None,
+        "correlation_info": {
+            "high": [(1, 2, "+"), (2, 3, "-"), (1, 5, "+")],
+            "middle": [(4, 5, "-")],
+            "low": [(4, 7, "+"), (2, 3, "+"), (0, 2, "-")],
+        },
+        "correlation_mapping": {
+            "high": (0.5, 1),
+            "middle": (0.1, 0.5),
+            "low": (0, 0.1),
+        },
+        "create_correlation": False,
+        "benchmark_info": INFO,
     }
 )
 
@@ -115,7 +153,7 @@ class TestGeometricBenchmark(unittest.TestCase):
         bench = self.load_bench(DEFAULTS_STATIC)
         bench.read_instance_set()
         self.assertTrue(len(bench.config.instance_set.keys()) == 100)
-        self.assertTrue(len(bench.config.instance_set[0]) == 8)
+        self.assertTrue(len(bench.config.instance_set[0]) == 9)
         self.assertTrue(bench.config.instance_set[0][0][1] == "sigmoid")
         first_inst = bench.config.instance_set[0][0][3]
 
@@ -136,8 +174,8 @@ class TestGeometricBenchmark(unittest.TestCase):
         bench.set_action_values()
         self.assertTrue(bench.config.action_value_default == 4)
         self.assertTrue(bench.config.action_values[0] == 4)
-        self.assertTrue(bench.config.action_space_args[0] == 65536)
-        self.assertTrue(len(bench.config.observation_space_args[0]) == 33)
+        # self.assertTrue(bench.config.action_space_args[0] == 65536 * 4)
+        self.assertTrue(len(bench.config.observation_space_args[0]) == 20)
         self.assertTrue(
             len(bench.config.action_interval_mapping)
             == len(bench.config.action_value_mapping)
@@ -147,16 +185,23 @@ class TestGeometricBenchmark(unittest.TestCase):
         bench = self.load_bench(DEFAULTS_DYNAMIC)
         bench.read_instance_set()
         bench.set_action_values()
-        self.assertTrue(bench.config.action_values_variable == True)
+        self.assertTrue(bench.config.action_values_variable)
         self.assertTrue(bench.config.action_values[4] == 11)
-        self.assertTrue(bench.config.action_space_args[0] == 55440)
-        self.assertTrue(len(bench.config.observation_space_args[0]) == 39)
+        # self.assertTrue(bench.config.action_space_args[0] == 55440 * 9)
+        self.assertTrue(len(bench.config.observation_space_args[0]) == 20)
 
     def test_set_action_description(self):
         bench = self.load_bench(DEFAULTS_DYNAMIC)
         bench.read_instance_set()
         bench.set_action_values()
-        self.assertTrue(
-            "Action"
-            in bench.config.action_values_variable.benchmark_info["state_description"]
-        )
+        bench.set_action_description()
+        self.assertTrue("Action1" in bench.config.benchmark_info["state_description"])
+
+    def test_create_correlation_table(self):
+        bench = self.load_bench(DEFAULTS_CORRELATION)
+        bench.read_instance_set()
+        bench.read_instance_set()
+        bench.set_action_values()
+        bench.create_correlation_table()
+        n_actions = len(bench.config.action_values)
+        self.assertTrue(bench.config.correlation_table.shape == (n_actions, n_actions))
