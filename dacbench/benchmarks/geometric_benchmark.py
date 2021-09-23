@@ -26,11 +26,15 @@ GEOMETRIC_DEFAULTS = objdict(
         "observation_space_type": np.float32,
         "observation_space_args": [],
         "reward_range": (0, 1),
+        "seed": 0,
         "cutoff": 10,
         "action_values": [],
         "action_value_default": 4,
-        "action_values_variable": False,  # if True action value mapping will be used
-        "action_value_mapping": {  # defines number of action values for differnet functions
+        # if action_values_variable True action_value_mapping will be used instead of action_value_default to define action values
+        # action_value_mapping defines number of action values for differnet functions
+        # sigmoid is split in 3 actions, polynomial3D in 7 etc.
+        "action_values_variable": False,
+        "action_value_mapping": {
             "sigmoid": 3,
             "linear": 3,
             "polynomial2D": 5,
@@ -41,12 +45,25 @@ GEOMETRIC_DEFAULTS = objdict(
             "constant": 1,
             "sinus": 9,
         },
-        "action_interval_mapping": {},  # maps actions to equally sized intervalls in [-1, 1]
-        "seed": 0,
+        "action_interval_mapping": {},  # maps actions to equally sized intervalls in interval [-1, 1]
         "derivative_interval": 3,  # defines how many values are used for derivative calculation
-        "max_function_value": 10000000,  # clip function value if it is higher than this number
+        "max_function_value": 1000000,  # clip function value if it is higher than this number
         "realistic_trajectory": True,  # True: coordiantes are used as trajectory, False: Actions are used as trajectories
         "instance_set_path": "../instance_sets/geometric/geometric_test.csv",
+        # correlation table to chain dimensions -> if dim x changes dim y changes as well
+        # either assign numpy array to correlation table or use create_correlation_table()
+        "correlation_table": None,
+        "correlation_info": {
+            "high": [(1, 2, "+"), (2, 3, "-"), (1, 5, "+")],
+            "middle": [(4, 5, "-")],
+            "low": [(4, 7, "+"), (2, 3, "+"), (0, 2, "-")],
+        },
+        "correlation_mapping": {
+            "high": (0.5, 1),
+            "middle": (0.1, 0.5),
+            "low": (0, 0.1),
+        },
+        "create_correlation": False,
         "benchmark_info": INFO,
     }
 )
@@ -74,7 +91,7 @@ class GeometricBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = GEOMETRIC_DEFAULTS[key]
 
-        if self.config["observation_space_type"] == None:
+        if not self.config["observation_space_type"]:
             self.config["observation_space_type"] = np.float32
 
     def get_environment(self):
@@ -92,6 +109,9 @@ class GeometricBenchmark(AbstractBenchmark):
 
         self.set_action_values()
         self.set_action_description()
+
+        if self.config.create_correlation:
+            self.create_correlation_table()
 
         env = GeometricEnv(self.config)
 
@@ -162,6 +182,9 @@ class GeometricBenchmark(AbstractBenchmark):
         self.set_action_values()
         self.set_action_description()
 
+        if self.config.create_correlation:
+            self.create_correlation_table()
+
         env = GeometricEnv(self.config)
         return env
 
@@ -213,31 +236,34 @@ class GeometricBenchmark(AbstractBenchmark):
         Add Information about Derivative and Action to Description.
         """
         for index in range(len(self.config.action_values)):
-            self.config.benchmark_info["state_description"].append(
-                "Derivative" + str(index)
-            )
+            self.config.benchmark_info["state_description"].append(f"Derivative{index}")
 
         for index in range(len(self.config.action_values)):
-            self.config.benchmark_info["state_description"].append(
-                "Action" + str(index)
-            )
+            self.config.benchmark_info["state_description"].append(f"Action{index}")
+
+    def create_correlation_table(self):
+        """
+        Create correlation table from Config infos
+        """
+        n_actions = len(self.config.action_values)
+        corr_table = np.zeros((n_actions, n_actions))
+
+        for corr_level, corr_info in self.config.correlation_info.items():
+            for dim1, dim2, signum in corr_info:
+                low, high = self.config.correlation_mapping[corr_level]
+                value = np.random.uniform(low, high)
+                corr_table[dim1, dim2] = value if signum == "+" else value * -1
+
+        self.config.correlation_table = corr_table
 
 
 if __name__ == "__main__":
     geo_bench = GeometricBenchmark()
-    geo_bench.read_instance_set()
-    geo_bench.set_action_values()
+    env = geo_bench.get_benchmark()
 
-    config = GEOMETRIC_DEFAULTS
-    config["instance_set"] = geo_bench.config.instance_set
-    config["action_values"] = geo_bench.config.action_values
-    config["action_space_args"] = geo_bench.config.action_space_args
-    config["observation_space_args"] = geo_bench.config.observation_space_args
-
-    env = GeometricEnv(config)
     opt_policy = env.get_optimal_policy()
-    env.render_dimensions([0, 1, 2, 3, 4, 5, 6], "/home/rasmus/master")
-    env.render_3d_dimensions([1, 3], "/home/rasmus/master")
+    env.render_dimensions([0, 1, 2, 3, 4, 5, 6], "/home/vonglahn/tmp")
+    env.render_3d_dimensions([1, 3], "/home/vonglahn/tmp")
     env.reset()
 
     for step in range(env.n_steps):
