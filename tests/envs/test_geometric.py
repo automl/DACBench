@@ -26,7 +26,7 @@ DEFAULTS_STATIC = objdict(
         "max_function_value": 10000,  # clip function value if it is higher than this number
         "derivative_interval": 3,
         "realistic_trajectory": True,
-        "instance_set_path": "../instance_sets/geometric/geometric_unit_test.csv",
+        "instance_set_path": "../instance_sets/geometric/geometric_test.csv",
         "benchmark_info": "Hallo",
     }
 )
@@ -43,6 +43,7 @@ class TestGeometricEnv(unittest.TestCase):
         config["action_values"] = geo_bench.config.action_values
         config["action_space_args"] = geo_bench.config.action_space_args
         config["observation_space_args"] = geo_bench.config.observation_space_args
+        config["correlation_table"] = None
 
         env = GeometricEnv(config)
         return env
@@ -60,7 +61,7 @@ class TestGeometricEnv(unittest.TestCase):
         env = self.make_env(DEFAULTS_STATIC)
         state = env.reset()
         self.assertTrue(state[0] == DEFAULTS_STATIC["cutoff"])
-        self.assertTrue(env._prev_state == None)
+        self.assertFalse(env._prev_state)
         self.assertTrue(type(env.trajectory) == list)
         self.assertTrue(type(env.trajectory_set) == dict)
 
@@ -71,9 +72,8 @@ class TestGeometricEnv(unittest.TestCase):
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertTrue(state[0] == 9)
-        self.assertTrue(type(state[1]) == list)
-        self.assertTrue(len(state[2]) == env.n_actions)
-        self.assertTrue(len(state) == 10)
+        self.assertTrue(type(state) == np.ndarray)
+        self.assertTrue(len(state) == 2 + 2 * env.n_actions)
         self.assertFalse(done)
         self.assertTrue(len(meta.keys()) == 0)
 
@@ -106,28 +106,32 @@ class TestGeometricEnv(unittest.TestCase):
 
     def test_calculate_derivative(self):
         env = self.make_env(DEFAULTS_STATIC)
-        trajectory1 = [np.zeros(7)]
+        trajectory1 = [np.zeros(env.n_actions)]
         self.assertTrue(
             (env._calculate_derivative(trajectory1) == np.zeros(env.n_actions)).all()
         )
         env.c_step = 1
-        trajectory2 = [np.zeros(7), np.ones(7)]
+        trajectory2 = [np.zeros(env.n_actions), np.ones(env.n_actions)]
         self.assertTrue(
             (env._calculate_derivative(trajectory2) == np.ones(env.n_actions)).all()
         )
 
-        trajectory2 = [np.zeros(7), np.ones(7), np.ones(7) * 2]
+        trajectory2 = [
+            np.zeros(env.n_actions),
+            np.ones(env.n_actions),
+            np.ones(env.n_actions) * 2,
+        ]
         env.c_step = 2
         self.assertTrue(
             (env._calculate_derivative(trajectory2) == np.ones(env.n_actions)).all()
         )
 
         trajectory3 = [
-            np.zeros(7),
-            np.ones(7),
-            np.ones(7) * 2,
-            np.ones(7) * 4,
-            np.ones(7) * 7,
+            np.zeros(env.n_actions),
+            np.ones(env.n_actions),
+            np.ones(env.n_actions) * 2,
+            np.ones(env.n_actions) * 4,
+            np.ones(env.n_actions) * 7,
         ]
         env.c_step = 4
         self.assertTrue(
