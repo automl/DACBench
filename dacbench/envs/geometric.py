@@ -41,6 +41,8 @@ class GeometricEnv(AbstractEnv):
         self.max_function_value = config["max_function_value"]
         self.realistic_trajectory = config["realistic_trajectory"]
         self.derivative_interval = config["derivative_interval"]
+        self.correlation_table = config["correlation_table"]
+        self.correlation_active = True if config["correlation_table"] else False
 
         self.n_actions = len(self.action_vals)
         self.action_mapper = {}
@@ -119,9 +121,11 @@ class GeometricEnv(AbstractEnv):
         Norm Functions to Intervall between -1 and 1
         """
         for key, instance in self.instance_set.items():
-            instance_values = self.get_coordinates(instance)
+            instance_values = self.get_coordinates(instance).transpose()
+            # TODO: - add correlation and return max_value
 
-            for dim, function_values in enumerate(instance_values.transpose()):
+            for dim, function_values in enumerate(instance_values):
+
                 if abs(min(function_values)) > max(function_values):
                     norm_factor = abs(min(function_values))
                 else:
@@ -304,6 +308,7 @@ class GeometricEnv(AbstractEnv):
         Adds correlation between dimensions.
         Correlation table holds numbers between -1 and 1.
         e.g. correlation_table[0][2] = 0.5 if dimension 1 changes dimension 3 changes about 50% of dimension one
+        Call function recursively till max_depth is reached
 
         Parameters
         ----------
@@ -311,8 +316,6 @@ class GeometricEnv(AbstractEnv):
             table that holds all values of correlation between dimensions [n,n]
         """
         # TODO:
-        #   - load correlation table from json or load it from array
-        #   - add correlation table to default and make it configurable
         #   - add depth of domino-effekt
         pass
 
@@ -406,6 +409,8 @@ class GeometricEnv(AbstractEnv):
             )
             function_names.append(function_info[1])
 
+        # TODO: - add correlation for all changes based on trajectories
+        #       - use Domino Effekt
         # map action values to their interval mean
         mapping_list = [self.action_interval_mapping[name] for name in function_names]
         action_intervall = [
