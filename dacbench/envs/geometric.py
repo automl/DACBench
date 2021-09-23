@@ -7,7 +7,7 @@ import os
 import itertools
 from typing import List
 
-# from mpl_toolkits import mplot3d
+from mpl_toolkits import mplot3d
 from matplotlib import pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -43,6 +43,7 @@ class GeometricEnv(AbstractEnv):
         self.derivative_interval = config["derivative_interval"]
         self.correlation_table = config["correlation_table"]
         self.correlation_active = True if config["correlation_table"] else False
+        self.correlation_depth = 4
 
         self.n_actions = len(self.action_vals)
         self.action_mapper = {}
@@ -79,6 +80,223 @@ class GeometricEnv(AbstractEnv):
             self.get_state = config["state_method"]
         else:
             self.get_state = self.get_default_state
+
+    def get_coordinates(self, instance: List = None) -> List[np.array]:
+        """
+        Calculates coordinates for instance over all time_steps
+
+        Parameters
+        ----------
+        instance : List, optional
+            Instance that holds information about functions, by default None
+
+        Returns
+        -------
+        List[np.array]
+            Index of List refers to time step
+        """
+        if not instance:
+            instance = self.instance
+
+        optimal_policy_coord = np.zeros((self.n_steps, self.n_actions))
+
+        for time_step in range(self.n_steps):
+            optimal_policy_coord[time_step, :] = self._get_optimal_policy_at_time_step(
+                instance, time_step
+            )
+
+        return optimal_policy_coord
+
+    def get_optimal_policy(
+        self, instance: List = None, vector_action: bool = True
+    ) -> List[np.array]:
+        """
+        Calculates the optimal policy for an instance
+
+        Parameters
+        ----------
+        instance : List, optional
+            instance with information about function config.
+        vector_action : bool, optional
+            if True return multidim actions else return onedimensional action, by default True
+
+        Returns
+        -------
+        List[np.array]
+            List with entry for each timestep that holds all optimal values in an array or as int
+        """
+        if not instance:
+            instance = self.instance
+
+        optimal_policy_coords = self.get_coordinates(instance)
+        optimal_policy = np.zeros(((self.n_steps, self.n_actions)))
+
+        for step in range(self.n_steps):
+            for dimension in range(self.n_actions):
+                step_size = 2 / self.action_vals[dimension]
+                interval = [step for step in np.arange(-1, 1, step_size)][1:]
+
+                optimal_policy[step, dimension] = bisect.bisect_left(
+                    interval, optimal_policy_coords[step, dimension]
+                )
+
+        optimal_policy = optimal_policy.astype(int)
+        if not vector_action:
+            reverse_action_mapper = {v: k for k, v in self.action_mapper.items()}
+            optimal_policy = [
+                reverse_action_mapper[tuple(vec)] for vec in optimal_policy
+            ]
+
+        return optimal_policy
+
+    def step(self, action: int):
+        """
+        Execute environment step
+
+        Parameters
+        ----------
+        action : int
+            action to execute
+
+        Returns
+        -------
+        np.array, float, bool, dict
+            state, reward, done, info
+        """
+        self.done = super(GeometricEnv, self).step_()
+
+        # map integer action to vector
+        action_vec = self.action_mapper[action]
+        assert self.n_actions == len(
+            action_vec
+        ), f"action should be of length {self.n_actions}."
+        self.action = action_vec
+
+        self.trajectory.append(np.array(action_vec))
+        self.agent_trajectory.append(np.array(action))
+        self.coord_trajectory.append(
+            self._get_optimal_policy_at_time_step(self.instance, self.c_step)
+        )
+
+        self.coord_trajectory_set[self.inst_id] = self.coord_trajectory
+        self.trajectory_set[self.inst_id] = self.trajectory
+
+        if self.realistic_trajectory:
+            self.derivative = self._calculate_derivative(self.coord_trajectory)
+        else:
+            self.derivative = self._calculate_derivative(self.trajectory)
+
+        self.derivative_set[self.inst_id] = self.derivative
+
+        next_state = self.get_state(self)
+        self._prev_state = next_state
+        return next_state, self.get_reward(self), self.done, {}
+
+    def reset(self) -> List[int]:
+        """
+        Resets env
+
+        Returns
+        -------
+        numpy.array
+            Environment state
+        """
+        super(GeometricEnv, self).reset_()
+
+        self.trajectory = self.trajectory_set.get(
+            self.inst_id, [np.zeros(self.n_actions)]
+        )
+        self.coord_trajectory = self.coord_trajectory_set.get(
+            self.inst_id, [np.zeros(self.n_actions)]
+        )
+
+        self.derivative = self.derivative_set.get(self.inst_id, 0)
+
+        self._prev_state = None
+
+        return self.get_state(self)
+
+    def get_default_reward(self, _) -> float:
+        """
+        Calculate euclidean distance between action vector and real position of Curve.
+
+        Parameters
+        ----------
+        _ : self
+            ignore
+
+        Returns
+        -------
+        float
+            Euclidean distance
+        """
+        coordinates = np.zeros(self.n_actions)
+        function_names = []
+
+        for dim, function_info in enumerate(self.instance):
+            coordinates[dim] = self._calculate_function_value(
+                self.c_step, function_info
+            )
+            function_names.append(function_info[1])
+
+        # TODO: - add correlation for all changes based on trajectories
+        if self.correlation_active:
+            self._add_correlation_between_dimensions(coordinates)
+
+        # map action values to their interval mean
+        mapping_list = [self.action_interval_mapping[name] for name in function_names]
+        action_intervall = [
+            mapping_list[count][index] for count, index in enumerate(self.action)
+        ]
+
+        dist = np.linalg.norm(action_intervall - coordinates)
+
+        # norm reward to (0, 1)
+        highest_coords = np.ones(max(self.action_vals))
+        lowest_actions = np.full((max(self.action_vals)), np.min(mapping_list))
+        max_dist = np.linalg.norm(highest_coords - lowest_actions)
+
+        reward = 1 - (dist / max_dist)
+
+        return abs(reward)
+
+    def get_default_state(self, _) -> np.array:
+        """
+        Gather state information.
+
+        Parameters
+        ----------
+        _ :
+            ignore param
+
+        Returns
+        -------
+        np.array
+            numpy array with state information
+        """
+        remaining_budget = self.n_steps - self.c_step
+        next_state = [remaining_budget]
+        next_state += [self.n_actions]
+
+        if self.c_step == 0:
+            next_state += [0 for _ in range(self.n_actions)]
+            next_state += [0 for _ in range(self.n_actions)]
+        else:
+            next_state += list(self.derivative)
+            next_state += list(self.action)
+
+        return np.array(next_state, dtype="float32")
+
+    def close(self) -> bool:
+        """
+        Close Env
+
+        Returns
+        -------
+        bool
+            Closing confirmation
+        """
+        return True
 
     def _sigmoid(self, t: float, scaling: float, inflection: float):
         """Simple sigmoid function"""
@@ -235,75 +453,9 @@ class GeometricEnv(AbstractEnv):
 
         return value_array
 
-    def get_coordinates(self, instance: List = None) -> List[np.array]:
-        """
-        Calculates coordinates for instance over all time_steps
-
-        Parameters
-        ----------
-        instance : List, optional
-            Instance that holds information about functions, by default None
-
-        Returns
-        -------
-        List[np.array]
-            Index of List refers to time step
-        """
-        if not instance:
-            instance = self.instance
-
-        optimal_policy_coord = np.zeros((self.n_steps, self.n_actions))
-
-        for time_step in range(self.n_steps):
-            optimal_policy_coord[time_step, :] = self._get_optimal_policy_at_time_step(
-                instance, time_step
-            )
-
-        return optimal_policy_coord
-
-    def get_optimal_policy(
-        self, instance: List = None, vector_action: bool = True
-    ) -> List[np.array]:
-        """
-        Calculates the optimal policy for an instance
-
-        Parameters
-        ----------
-        instance : List, optional
-            instance with information about function config.
-        vector_action : bool, optional
-            if True return multidim actions else return onedimensional action, by default True
-
-        Returns
-        -------
-        List[np.array]
-            List with entry for each timestep that holds all optimal values in an array or as int
-        """
-        if not instance:
-            instance = self.instance
-
-        optimal_policy_coords = self.get_coordinates(instance)
-        optimal_policy = np.zeros(((self.n_steps, self.n_actions)))
-
-        for step in range(self.n_steps):
-            for dimension in range(self.n_actions):
-                step_size = 2 / self.action_vals[dimension]
-                interval = [step for step in np.arange(-1, 1, step_size)][1:]
-
-                optimal_policy[step, dimension] = bisect.bisect_left(
-                    interval, optimal_policy_coords[step, dimension]
-                )
-
-        optimal_policy = optimal_policy.astype(int)
-        if not vector_action:
-            reverse_action_mapper = {v: k for k, v in self.action_mapper.items()}
-            optimal_policy = [
-                reverse_action_mapper[tuple(vec)] for vec in optimal_policy
-            ]
-
-        return optimal_policy
-
-    def add_correlation_between_dimensions(self, correlation_table: np.array):
+    def _add_correlation_between_dimensions(
+        self, current_values: np.ndarray, prev_values: np.ndarray, current_depth: int
+    ):
         """
         Adds correlation between dimensions.
         Correlation table holds numbers between -1 and 1.
@@ -315,156 +467,17 @@ class GeometricEnv(AbstractEnv):
         correlation_table : np.array
             table that holds all values of correlation between dimensions [n,n]
         """
-        # TODO:
-        #   - add depth of domino-effekt
-        pass
-
-    def step(self, action: int):
-        """
-        Execute environment step
-
-        Parameters
-        ----------
-        action : int
-            action to execute
-
-        Returns
-        -------
-        np.array, float, bool, dict
-            state, reward, done, info
-        """
-        self.done = super(GeometricEnv, self).step_()
-
-        # map integer action to vector
-        action_vec = self.action_mapper[action]
-        assert self.n_actions == len(
-            action_vec
-        ), f"action should be of length {self.n_actions}."
-        self.action = action_vec
-
-        self.trajectory.append(np.array(action_vec))
-        self.agent_trajectory.append(np.array(action))
-        self.coord_trajectory.append(
-            self._get_optimal_policy_at_time_step(self.instance, self.c_step)
-        )
-
-        self.coord_trajectory_set[self.inst_id] = self.coord_trajectory
-        self.trajectory_set[self.inst_id] = self.trajectory
-
-        if self.realistic_trajectory:
-            self.derivative = self._calculate_derivative(self.coord_trajectory)
-        else:
-            self.derivative = self._calculate_derivative(self.trajectory)
-
-        self.derivative_set[self.inst_id] = self.derivative
-
-        next_state = self.get_state(self)
-        self._prev_state = next_state
-        return next_state, self.get_reward(self), self.done, {}
-
-    def reset(self) -> List[int]:
-        """
-        Resets env
-
-        Returns
-        -------
-        numpy.array
-            Environment state
-        """
-        super(GeometricEnv, self).reset_()
-
-        self.trajectory = self.trajectory_set.get(
-            self.inst_id, [np.zeros(self.n_actions)]
-        )
-        self.coord_trajectory = self.coord_trajectory_set.get(
-            self.inst_id, [np.zeros(self.n_actions)]
-        )
-
-        self.derivative = self.derivative_set.get(self.inst_id, 0)
-
-        self._prev_state = None
-
-        return self.get_state(self)
-
-    def get_default_reward(self, _) -> float:
-        """
-        Calculate euclidean distance between action vector and real position of Curve.
-
-        Parameters
-        ----------
-        _ : self
-            ignore
-
-        Returns
-        -------
-        float
-            Euclidean distance
-        """
-        coordinates = np.zeros(self.n_actions)
-        function_names = []
-
-        for dim, function_info in enumerate(self.instance):
-            coordinates[dim] = self._calculate_function_value(
-                self.c_step, function_info
+        if current_depth < self.correlation_depth:
+            # do value update
+            corr_values = 1
+            self._add_correlation_between_dimensions(
+                current_values, corr_values, current_depth + 1
             )
-            function_names.append(function_info[1])
-
-        # TODO: - add correlation for all changes based on trajectories
-        #       - use Domino Effekt
-        # map action values to their interval mean
-        mapping_list = [self.action_interval_mapping[name] for name in function_names]
-        action_intervall = [
-            mapping_list[count][index] for count, index in enumerate(self.action)
-        ]
-
-        dist = np.linalg.norm(action_intervall - coordinates)
-
-        # norm reward to (0, 1)
-        highest_coords = np.ones(max(self.action_vals))
-        lowest_actions = np.full((max(self.action_vals)), np.min(mapping_list))
-        max_dist = np.linalg.norm(highest_coords - lowest_actions)
-
-        reward = 1 - (dist / max_dist)
-
-        return abs(reward)
-
-    def get_default_state(self, _) -> np.array:
-        """
-        Gather state information.
-
-        Parameters
-        ----------
-        _ :
-            ignore param
-
-        Returns
-        -------
-        np.array
-            numpy array with state information
-        """
-        remaining_budget = self.n_steps - self.c_step
-        next_state = [remaining_budget]
-        next_state += [self.n_actions]
-
-        if self.c_step == 0:
-            next_state += [0 for _ in range(self.n_actions)]
-            next_state += [0 for _ in range(self.n_actions)]
         else:
-            next_state += list(self.derivative)
-            next_state += list(self.action)
+            corr_values = self._apply_correlation_update()
 
-        return np.array(next_state, dtype="float32")
-
-    def close(self) -> bool:
-        """
-        Close Env
-
-        Returns
-        -------
-        bool
-            Closing confirmation
-        """
-        return True
+    def _apply_correlation_update(self):
+        pass
 
     def render_dimensions(self, dimensions: List, absolute_path: str):
         """
