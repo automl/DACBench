@@ -65,6 +65,7 @@ class SGDEnv(AbstractEnv):
         self.on_features = config.features
         self.cd_paper_reconstruction = config.cd_paper_reconstruction
         self.cd_bias_correction = config.cd_bias_correction
+        self.crashed = False
 
         if isinstance(config.reward_type, Reward):
             self.reward_type = config.reward_type
@@ -285,13 +286,10 @@ class SGDEnv(AbstractEnv):
         new_lr = torch.Tensor([action]).to(self.device)
         self.current_lr = new_lr
 
-        nan_state = {}
-        for feature in self.on_features:
-            nan_state[feature] = np.nan
-
         direction = self.get_optimizer_direction()
         if any(np.isnan(direction)) or np.isnan(action):
-            return nan_state, self.reward_range[0], True, {}
+            self.crashed = True
+            return self.get_state(self), self.reward_range[0], False, {}
 
         self.current_direction = direction
 
@@ -313,9 +311,17 @@ class SGDEnv(AbstractEnv):
         self.train_network()
         reward = self.get_reward()
         if np.isnan(reward):
-            return nan_state, self.reward_range[0], True, {}
+            self.crashed = True
+            reward = self.reward_range[0]
 
-        return self.get_state(self), reward, done, {}
+        state = self.get_state(self)
+        for value in state.values():
+            if np.isnan(value):
+                self.crashed = True
+                reward = self.reward_range[0]
+                state = self.get_state(self)
+                break
+        return state, reward, done, {}
 
     def _architecture_constructor(self, arch_str):
         layer_specs = []
@@ -353,6 +359,8 @@ class SGDEnv(AbstractEnv):
         construct_model = self._architecture_constructor(self.instance[2])
         self.n_steps = self.instance[3]
         dataset_size = self.instance[4]
+
+        self.crashed = False
 
         self.seed(instance_seed)
 
@@ -562,13 +570,21 @@ class SGDEnv(AbstractEnv):
         if 'currentLR' in self.on_features:
             state["currentLR"] = self.current_lr.item()
         if 'trainingLoss' in self.on_features:
-            state["trainingLoss"] = self.current_training_loss.item()
+            if self.crashed:
+                state["trainingLoss"] = 0.0
+            else:
+                state["trainingLoss"] = self.current_training_loss.item()
         if 'validationLoss' in self.on_features:
-            state["validationLoss"] = self.current_validation_loss.item()
+            if self.crashed:
+                state["validationLoss"] = 0.0
+            else:
+                state["validationLoss"] = self.current_validation_loss.item()
         if 'step' in self.on_features:
             state["step"] = self.step_count.item()
         if 'alignment' in self.on_features:
             state["alignment"] = alignment.item()
+        if 'crashed' in self.on_features:
+            state["crashed"] = self.crashed
 
         return state
 
@@ -671,6 +687,8 @@ class SGDEnv(AbstractEnv):
         return self.sgd_momentum_v
 
     def _get_loss_features(self):
+        if self.crashed:
+            return torch.tensor(0.0), torch.tensor(0.0)
         bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
         with torch.no_grad():
             loss_var = torch.log(torch.var(self.loss_batch))
@@ -687,6 +705,8 @@ class SGDEnv(AbstractEnv):
         return self.lossVarDiscountedAverage/bias_correction, self.lossVarUncertainty/bias_correction
 
     def _get_predictive_change_features(self, lr):
+        if self.crashed:
+            return torch.tensor(0.0), torch.tensor(0.0)
         bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
         batch_gradients = []
         for i, (name, param) in enumerate(self.model.named_parameters()):
@@ -719,6 +739,8 @@ class SGDEnv(AbstractEnv):
         )
 
     def _get_alignment(self):
+        if self.crashed:
+            return torch.tensor(0.0)
         alignment = torch.mean(torch.sign(torch.mul(self.prev_direction, self.current_direction)))
         alignment = torch.unsqueeze(alignment, dim=0)
         self.prev_direction = self.current_direction

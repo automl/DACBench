@@ -70,13 +70,12 @@ class TestSGDEnv(unittest.TestCase):
             self.assertFalse(done)
             self.assertTrue(len(meta.keys()) == 0)
 
-    def test_nan(self):
+    def test_crash(self):
         env = ObservationWrapper(self.env)
         env.reset()
         state, reward, done, _ = env.step(np.nan)
-        self.assertTrue(all(np.isnan(state)))
+        self.assertTrue(env.crashed)
         self.assertTrue(reward == env.reward_range[0])
-        self.assertTrue(done)
 
     def test_stateless(self):
         env = ObservationWrapper(self.env)
@@ -154,7 +153,8 @@ class TestSGDEnv(unittest.TestCase):
                     "trainingLoss",
                     "validationLoss",
                     "step",
-                    "alignment"
+                    "alignment",
+                    "crashed"
                 ],
             )
         )

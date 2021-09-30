@@ -30,7 +30,8 @@ INFO = {
         "Training Loss",
         "Validation Loss",
         "Step",
-        "Alignment"
+        "Alignment",
+        "Crashed"
     ],
 }
 
@@ -58,6 +59,7 @@ SGD_DEFAULTS = objdict(
                 "validationLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
                 "step": spaces.Box(low=0, high=np.inf, shape=(1,)),
                 "alignment": spaces.Box(low=0, high=1, shape=(1,)),
+                "crashed": spaces.Discrete(2),
             }
         ],
         "reward_type": Reward.LogDiffTraining,
@@ -89,7 +91,8 @@ SGD_DEFAULTS = objdict(
             "trainingLoss",
             "validationLoss",
             "step",
-            "alignment"
+            "alignment",
+            "crashed"
         ],
     }
 )
