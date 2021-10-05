@@ -223,14 +223,6 @@ class SGDEnv(AbstractEnv):
                 [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
             )
 
-            # hot fix for https://github.com/pytorch/vision/issues/3549
-            # If fix is available in stable version (0.9.1), we should update and be removed this.
-            new_mirror = "https://ossci-datasets.s3.amazonaws.com/mnist"
-            datasets.MNIST.resources = [
-                ("/".join([new_mirror, url.split("/")[-1]]), md5)
-                for url, md5 in datasets.MNIST.resources
-            ]
-
             train_dataset = datasets.MNIST(
                 "../data", train=True, download=True, transform=transform
             )
