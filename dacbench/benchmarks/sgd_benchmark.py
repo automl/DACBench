@@ -80,6 +80,8 @@ SGD_DEFAULTS = objdict(
         "seed": 0,
         "cd_paper_reconstruction": False,
         "cd_bias_correction": True,
+        "terminate_on_crash": False,
+        "crash_penalty": 0.0,
         "instance_set_path": "../instance_sets/sgd/sgd_train_100instances.csv",
         "benchmark_info": INFO,
         "features": [

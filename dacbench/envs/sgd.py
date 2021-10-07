@@ -66,6 +66,8 @@ class SGDEnv(AbstractEnv):
         self.cd_paper_reconstruction = config.cd_paper_reconstruction
         self.cd_bias_correction = config.cd_bias_correction
         self.crashed = False
+        self.terminate_on_crash = config.terminate_on_crash
+        self.crash_penalty = config.crash_penalty
 
         if isinstance(config.reward_type, Reward):
             self.reward_type = config.reward_type
@@ -239,6 +241,11 @@ class SGDEnv(AbstractEnv):
     def get_full_training_reward(self):
         return -self._get_full_training_loss(loader=self.train_loader).item()
 
+    @property
+    def crash(self):
+        self.crashed = True
+        return self.get_state(self), self.crash_penalty, self.terminate_on_crash, {}
+
     def seed(self, seed=None, seed_action_space=False):
         """
         Set rng seed
@@ -283,13 +290,15 @@ class SGDEnv(AbstractEnv):
         if not isinstance(action, numbers.Number):
             action = action[0]
 
+        if np.isnan(action):
+            return self.crash
+
         new_lr = torch.Tensor([action]).to(self.device)
         self.current_lr = new_lr
 
         direction = self.get_optimizer_direction()
-        if any(np.isnan(direction)) or np.isnan(action):
-            self.crashed = True
-            return self.get_state(self), self.reward_range[0], False, {}
+        if any(np.isnan(direction)):
+            return self.crash
 
         self.current_direction = direction
 
@@ -311,16 +320,12 @@ class SGDEnv(AbstractEnv):
         self.train_network()
         reward = self.get_reward()
         if np.isnan(reward):
-            self.crashed = True
-            reward = self.reward_range[0]
+            return self.crash
 
         state = self.get_state(self)
         for value in state.values():
             if np.isnan(value):
-                self.crashed = True
-                reward = self.reward_range[0]
-                state = self.get_state(self)
-                break
+                return self.crash
         return state, reward, done, {}
 
     def _architecture_constructor(self, arch_str):
