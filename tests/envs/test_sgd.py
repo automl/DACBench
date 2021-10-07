@@ -75,7 +75,8 @@ class TestSGDEnv(unittest.TestCase):
         env.reset()
         state, reward, done, _ = env.step(np.nan)
         self.assertTrue(env.crashed)
-        self.assertTrue(reward == env.reward_range[0])
+        self.assertFalse(any(np.isnan(state)))
+        self.assertTrue(reward == env.crash_penalty)
 
     def test_stateless(self):
         env = ObservationWrapper(self.env)
