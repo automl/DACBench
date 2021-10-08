@@ -23,6 +23,10 @@ class GeometricEnv(AbstractEnv):
     Use product approach: f(t,x,y,z) = X(t,x) * Y(t,y) * Z(t,z)
     Normalize Function Value on a Scale betwwen 0 and 1
         - min and max value for normalization over all timesteps
+    TODOS:
+        - fix instance set generation to make functions more similar
+        - edit Coordiates/Function class to script for better understanding
+            - class has norm, derivative, correlation and coordinate functions
     """
 
     def __init__(self, config) -> None:
@@ -101,6 +105,7 @@ class GeometricEnv(AbstractEnv):
         optimal_policy_coord = np.zeros((self.n_steps, self.n_actions))
 
         for time_step in range(self.n_steps):
+            # TODO: apply correlation
             optimal_policy_coord[time_step, :] = self._get_optimal_policy_at_time_step(
                 instance, time_step
             )
@@ -249,14 +254,14 @@ class GeometricEnv(AbstractEnv):
             mapping_list[count][index] for count, index in enumerate(self.action)
         ]
 
-        dist = np.linalg.norm(action_intervall - coordinates)
+        euclidean_dist = np.linalg.norm(action_intervall - coordinates)
 
         # norm reward to (0, 1)
         highest_coords = np.ones(max(self.action_vals))
         lowest_actions = np.full((max(self.action_vals)), np.min(mapping_list))
         max_dist = np.linalg.norm(highest_coords - lowest_actions)
 
-        reward = 1 - (dist / max_dist)
+        reward = 1 - (euclidean_dist / max_dist)
 
         return abs(reward)
 
@@ -543,3 +548,193 @@ class GeometricEnv(AbstractEnv):
         ax.set_yticks([])
         ax.view_init(elev=0, azim=-90)
         fig.savefig(os.path.join(absolute_path, "3D-90side.jpg"))
+
+
+class Functions:
+    def __init__(self) -> None:
+        self.norm_calculated = False
+        self._calculate_norm_value()
+
+    def get_optimal_policy_at_time_step(
+        self, instance: List, time_step: int
+    ) -> np.array:
+        """calculate optimal policy at time_step"""
+        value_array = np.zeros(self.n_actions)
+        for index, function_info in enumerate(instance):
+            value_array[index] = self._calculate_function_value(
+                time_step, function_info
+            )
+
+        return value_array
+
+    def calculate_function_value(self, time_step: int, function_infos: List) -> float:
+        """
+        Call different functions with their speicifc parameters and norm them.
+
+        Parameters
+        ----------
+        function_infos : List
+            Consists of function name and the coefficients
+        time_step: int
+            time step for each function
+        calculate_norm : bool, optional
+            True if norm gets calculated, by default False
+
+        Returns
+        -------
+        float
+            coordinate in dimension of function
+        """
+        norm_value = function_infos[0] if not self.norm_calculated else 1
+        function_name = function_infos[1]
+        coefficients = function_infos[2:]
+
+        function_value = 0
+
+        if "sigmoid" == function_name:
+            function_value = self._sigmoid(time_step, coefficients[0], coefficients[1])
+
+        elif "linear" == function_name:
+            function_value = self._linear(time_step, coefficients[0], coefficients[1])
+
+        elif "constant" == function_name:
+            function_value = self._constant(coefficients[0])
+
+        elif "exponential" == function_name:
+            function_value = self._exponential(time_step, coefficients[0])
+
+        elif "logarithmic" == function_name:
+            function_value = self._logarithmic(time_step, coefficients[0])
+
+        elif "polynomial" in function_name:
+            function_value = self._polynom(time_step, coefficients)
+
+        elif "sinus" in function_name:
+            function_value = self._sinus(time_step, coefficients[0])
+
+        function_value = max(function_value, -self.max_function_value)
+        return min(function_value, self.max_function_value) / norm_value
+
+    def _calculate_derivative(self, trajectory: List) -> np.array:
+        """
+        Calculate derivatives of each dimension, based on trajectories.
+
+        Parameters
+        ----------
+        trajectory: List
+            List of actions or coordinates already taken
+
+        Returns
+        -------
+        np.array
+            derivatives for each dimension
+        """
+        if self.c_step > 1:
+            upper_bound = self.c_step + 1
+            lower_bound = max(upper_bound - self.derivative_interval, 1)
+
+            derrivative = np.zeros(self.n_actions)
+            for step in range(lower_bound, upper_bound):
+                der = np.subtract(
+                    np.array(trajectory[step], dtype=np.float),
+                    np.array(trajectory[step - 1], dtype=np.float),
+                )
+                derrivative = np.add(derrivative, der)
+
+            derrivative /= upper_bound - lower_bound
+
+        elif self.c_step == 1:
+            derrivative = np.subtract(
+                np.array(trajectory[self.c_step], dtype=np.float),
+                np.array(trajectory[self.c_step - 1], dtype=np.float),
+            )
+
+        else:
+            derrivative = np.zeros(self.n_actions)
+
+        return derrivative
+
+    def _calculate_norm_value(self):
+        """
+        Norm Functions to Intervall between -1 and 1
+        """
+        for key, instance in self.instance_set.items():
+            instance_values = self.get_coordinates(instance).transpose()
+            # TODO: - add correlation and return max_value
+
+            for dim, function_values in enumerate(instance_values):
+
+                if abs(min(function_values)) > max(function_values):
+                    norm_factor = abs(min(function_values))
+                else:
+                    norm_factor = max(function_values)
+
+                # set first item of every function_list in instance as norm factor
+                self.instance_set[key][dim][0] = norm_factor
+
+        self._toggle_norm_calculated()
+
+    def _toggle_norm_calculated(self):
+        self.norm_calculated = False if self.norm_calculated else True
+
+    def _add_correlation_between_dimensions(
+        self, current_values: np.ndarray, prev_values: np.ndarray, current_depth: int
+    ):
+        """
+        Adds correlation between dimensions.
+        Correlation table holds numbers between -1 and 1.
+        e.g. correlation_table[0][2] = 0.5 if dimension 1 changes dimension 3 changes about 50% of dimension one
+        Call function recursively till max_depth is reached
+
+        Parameters
+        ----------
+        correlation_table : np.array
+            table that holds all values of correlation between dimensions [n,n]
+        """
+        if current_depth < self.correlation_depth:
+            # do value update
+            corr_values = 1
+            self._add_correlation_between_dimensions(
+                current_values, corr_values, current_depth + 1
+            )
+        else:
+            corr_values = self._apply_correlation_update()
+
+    def _apply_correlation_update(self):
+        pass
+
+    def _sigmoid(self, t: float, scaling: float, inflection: float):
+        """Simple sigmoid function"""
+        return 1 / (1 + np.exp(-scaling * (t - inflection)))
+
+    def _linear(self, t: float, a: float, b: float):
+        """Linear function"""
+        return a * t + b
+
+    def _polynom(self, t: float, coeff_list: List[float]):
+        """Polynomial function. Dimension depends on length of coefficient list."""
+        pol_value = 0
+
+        for dim, coeff in enumerate(coeff_list):
+            pol_value += coeff * t ** dim
+
+        return pol_value
+
+    def _logarithmic(self, t: float, a: float):
+        """Logarithmic function"""
+        if t != 0:
+            return a * np.log(t)
+        else:
+            return self.max_function_value
+
+    def _exponential(self, t: float, a: int):
+        """Exponential function"""
+        return a * np.exp(t)
+
+    def _constant(self, c: float):
+        """Constant function"""
+        return c
+
+    def _sinus(self, t: float, scale: float):
+        """Sinus function"""
+        return np.sin(scale * t)
