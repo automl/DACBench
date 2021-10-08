@@ -63,6 +63,7 @@ GEOMETRIC_DEFAULTS = objdict(
             "middle": (0.1, 0.5),
             "low": (0, 0.1),
         },
+        "correlation_depth": 4,
         "create_correlation": False,
         "benchmark_info": INFO,
     }
@@ -259,7 +260,7 @@ class GeometricBenchmark(AbstractBenchmark):
 
 if __name__ == "__main__":
     geo_bench = GeometricBenchmark()
-    env = geo_bench.get_benchmark()
+    env = geo_bench.get_environment()
 
     opt_policy = env.get_optimal_policy()
     env.render_dimensions([0, 1, 2, 3, 4, 5, 6], "/home/vonglahn/tmp")
