@@ -47,7 +47,6 @@ GEOMETRIC_DEFAULTS = objdict(
         },
         "action_interval_mapping": {},  # maps actions to equally sized intervalls in interval [-1, 1]
         "derivative_interval": 3,  # defines how many values are used for derivative calculation
-        "max_function_value": 1000000,  # clip function value if it is higher than this number
         "realistic_trajectory": True,  # True: coordiantes are used as trajectory, False: Actions are used as trajectories
         "instance_set_path": "../instance_sets/geometric/geometric_test.csv",
         # correlation table to chain dimensions -> if dim x changes dim y changes as well
