@@ -7,6 +7,7 @@ from enum import IntEnum, auto
 import copy
 from contextlib import contextmanager
 import random
+import inspect
 
 
 import torch
@@ -70,9 +71,14 @@ class SGDEnv(AbstractEnv):
         config : objdict
             Environment configuration
         """
-        super(SGDEnv, self).__init__(config)
+        sig = inspect.signature(config.optimizer)
+        for name, _ in config.actions.items():
+            if name not in sig.parameters:
+                raise ValueError(f'{name} is not a valid {config.optimizer} param.')
+        config.action_space_args = np.array(list(zip(*config.actions.values())))
+        self.action_names = config.actions.keys()
 
-        self.optimizer_name = config.optimizer
+        super(SGDEnv, self).__init__(config)
 
         self.batch_size = config.training_batch_size
         self.validation_batch_size = config.validation_batch_size
@@ -262,25 +268,21 @@ class SGDEnv(AbstractEnv):
         self.step_count += 1
         index = 0
 
-        if not isinstance(action, int) and not isinstance(action, float):
-            action = action.item()
-        if not isinstance(action, numbers.Number):
-            action = action[0]
-
-        if np.isnan(action):
-            return self.crash
-
-        new_lr = torch.Tensor([action]).to(self.device)
+        if isinstance(action, numbers.Number):
+            action = [action]
 
         if any(torch.isnan(self.update_value)):
             return self.crash
 
         self.current_direction = -self.update_value / self.current_lr
 
-        self.current_lr = new_lr
-
-        for g in self.optimizer.param_groups:
-            g['lr'] = action
+        for idx, action_name in enumerate(self.action_names):
+            for g in self.optimizer.param_groups:
+                if np.isnan(action[idx]):
+                    return self.crash
+                g[action_name] = action[idx]
+            if action_name == 'lr':
+                self.current_lr = torch.Tensor([action[idx]]).to(self.device)
 
         self.optimizer.step()
         self.optimizer.zero_grad()
@@ -435,23 +437,9 @@ class SGDEnv(AbstractEnv):
         self.current_training_loss = None
         self.loss_batch = None
 
-        def construct_optimizer(optimizer, **kwargs):
-            return optimizer(self.model.parameters(),
-                    lr=self.initial_lr.item(), **kwargs)
-
-
-        # NOTE: Support every optimizer in the config
-        if self.optimizer_name=="adam":
-            self.optimizer = construct_optimizer(torch.optim.Adam,
-                    betas=[self.config.beta1, self.config.beta2])
-        elif self.optimizer_name=="rmsprop":
-            self.optimizer = construct_optimizer(torch.optim.RMSprop,
-                    alpha=self.config.beta2)
-        elif self.optimizer_name=="momentum":
-            self.optimizer = construct_optimizer(torch.optim.SGD, momentum=0.9)
-        else:
-            raise NotImplementedError
-
+        self.optimizer = self.config.optimizer(self.model.parameters(),
+                                               lr=self.initial_lr.item(),
+                                               **self.config.optimizer_kwargs)
         self.optimizer.zero_grad()
 
         self.current_lr = self.initial_lr  # TODO: Should not need these anymore if we use torch.optim as the initial LR is specified in config.optimizer_kwargs

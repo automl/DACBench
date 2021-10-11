@@ -3,6 +3,7 @@ import os
 
 import numpy as np
 from gym import spaces
+import torch.optim
 from torch.nn import NLLLoss
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
@@ -39,7 +40,7 @@ INFO = {
 SGD_DEFAULTS = objdict(
     {
         "action_space_class": "Box",
-        "action_space_args": [np.array([0]), np.array([10])],
+        "action_space_args": [],
         "observation_space_class": "Dict",
         "observation_space_type": None,
         "observation_space_args": [
@@ -65,7 +66,9 @@ SGD_DEFAULTS = objdict(
         "reward_type": Reward.LogDiffTraining,
         "cutoff": 1e3,
         "lr": 1e-3,
-        "optimizer": "rmsprop",
+        "actions": {'lr': [0.0, 1.0]},
+        "optimizer": torch.optim.RMSprop,
+        "optimizer_kwargs": {},
         "loss_function": __default_loss_function,
         "loss_function_kwargs": {},
         "val_loss_function": __default_loss_function,
@@ -74,8 +77,6 @@ SGD_DEFAULTS = objdict(
         "validation_batch_size": 64,
         "train_validation_ratio": 0.8,
         "no_cuda": False,
-        "beta1": 0.9,
-        "beta2": 0.999,
         "seed": 0,
         "cd_paper_reconstruction": False,
         "cd_bias_correction": True,
