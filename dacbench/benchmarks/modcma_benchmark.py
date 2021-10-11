@@ -5,7 +5,7 @@ import numpy as np
 from modcma import Parameters
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import ModCMAEnv
+from dacbench.envs import ModCMAEnv, CMAStepSizeEnv
 
 
 INFO = {"identifier": "ModCMA",
@@ -43,16 +43,21 @@ MODCMA_DEFAULTS = objdict(
 
 
 class ModCMABenchmark(AbstractBenchmark):
-    def __init__(self, config_path:str = None):
+    def __init__(self, config_path:str = None, step_size=False):
         super().__init__(config_path)
         self.config = objdict(MODCMA_DEFAULTS.copy(), **(self.config or dict()))
-
+        self.step_size = step_size
 
     def get_environment(self):
         if 'instance_set' not in self.config:
             self.read_instance_set()
 
-        env = ModCMAEnv(self.config)
+        if self.step_size:
+            self.config.action_space_class = "Box"
+            self.config.action_space_args = [np.array([0]), np.array([10])]
+            env = CMAStepSizeEnv(self.config)
+        else:
+            env = ModCMAEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
         return env
