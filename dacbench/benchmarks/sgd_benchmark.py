@@ -30,7 +30,8 @@ INFO = {
         "Training Loss",
         "Validation Loss",
         "Step",
-        "Alignment"
+        "Alignment",
+        "Crashed"
     ],
 }
 
@@ -58,6 +59,7 @@ SGD_DEFAULTS = objdict(
                 "validationLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
                 "step": spaces.Box(low=0, high=np.inf, shape=(1,)),
                 "alignment": spaces.Box(low=0, high=1, shape=(1,)),
+                "crashed": spaces.Discrete(2),
             }
         ],
         "reward_type": Reward.LogDiffTraining,
@@ -77,6 +79,8 @@ SGD_DEFAULTS = objdict(
         "seed": 0,
         "cd_paper_reconstruction": False,
         "cd_bias_correction": True,
+        "terminate_on_crash": True,
+        "crash_penalty": 0.0,
         "instance_set_path": "../instance_sets/sgd/sgd_train_100instances.csv",
         "benchmark_info": INFO,
         "features": [
@@ -88,7 +92,8 @@ SGD_DEFAULTS = objdict(
             "trainingLoss",
             "validationLoss",
             "step",
-            "alignment"
+            "alignment",
+            "crashed"
         ],
     }
 )

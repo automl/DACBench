@@ -6,6 +6,7 @@ from functools import reduce
 from enum import IntEnum, auto
 import copy
 from contextlib import contextmanager
+import random
 
 
 import torch
@@ -13,8 +14,8 @@ from backpack import backpack, extend
 from backpack.extensions import BatchGrad
 from numpy import float32
 from torchvision import datasets, transforms
+import numpy as np
 from dacbench import AbstractEnv
-import random
 
 warnings.filterwarnings("ignore")
 
@@ -80,6 +81,9 @@ class SGDEnv(AbstractEnv):
         self.on_features = config.features
         self.cd_paper_reconstruction = config.cd_paper_reconstruction
         self.cd_bias_correction = config.cd_bias_correction
+        self.crashed = False
+        self.terminate_on_crash = config.terminate_on_crash
+        self.crash_penalty = config.crash_penalty
         self.config = config
 
         if isinstance(config.reward_type, Reward):
@@ -214,6 +218,11 @@ class SGDEnv(AbstractEnv):
     def get_full_training_reward(self):
         return -self._get_full_training_loss().item()
 
+    @property
+    def crash(self):
+        self.crashed = True
+        return self.get_state(self), self.crash_penalty, self.terminate_on_crash, {}
+
     def seed(self, seed=None, seed_action_space=False):
         """
         Set rng seed
@@ -258,7 +267,13 @@ class SGDEnv(AbstractEnv):
         if not isinstance(action, numbers.Number):
             action = action[0]
 
+        if np.isnan(action):
+            return self.crash
+
         new_lr = torch.Tensor([action]).to(self.device)
+
+        if any(torch.isnan(self.update_value)):
+            return self.crash
 
         self.current_direction = -self.update_value / self.current_lr
 
@@ -276,8 +291,15 @@ class SGDEnv(AbstractEnv):
 
         self.fake_train()
         reward = self.get_reward()
+        if np.isnan(reward):
+            return self.crash
 
-        return self.get_state(self), reward, done, {}
+        state = self.get_state(self)
+        for value in state.values():
+            if np.isnan(value):
+                return self.crash
+
+        return state, reward, done, {}
 
     def _architecture_constructor(self, arch_str):
         layer_specs = []
@@ -546,13 +568,21 @@ class SGDEnv(AbstractEnv):
         if 'currentLR' in self.on_features:
             state["currentLR"] = self.current_lr.item()
         if 'trainingLoss' in self.on_features:
-            state["trainingLoss"] = self.current_training_loss.item()
+            if self.crashed:
+                state["trainingLoss"] = 0.0
+            else:
+                state["trainingLoss"] = self.current_training_loss.item()
         if 'validationLoss' in self.on_features:
-            state["validationLoss"] = self.current_validation_loss.item()
+            if self.crashed:
+                state["validationLoss"] = 0.0
+            else:
+                state["validationLoss"] = self.current_validation_loss.item()
         if 'step' in self.on_features:
             state["step"] = self.step_count
         if 'alignment' in self.on_features:
             state["alignment"] = alignment.item()
+        if 'crashed' in self.on_features:
+            state["crashed"] = self.crashed
 
         return state
 
@@ -643,6 +673,8 @@ class SGDEnv(AbstractEnv):
         return validation_loss
 
     def _get_loss_features(self):
+        if self.crashed:
+            return torch.tensor(0.0), torch.tensor(0.0)
         bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
         with torch.no_grad():
             loss_var = torch.log(torch.var(self.loss_batch))
@@ -659,6 +691,8 @@ class SGDEnv(AbstractEnv):
         return self.lossVarDiscountedAverage/bias_correction, self.lossVarUncertainty/bias_correction
 
     def _get_predictive_change_features(self, lr):
+        if self.crashed:
+            return torch.tensor(0.0), torch.tensor(0.0)
         bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
         batch_gradients = []
         for i, param in enumerate(self.model.parameters()):
@@ -690,6 +724,8 @@ class SGDEnv(AbstractEnv):
         )
 
     def _get_alignment(self):
+        if self.crashed:
+            return torch.tensor(0.0)
         a = torch.mul(self.prev_direction, self.current_direction)
         alignment = torch.mean(torch.sign(torch.mul(self.prev_direction, self.current_direction)))
         alignment = torch.unsqueeze(alignment, dim=0)
