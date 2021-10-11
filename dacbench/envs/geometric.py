@@ -5,7 +5,7 @@ Original environment authors: Rasmus von Glahn
 import bisect
 import os
 import itertools
-from typing import List
+from typing import List, Dict, Tuple
 
 from mpl_toolkits import mplot3d
 from matplotlib import pyplot as plt
@@ -42,7 +42,6 @@ class GeometricEnv(AbstractEnv):
 
         self.action_vals = config["action_values"]
         self.action_interval_mapping = config["action_interval_mapping"]
-        self.max_function_value = config["max_function_value"]
         self.realistic_trajectory = config["realistic_trajectory"]
         self.derivative_interval = config["derivative_interval"]
 
@@ -56,7 +55,15 @@ class GeometricEnv(AbstractEnv):
         self.action_mapper = {}
 
         # Function object
-        self.functions = Functions(self.n_steps, self.n_actions)
+        self.functions = Functions(
+            self.n_steps,
+            self.n_actions,
+            len(self.instance_set),
+            self.correlation_active,
+            self.correlation_table,
+            self.derivative_interval,
+        )
+        self.functions.calculate_norm_values(self.instance_set)
 
         # Trajectories
         self.action_trajectory = []
@@ -149,7 +156,7 @@ class GeometricEnv(AbstractEnv):
         ), f"action should be of length {self.n_actions}."
         self.action = action_vec
 
-        coords = self.functions.get_coordinates_at_time_step(self.instance, self.c_step)
+        coords = self.functions.get_coordinates_at_time_step(self.c_step, action_vec)
         self.coord_trajectory.append(coords)
         self.action_trajectory.append(np.array(action_vec))
 
@@ -157,9 +164,13 @@ class GeometricEnv(AbstractEnv):
         self.action_trajectory_set[self.inst_id] = self.action_trajectory
 
         if self.realistic_trajectory:
-            self.derivative = self._calculate_derivative(self.coord_trajectory)
+            self.derivative = self.functions.calculate_derivative(
+                self.coord_trajectory, self.c_step
+            )
         else:
-            self.derivative = self._calculate_derivative(self.action_trajectory)
+            self.derivative = self.functions.calculate_derivative(
+                self.action_trajectory, self.c_step
+            )
 
         self.derivative_set[self.inst_id] = self.derivative
 
@@ -177,6 +188,7 @@ class GeometricEnv(AbstractEnv):
             Environment state
         """
         super(GeometricEnv, self).reset_()
+        self.functions.set_instance(self.instance, self.instance_index)
 
         self.action_trajectory = self.action_trajectory_set.get(
             self.inst_id, [np.zeros(self.n_actions)]
@@ -185,8 +197,8 @@ class GeometricEnv(AbstractEnv):
             self.inst_id, [np.zeros(self.n_actions)]
         )
 
+        # TODO: is 0 correct or vec of zeros?
         self.derivative = self.derivative_set.get(self.inst_id, 0)
-
         self._prev_state = None
 
         return self.get_state(self)
@@ -205,18 +217,8 @@ class GeometricEnv(AbstractEnv):
         float
             Euclidean distance
         """
-        coordinates = np.zeros(self.n_actions)
-        function_names = []
-
-        for dim, function_info in enumerate(self.instance):
-            coordinates[dim] = self.functions.calculate_function_value(
-                self.c_step, function_info
-            )
-            function_names.append(function_info[1])
-
-        # TODO: - add correlation for all changes based on trajectories
-        if self.correlation_active:
-            pass
+        coordinates = self.functions.get_coordinates_at_time_step(self.c_step)
+        function_names = [function_info[1] for function_info in self.instance]
 
         # map action values to their interval mean
         mapping_list = [self.action_interval_mapping[name] for name in function_names]
@@ -227,6 +229,7 @@ class GeometricEnv(AbstractEnv):
         euclidean_dist = np.linalg.norm(action_intervall - coordinates)
 
         # norm reward to (0, 1)
+        # TODO: fix errors
         highest_coords = np.ones(max(self.action_vals))
         lowest_actions = np.full((max(self.action_vals)), np.min(mapping_list))
         max_dist = np.linalg.norm(highest_coords - lowest_actions)
@@ -283,7 +286,6 @@ class GeometricEnv(AbstractEnv):
             List of dimensions that get plotted
         """
         coordinates = self.functions.get_coordinates().transpose()
-        instance = self.instance
 
         fig, axes = plt.subplots(
             len(dimensions), sharex=True, sharey=True, figsize=(15, 4 * len(dimensions))
@@ -294,7 +296,7 @@ class GeometricEnv(AbstractEnv):
         plt.xticks(np.arange(0, self.n_steps, 1))
 
         for idx, dim in zip(range(len(dimensions)), dimensions):
-            function_info = instance[dim]
+            function_info = self.instance[dim]
             title = function_info[1] + " - Dimension " + str(dim)
 
             axes[idx].set_yticks((np.arange(-1, 1.1, 2 / self.action_vals[dim])))
@@ -317,6 +319,7 @@ class GeometricEnv(AbstractEnv):
             List of dimensions that get plotted. Max 2
         """
         assert len(dimensions) == 2
+        print(mplot3d)
 
         coordinates = self.functions.get_coordinates().transpose()
 
@@ -340,16 +343,38 @@ class GeometricEnv(AbstractEnv):
 
 
 class Functions:
-    def __init__(self, n_steps: int, n_actions: int) -> None:
+    def __init__(
+        self,
+        n_steps: int,
+        n_actions: int,
+        n_instances: int,
+        correlation,
+        correlation_table: np.ndarray,
+        derivative_interval,
+    ) -> None:
+        self.instance = None
+        self.instance_idx = None
+
+        self.coord_array = np.zeros((n_instances, n_actions, n_steps))
         self.norm_calculated = False
-        self.correlation = False
+        self.norm_values = np.ones((n_instances, n_actions))
+
+        self.correlation = correlation
+        self.correlation_table = correlation_table
+
         self.n_steps = n_steps
         self.n_actions = n_actions
-        self._calculate_norm_value()
+        self.derivative_interval = derivative_interval
+
+    def set_instance(self, instance: List, instance_index):
+        """update instance"""
+        self.instance = instance
+        self.instance_idx = instance_index
 
     def get_coordinates(self, instance: List = None) -> List[np.array]:
         """
-        Calculates coordinates for instance over all time_steps
+        Calculates coordinates for instance over all time_steps.
+        The values will change if correlation is applied and not optimal actions are taken.
 
         Parameters
         ----------
@@ -363,26 +388,104 @@ class Functions:
         """
         if not instance:
             instance = self.instance
+        assert instance
 
-        optimal_policy_coord = np.zeros((self.n_steps, self.n_actions))
-
+        optimal_coords = np.zeros((self.n_steps, self.n_actions))
         for time_step in range(self.n_steps):
-            # TODO: apply correlation
-            optimal_policy_coord[time_step, :] = self.get_coordinates_at_time_step(
-                instance, time_step
-            )
+            optimal_coords[time_step, :] = self.get_coordinates_at_time_step(time_step)
 
-        return optimal_policy_coord
+        return optimal_coords
 
-    def get_coordinates_at_time_step(self, instance: List, time_step: int) -> np.array:
-        """calculate optimal policy at time_step"""
+    def get_coordinates_at_time_step(
+        self, time_step: int, action_vec: Tuple = None
+    ) -> np.array:
+        """
+        Calculate coordiantes at time_step.
+        Apply correlation.
+
+        Parameters
+        ----------
+        instance : List
+            Instance that holds information about functions
+        time_step : int
+            Time step of functions
+
+        Returns
+        -------
+        np.array
+            array of function values at timestep
+        """
         value_array = np.zeros(self.n_actions)
-        for index, function_info in enumerate(instance):
-            value_array[index] = self.calculate_function_value(time_step, function_info)
+        for index, function_info in enumerate(self.instance):
+            value_array[index] = self._calculate_function_value(
+                time_step, function_info, index
+            )
 
         return value_array
 
-    def calculate_function_value(self, time_step: int, function_infos: List) -> float:
+    def calculate_derivative(self, trajectory: List, c_step: int) -> np.array:
+        """
+        Calculate derivatives of each dimension, based on trajectories.
+
+        Parameters
+        ----------
+        trajectory: List
+            List of actions or coordinates already taken
+        c_step: int
+            current timestep
+
+        Returns
+        -------
+        np.array
+            derivatives for each dimension
+        """
+        if c_step > 1:
+            upper_bound = c_step + 1
+            lower_bound = max(upper_bound - self.derivative_interval, 1)
+
+            derrivative = np.zeros(self.n_actions)
+            for step in range(lower_bound, upper_bound):
+                der = np.subtract(
+                    np.array(trajectory[step], dtype=np.float),
+                    np.array(trajectory[step - 1], dtype=np.float),
+                )
+                derrivative = np.add(derrivative, der)
+
+            derrivative /= upper_bound - lower_bound
+
+        elif c_step == 1:
+            derrivative = np.subtract(
+                np.array(trajectory[c_step], dtype=np.float),
+                np.array(trajectory[c_step - 1], dtype=np.float),
+            )
+
+        else:
+            derrivative = np.zeros(self.n_actions)
+
+        return derrivative
+
+    def calculate_norm_values(self, instance_set: Dict):
+        """
+        Norm Functions to Intervall between -1 and 1
+        """
+        for key, instance in instance_set.items():
+            self.set_instance(instance, key)
+            instance_values = self.get_coordinates().transpose()
+
+            for dim, function_values in enumerate(instance_values):
+
+                if abs(min(function_values)) > max(function_values):
+                    norm_factor = abs(min(function_values))
+                else:
+                    norm_factor = max(function_values)
+
+                self.norm_values[key][dim] = norm_factor
+
+        self.norm_calculated = True
+
+    def _calculate_function_value(
+        self, time_step: int, function_infos: List, func_idx: int
+    ) -> float:
         """
         Call different functions with their speicifc parameters and norm them.
 
@@ -400,9 +503,14 @@ class Functions:
         float
             coordinate in dimension of function
         """
-        norm_value = function_infos[0] if not self.norm_calculated else 1
+        assert self.instance_idx == function_infos[0]
+
         function_name = function_infos[1]
         coefficients = function_infos[2:]
+        if not self.norm_calculated:
+            norm_value = self.norm_value[self.instance_idx, func_idx]
+        else:
+            norm_value = 1
 
         function_value = 0
 
@@ -427,70 +535,7 @@ class Functions:
         elif "sinus" in function_name:
             function_value = self._sinus(time_step, coefficients[0])
 
-        function_value = max(function_value, -self.max_function_value)
-        return min(function_value, self.max_function_value) / norm_value
-
-    def calculate_derivative(self, trajectory: List) -> np.array:
-        """
-        Calculate derivatives of each dimension, based on trajectories.
-
-        Parameters
-        ----------
-        trajectory: List
-            List of actions or coordinates already taken
-
-        Returns
-        -------
-        np.array
-            derivatives for each dimension
-        """
-        if self.c_step > 1:
-            upper_bound = self.c_step + 1
-            lower_bound = max(upper_bound - self.derivative_interval, 1)
-
-            derrivative = np.zeros(self.n_actions)
-            for step in range(lower_bound, upper_bound):
-                der = np.subtract(
-                    np.array(trajectory[step], dtype=np.float),
-                    np.array(trajectory[step - 1], dtype=np.float),
-                )
-                derrivative = np.add(derrivative, der)
-
-            derrivative /= upper_bound - lower_bound
-
-        elif self.c_step == 1:
-            derrivative = np.subtract(
-                np.array(trajectory[self.c_step], dtype=np.float),
-                np.array(trajectory[self.c_step - 1], dtype=np.float),
-            )
-
-        else:
-            derrivative = np.zeros(self.n_actions)
-
-        return derrivative
-
-    def _calculate_norm_value(self):
-        """
-        Norm Functions to Intervall between -1 and 1
-        """
-        for key, instance in self.instance_set.items():
-            instance_values = self.get_coordinates(instance).transpose()
-            # TODO: - add correlation and return max_value
-
-            for dim, function_values in enumerate(instance_values):
-
-                if abs(min(function_values)) > max(function_values):
-                    norm_factor = abs(min(function_values))
-                else:
-                    norm_factor = max(function_values)
-
-                # set first item of every function_list in instance as norm factor
-                self.instance_set[key][dim][0] = norm_factor
-
-        self._toggle_norm_calculated()
-
-    def _toggle_norm_calculated(self):
-        self.norm_calculated = False if self.norm_calculated else True
+        return function_value / norm_value
 
     def _add_correlation_between_dimensions(
         self, current_values: np.ndarray, prev_values: np.ndarray, current_depth: int
@@ -540,7 +585,7 @@ class Functions:
         if t != 0:
             return a * np.log(t)
         else:
-            return self.max_function_value
+            return 1000
 
     def _exponential(self, t: float, a: int):
         """Exponential function"""
