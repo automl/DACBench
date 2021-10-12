@@ -50,9 +50,11 @@ def save_geometric_instances(filename: str, config: Dict = FUNCTION_CONFIG):
         os.remove(csv_path)
 
     with open(csv_path, "a") as fh:
-        id_string = (
-            "ID,fcn_name,param1,param2,param3,param4,param5,param6,param7,param8\n"
-        )
+        id_string = "ID,fcn_name"
+        for index in range(1, max(list(FUNCTION_PARAMETER_NUMBERS.values())) + 1):
+            id_string += f",param{index}"
+        id_string += "\n"
+
         fh.write(id_string)
 
         for index in range(SAMPLE_SIZE):
@@ -95,11 +97,11 @@ def _create_csv_string(index, func_name: str) -> str:
         if i < count:
 
             if func_name == "sinus":
-                value = sample_sinus_value()
+                value = np.round(sample_sinus_value(), 1)
             elif func_name == "sigmoid":
-                value = next(value_generator)
+                value = np.round(next(value_generator), 1)
             elif "polynomial" in func_name:
-                value = next(value_generator)
+                value = np.round(next(value_generator), 1)
             else:
                 value = np.round(np.random.uniform(low=-10.0, high=10.0), 1)
 
@@ -123,10 +125,11 @@ def sample_sigmoid_value():
 
 
 def sample_polynomial_value():
-    start_value = np.round(np.random.uniform(low=50, high=100), 1)
+    start_value = np.round(np.random.uniform(low=1, high=10), 1)
 
     for n in range(1, 999):
-        yield np.power(start_value, 1 / n)
+        value = np.power(start_value, 1 / n)
+        yield value * np.random.choice([-1, 1])
 
 
 if __name__ == "__main__":
