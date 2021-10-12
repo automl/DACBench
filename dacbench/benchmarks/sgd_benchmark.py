@@ -7,7 +7,7 @@ import torch.optim
 from torch.nn import NLLLoss
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import SGDEnv
+from dacbench.envs import SGDEnv, log_diff_training_loss
 from dacbench.envs.sgd import Reward
 
 
@@ -63,7 +63,7 @@ SGD_DEFAULTS = objdict(
                 "crashed": spaces.Discrete(2),
             }
         ],
-        "reward_type": Reward.LogDiffTraining,
+        "reward_type": log_diff_training_loss,
         "cutoff": 1e3,
         "lr": 1e-3,
         "actions": {'lr': [0.0, 1.0]},
@@ -98,9 +98,6 @@ SGD_DEFAULTS = objdict(
         ],
     }
 )
-
-# Set reward range based on the chosen reward type
-SGD_DEFAULTS.reward_range = SGD_DEFAULTS['reward_type'].func.frange
 
 
 class SGDBenchmark(AbstractBenchmark):

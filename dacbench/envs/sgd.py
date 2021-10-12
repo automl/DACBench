@@ -2,12 +2,12 @@ import math
 import numbers
 import warnings
 import json
-from functools import reduce
-from enum import IntEnum, auto
+from functools import reduce, singledispatchmethod
 import copy
 from contextlib import contextmanager
 import random
 import inspect
+from dataclasses import dataclass
 
 
 import torch
@@ -32,29 +32,30 @@ def fake_step(model, optimizer):
         optimizer.load_state_dict(optimizer_state)
 
 
-def reward_range(frange):
-    def wrapper(f):
-        f.frange = frange
-        return f
-    return wrapper
+@dataclass
+class Reward:
+    low: float
+    high: float
 
+class TrainingLoss(Reward): pass
+class ValidationLoss(Reward): pass
+class LogTrainingLoss(Reward): pass
+class LogValidationLoss(Reward): pass
+class DiffTraining(Reward): pass
+class DiffValidation(Reward): pass
+class LogDiffTraining(Reward): pass
+class LogDiffValidation(Reward): pass
+class FullTraining(Reward): pass
 
-class Reward(IntEnum):
-    TrainingLoss = auto()
-    ValidationLoss = auto()
-    LogTrainingLoss = auto()
-    LogValidationLoss = auto()
-    DiffTraining = auto()
-    DiffValidation = auto()
-    LogDiffTraining = auto()
-    LogDiffValidation = auto()
-    FullTraining = auto()
-
-    def __call__(self, f):
-        if hasattr(self, 'func'):
-            raise ValueError('Can not assign the same reward to a different function!')
-        self.func = f
-        return f
+training_loss = TrainingLoss(-(10**9), 0)
+validation_loss = ValidationLoss(-(10**9), 10**9)
+log_training_loss = LogTrainingLoss(-(10**9), 10**9)
+log_validation_loss = LogTrainingLoss(-(10**9), 10**9)
+diff_training_loss = DiffTraining(-(10**9), 10**9)
+diff_validation_loss = DiffValidation(-(10**9), 10**9)
+log_diff_training_loss = LogDiffTraining(-(10**9), 10**9)
+log_diff_validation_loss = LogDiffValidation(-(10**9), 10**9)
+full_training_loss = FullTraining(-(10**9), 0)
 
 
 class SGDEnv(AbstractEnv):
@@ -71,14 +72,23 @@ class SGDEnv(AbstractEnv):
         config : objdict
             Environment configuration
         """
-        sig = inspect.signature(config.optimizer)
-        for name, _ in config.actions.items():
+        self.config = copy.deepcopy(config)
+        sig = inspect.signature(self.config.optimizer)
+        for name, _ in self.config.actions.items():
             if name not in sig.parameters:
-                raise ValueError(f'{name} is not a valid {config.optimizer} param.')
-        config.action_space_args = np.array(list(zip(*config.actions.values())))
-        self.action_names = config.actions.keys()
+                raise ValueError(f'{name} is not a valid {self.config.optimizer} param.')
+        self.config.action_space_args = np.array(list(zip(*self.config.actions.values())))
+        self.action_names = self.config.actions.keys()
 
-        super(SGDEnv, self).__init__(config)
+        if isinstance(self.config.reward_type, str):
+            try:
+                self.config.reward_type = globals()[config.reward_type]
+            except AttributeError:
+                raise ValueError(f'{config.reward_type} is not a valid reward type!')
+        assert isinstance(self.config.reward_type, Reward)
+        self.config.reward_range = [self.config.reward_type.low, self.config.reward_type.high]
+
+        super(SGDEnv, self).__init__(self.config)
 
         self.batch_size = config.training_batch_size
         self.validation_batch_size = config.validation_batch_size
@@ -90,17 +100,6 @@ class SGDEnv(AbstractEnv):
         self.crashed = False
         self.terminate_on_crash = config.terminate_on_crash
         self.crash_penalty = config.crash_penalty
-        self.config = config
-
-        if isinstance(config.reward_type, Reward):
-            self.reward_type = config.reward_type
-        elif isinstance(config.reward_type, str):
-            try:
-                self.reward_type = getattr(Reward, config.reward_type)
-            except AttributeError:
-                raise ValueError(f'{config.reward_type} is not a valid reward type!')
-        else:
-            raise ValueError(f'Type {type(config.reward_type)} is not valid!')
 
         self.use_cuda = not self.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
@@ -164,64 +163,49 @@ class SGDEnv(AbstractEnv):
         )
         self.discount_factor = 0.9  # TODO: Make this part of the config
 
-        if "reward_function" in config.keys():
-            self._get_reward = config["reward_function"]
-        else:
-            self._get_reward = self.reward_type.func
-
         if "state_method" in config.keys():
             self.get_state = config["state_method"]
         else:
             self.get_state = self.get_default_state
 
-        self.reward_range = self.reward_type.func.frange
+    @singledispatchmethod
+    def get_reward(self, reward_type):
+        raise NotImplementedError
 
-    def get_reward(self):
-        return self._get_reward(self)
-
-    @reward_range([-(10**9), 0])
-    @Reward.TrainingLoss
-    def get_training_reward(self):
+    @get_reward.register
+    def _(self, reward_type: TrainingLoss):
         return -self.current_training_loss.item()
 
-    @reward_range([-(10**9), 0])
-    @Reward.ValidationLoss
-    def get_validation_reward(self):
+    @get_reward.register
+    def _(self, reward_type: ValidationLoss):
         return -self.current_validation_loss.item()
 
-    @reward_range([-(10**9), (10**9)])
-    @Reward.LogTrainingLoss
-    def get_log_training_reward(self):
+    @get_reward.register
+    def _(self, reward_type: LogTrainingLoss):
         return -torch.log(self.current_training_loss).item()
 
-    @reward_range([-(10**9), (10**9)])
-    @Reward.LogValidationLoss
-    def get_log_validation_reward(self):
+    @get_reward.register
+    def _(self, reward_type: LogValidationLoss):
         return -torch.log(self.current_validation_loss).item()
 
-    @reward_range([-(10**9), (10**9)])
-    @Reward.LogDiffTraining
-    def get_log_diff_training_reward(self):
+    @get_reward.register
+    def _(self, reward_type: LogDiffTraining):
         return -(torch.log(self.current_training_loss) - torch.log(self.prev_training_loss)).item()
 
-    @reward_range([-(10**9), (10**9)])
-    @Reward.LogDiffValidation
-    def get_log_diff_validation_reward(self):
+    @get_reward.register
+    def _(self, reward_type: LogDiffValidation):
         return -(torch.log(self.current_validation_loss) - torch.log(self.prev_validation_loss)).item()
 
-    @reward_range([-(10**9), (10**9)])
-    @Reward.DiffTraining
-    def get_diff_training_reward(self):
+    @get_reward.register
+    def _(self, reward_type: DiffTraining):
         return (self.current_training_loss - self.prev_training_loss).item()
 
-    @reward_range([-(10**9), (10**9)])
-    @Reward.DiffValidation
-    def get_diff_validation_reward(self):
+    @get_reward.register
+    def _(self, reward_type: DiffValidation):
         return (self.current_validation_loss - self.prev_validation_loss).item()
 
-    @reward_range([-(10**9), 0])
-    @Reward.FullTraining
-    def get_full_training_reward(self):
+    @get_reward.register
+    def _(self, reward_type: FullTraining):
         return -self._get_full_training_loss().item()
 
     @property
@@ -292,7 +276,7 @@ class SGDEnv(AbstractEnv):
             self.prev_validation_loss = self.current_validation_loss
 
         self.fake_train()
-        reward = self.get_reward()
+        reward = self.get_reward(self.config.reward_type)
         if np.isnan(reward):
             return self.crash
 
