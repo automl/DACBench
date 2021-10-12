@@ -5,7 +5,7 @@ Original environment authors: Rasmus von Glahn
 import bisect
 import os
 import itertools
-from typing import List, Dict, Tuple
+from typing import List, Dict
 
 from mpl_toolkits import mplot3d
 from matplotlib import pyplot as plt
@@ -61,6 +61,7 @@ class GeometricEnv(AbstractEnv):
             len(self.instance_set),
             self.correlation_active,
             self.correlation_table,
+            self.correlation_depth,
             self.derivative_interval,
         )
         self.functions.calculate_norm_values(self.instance_set)
@@ -156,7 +157,7 @@ class GeometricEnv(AbstractEnv):
         ), f"action should be of length {self.n_actions}."
         self.action = action_vec
 
-        coords = self.functions.get_coordinates_at_time_step(self.c_step, action_vec)
+        coords = self.functions.get_coordinates_at_time_step(self.c_step)
         self.coord_trajectory.append(coords)
         self.action_trajectory.append(np.array(action_vec))
 
@@ -348,9 +349,10 @@ class Functions:
         n_steps: int,
         n_actions: int,
         n_instances: int,
-        correlation,
+        correlation: bool,
         correlation_table: np.ndarray,
-        derivative_interval,
+        correlation_depth: int,
+        derivative_interval: int,
     ) -> None:
         self.instance = None
         self.instance_idx = None
@@ -361,6 +363,8 @@ class Functions:
 
         self.correlation = correlation
         self.correlation_table = correlation_table
+        self.correlation_changes = np.zeros(n_actions)
+        self.correlation_depth = correlation_depth
 
         self.n_steps = n_steps
         self.n_actions = n_actions
@@ -394,11 +398,12 @@ class Functions:
         for time_step in range(self.n_steps):
             optimal_coords[time_step, :] = self.get_coordinates_at_time_step(time_step)
 
+        if self.norm_calculated:
+            self.coord_array[self.instance_idx][:][:] = optimal_coords
+
         return optimal_coords
 
-    def get_coordinates_at_time_step(
-        self, time_step: int, action_vec: Tuple = None
-    ) -> np.array:
+    def get_coordinates_at_time_step(self, time_step: int) -> np.array:
         """
         Calculate coordiantes at time_step.
         Apply correlation.
@@ -420,6 +425,9 @@ class Functions:
             value_array[index] = self._calculate_function_value(
                 time_step, function_info, index
             )
+
+        if self.correlation and time_step > 0:
+            value_array = self._add_correlation(value_array, time_step)
 
         return value_array
 
@@ -507,8 +515,8 @@ class Functions:
 
         function_name = function_infos[1]
         coefficients = function_infos[2:]
-        if not self.norm_calculated:
-            norm_value = self.norm_value[self.instance_idx, func_idx]
+        if self.norm_calculated:
+            norm_value = self.norm_values[self.instance_idx, func_idx]
         else:
             norm_value = 1
 
@@ -537,9 +545,7 @@ class Functions:
 
         return function_value / norm_value
 
-    def _add_correlation_between_dimensions(
-        self, current_values: np.ndarray, prev_values: np.ndarray, current_depth: int
-    ):
+    def _add_correlation(self, value_array: np.ndarray, time_step: int):
         """
         Adds correlation between dimensions.
         Correlation table holds numbers between -1 and 1.
@@ -551,17 +557,26 @@ class Functions:
         correlation_table : np.array
             table that holds all values of correlation between dimensions [n,n]
         """
-        if current_depth < self.correlation_depth:
-            # do value update
-            corr_values = 1
-            self._add_correlation_between_dimensions(
-                current_values, corr_values, current_depth + 1
-            )
-        else:
-            corr_values = self._apply_correlation_update()
+        prev_values = self.coord_array[self.instance_idx][:][time_step - 1]
+        diff_values = value_array - prev_values
 
-    def _apply_correlation_update(self):
-        pass
+        new_values = []
+        for idx, diff in enumerate(diff_values):
+            self._apply_correlation_update(idx, diff, self.correlation_depth)
+
+        new_values = self.correlation_changes + value_array
+        self.correlation_changes = np.zeros(self.n_actions)
+        return new_values
+
+    def _apply_correlation_update(self, idx: int, diff: float, depth):
+        """recursive function vor correlation updates"""
+        if not depth or diff < 0.001:
+            return
+
+        for coeff_idx, corr_coeff in enumerate(self.correlation_table[:][idx]):
+            change = corr_coeff * diff
+            self.correlation_changes[coeff_idx] += change
+            self._apply_correlation_update(coeff_idx, change, depth - 1)
 
     def _sigmoid(self, t: float, scaling: float, inflection: float):
         """Simple sigmoid function"""
