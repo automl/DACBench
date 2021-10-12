@@ -264,10 +264,11 @@ if __name__ == "__main__":
     env = geo_bench.get_environment()
 
     opt_policy = env.get_optimal_policy()
-    env.render_dimensions([0, 1, 2, 3, 4, 7, 8], "/home/vonglahn/tmp")
+    env.render_dimensions([0, 1, 2, 3, 4, 7], "/home/vonglahn/tmp")
     # env.render_3d_dimensions([1, 3], "/home/vonglahn/tmp")
     env.reset()
 
+    opt_policy = env.get_optimal_policy()
     for step in range(env.n_steps):
         state, reward, done, info = env.step(np.random.randint(env.action_space.n))
         print(reward)
