@@ -63,7 +63,7 @@ GEOMETRIC_DEFAULTS = objdict(
             "low": (0, 0.1),
         },
         "correlation_depth": 4,
-        "create_correlation": False,
+        "correlation_active": True,
         "benchmark_info": INFO,
     }
 )
@@ -110,7 +110,7 @@ class GeometricBenchmark(AbstractBenchmark):
         self.set_action_values()
         self.set_action_description()
 
-        if self.config.create_correlation:
+        if self.config.correlation_active and not self.config.correlation_table:
             self.create_correlation_table()
 
         env = GeometricEnv(self.config)
@@ -182,7 +182,7 @@ class GeometricBenchmark(AbstractBenchmark):
         self.set_action_values()
         self.set_action_description()
 
-        if self.config.create_correlation:
+        if self.config.correlation_active and not self.config.correlation_table:
             self.create_correlation_table()
 
         env = GeometricEnv(self.config)
@@ -263,7 +263,7 @@ if __name__ == "__main__":
 
     opt_policy = env.get_optimal_policy()
     env.render_dimensions([0, 1, 2, 3, 4, 5, 6], "/home/vonglahn/tmp")
-    env.render_3d_dimensions([1, 3], "/home/vonglahn/tmp")
+    # env.render_3d_dimensions([1, 3], "/home/vonglahn/tmp")
     env.reset()
 
     for step in range(env.n_steps):

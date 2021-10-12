@@ -46,7 +46,7 @@ class GeometricEnv(AbstractEnv):
         self.derivative_interval = config["derivative_interval"]
 
         self.correlation_table = config["correlation_table"]
-        self.correlation_active = config["create_correlation"]
+        self.correlation_active = config["correlation_active"]
         self.correlation_depth = config["correlation_depth"]
 
         self._prev_state = None
@@ -113,7 +113,7 @@ class GeometricEnv(AbstractEnv):
         if not instance:
             instance = self.instance
 
-        optimal_policy_coords = self.functions.get_coordinates(instance)
+        optimal_policy_coords = self.functions.get_coordinates(instance).transpose()
         optimal_policy = np.zeros(((self.n_steps, self.n_actions)))
 
         for step in range(self.n_steps):
@@ -286,7 +286,7 @@ class GeometricEnv(AbstractEnv):
         dimensions : List
             List of dimensions that get plotted
         """
-        coordinates = self.functions.get_coordinates().transpose()
+        coordinates = self.functions.get_coordinates()
 
         fig, axes = plt.subplots(
             len(dimensions), sharex=True, sharey=True, figsize=(15, 4 * len(dimensions))
@@ -322,7 +322,7 @@ class GeometricEnv(AbstractEnv):
         assert len(dimensions) == 2
         print(mplot3d)
 
-        coordinates = self.functions.get_coordinates().transpose()
+        coordinates = self.functions.get_coordinates()
 
         fig = plt.figure(figsize=(10, 10))
         ax = plt.axes(projection="3d")
@@ -394,9 +394,9 @@ class Functions:
             instance = self.instance
         assert instance
 
-        optimal_coords = np.zeros((self.n_steps, self.n_actions))
+        optimal_coords = np.zeros((self.n_actions, self.n_steps))
         for time_step in range(self.n_steps):
-            optimal_coords[time_step, :] = self.get_coordinates_at_time_step(time_step)
+            optimal_coords[:, time_step] = self.get_coordinates_at_time_step(time_step)
 
         if self.norm_calculated:
             self.coord_array[self.instance_idx][:][:] = optimal_coords
@@ -426,7 +426,7 @@ class Functions:
                 time_step, function_info, index
             )
 
-        if self.correlation and time_step > 0:
+        if self.correlation and time_step > 0 and self.norm_calculated:
             value_array = self._add_correlation(value_array, time_step)
 
         return value_array
@@ -478,7 +478,7 @@ class Functions:
         """
         for key, instance in instance_set.items():
             self.set_instance(instance, key)
-            instance_values = self.get_coordinates().transpose()
+            instance_values = self.get_coordinates()
 
             for dim, function_values in enumerate(instance_values):
 
@@ -547,17 +547,16 @@ class Functions:
 
     def _add_correlation(self, value_array: np.ndarray, time_step: int):
         """
-        Adds correlation between dimensions.
+        Adds correlation between dimensions but clips at -1 and 1.
         Correlation table holds numbers between -1 and 1.
         e.g. correlation_table[0][2] = 0.5 if dimension 1 changes dimension 3 changes about 50% of dimension one
-        Call function recursively till max_depth is reached
 
         Parameters
         ----------
         correlation_table : np.array
             table that holds all values of correlation between dimensions [n,n]
         """
-        prev_values = self.coord_array[self.instance_idx][:][time_step - 1]
+        prev_values = self.coord_array[self.instance_idx, :, time_step - 1]
         diff_values = value_array - prev_values
 
         new_values = []
@@ -565,11 +564,16 @@ class Functions:
             self._apply_correlation_update(idx, diff, self.correlation_depth)
 
         new_values = self.correlation_changes + value_array
+        clipped_values = np.clip(new_values, a_min=-1, a_max=1)
         self.correlation_changes = np.zeros(self.n_actions)
-        return new_values
+
+        return clipped_values
 
     def _apply_correlation_update(self, idx: int, diff: float, depth):
-        """recursive function vor correlation updates"""
+        """
+        Recursive function vor correlation updates
+        Call function recursively till depth is 0 or diff is too small.
+        """
         if not depth or diff < 0.001:
             return
 
