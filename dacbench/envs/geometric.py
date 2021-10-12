@@ -198,8 +198,9 @@ class GeometricEnv(AbstractEnv):
             self.inst_id, [np.zeros(self.n_actions)]
         )
 
-        # TODO: is 0 correct or vec of zeros?
-        self.derivative = self.derivative_set.get(self.inst_id, 0)
+        self.derivative = self.derivative_set.get(
+            self.inst_id, np.zeros(self.n_actions)
+        )
         self._prev_state = None
 
         return self.get_state(self)
@@ -230,9 +231,8 @@ class GeometricEnv(AbstractEnv):
         euclidean_dist = np.linalg.norm(action_intervall - coordinates)
 
         # norm reward to (0, 1)
-        # TODO: fix errors
-        highest_coords = np.ones(max(self.action_vals))
-        lowest_actions = np.full((max(self.action_vals)), np.min(mapping_list))
+        highest_coords = np.ones(self.n_actions)
+        lowest_actions = np.ones(self.n_actions) * -1
         max_dist = np.linalg.norm(highest_coords - lowest_actions)
 
         reward = 1 - (euclidean_dist / max_dist)
@@ -550,7 +550,7 @@ class Functions:
         elif "sinus" in function_name:
             function_value = self._sinus(time_step, coefficients[0])
 
-        return function_value / norm_value
+        return np.round(function_value / norm_value, 5)
 
     def _add_correlation(self, value_array: np.ndarray, time_step: int):
         """

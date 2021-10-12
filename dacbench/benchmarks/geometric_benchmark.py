@@ -33,7 +33,7 @@ GEOMETRIC_DEFAULTS = objdict(
         # if action_values_variable True action_value_mapping will be used instead of action_value_default to define action values
         # action_value_mapping defines number of action values for differnet functions
         # sigmoid is split in 3 actions, polynomial3D in 7 etc.
-        "action_values_variable": False,
+        "action_values_variable": True,
         "action_value_mapping": {
             "sigmoid": 3,
             "linear": 3,
@@ -221,7 +221,9 @@ class GeometricBenchmark(AbstractBenchmark):
 
                     action_interval.append(middle)
 
-                self.config.action_interval_mapping[function_name] = action_interval
+                self.config.action_interval_mapping[function_name] = np.round(
+                    action_interval, 3
+                )
 
         self.config.action_values = values
         self.config.action_space_args = [int(np.prod(values))]
@@ -262,9 +264,10 @@ if __name__ == "__main__":
     env = geo_bench.get_environment()
 
     opt_policy = env.get_optimal_policy()
-    env.render_dimensions([0, 1, 2, 3, 4, 5, 6], "/home/vonglahn/tmp")
+    env.render_dimensions([0, 1, 2, 3, 4, 7, 8], "/home/vonglahn/tmp")
     # env.render_3d_dimensions([1, 3], "/home/vonglahn/tmp")
     env.reset()
 
     for step in range(env.n_steps):
-        env.step(3)
+        state, reward, done, info = env.step(np.random.randint(env.action_space.n))
+        print(reward)
