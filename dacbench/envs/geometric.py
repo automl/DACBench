@@ -358,6 +358,7 @@ class Functions:
         self.instance_idx = None
 
         self.coord_array = np.zeros((n_instances, n_actions, n_steps))
+        self.coords_calculated = []
         self.norm_calculated = False
         self.norm_values = np.ones((n_instances, n_actions))
 
@@ -394,12 +395,18 @@ class Functions:
             instance = self.instance
         assert instance
 
-        optimal_coords = np.zeros((self.n_actions, self.n_steps))
-        for time_step in range(self.n_steps):
-            optimal_coords[:, time_step] = self.get_coordinates_at_time_step(time_step)
+        if self.instance_idx in self.coords_calculated:
+            optimal_coords = self.coord_array[self.instance_idx][:][:]
+        else:
+            optimal_coords = np.zeros((self.n_actions, self.n_steps))
+            for time_step in range(self.n_steps):
+                optimal_coords[:, time_step] = self.get_coordinates_at_time_step(
+                    time_step
+                )
 
-        if self.norm_calculated:
-            self.coord_array[self.instance_idx][:][:] = optimal_coords
+            if self.norm_calculated:
+                self.coord_array[self.instance_idx][:][:] = optimal_coords
+                self.coords_calculated.append(self.instance_idx)
 
         return optimal_coords
 
