@@ -52,6 +52,7 @@ FD_DEFAULTS = objdict(
         "seed": 0,
         "max_rand_steps": 0,
         "instance_set_path": "../instance_sets/fast_downward/train",
+        "test_set_path": "../instance_sets/fast_downward/test",
         "fd_path": os.path.dirname(os.path.abspath(__file__))
         + "/../envs/rl-plan/fast-downward/fast-downward.py",
         "parallel": True,
@@ -83,7 +84,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = FD_DEFAULTS[key]
 
-    def get_environment(self):
+    def get_environment(self, test=False):
         """
         Return Luby env with current configuration
 
@@ -93,7 +94,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
             Luby environment
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set()
+            self.read_instance_set(test)
 
         env = FastDownwardEnv(self.config)
         for func in self.wrap_funcs:
@@ -101,16 +102,23 @@ class FastDownwardBenchmark(AbstractBenchmark):
 
         return env
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """
         Read paths of instances from config into list
         """
         instances = {}
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
+        if test:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.test_set_path
+            )
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
         import re
 
         for root, dirs, files in os.walk(path):
@@ -151,7 +159,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
             np.array([np.inf for _ in range(5 * len(heuristics))]),
         ]
 
-    def get_benchmark(self, seed=0):
+    def get_benchmark(self, seed=0, test=False):
         """
         Get published benchmark
 
@@ -166,7 +174,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
             FD environment
         """
         self.config = objdict(FD_DEFAULTS.copy())
-        self.read_instance_set()
+        self.read_instance_set(test)
         self.config.seed = seed
         env = FastDownwardEnv(self.config)
         return env

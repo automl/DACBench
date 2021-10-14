@@ -58,6 +58,7 @@ SGD_DEFAULTS = objdict(
         "beta2": 0.999,
         "seed": 0,
         "instance_set_path": "../instance_sets/sgd/sgd_train.csv",
+        "test_set_path": "../instance_sets/sgd/sgd_test.csv",
         "benchmark_info": INFO,
     }
 )
@@ -85,7 +86,7 @@ class SGDBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = SGD_DEFAULTS[key]
 
-    def get_environment(self):
+    def get_environment(self, test=False):
         """
         Return SGDEnv env with current configuration
 
@@ -95,7 +96,7 @@ class SGDBenchmark(AbstractBenchmark):
             SGD environment
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set()
+            self.read_instance_set(test)
 
         env = SGDEnv(self.config)
         for func in self.wrap_funcs:
@@ -103,16 +104,23 @@ class SGDBenchmark(AbstractBenchmark):
 
         return env
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """
         Read path of instances from config into list
         """
+        if test:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.test_set_path
+            )
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
 
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
         self.config["instance_set"] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh, delimiter=";")
@@ -124,7 +132,7 @@ class SGDBenchmark(AbstractBenchmark):
                 ]
                 self.config["instance_set"][int(row["ID"])] = instance
 
-    def get_benchmark(self, seed=0):
+    def get_benchmark(self, seed=0, test=False):
         """
         Get benchmark from the LTO paper
 
@@ -140,5 +148,5 @@ class SGDBenchmark(AbstractBenchmark):
         """
         self.config = objdict(SGD_DEFAULTS.copy())
         self.config.seed = seed
-        self.read_instance_set()
+        self.read_instance_set(test)
         return SGDEnv(self.config)

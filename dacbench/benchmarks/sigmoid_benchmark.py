@@ -38,6 +38,7 @@ SIGMOID_DEFAULTS = objdict(
         "slope_multiplier": 2.0,
         "seed": 0,
         "instance_set_path": "../instance_sets/sigmoid/sigmoid_2D3M_train.csv",
+        "test_set_path": "../instance_sets/sigmoid/sigmoid_2D3M_test.csv",
         "benchmark_info": INFO,
     }
 )
@@ -65,7 +66,7 @@ class SigmoidBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = SIGMOID_DEFAULTS[key]
 
-    def get_environment(self):
+    def get_environment(self, test=False):
         """
         Return Sigmoid env with current configuration
 
@@ -76,18 +77,29 @@ class SigmoidBenchmark(AbstractBenchmark):
 
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set()
+            self.read_instance_set(test)
 
-        if 'env_type' in self.config:  # The env_type determines which Sigmoid environment to use.
-            if self.config['env_type'].lower() in ['continuous', 'cont']:  # Either continuous ...
-                if self.config['action_space'] == 'Box':  # ... in both actions and x-axis state, only ...
+        if (
+            "env_type" in self.config
+        ):  # The env_type determines which Sigmoid environment to use.
+            if self.config["env_type"].lower() in [
+                "continuous",
+                "cont",
+            ]:  # Either continuous ...
+                if (
+                    self.config["action_space"] == "Box"
+                ):  # ... in both actions and x-axis state, only ...
                     env = ContinuousSigmoidEnv(self.config)
-                elif self.config['action_space'] == 'Discrete':  # ... continuous in the x-axis state or ...
+                elif (
+                    self.config["action_space"] == "Discrete"
+                ):  # ... continuous in the x-axis state or ...
                     env = ContinuousStateSigmoidEnv(self.config)
                 else:
-                    raise Exception(f'The given environment type \"{self.config["env_type"]}\" does not support the'
-                                    f' chosen action_space \"{self.config["action_space"]}\". The action space has to'
-                                    f' be either of type "Box" for continuous actions or "Discrete".')
+                    raise Exception(
+                        f'The given environment type "{self.config["env_type"]}" does not support the'
+                        f' chosen action_space "{self.config["action_space"]}". The action space has to'
+                        f' be either of type "Box" for continuous actions or "Discrete".'
+                    )
             else:  # ... discrete.
                 env = SigmoidEnv(self.config)
         else:  # If the type is not specified we the simplest, fully discrete version.
@@ -113,13 +125,21 @@ class SigmoidBenchmark(AbstractBenchmark):
             np.array([np.inf for _ in range(1 + len(values) * 3)]),
         ]
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """Read instance set from file"""
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
+        if test:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.test_set_path
+            )
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
+
         self.config["instance_set"] = {}
         with open(path, "r") as f:
             reader = csv.reader(f)
@@ -141,7 +161,7 @@ class SigmoidBenchmark(AbstractBenchmark):
                 if not len(f) == 0:
                     self.config.instance_set[inst_id] = f
 
-    def get_benchmark(self, dimension=None, seed=0):
+    def get_benchmark(self, dimension=None, seed=0, test=False):
         """
         Get Benchmark from DAC paper
 
@@ -163,6 +183,7 @@ class SigmoidBenchmark(AbstractBenchmark):
             self.config.instance_set_path = (
                 "../instance_sets/sigmoid/sigmoid_1D3M_train.csv"
             )
+            self.config.test_set_path = "../instance_sets/sigmoid/sigmoid_1D3M_test.csv"
             self.config.benchmark_info["state_description"] = [
                 "Remaining Budget",
                 "Shift (dimension 1)",
@@ -176,6 +197,7 @@ class SigmoidBenchmark(AbstractBenchmark):
             self.config.instance_set_path = (
                 "../instance_sets/sigmoid/sigmoid_3D3M_train.csv"
             )
+            self.config.test_set_path = "../instance_sets/sigmoid/sigmoid_3D3M_test.csv"
             self.config.benchmark_info["state_description"] = [
                 "Remaining Budget",
                 "Shift (dimension 1)",
@@ -193,6 +215,7 @@ class SigmoidBenchmark(AbstractBenchmark):
             self.config.instance_set_path = (
                 "../instance_sets/sigmoid/sigmoid_5D3M_train.csv"
             )
+            self.config.test_set_path = "../instance_sets/sigmoid/sigmoid_5D3M_test.csv"
             self.config.benchmark_info["state_description"] = [
                 "Remaining Budget",
                 "Shift (dimension 1)",
@@ -212,6 +235,6 @@ class SigmoidBenchmark(AbstractBenchmark):
                 "Action 5",
             ]
         self.config.seed = seed
-        self.read_instance_set()
+        self.read_instance_set(test)
         env = SigmoidEnv(self.config)
         return env

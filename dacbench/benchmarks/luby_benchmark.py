@@ -40,6 +40,7 @@ LUBY_DEFAULTS = objdict(
         "min_steps": 2 ** 3,
         "seed": 0,
         "instance_set_path": "../instance_sets/luby/luby_default.csv",
+        "test_set_path": None,
         "benchmark_info": INFO,
     }
 )
@@ -67,7 +68,7 @@ class LubyBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = LUBY_DEFAULTS[key]
 
-    def get_environment(self):
+    def get_environment(self, test=False):
         """
         Return Luby env with current configuration
 
@@ -77,7 +78,7 @@ class LubyBenchmark(AbstractBenchmark):
             Luby environment
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set()
+            self.read_instance_set(test)
 
         env = LubyEnv(self.config)
         for func in self.wrap_funcs:
@@ -122,13 +123,20 @@ class LubyBenchmark(AbstractBenchmark):
             np.array([2 ** max(LUBY_SEQUENCE + 1) for _ in range(length + 1)]),
         ]
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """Read instance set from file"""
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
+        if test:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.test_set_path
+            )
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
         self.config["instance_set"] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh)
@@ -138,7 +146,7 @@ class LubyBenchmark(AbstractBenchmark):
                 ] + [float(slope) for slope in row["sticky"].split(",")]
         self.config["instance_set"] = self.config["instance_set"]
 
-    def get_benchmark(self, L=8, fuzziness=1.5, seed=0):
+    def get_benchmark(self, L=8, fuzziness=1.5, seed=0, test=False):
         """
         Get Benchmark from DAC paper
 
