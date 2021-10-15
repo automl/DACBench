@@ -502,7 +502,7 @@ class SGDEnv(AbstractEnv):
             'predictiveChangeVarDiscountedAverage' in self.config.features or
             'predictiveChangeVarUncertainty' in self.config.features):
             predictive_change = self._get_predictive_change_feature(self.current_lr).item()
-            predictive_change_averange, predictive_change_uncertainty = self.ema_predictive_change.update(predictive_change)
+            predictive_change_average, predictive_change_uncertainty = self.ema_predictive_change.update(predictive_change)
 
         if ('lossVar' in self.config.features or
             'lossVarDiscountedAverage' in self.config.features or
@@ -518,7 +518,7 @@ class SGDEnv(AbstractEnv):
         if 'predictiveChange' in self.config.features:
             state["predictiveChange"] = predictive_change
         if 'predictiveChangeVarDiscountedAverage' in self.config.features:
-            state["predictiveChangeVarDiscountedAverage"] = predictive_change_averange
+            state["predictiveChangeVarDiscountedAverage"] = predictive_change_average
         if 'predictiveChangeVarUncertainty' in self.config.features:
             state["predictiveChangeVarUncertainty"] = predictive_change_uncertainty
         if 'lossVar' in self.config.features:
