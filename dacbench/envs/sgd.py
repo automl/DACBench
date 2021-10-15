@@ -7,7 +7,7 @@ import copy
 from contextlib import contextmanager
 import random
 import inspect
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 import torch
@@ -19,6 +19,23 @@ import numpy as np
 from dacbench import AbstractEnv
 
 warnings.filterwarnings("ignore")
+
+
+@dataclass
+class ExponentialMovingAverage:
+    alpha: float = 0.0
+    bias_correction: bool = False
+    mean: float = field(default=0.0, init=False)
+    variance: float = field(default=0.0, init=False)
+    t: int = field(default=0, init=False)
+
+    def update(self, value):
+        self.t += 1
+        bias_correction = 1 - self.alpha ** self.t if self.bias_correction else 1
+        self.mean = self.alpha * self.mean + (1 - self.alpha) * value
+        mean_hat = self.mean / bias_correction
+        self.variance = self.alpha * self.variance + (1 - self.alpha) * (value - mean_hat) ** 2
+        return mean_hat, self.variance / bias_correction
 
 
 @contextmanager
@@ -90,18 +107,9 @@ class SGDEnv(AbstractEnv):
 
         super(SGDEnv, self).__init__(self.config)
 
-        self.batch_size = config.training_batch_size
-        self.validation_batch_size = config.validation_batch_size
-        self.no_cuda = config.no_cuda
-        self.current_batch_size = config.training_batch_size
-        self.on_features = config.features
-        self.cd_paper_reconstruction = config.cd_paper_reconstruction
-        self.cd_bias_correction = config.cd_bias_correction
         self.crashed = False
-        self.terminate_on_crash = config.terminate_on_crash
-        self.crash_penalty = config.crash_penalty
 
-        self.use_cuda = not self.no_cuda and torch.cuda.is_available()
+        self.use_cuda = not self.config.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
 
         self.training_validation_ratio = config.train_validation_ratio
@@ -149,18 +157,6 @@ class SGDEnv(AbstractEnv):
         self.current_direction = None
 
         self.learning_rate = 0.001  # TODO: Yet another lr? Is this used?
-        self.predictiveChangeVarDiscountedAverage = torch.zeros(
-            1, device=self.device, requires_grad=False
-        )
-        self.predictiveChangeVarUncertainty = torch.zeros(
-            1, device=self.device, requires_grad=False
-        )
-        self.lossVarDiscountedAverage = torch.zeros(
-            1, device=self.device, requires_grad=False
-        )
-        self.lossVarUncertainty = torch.zeros(
-            1, device=self.device, requires_grad=False
-        )
         self.discount_factor = 0.9  # TODO: Make this part of the config
 
         if "state_method" in config.keys():
@@ -211,7 +207,7 @@ class SGDEnv(AbstractEnv):
     @property
     def crash(self):
         self.crashed = True
-        return self.get_state(self), self.crash_penalty, self.terminate_on_crash, {}
+        return self.get_state(self), self.config.crash_penalty, self.config.terminate_on_crash, {}
 
     def seed(self, seed=None, seed_action_space=False):
         """
@@ -335,11 +331,11 @@ class SGDEnv(AbstractEnv):
                 torch.nn.init.xavier_normal(m.weight)
                 m.bias.data.fill_(0.0)
 
-        if self.cd_paper_reconstruction:
+        if self.config.cd_paper_reconstruction:
             self.model.apply(init_weights)
 
-        train_dataloader_args = {"batch_size": self.batch_size, "drop_last": True}
-        validation_dataloader_args = {"batch_size": self.validation_batch_size, "drop_last": True}
+        train_dataloader_args = {"batch_size": self.config.training_batch_size, "drop_last": True}
+        validation_dataloader_args = {"batch_size": self.config.validation_batch_size, "drop_last": True}
         if self.use_cuda:
             param = {"num_workers": 1, "pin_memory": True}
             train_dataloader_args.update(param)
@@ -434,18 +430,6 @@ class SGDEnv(AbstractEnv):
             (self.parameter_count,), device=self.device, requires_grad=False
         )
 
-        self.predictiveChangeVarDiscountedAverage = torch.zeros(
-            1, device=self.device, requires_grad=False
-        )
-        self.predictiveChangeVarUncertainty = torch.zeros(
-            1, device=self.device, requires_grad=False
-        )
-        self.lossVarDiscountedAverage = torch.zeros(
-            1, device=self.device, requires_grad=False
-        )
-        self.lossVarUncertainty = torch.zeros(
-            1, device=self.device, requires_grad=False
-        )
         self.firstOrderMomentum = torch.zeros(
             1, device=self.device, requires_grad=False
         )
@@ -460,6 +444,8 @@ class SGDEnv(AbstractEnv):
         self.prev_validation_loss = torch.zeros(
             1, device=self.device, requires_grad=False
         )
+        self.ema_loss_var = ExponentialMovingAverage(self.discount_factor, self.config.cd_bias_correction)
+        self.ema_predictive_change = ExponentialMovingAverage(self.discount_factor, self.config.cd_bias_correction)
 
         self.fake_train()
 
@@ -471,15 +457,10 @@ class SGDEnv(AbstractEnv):
         with backpack(BatchGrad()):
             loss.mean().backward()
 
-        # for i, param in enumerate(self.model.parameters()):
-        #     print(param.grad)
-        #     break
-
         with fake_step(self.optimizer, self.model):
             prev_values = torch.nn.utils.parameters_to_vector(self.model.parameters())
             self.optimizer.step()
             current_values = torch.nn.utils.parameters_to_vector(self.model.parameters())
-            # print(prev_values, current_values)
             self.update_value = current_values - prev_values
 
     def close(self):
@@ -517,43 +498,52 @@ class SGDEnv(AbstractEnv):
             Environment state
 
         """
-        if 'predictiveChangeVarDiscountedAverage' in self.on_features or 'predictiveChangeVarUncertainty' in self.on_features:
-            predictiveChangeVarDiscountedAverage, predictiveChangeVarUncertainty = \
-                self._get_predictive_change_features(self.current_lr)
+        if ('predictiveChange' in self.config.features or
+            'predictiveChangeVarDiscountedAverage' in self.config.features or
+            'predictiveChangeVarUncertainty' in self.config.features):
+            predictive_change = self._get_predictive_change_feature(self.current_lr).item()
+            predictive_change_averange, predictive_change_uncertainty = self.ema_predictive_change.update(predictive_change)
 
-        if 'lossVarDiscountedAverage' in self.on_features or 'lossVarUncertainty' in self.on_features:
-            lossVarDiscountedAverage, lossVarUncertainty = self._get_loss_features()
+        if ('lossVar' in self.config.features or
+            'lossVarDiscountedAverage' in self.config.features or
+            'lossVarUncertainty' in self.config.features):
+            loss_var = self._get_loss_feature().item()
+            loss_var_average, loss_var_uncertainty = self.ema_loss_var.update(loss_var)
 
-        if 'alignment' in self.on_features:
+        if 'alignment' in self.config.features:
             alignment = self._get_alignment()
 
         state = {}
 
-        if 'predictiveChangeVarDiscountedAverage' in self.on_features:
-            state["predictiveChangeVarDiscountedAverage"] = predictiveChangeVarDiscountedAverage.item()
-        if 'predictiveChangeVarUncertainty' in self.on_features:
-            state["predictiveChangeVarUncertainty"] = predictiveChangeVarUncertainty.item()
-        if 'lossVarDiscountedAverage' in self.on_features:
-            state["lossVarDiscountedAverage"] = lossVarDiscountedAverage.item()
-        if 'lossVarUncertainty' in self.on_features:
-            state["lossVarUncertainty"] = lossVarUncertainty.item()
-        if 'currentLR' in self.on_features:
+        if 'predictiveChange' in self.config.features:
+            state["predictiveChange"] = predictive_change
+        if 'predictiveChangeVarDiscountedAverage' in self.config.features:
+            state["predictiveChangeVarDiscountedAverage"] = predictive_change_averange
+        if 'predictiveChangeVarUncertainty' in self.config.features:
+            state["predictiveChangeVarUncertainty"] = predictive_change_uncertainty
+        if 'lossVar' in self.config.features:
+            state["lossVar"] = loss_var
+        if 'lossVarDiscountedAverage' in self.config.features:
+            state["lossVarDiscountedAverage"] = loss_var_average
+        if 'lossVarUncertainty' in self.config.features:
+            state["lossVarUncertainty"] = loss_var_uncertainty
+        if 'currentLR' in self.config.features:
             state["currentLR"] = self.current_lr.item()
-        if 'trainingLoss' in self.on_features:
+        if 'trainingLoss' in self.config.features:
             if self.crashed:
                 state["trainingLoss"] = 0.0
             else:
                 state["trainingLoss"] = self.current_training_loss.item()
-        if 'validationLoss' in self.on_features:
+        if 'validationLoss' in self.config.features:
             if self.crashed:
                 state["validationLoss"] = 0.0
             else:
                 state["validationLoss"] = self.current_validation_loss.item()
-        if 'step' in self.on_features:
+        if 'step' in self.config.features:
             state["step"] = self.step_count
-        if 'alignment' in self.on_features:
+        if 'alignment' in self.config.features:
             state["alignment"] = alignment.item()
-        if 'crashed' in self.on_features:
+        if 'crashed' in self.config.features:
             state["crashed"] = self.crashed
 
         return state
@@ -644,28 +634,18 @@ class SGDEnv(AbstractEnv):
 
         return validation_loss
 
-    def _get_loss_features(self):
+    def _get_loss_feature(self):
         if self.crashed:
-            return torch.tensor(0.0), torch.tensor(0.0)
-        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
+            return torch.tensor(0.0)
+        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.config.cd_bias_correction else 1
         with torch.no_grad():
             loss_var = torch.log(torch.var(self.loss_batch))
-            self.lossVarDiscountedAverage = (
-                self.discount_factor * self.lossVarDiscountedAverage
-                + (1 - self.discount_factor) * loss_var
-            )
-            self.lossVarUncertainty = (
-                self.discount_factor * self.lossVarUncertainty
-                + (1 - self.discount_factor)
-                * (loss_var - self.lossVarDiscountedAverage/bias_correction) ** 2
-            )
+        return loss_var
 
-        return self.lossVarDiscountedAverage/bias_correction, self.lossVarUncertainty/bias_correction
-
-    def _get_predictive_change_features(self, lr):
+    def _get_predictive_change_feature(self, lr):
         if self.crashed:
-            return torch.tensor(0.0), torch.tensor(0.0)
-        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
+            return torch.tensor(0.0)
+        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.config.cd_bias_correction else 1
         batch_gradients = []
         for i, param in enumerate(self.model.parameters()):
             grad_batch = param.grad_batch.reshape(
@@ -674,26 +654,10 @@ class SGDEnv(AbstractEnv):
             batch_gradients.append(grad_batch)
 
         batch_gradients = torch.cat(batch_gradients, dim=1)
-        # print(batch_gradients)
-
         predictive_change = torch.log(
             torch.var(-1 * torch.matmul(batch_gradients, self.update_value))
         )
-
-        self.predictiveChangeVarDiscountedAverage = (
-            self.discount_factor * self.predictiveChangeVarDiscountedAverage
-            + (1 - self.discount_factor) * predictive_change
-        )
-        self.predictiveChangeVarUncertainty = (
-            self.discount_factor * self.predictiveChangeVarUncertainty
-            + (1 - self.discount_factor)
-            * (predictive_change - self.predictiveChangeVarDiscountedAverage/bias_correction) ** 2
-        )
-
-        return (
-            self.predictiveChangeVarDiscountedAverage/bias_correction,
-            self.predictiveChangeVarUncertainty/bias_correction,
-        )
+        return predictive_change
 
     def _get_alignment(self):
         if self.crashed:
