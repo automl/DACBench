@@ -19,6 +19,7 @@ class AbstractEnv(gym.Env):
             If to seed the action space as well
         """
         super(AbstractEnv, self).__init__()
+        self.config = config
         self.instance_set = config["instance_set"]
         self.instance_id_list = sorted(list(self.instance_set.keys()))
         self.instance_index = 0
