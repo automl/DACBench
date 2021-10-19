@@ -54,7 +54,7 @@ class TestRunner(unittest.TestCase):
             return DummyAgent(env)
 
         with tempfile.TemporaryDirectory() as tmp_dir:
-            run_dacbench(tmp_dir, make, 1, bench=["LubyBenchmark", "SigmoidBenchmark"])
+            run_dacbench(tmp_dir, make, 1, bench=["LubyBenchmark", "SigmoidBenchmark"], seeds=[42])
             path = Path(tmp_dir)
             self.assertFalse(os.stat(path / "LubyBenchmark") == 0)
             self.assertFalse(os.stat(path / "SigmoidBenchmark") == 0)
