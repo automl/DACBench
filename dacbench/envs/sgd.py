@@ -3,14 +3,43 @@ import numbers
 import warnings
 import json
 from functools import reduce
+from enum import IntEnum, auto
 
+import numpy as np
 import torch
 from backpack import backpack, extend
 from backpack.extensions import BatchGrad
+from numpy import float32
 from torchvision import datasets, transforms
 from dacbench import AbstractEnv
+import random
 
 warnings.filterwarnings("ignore")
+
+
+def reward_range(frange):
+    def wrapper(f):
+        f.frange = frange
+        return f
+    return wrapper
+
+
+class Reward(IntEnum):
+    TrainingLoss = auto()
+    ValidationLoss = auto()
+    LogTrainingLoss = auto()
+    LogValidationLoss = auto()
+    DiffTraining = auto()
+    DiffValidation = auto()
+    LogDiffTraining = auto()
+    LogDiffValidation = auto()
+    FullTraining = auto()
+
+    def __call__(self, f):
+        if hasattr(self, 'func'):
+            raise ValueError('Can not assign the same reward to a different function!')
+        self.func = f
+        return f
 
 
 class SGDEnv(AbstractEnv):
@@ -33,11 +62,27 @@ class SGDEnv(AbstractEnv):
         self.validation_batch_size = config.validation_batch_size
         self.no_cuda = config.no_cuda
         self.current_batch_size = config.training_batch_size
+        self.on_features = config.features
+        self.cd_paper_reconstruction = config.cd_paper_reconstruction
+        self.cd_bias_correction = config.cd_bias_correction
+        self.crashed = False
+        self.terminate_on_crash = config.terminate_on_crash
+        self.crash_penalty = config.crash_penalty
+
+        if isinstance(config.reward_type, Reward):
+            self.reward_type = config.reward_type
+        elif isinstance(config.reward_type, str):
+            try:
+                self.reward_type = getattr(Reward, config.reward_type)
+            except AttributeError:
+                raise ValueError(f'{config.reward_type} is not a valid reward type!')
+        else:
+            raise ValueError(f'Type {type(config.reward_type)} is not valid!')
 
         self.use_cuda = not self.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
 
-        self.training_validation_ratio = 0.8
+        self.training_validation_ratio = config.train_validation_ratio
         # self.test_dataset = None
         self.train_dataset = None
         self.validation_dataset = None
@@ -52,14 +97,34 @@ class SGDEnv(AbstractEnv):
 
         self.current_training_loss = None
         self.loss_batch = None
+        self.prev_training_loss = None
+        self._current_validation_loss = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self._current_validation_loss.calculated = False
+        self.prev_validation_loss = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
 
         self.model = None
-
+        self.val_model = None
+        # TODO:
+        """
+        TODO: Samuel Mueller (PhD student in our group) also uses backpack and has ran into a similar memory leak.
+        He solved it calling this custom made RECURSIVE memory_cleanup function:
+        # from backpack import memory_cleanup
+        # def recursive_backpack_memory_cleanup(module: torch.nn.Module):
+        #   memory_cleanup(module)
+        #   for m in module.modules():
+        #      memory_cleanup(m)
+        (calling this after computing the training loss/gradients and after validation loss should suffice)
+        """
         self.parameter_count = 0
         self.layer_sizes = []
 
-        self.loss_function = torch.nn.NLLLoss(reduction="none")
+        self.loss_function = config.loss_function(**config.loss_function_kwargs)
         self.loss_function = extend(self.loss_function)
+        self.val_loss_function = config.loss_function(**config.val_loss_function_kwargs)
 
         self.initial_lr = config.lr * torch.ones(
             1, device=self.device, requires_grad=False
@@ -68,18 +133,25 @@ class SGDEnv(AbstractEnv):
             1, device=self.device, requires_grad=False
         )
 
-        # Adam parameters
+        self.optimizer_name = config.optimizer
+
         self.beta1 = config.beta1
+        self.beta2 = config.beta2
+        self.epsilon = 1.0e-06
+        # RMSprop parameters
         self.beta2 = config.beta2
         self.m = 0
         self.v = 0
-        self.epsilon = 1.0e-08
+        # Momentum parameters
+        self.sgd_momentum_v = 0
+        self.sgd_rho = 0.9
+
         self.t = 0
         self.step_count = torch.zeros(1, device=self.device, requires_grad=False)
 
-        self.prev_descent = None
+        self.prev_direction = None
+        self.current_direction = None
 
-        self.learning_rate = 0.001
         self.predictiveChangeVarDiscountedAverage = torch.zeros(
             1, device=self.device, requires_grad=False
         )
@@ -92,7 +164,7 @@ class SGDEnv(AbstractEnv):
         self.lossVarUncertainty = torch.zeros(
             1, device=self.device, requires_grad=False
         )
-        self.discount_factor = 0.9
+        self.discount_factor = config.discount_factor
         self.firstOrderMomentum = torch.zeros(
             1, device=self.device, requires_grad=False
         )
@@ -100,17 +172,79 @@ class SGDEnv(AbstractEnv):
             1, device=self.device, requires_grad=False
         )
 
-        self.writer = None
+        if self.optimizer_name=="adam":
+            self.get_optimizer_direction = self.get_adam_direction
+        elif self.optimizer_name=="rmsprop":
+            self.get_optimizer_direction = self.get_rmsprop_direction
+        elif self.optimizer_name=="momentum":
+            self.get_optimizer_direction = self.get_momentum_direction
+        else:
+            raise NotImplementedError
 
         if "reward_function" in config.keys():
-            self.get_reward = config["reward_function"]
+            self._get_reward = config["reward_function"]
         else:
-            self.get_reward = self.get_default_reward
+            self._get_reward = self.reward_type.func
 
         if "state_method" in config.keys():
             self.get_state = config["state_method"]
         else:
             self.get_state = self.get_default_state
+
+        self.reward_range = self.reward_type.func.frange
+
+    def get_reward(self):
+        return self._get_reward(self)
+
+    @reward_range([-(10**9), 0])
+    @Reward.TrainingLoss
+    def get_training_reward(self):
+        return -self.current_training_loss.item()
+
+    @reward_range([-(10**9), 0])
+    @Reward.ValidationLoss
+    def get_validation_reward(self):
+        return -self.current_validation_loss.item()
+
+    @reward_range([-(10**9), (10**9)])
+    @Reward.LogTrainingLoss
+    def get_log_training_reward(self):
+        return -torch.log(self.current_training_loss).item()
+
+    @reward_range([-(10**9), (10**9)])
+    @Reward.LogValidationLoss
+    def get_log_validation_reward(self):
+        return -torch.log(self.current_validation_loss).item()
+
+    @reward_range([-(10**9), (10**9)])
+    @Reward.LogDiffTraining
+    def get_log_diff_training_reward(self):
+        return -(torch.log(self.current_training_loss) - torch.log(self.prev_training_loss)).item()
+
+    @reward_range([-(10**9), (10**9)])
+    @Reward.LogDiffValidation
+    def get_log_diff_validation_reward(self):
+        return -(torch.log(self.current_validation_loss) - torch.log(self.prev_validation_loss)).item()
+
+    @reward_range([-(10**9), (10**9)])
+    @Reward.DiffTraining
+    def get_diff_training_reward(self):
+        return (self.current_training_loss - self.prev_training_loss).item()
+
+    @reward_range([-(10**9), (10**9)])
+    @Reward.DiffValidation
+    def get_diff_validation_reward(self):
+        return (self.current_validation_loss - self.prev_validation_loss).item()
+
+    @reward_range([-(10**9), 0])
+    @Reward.FullTraining
+    def get_full_training_reward(self):
+        return -self._get_full_training_loss(loader=self.train_loader).item()
+
+    @property
+    def crash(self):
+        self.crashed = True
+        return self.get_state(self), self.crash_penalty, self.terminate_on_crash, {}
 
     def seed(self, seed=None, seed_action_space=False):
         """
@@ -126,6 +260,10 @@ class SGDEnv(AbstractEnv):
         (seed,) = super().seed(seed, seed_action_space)
         if seed is not None:
             torch.manual_seed(seed)
+            torch.cuda.manual_seed(seed)
+            torch.cuda.manual_seed_all(seed)
+            torch.backends.cudnn.benchmark = False
+            torch.backends.cudnn.deterministic = True
         return [seed]
 
     def step(self, action):
@@ -146,19 +284,26 @@ class SGDEnv(AbstractEnv):
 
         self.step_count += 1
         index = 0
-        if not isinstance(action, float) and not isinstance(action, int):
+
+        if not isinstance(action, int) and not isinstance(action, float):
             action = action.item()
         if not isinstance(action, numbers.Number):
             action = action[0]
 
-        action = torch.Tensor([action]).to(self.device)
-        new_lr = 10 ** (-action)
+        if np.isnan(action):
+            return self.crash
+
+        new_lr = torch.Tensor([action]).to(self.device)
         self.current_lr = new_lr
-        delta_w = torch.mul(
-            new_lr,
-            self.firstOrderMomentum
-            / (torch.sqrt(self.secondOrderMomentum) + self.epsilon),
-        )
+
+        direction = self.get_optimizer_direction()
+        if any(np.isnan(direction)):
+            return self.crash
+
+        self.current_direction = direction
+
+        delta_w = torch.mul(new_lr, direction)
+
         for i, p in enumerate(self.model.parameters()):
             layer_size = self.layer_sizes[i]
             p.data = p.data - delta_w[index : index + layer_size].reshape(
@@ -166,9 +311,22 @@ class SGDEnv(AbstractEnv):
             )
             index += layer_size
 
-        self._set_zero_grad()
-        reward = self.get_reward(self)
-        return self.get_state(self), reward, done, {}
+        self.model.zero_grad()
+
+        self.prev_training_loss = self.current_training_loss
+        if self._current_validation_loss.calculated:
+            self.prev_validation_loss = self.current_validation_loss
+
+        self.train_network()
+        reward = self.get_reward()
+        if np.isnan(reward):
+            return self.crash
+
+        state = self.get_state(self)
+        for value in state.values():
+            if np.isnan(value):
+                return self.crash
+        return state, reward, done, {}
 
     def _architecture_constructor(self, arch_str):
         layer_specs = []
@@ -204,31 +362,58 @@ class SGDEnv(AbstractEnv):
         dataset = self.instance[0]
         instance_seed = self.instance[1]
         construct_model = self._architecture_constructor(self.instance[2])
+        self.n_steps = self.instance[3]
+        dataset_size = self.instance[4]
+
+        self.crashed = False
 
         self.seed(instance_seed)
 
         self.model = construct_model().to(self.device)
+        self.val_model = construct_model().to(self.device)
 
-        self.training_validation_ratio = 0.8
+        def init_weights(m):
+            if type(m) == torch.nn.Linear or type(m) == torch.nn.Conv2d:
+                torch.nn.init.xavier_normal(m.weight)
+                m.bias.data.fill_(0.0)
 
-        train_dataloader_args = {"batch_size": self.batch_size}
-        validation_dataloader_args = {"batch_size": self.validation_batch_size}
+        if self.cd_paper_reconstruction:
+            self.model.apply(init_weights)
+
+        train_dataloader_args = {"batch_size": self.batch_size, "drop_last": True}
+        validation_dataloader_args = {"batch_size": self.validation_batch_size, "drop_last": True}
         if self.use_cuda:
             param = {"num_workers": 1, "pin_memory": True, "shuffle": True}
             train_dataloader_args.update(param)
             validation_dataloader_args.update(param)
 
         if dataset == "MNIST":
-            transform = transforms.Compose(
-                [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
-            )
+            transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize((0.1307,), (0.3081,))
+            ])
 
             train_dataset = datasets.MNIST(
                 "../data", train=True, download=True, transform=transform
             )
             # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
+        elif dataset == "CIFAR":
+            transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+            ])
+
+            train_dataset = datasets.CIFAR10(
+                "../data", train=True, download=True, transform=transform
+            )
+            # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
         else:
             raise NotImplementedError
+
+        if dataset_size is not None:
+            train_dataset = torch.utils.data.Subset(
+                train_dataset, range(0, dataset_size)
+            )
 
         training_dataset_limit = math.floor(
             len(train_dataset) * self.training_validation_ratio
@@ -264,23 +449,57 @@ class SGDEnv(AbstractEnv):
 
         self.model = extend(self.model)
 
-        self._set_zero_grad()
+        self.model.zero_grad()
         self.model.train()
+        self.val_model.eval()
 
         self.current_training_loss = None
         self.loss_batch = None
 
-        # Adam parameters
+        # Momentum parameters
         self.m = 0
         self.v = 0
+        self.sgd_momentum_v = 0
+
         self.t = 0
+
         self.step_count = torch.zeros(1, device=self.device, requires_grad=False)
 
         self.current_lr = self.initial_lr
-        self.prev_descent = torch.zeros(
+        self.prev_direction = torch.zeros(
             (self.parameter_count,), device=self.device, requires_grad=False
         )
-        self.get_default_reward(self)
+        self.current_direction = torch.zeros(
+            (self.parameter_count,), device=self.device, requires_grad=False
+        )
+
+        self.predictiveChangeVarDiscountedAverage = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.predictiveChangeVarUncertainty = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.lossVarDiscountedAverage = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.lossVarUncertainty = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.firstOrderMomentum = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.secondOrderMomentum = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+
+        self._current_validation_loss = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self._current_validation_loss.calculated = False
+        self.prev_validation_loss = torch.zeros(
+            1, device=self.device, requires_grad=False
+        )
+        self.train_network()
 
         return self.get_state(self)
 
@@ -322,38 +541,49 @@ class SGDEnv(AbstractEnv):
             Environment state
 
         """
-        gradients = self._get_gradients()
-        self.firstOrderMomentum, self.secondOrderMomentum = self._get_momentum(
-            gradients
-        )
-        (
-            predictiveChangeVarDiscountedAverage,
-            predictiveChangeVarUncertainty,
-        ) = self._get_predictive_change_features(
-            self.current_lr, self.firstOrderMomentum, self.secondOrderMomentum
-        )
-        lossVarDiscountedAverage, lossVarUncertainty = self._get_loss_features()
+        self.gradients = self._get_gradients()
+        self.firstOrderMomentum, self.secondOrderMomentum, self.sgdMomentum = self._get_momentum(self.gradients)
 
-        state = {
-            "predictiveChangeVarDiscountedAverage": predictiveChangeVarDiscountedAverage,
-            "predictiveChangeVarUncertainty": predictiveChangeVarUncertainty,
-            "lossVarDiscountedAverage": lossVarDiscountedAverage,
-            "lossVarUncertainty": lossVarUncertainty,
-            "currentLR": self.current_lr,
-            "trainingLoss": self.current_training_loss,
-            "validationLoss": self.current_validation_loss,
-        }
+        if 'predictiveChangeVarDiscountedAverage' in self.on_features or 'predictiveChangeVarUncertainty' in self.on_features:
+            predictiveChangeVarDiscountedAverage, predictiveChangeVarUncertainty = \
+                self._get_predictive_change_features(self.current_lr)
+
+        if 'lossVarDiscountedAverage' in self.on_features or 'lossVarUncertainty' in self.on_features:
+            lossVarDiscountedAverage, lossVarUncertainty = self._get_loss_features()
+
+        if 'alignment' in self.on_features:
+            alignment = self._get_alignment()
+
+        state = {}
+
+        if 'predictiveChangeVarDiscountedAverage' in self.on_features:
+            state["predictiveChangeVarDiscountedAverage"] = predictiveChangeVarDiscountedAverage.item()
+        if 'predictiveChangeVarUncertainty' in self.on_features:
+            state["predictiveChangeVarUncertainty"] = predictiveChangeVarUncertainty.item()
+        if 'lossVarDiscountedAverage' in self.on_features:
+            state["lossVarDiscountedAverage"] = lossVarDiscountedAverage.item()
+        if 'lossVarUncertainty' in self.on_features:
+            state["lossVarUncertainty"] = lossVarUncertainty.item()
+        if 'currentLR' in self.on_features:
+            state["currentLR"] = self.current_lr.item()
+        if 'trainingLoss' in self.on_features:
+            if self.crashed:
+                state["trainingLoss"] = 0.0
+            else:
+                state["trainingLoss"] = self.current_training_loss.item()
+        if 'validationLoss' in self.on_features:
+            if self.crashed:
+                state["validationLoss"] = 0.0
+            else:
+                state["validationLoss"] = self.current_validation_loss.item()
+        if 'step' in self.on_features:
+            state["step"] = self.step_count.item()
+        if 'alignment' in self.on_features:
+            state["alignment"] = alignment.item()
+        if 'crashed' in self.on_features:
+            state["crashed"] = self.crashed
 
         return state
-
-    def _set_zero_grad(self):
-        index = 0
-        for i, p in enumerate(self.model.parameters()):
-            if p.grad is None:
-                continue
-            layer_size = self.layer_sizes[i]
-            p.grad.zero_()
-            index += layer_size
 
     def _train_batch_(self):
         (data, target) = self.train_loader_it.next()
@@ -366,50 +596,54 @@ class SGDEnv(AbstractEnv):
             loss.mean().backward()
 
         loss_value = loss.mean()
-        reward = self._get_validation_loss()
+
         self.loss_batch = loss
         self.current_training_loss = torch.unsqueeze(loss_value.detach(), dim=0)
         self.train_batch_index += 1
+        self._current_validation_loss.calculated = False
 
-        return reward
-
-    def get_default_reward(self, _):
+    def train_network(self):
         try:
-            reward = self._train_batch_()
+            self._train_batch_()
         except StopIteration:
             self.train_batch_index = 0
             self.epoch_index += 1
             self.train_loader_it = iter(self.train_loader)
-            reward = self._train_batch_()
+            self._train_batch_()
 
-        return reward
-
-    def _get_val_loss(self):
-        self.model.eval()
-        validation_loss = torch.zeros(1, device=self.device, requires_grad=False)
+    def _get_full_training_loss(self, loader):
+        for target_param, param in zip(self.val_model.parameters(), self.model.parameters()):
+            target_param.data.copy_(param.data)
+        loss = torch.zeros(1, device=self.device, requires_grad=False)
         with torch.no_grad():
-            for data, target in self.validation_loader:
+            for data, target in loader:
                 data, target = data.to(self.device), target.to(self.device)
-                output = self.model(data)
-                validation_loss += self.loss_function(output, target).mean()
+                output = self.val_model(data)
+                loss += self.val_loss_function(output, target).sum().detach().detach()
 
-        validation_loss /= len(self.validation_loader.dataset)
-        self.model.train()
-        return validation_loss
+        loss /= len(loader.dataset)
+        return loss
+
+    @property
+    def current_validation_loss(self):
+        if not self._current_validation_loss.calculated:
+            self._current_validation_loss = self._get_validation_loss()
+            self._current_validation_loss.calculated = True
+        return self._current_validation_loss
 
     def _get_validation_loss_(self):
-        self.model.eval()
-        (data, target) = self.validation_loader_it.next()
-        data, target = data.to(self.device), target.to(self.device)
-        output = self.model(data)
-        validation_loss = self.loss_function(output, target).mean()
-        validation_loss = torch.unsqueeze(validation_loss.detach(), dim=0)
-        self.current_validation_loss = validation_loss
-        self.model.train()
+        with torch.no_grad():
+            (data, target) = self.validation_loader_it.next()
+            data, target = data.to(self.device), target.to(self.device)
+            output = self.val_model(data)
+            validation_loss = self.val_loss_function(output, target).mean()
+            validation_loss = torch.unsqueeze(validation_loss.detach(), dim=0)
 
-        return -validation_loss.item()  # negative because it is the reward
+        return validation_loss
 
     def _get_validation_loss(self):
+        for target_param, param in zip(self.val_model.parameters(), self.model.parameters()):
+            target_param.data.copy_(param.data)
         try:
             validation_loss = self._get_validation_loss_()
         except StopIteration:
@@ -436,16 +670,25 @@ class SGDEnv(AbstractEnv):
         bias_corrected_m = self.m / (1 - self.beta1 ** self.t)
         bias_corrected_v = self.v / (1 - self.beta2 ** self.t)
 
-        return bias_corrected_m, bias_corrected_v
+        self.sgd_momentum_v = self.sgd_rho * self.sgd_momentum_v + gradients
 
-    def _get_adam_feature(self, learning_rate, m, v):
-        epsilon = 1.0e-8
-        return torch.mul(learning_rate, m / (torch.sqrt(v) + epsilon))
+        return bias_corrected_m, bias_corrected_v, self.sgd_momentum_v
+
+    def get_adam_direction(self):
+        return self.firstOrderMomentum / (torch.sqrt(self.secondOrderMomentum) + self.epsilon)
+
+    def get_rmsprop_direction(self):
+        return self.gradients / (torch.sqrt(self.secondOrderMomentum) + self.epsilon)
+
+    def get_momentum_direction(self):
+        return self.sgd_momentum_v
 
     def _get_loss_features(self):
+        if self.crashed:
+            return torch.tensor(0.0), torch.tensor(0.0)
+        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
         with torch.no_grad():
             loss_var = torch.log(torch.var(self.loss_batch))
-
             self.lossVarDiscountedAverage = (
                 self.discount_factor * self.lossVarDiscountedAverage
                 + (1 - self.discount_factor) * loss_var
@@ -453,12 +696,15 @@ class SGDEnv(AbstractEnv):
             self.lossVarUncertainty = (
                 self.discount_factor * self.lossVarUncertainty
                 + (1 - self.discount_factor)
-                * (loss_var - self.lossVarDiscountedAverage) ** 2
+                * (loss_var - self.lossVarDiscountedAverage/bias_correction) ** 2
             )
 
-        return self.lossVarDiscountedAverage, self.lossVarUncertainty
+        return self.lossVarDiscountedAverage/bias_correction, self.lossVarUncertainty/bias_correction
 
-    def _get_predictive_change_features(self, lr, m, v):
+    def _get_predictive_change_features(self, lr):
+        if self.crashed:
+            return torch.tensor(0.0), torch.tensor(0.0)
+        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
         batch_gradients = []
         for i, (name, param) in enumerate(self.model.named_parameters()):
             grad_batch = param.grad_batch.reshape(
@@ -468,7 +714,8 @@ class SGDEnv(AbstractEnv):
 
         batch_gradients = torch.cat(batch_gradients, dim=1)
 
-        update_value = self._get_adam_feature(lr, m, v)
+        update_value = torch.mul(lr, self.get_optimizer_direction())
+
         predictive_change = torch.log(
             torch.var(-1 * torch.matmul(batch_gradients, update_value))
         )
@@ -480,10 +727,150 @@ class SGDEnv(AbstractEnv):
         self.predictiveChangeVarUncertainty = (
             self.discount_factor * self.predictiveChangeVarUncertainty
             + (1 - self.discount_factor)
-            * (predictive_change - self.predictiveChangeVarDiscountedAverage) ** 2
+            * (predictive_change - self.predictiveChangeVarDiscountedAverage/bias_correction) ** 2
         )
 
         return (
-            self.predictiveChangeVarDiscountedAverage,
-            self.predictiveChangeVarUncertainty,
+            self.predictiveChangeVarDiscountedAverage/bias_correction,
+            self.predictiveChangeVarUncertainty/bias_correction,
         )
+
+    def _get_alignment(self):
+        if self.crashed:
+            return torch.tensor(0.0)
+        alignment = torch.mean(torch.sign(torch.mul(self.prev_direction, self.current_direction)))
+        alignment = torch.unsqueeze(alignment, dim=0)
+        self.prev_direction = self.current_direction
+        return alignment
+
+    def generate_instance_file(self, file_name, mode='test', n=100):
+        header = ['ID', 'dataset', 'architecture', 'seed', 'steps']
+
+        # dataset name, architecture, dataset size, sample dimension, number of max pool layers, hidden layers, test architecture convolutional layers
+        architectures = [
+            ('MNIST',
+             'Conv2d(1, {0}, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d({0}, {1}, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d({1}, {2}, 3, 1, 1)-ReLU-Flatten-Linear({3}, 10)-LogSoftmax(1)',
+             60000,
+             28,
+             2,
+             3,
+             [20, 50, 500]
+            ),
+            ('CIFAR',
+             'Conv2d(3, {0}, 3, 1, 1)-MaxPool2d(2, 2)-ReLU-Conv2d({0}, {1}, 3, 1, 1)-ReLU-MaxPool2d(2, 2)-Conv2d({1}, {2}, 3, 1, 1)-ReLU-MaxPool2d(2, 2)-Conv2d({2}, {3}, 3, 1, 1)-ReLU-Flatten-Linear({4}, 10)-LogSoftmax(1)',
+             60000,
+             32,
+             3,
+             4,
+             [32, 32, 64, 64]
+            )
+        ]
+        if mode is 'test':
+
+            seed_list = [random.randrange(start=0, stop=1e9) for _ in range(n)]
+
+            for i in range(len(architectures)):
+
+                fname = file_name + "_" + architectures[i][0].lower() + ".csv"
+
+                steps = int(1e8)
+
+                conv = architectures[i][6]
+                hidden_layers = architectures[i][5]
+
+                sample_size = architectures[i][3]
+                pool_layer_count = architectures[i][4]
+                linear_layer_size = conv[-1] * pow(sample_size / pow(2, pool_layer_count), 2)
+                linear_layer_size = int(round(linear_layer_size))
+
+                dataset = architectures[i][0]
+
+                if hidden_layers == 3:
+                    architecture = architectures[i][1].format(conv[0], conv[1], conv[2], linear_layer_size)
+                else:
+                    architecture = architectures[i][1].format(conv[0], conv[1], conv[2], conv[3], linear_layer_size)
+
+                # args = conv
+                # args.append(linear_layer_size)
+                # # architecture = architectures[i][1].format(**conv)
+                # args = {0: conv[0], 1: conv[1], 2: conv[2], 3: linear_layer_size}
+                # architecture = architectures[i][1].format(**args)
+
+                with open(fname, 'w', encoding='UTF8') as f:
+                    for h in header:
+                        f.write(h + ";")
+
+                    f.write("\n")
+
+                    for id in range(0, n):
+                        f.write(str(id) + ";")
+
+                        f.write(dataset + ";")
+                        f.write(architecture + ";")
+
+                        seed = seed_list[id]
+                        f.write(str(seed) + ";")
+
+                        f.write(str(steps) + ";")
+
+                        f.write("\n")
+                    f.close()
+
+        else:
+            dataset_index = 0
+
+            dataset_size_start = 0.1
+            dataset_size_stop = 0.5
+
+            steps_start = 300
+            steps_stop = 1000
+
+            conv1_start = 2
+            conv1_stop = 10
+            conv2_start = 5
+            conv2_stop = 25
+            conv3_start = 50
+            conv3_stop = 250
+
+            dataset_list = [dataset_index for _ in range(n)]
+
+            dataset_size_list = [random.uniform(dataset_size_start, dataset_size_stop) for _ in range(n)]
+
+            seed_list = [random.randrange(start=0, stop=1e9) for _ in range(n)]
+
+            steps_list = [random.randrange(start=steps_start, stop=steps_stop) for _ in range(n)]
+
+            conv1_list = [random.randrange(start=conv1_start, stop=conv1_stop) for _ in range(n)]
+            conv2_list = [random.randrange(start=conv2_start, stop=conv2_stop) for _ in range(n)]
+            conv3_list = [random.randrange(start=conv3_start, stop=conv3_stop) for _ in range(n)]
+
+            fname = file_name + ".csv"
+            with open(fname, 'w', encoding='UTF8') as f:
+                for h in header:
+                    f.write(h + ";")
+
+                f.write("\n")
+
+                for id in range(0, n):
+                    f.write(str(id) + ";")
+
+                    sample_size = architectures[dataset_list[id]][3]
+                    pool_layer_count = architectures[dataset_list[id]][4]
+                    linear_layer_size = conv3_list[id] * pow(sample_size / pow(2, pool_layer_count), 2)
+                    linear_layer_size = int(round(linear_layer_size))
+
+                    dataset_size = int(dataset_size_list[id] * architectures[dataset_list[id]][2])
+                    dataset = architectures[dataset_list[id]][0] + "_" + str(dataset_size)
+                    architecture = architectures[dataset_list[id]][1].format(conv1_list[id], conv2_list[id], conv3_list[id], linear_layer_size)
+
+                    f.write(dataset + ";")
+                    f.write(architecture + ";")
+
+                    seed = seed_list[id]
+                    f.write(str(seed) + ";")
+
+                    steps = steps_list[id]
+                    f.write(str(steps) + ";")
+
+                    f.write("\n")
+                f.close()

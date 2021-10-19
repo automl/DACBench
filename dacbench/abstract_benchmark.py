@@ -1,10 +1,14 @@
 import json
+from types import FunctionType
+from typing import Callable
+
 import numpy as np
 from gym import spaces
 from functools import partial
 from dacbench import wrappers
 
 # from dacbench import ModuleLogger
+
 
 
 class AbstractBenchmark:
@@ -61,17 +65,7 @@ class AbstractBenchmark:
         if "action_space" in self.config:
             conf["action_space"] = self.space_to_list(conf["action_space"])
 
-        if "reward_function" in self.config:
-            conf["reward_function"] = [
-                conf["reward_function"].__module__,
-                conf["reward_function"].__name__,
-            ]
-
-        if "state_method" in self.config:
-            conf["state_method"] = [
-                conf["state_method"].__module__,
-                conf["state_method"].__name__,
-            ]
+        conf = AbstractBenchmark.__stringify_functions(conf)
 
         for k in self.config.keys():
             if isinstance(self.config[k], np.ndarray) or isinstance(
@@ -141,6 +135,61 @@ class AbstractBenchmark:
 
             self.wrap_funcs.append(partial(func, *args))
 
+    @staticmethod
+    def __import_from(module : str, name : str):
+        """
+        Imports the class / function / ... with name from module
+        Parameters
+        ----------
+        module
+        name
+
+        Returns
+        -------
+        the imported object
+        """
+        module = __import__(module, fromlist=[name])
+        return getattr(module, name)
+
+    @staticmethod
+    def __decorate_config_with_functions(conf : dict):
+        """
+        Replaced the stringified functions with the callable objects
+        Parameters
+        ----------
+        config
+
+        Returns
+        -------
+
+        """
+        for key, value in {k: v for k, v in conf.items() if isinstance(v, list) and len(v) == 3 and v[0] == 'function'}.items():
+            _, module_name, function_name = value
+            conf[key] = AbstractBenchmark.__import_from(module_name, function_name)
+        return conf
+
+    @staticmethod
+    def __stringify_functions(conf : dict) -> dict:
+        """
+        Replaced all callables in the config with a
+        triple ('function', module_name, function_name)
+
+        Parameters
+        ----------
+        config
+
+        Returns
+        -------
+        modified dict
+        """
+        for key, value in {k: v for k, v in conf.items() if isinstance(v, FunctionType)}.items():
+            conf[key] = [
+                'function',
+                conf[key].__module__,
+                conf[key].__name__
+            ]
+        return conf
+
     def space_to_list(self, space):
         res = []
         if isinstance(space, spaces.Box):
@@ -180,19 +229,31 @@ class AbstractBenchmark:
         for k in dict_space.keys():
             keys.append(k)
             value = dict_space[k]
-            if not isinstance(value, spaces.Box):
-                raise ValueError("Only Dict spaces made up of Boxes are supported")
+            if not isinstance(value, (spaces.Box, spaces.Discrete)):
+                raise ValueError(f"Only Dict spaces made up of Box spaces or discrete spaces are supported but got {type(value)}")
 
-            low = value.low.tolist()
-            high = value.high.tolist()
-            arguments.append([low, high])
+            if isinstance(value, spaces.Box):
+                low = value.low.tolist()
+                high = value.high.tolist()
+                arguments.append([low, high])
+
+            if isinstance(value, spaces.Discrete):
+                n = value.n
+                arguments.append([n])
         return [keys, arguments]
 
     def dictify_json(self, dict_list):
         dict_space = {}
-        for i in range(len(dict_list[0])):
-            args = [np.array(arg) for arg in dict_list[1][i]]
-            dict_space[dict_list[0][i]] = spaces.Box(*args, dtype=np.float32)
+        types, args = dict_list
+        for type, args_ in zip(types, args):
+            prepared_args = map(np.array, args_)
+            if type == "box":
+                dict_space[type] = spaces.Box(*prepared_args, dtype=np.float32)
+            elif type == "discrete":
+                dict_space[type] = spaces.Discrete(*prepared_args)
+            else:
+                raise TypeError(f"Currently only Discrete and Box spaces are allowed in Dict spaces got {type}")
+
         return dict_space
 
     def read_config_file(self, path):
@@ -235,19 +296,7 @@ class AbstractBenchmark:
             self.dejson_wrappers(self.config["wrappers"])
             del self.config["wrappers"]
 
-        import importlib
-
-        if "reward_function" in self.config:
-            self.config["reward_function"] = getattr(
-                importlib.import_module(self.config["reward_function"][0]),
-                self.config["reward_function"][1],
-            )
-
-        if "state_method" in self.config:
-            self.config["state_method"] = getattr(
-                importlib.import_module(self.config["state_method"][0]),
-                self.config["state_method"][1],
-            )
+        self.config = AbstractBenchmark.__decorate_config_with_functions(self.config)
 
         for k in self.config.keys():
             if type(self.config[k]) == list:

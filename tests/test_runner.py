@@ -40,7 +40,6 @@ class TestRunner(unittest.TestCase):
 
             def act(self, reward, state):
                 action = np.ones(self.num_actions)
-                print(self.num_actions)
                 if self.num_actions == 1:
                     action = 1
                 return action
