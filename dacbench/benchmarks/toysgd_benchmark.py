@@ -40,6 +40,7 @@ DEFAULTS = objdict(
         "cutoff": 10,
         "seed": 0,
         "instance_set_path": "../instance_sets/toysgd/toysgd_default.csv",
+        "test_set_path": None,
         "benchmark_info": INFO,
     }
 )
@@ -63,7 +64,7 @@ class ToySGDBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = DEFAULTS[key]
 
-    def get_environment(self):
+    def get_environment(self, test=False):
         """
         Return SGDEnv env with current configuration
 
@@ -73,7 +74,7 @@ class ToySGDBenchmark(AbstractBenchmark):
             SGD environment
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set()
+            self.read_instance_set(test)
 
         env = dacbench.envs.toysgd.ToySGDEnv(self.config)
         for func in self.wrap_funcs:
@@ -81,16 +82,22 @@ class ToySGDBenchmark(AbstractBenchmark):
 
         return env
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """
         Read path of instances from config into list
         """
-
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
+        if test:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.test_set_path
+            )
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
         self.config["instance_set"] = {}
         with open(path, "r") as fh:
             # reader = csv.DictReader(fh, delimiter=";")
@@ -98,7 +105,7 @@ class ToySGDBenchmark(AbstractBenchmark):
             for index, instance in df.iterrows():
                 self.config["instance_set"][int(instance["ID"])] = instance
 
-    def get_benchmark(self, seed=0):
+    def get_benchmark(self, seed=0, test=False):
         """
         Get benchmark from the LTO paper
 
@@ -114,7 +121,7 @@ class ToySGDBenchmark(AbstractBenchmark):
         """
         self.config = objdict(DEFAULTS.copy())
         self.config.seed = seed
-        self.read_instance_set()
+        self.read_instance_set(test)
         return dacbench.envs.toysgd.ToySGDEnv(self.config)
 
 

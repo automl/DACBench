@@ -54,13 +54,10 @@ class TestRunner(unittest.TestCase):
             return DummyAgent(env)
 
         with tempfile.TemporaryDirectory() as tmp_dir:
-            run_dacbench(tmp_dir, make, 1)
+            run_dacbench(tmp_dir, make, 1, bench=["LubyBenchmark", "SigmoidBenchmark"])
             path = Path(tmp_dir)
             self.assertFalse(os.stat(path / "LubyBenchmark") == 0)
             self.assertFalse(os.stat(path / "SigmoidBenchmark") == 0)
-            self.assertFalse(os.stat(path / "CMAESBenchmark") == 0)
-            self.assertFalse(os.stat(path / "FastDownwardBenchmark") == 0)
-            self.assertFalse(os.stat(path / "SGDBenchmark") == 0)
 
 
 #    def test_plotting(self):

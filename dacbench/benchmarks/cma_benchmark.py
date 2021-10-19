@@ -52,6 +52,7 @@ CMAES_DEFAULTS = objdict(
         "popsize": 10,
         "seed": 0,
         "instance_set_path": "../instance_sets/cma/cma_train.csv",
+        "test_set_path": "../instance_sets/cma/cma_test.csv",
         "benchmark_info": INFO,
     }
 )
@@ -79,7 +80,7 @@ class CMAESBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = CMAES_DEFAULTS[key]
 
-    def get_environment(self):
+    def get_environment(self, test=False):
         """
         Return CMAESEnv env with current configuration
 
@@ -89,7 +90,7 @@ class CMAESBenchmark(AbstractBenchmark):
             CMAES environment
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set()
+            self.read_instance_set(test)
 
         env = CMAESEnv(self.config)
         for func in self.wrap_funcs:
@@ -97,15 +98,23 @@ class CMAESBenchmark(AbstractBenchmark):
 
         return env
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """
         Read path of instances from config into list
         """
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
+        if test:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.test_set_path
+            )
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
+
         self.config["instance_set"] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh)
@@ -119,7 +128,7 @@ class CMAESBenchmark(AbstractBenchmark):
                 ]
                 self.config["instance_set"][int(row["ID"])] = instance
 
-    def get_benchmark(self, seed=0):
+    def get_benchmark(self, seed=0, test=False):
         """
         Get benchmark from the LTO paper
 
@@ -135,5 +144,5 @@ class CMAESBenchmark(AbstractBenchmark):
         """
         self.config = objdict(CMAES_DEFAULTS.copy())
         self.config.seed = seed
-        self.read_instance_set()
+        self.read_instance_set(test)
         return CMAESEnv(self.config)

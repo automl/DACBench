@@ -43,7 +43,7 @@ class AbstractBenchmark:
         """
         return self.config
 
-    def save_config(self, path):
+    def serialize_config(self):
         """
         Save configuration to .json
 
@@ -89,6 +89,10 @@ class AbstractBenchmark:
         if "instance_set" in conf:
             del conf["instance_set"]
 
+        return conf
+
+    def save_config(self, path):
+        conf = self.serialize_config()
         with open(path, "w") as fp:
             json.dump(conf, fp)
 
