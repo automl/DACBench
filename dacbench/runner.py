@@ -69,7 +69,7 @@ def run_dacbench(results_path, agent_method, num_episodes, bench=None, seeds=Non
     seeds = seeds if seeds is not None else range(10)
     for b in bench:
         print(f"Evaluating {b.__name__}")
-        for i in range(seeds):
+        for i in seeds:
             print(f"Seed {i}/10")
             bench = b()
             try:
