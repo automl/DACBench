@@ -51,6 +51,7 @@ GEOMETRIC_DEFAULTS = objdict(
         "instance_set_path": "../instance_sets/geometric/geometric_test.csv",
         # correlation table to chain dimensions -> if dim x changes dim y changes as well
         # either assign numpy array to correlation table or use create_correlation_table()
+        "correlation_active": False,
         "correlation_table": None,
         "correlation_info": {
             "high": [(1, 2, "+"), (2, 3, "-"), (1, 5, "+")],
@@ -63,7 +64,6 @@ GEOMETRIC_DEFAULTS = objdict(
             "low": (0, 0.1),
         },
         "correlation_depth": 4,
-        "correlation_active": True,
         "benchmark_info": INFO,
     }
 )
@@ -268,7 +268,6 @@ if __name__ == "__main__":
     # env.render_3d_dimensions([1, 3], "/home/vonglahn/tmp")
     env.reset()
 
-    opt_policy = env.get_optimal_policy()
     for step in range(env.n_steps):
         state, reward, done, info = env.step(np.random.randint(env.action_space.n))
         print(reward)
