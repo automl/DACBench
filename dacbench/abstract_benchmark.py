@@ -98,8 +98,8 @@ class AbstractBenchmark:
         return conf
 
     @staticmethod
-    def from_json(json):
-        config = objdict(json.loads(json))
+    def from_json(json_config):
+        config = objdict(json.loads(json_config))
         return AbstractBenchmark(config=config)
     
     def to_json(self):
