@@ -16,7 +16,7 @@ class AbstractBenchmark:
     Abstract template for benchmark classes
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config:  'objdict'=None):
         """
         Initialize benchmark class
 
@@ -24,11 +24,17 @@ class AbstractBenchmark:
         -------
         config_path : str
             Path to load configuration from (if read from file)
+        config : objdict
+            Object dict containing the config
         """
+        if config is not None and config_path is not None:
+            raise ValueError("Both path to config and config where provided")
         self.wrap_funcs = []
         if config_path:
             self.config_path = config_path
             self.read_config_file(self.config_path)
+        elif config:
+            self.load_config(config)
         else:
             self.config = None
 
@@ -45,7 +51,7 @@ class AbstractBenchmark:
 
     def serialize_config(self):
         """
-        Save configuration to .json
+        Save configuration to json
 
         Parameters
         ----------
@@ -90,6 +96,15 @@ class AbstractBenchmark:
             del conf["instance_set"]
 
         return conf
+
+    @staticmethod
+    def from_json(json):
+        config = objdict(json.loads(json))
+        return AbstractBenchmark(config=config)
+    
+    def to_json(self):
+        conf = self.serialize_config()
+        return json.dumps(conf)
 
     def save_config(self, path):
         conf = self.serialize_config()
@@ -260,17 +275,8 @@ class AbstractBenchmark:
 
         return dict_space
 
-    def read_config_file(self, path):
-        """
-        Read configuration from file
-
-        Parameters
-        ----------
-        path : str
-            Path to config file
-        """
-        with open(path, "r") as fp:
-            self.config = objdict(json.load(fp))
+    def load_config(self, config :  'objdict'):
+        self.config = config
         if "observation_space_type" in self.config:
             # Types have to be numpy dtype (for gym spaces)s
             if type(self.config["observation_space_type"]) == str:
@@ -307,6 +313,21 @@ class AbstractBenchmark:
                 if type(self.config[k][0]) == list:
                     map(np.array, self.config[k])
                 self.config[k] = np.array(self.config[k])
+
+    def read_config_file(self, path):
+        """
+        Read configuration from file
+
+        Parameters
+        ----------
+        path : str
+            Path to config file
+        """
+        with open(path, "r") as fp:
+            config = objdict(json.load(fp))
+        
+        self.load_config(config)
+    
 
     def get_environment(self):
         """
