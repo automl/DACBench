@@ -81,7 +81,6 @@ def _create_csv_string(index, func_name: str) -> str:
     str
         comma separated string
     """
-    # TODO extra conditions for logarithmic and exponential
     count = FUNCTION_PARAMETER_NUMBERS[func_name]
     max_count = max(list(FUNCTION_PARAMETER_NUMBERS.values()))
 
