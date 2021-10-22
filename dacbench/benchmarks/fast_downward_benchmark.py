@@ -67,7 +67,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for Sigmoid
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize FD Benchmark
 
@@ -76,7 +76,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
         config_path : str
             Path to config file (optional)
         """
-        super(FastDownwardBenchmark, self).__init__(config_path)
+        super(FastDownwardBenchmark, self).__init__(config_path, config)
         if not self.config:
             self.config = objdict(FD_DEFAULTS.copy())
 

@@ -51,7 +51,7 @@ class LubyBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for Sigmoid
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize Luby Benchmark
 
@@ -60,7 +60,7 @@ class LubyBenchmark(AbstractBenchmark):
         config_path : str
             Path to config file (optional)
         """
-        super(LubyBenchmark, self).__init__(config_path)
+        super(LubyBenchmark, self).__init__(config_path, config)
         if not self.config:
             self.config = objdict(LUBY_DEFAULTS.copy())
 

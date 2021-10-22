@@ -14,6 +14,7 @@ class OneLLBenchmark(AbstractBenchmark):
         self,
         config_path=os.path.dirname(os.path.abspath(__file__))
         + "/../additional_configs/onell/lbd_theory.json",
+        config=None
     ):
         """
         Initialize OneLL benchmark
@@ -28,12 +29,12 @@ class OneLLBenchmark(AbstractBenchmark):
             all options specified in config_path will override the ones in config_name
 
         """
-        if config_path is None:
+        if config_path is None and config is None:
             config_path = (
                 os.path.dirname(os.path.abspath(__file__))
                 + "/../additional_configs/onell/lbd_theory.json"
             )
-        super(OneLLBenchmark, self).__init__(config_path)
+        super(OneLLBenchmark, self).__init__(config_path, config)
 
         self.read_instance_set()
 

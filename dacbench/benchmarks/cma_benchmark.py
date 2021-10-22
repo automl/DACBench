@@ -63,7 +63,7 @@ class CMAESBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for CMA-ES
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize CMA Benchmark
 
@@ -72,7 +72,7 @@ class CMAESBenchmark(AbstractBenchmark):
         config_path : str
             Path to config file (optional)
         """
-        super(CMAESBenchmark, self).__init__(config_path)
+        super(CMAESBenchmark, self).__init__(config_path, config)
         if not self.config:
             self.config = objdict(CMAES_DEFAULTS.copy())
 
