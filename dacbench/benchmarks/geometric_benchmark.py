@@ -247,20 +247,26 @@ class GeometricBenchmark(AbstractBenchmark):
         """
         Create correlation table from Config infos
         """
-        n_actions = len(self.config.action_values)
-        corr_table = np.zeros((n_actions, n_actions))
+        n_dimensions = len(self.config.instance_set[0])
+        corr_table = np.zeros((n_dimensions, n_dimensions))
 
         for corr_level, corr_info in self.config.correlation_info.items():
             for dim1, dim2, signum in corr_info:
                 low, high = self.config.correlation_mapping[corr_level]
                 value = np.random.uniform(low, high)
-                corr_table[dim1, dim2] = value if signum == "+" else value * -1
+                try:
+                    corr_table[dim1, dim2] = value if signum == "+" else value * -1
+                except IndexError:
+                    print(
+                        "Check your correlation_info dict. Does it have more dimensions than the instance_set?"
+                    )
 
         self.config.correlation_table = corr_table
 
 
 if __name__ == "__main__":
     geo_bench = GeometricBenchmark()
+    geo_bench.config["correlation_active"] = True
     env = geo_bench.get_environment()
 
     opt_policy = env.get_optimal_policy()
