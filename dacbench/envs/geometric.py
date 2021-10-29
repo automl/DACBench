@@ -21,12 +21,8 @@ class GeometricEnv(AbstractEnv):
     """
     Environment for tracing different curves that are orthogonal to each other
     Use product approach: f(t,x,y,z) = X(t,x) * Y(t,y) * Z(t,z)
-    Normalize Function Value on a Scale betwwen 0 and 1
+    Normalize Function Value on a Scale between 0 and 1
         - min and max value for normalization over all timesteps
-    TODOS:
-        - fix instance set generation to make functions more similar
-        - edit Coordiates/Function class to script for better understanding
-            - class has norm, derivative, correlation and coordinate functions
     """
 
     def __init__(self, config) -> None:
@@ -42,6 +38,7 @@ class GeometricEnv(AbstractEnv):
 
         self.action_vals = config["action_values"]
         self.action_interval_mapping = config["action_interval_mapping"]
+        self.action_masking = config["action_masking"]
         self.realistic_trajectory = config["realistic_trajectory"]
         self.derivative_interval = config["derivative_interval"]
 
@@ -53,8 +50,9 @@ class GeometricEnv(AbstractEnv):
         self.action = None
         self.n_actions = len(self.action_vals)
         self.action_mapper = {}
+        self.action_mask = []
 
-        # Function object
+        # Functions
         self.functions = Functions(
             self.n_steps,
             self.n_actions,
@@ -91,6 +89,17 @@ class GeometricEnv(AbstractEnv):
             self.get_state = config["state_method"]
         else:
             self.get_state = self.get_default_state
+
+    def set_masking(self, mask: List):
+        """
+        Set action masking in env for ray rllib
+
+        Parameters
+        ----------
+        mask : List
+            one hot action masking
+        """
+        self.action_mask = mask
 
     def get_optimal_policy(
         self, instance: List = None, vector_action: bool = True
@@ -219,6 +228,7 @@ class GeometricEnv(AbstractEnv):
         float
             Euclidean distance
         """
+        # TODO: better reward!
         coordinates = self.functions.get_coordinates_at_time_step(self.c_step)
         function_names = [function_info[1] for function_info in self.instance]
 
@@ -255,6 +265,10 @@ class GeometricEnv(AbstractEnv):
         """
         remaining_budget = self.n_steps - self.c_step
         next_state = [remaining_budget]
+
+        if self.action_masking:
+            next_state.append(self.action_mask)
+
         next_state += [self.n_actions]
 
         if self.c_step == 0:
