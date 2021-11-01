@@ -38,7 +38,6 @@ class GeometricEnv(AbstractEnv):
 
         self.action_vals = config["action_values"]
         self.action_interval_mapping = config["action_interval_mapping"]
-        self.action_masking = config["action_masking"]
         self.realistic_trajectory = config["realistic_trajectory"]
         self.derivative_interval = config["derivative_interval"]
 
@@ -50,7 +49,6 @@ class GeometricEnv(AbstractEnv):
         self.action = None
         self.n_actions = len(self.action_vals)
         self.action_mapper = {}
-        self.action_mask = []
 
         # Functions
         self.functions = Functions(
@@ -89,17 +87,6 @@ class GeometricEnv(AbstractEnv):
             self.get_state = config["state_method"]
         else:
             self.get_state = self.get_default_state
-
-    def set_masking(self, mask: List):
-        """
-        Set action masking in env for ray rllib
-
-        Parameters
-        ----------
-        mask : List
-            one hot action masking
-        """
-        self.action_mask = mask
 
     def get_optimal_policy(
         self, instance: List = None, vector_action: bool = True
@@ -265,9 +252,6 @@ class GeometricEnv(AbstractEnv):
         """
         remaining_budget = self.n_steps - self.c_step
         next_state = [remaining_budget]
-
-        if self.action_masking:
-            next_state.append(self.action_mask)
 
         next_state += [self.n_actions]
 

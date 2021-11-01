@@ -28,7 +28,6 @@ GEOMETRIC_DEFAULTS = objdict(
         "reward_range": (0, 1),
         "seed": 0,
         "cutoff": 10,
-        "action_masking": False,
         "action_values": [],
         "action_value_default": 4,
         # if action_values_variable True action_value_mapping will be used instead of action_value_default to define action values
@@ -227,7 +226,7 @@ class GeometricBenchmark(AbstractBenchmark):
         self.config.action_values = values
         self.config.action_space_args = [int(np.prod(values))]
 
-        num_info = 3 if self.config.action_masking else 2
+        num_info = 2
         self.config.observation_space_args = [
             np.array([-1 for _ in range(num_info + 2 * len(values))]),
             np.array(
@@ -239,9 +238,6 @@ class GeometricBenchmark(AbstractBenchmark):
         """
         Add Information about Derivative and Action to Description.
         """
-        if self.config.action_masking:
-            self.config.benchmark_info["state_description"].append("action_mask")
-
         for index in range(len(self.config.action_values)):
             self.config.benchmark_info["state_description"].append(f"Derivative{index}")
 
