@@ -5,7 +5,7 @@ Original environment authors: Rasmus von Glahn
 import bisect
 import os
 import itertools
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 from mpl_toolkits import mplot3d
 from matplotlib import pyplot as plt
@@ -215,23 +215,10 @@ class GeometricEnv(AbstractEnv):
         float
             Euclidean distance
         """
-        # TODO: better reward!
-        coordinates = self.functions.get_coordinates_at_time_step(self.c_step)
-        function_names = [function_info[1] for function_info in self.instance]
+        coords, action_coords, highest_coords, lowest_actions = self._pre_reward()
+        euclidean_dist = np.linalg.norm(action_coords - coords)
 
-        # map action values to their interval mean
-        mapping_list = [self.action_interval_mapping[name] for name in function_names]
-        action_intervall = [
-            mapping_list[count][index] for count, index in enumerate(self.action)
-        ]
-
-        euclidean_dist = np.linalg.norm(action_intervall - coordinates)
-
-        # norm reward to (0, 1)
-        highest_coords = np.ones(self.n_actions)
-        lowest_actions = np.ones(self.n_actions) * -1
         max_dist = np.linalg.norm(highest_coords - lowest_actions)
-
         reward = 1 - (euclidean_dist / max_dist)
 
         return abs(reward)
@@ -339,6 +326,28 @@ class GeometricEnv(AbstractEnv):
         ax.set_yticks([])
         ax.view_init(elev=0, azim=-90)
         fig.savefig(os.path.join(absolute_path, "3D-90side.jpg"))
+
+    def _pre_reward(self) -> Tuple[np.ndarray, List]:
+        """
+        Prepare actions and coordinates for reward calculation.
+
+        Returns
+        -------
+        Tuple[np.ndarray, List]
+            [description]
+        """
+        coordinates = self.functions.get_coordinates_at_time_step(self.c_step)
+        function_names = [function_info[1] for function_info in self.instance]
+
+        # map action values to their interval mean
+        mapping_list = [self.action_interval_mapping[name] for name in function_names]
+        action_intervall = [
+            mapping_list[count][index] for count, index in enumerate(self.action)
+        ]
+        highest_coords = np.ones(self.n_actions)
+        lowest_actions = np.array([val[0] for val in mapping_list])
+
+        return coordinates, action_intervall, highest_coords, lowest_actions
 
 
 class Functions:
