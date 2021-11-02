@@ -40,7 +40,7 @@ class ModeaBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for Modea
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize Modea Benchmark
 
@@ -49,7 +49,7 @@ class ModeaBenchmark(AbstractBenchmark):
         config_path : str
             Path to config file (optional)
         """
-        super(ModeaBenchmark, self).__init__(config_path)
+        super(ModeaBenchmark, self).__init__(config_path, config)
         if not self.config:
             self.config = objdict(MODEA_DEFAULTS.copy())
 

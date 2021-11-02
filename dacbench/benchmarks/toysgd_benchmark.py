@@ -47,7 +47,7 @@ DEFAULTS = objdict(
 
 
 class ToySGDBenchmark(AbstractBenchmark):
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize SGD Benchmark
 
@@ -56,7 +56,7 @@ class ToySGDBenchmark(AbstractBenchmark):
         config_path : str
             Path to config file (optional)
         """
-        super(ToySGDBenchmark, self).__init__(config_path)
+        super(ToySGDBenchmark, self).__init__(config_path, config)
         if not self.config:
             self.config = objdict(DEFAULTS.copy())
 

@@ -49,7 +49,7 @@ class SigmoidBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for Sigmoid
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize Sigmoid Benchmark
 
@@ -58,7 +58,7 @@ class SigmoidBenchmark(AbstractBenchmark):
         config_path : str
             Path to config file (optional)
         """
-        super(SigmoidBenchmark, self).__init__(config_path)
+        super(SigmoidBenchmark, self).__init__(config_path, config)
         if not self.config:
             self.config = objdict(SIGMOID_DEFAULTS.copy())
 
