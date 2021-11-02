@@ -1,26 +1,31 @@
 import os
+from typing import Tuple
 
 os.environ["PYRO_LOGFILE"] = "stderr"
 os.environ["PYRO_LOGLEVEL"] = "DEBUG"
 
 from dacbench.abstract_agent import AbstractDACBenchAgent
-from dacbench.abstract_benchmark import objdict
+from dacbench.abstract_benchmark import objdict, AbstractBenchmark
 import Pyro4
 
-from dacbench.container.remote_env import RemoteEnvironmentServer
+from dacbench.container.remote_env import RemoteEnvironmentServer, RemoteEnvironmentClient
 
-
+from icecream import ic
 @Pyro4.expose
 class RemoteRunnerServer:
     def __init__(self, pyro_demon):
         self.benchmark = None
         self.pyro_demon = pyro_demon
 
-    def start(self,  config : objdict, benchmark : type):
-       self.benchmark = benchmark(config=config)
+    def start(self,  config : str, benchmark : Tuple[str, str]):
+        benchmark = AbstractBenchmark.import_from(*benchmark)
 
-    def get_env(self, seed) -> str:
-        env = self.benchmark.get_env(seed)
+        self.benchmark = benchmark.from_json(config)
+
+    def get_environment(self) -> str:
+
+
+        env = self.benchmark.get_environment()
 
         # set up logger and stuff
 
@@ -29,23 +34,29 @@ class RemoteRunnerServer:
         return uri
 
 class RemoteRunner:
-    def __init__(self, config : objdict, benchmark : type, remote_runner_uri : str):
-        # todo: implement
-        # todo switch to json config?
+    def __init__(self, benchmark : AbstractBenchmark, remote_runner_uri : str):
         # load container
         # start container and server
         # connect to continaer and create RemoveBenchmarkClient object
         # copy from AbstractBenchmarkClient
 
         self.remote_runner: RemoteRunnerServer = Pyro4.Proxy(remote_runner_uri)
-        self.remote_runner.start(config, benchmark)
 
+        serialized_config = benchmark.to_json()
+        serialized_type = benchmark.class_to_str()
+        self.remote_runner.start(serialized_config, serialized_type)
+
+    def __get_environment(self):
+        env_uri = self.remote_runner.get_environment()
+        remote_env_server = Pyro4.Proxy(env_uri)
+        remote_env = RemoteEnvironmentClient(remote_env_server)
+        return remote_env
 
     def run(self, agent : AbstractDACBenchAgent, number_of_episodes : int, seed : int = None):
         # todo: agent often needs env for creation ...
-        env_uri = self.remote_runner.get_env(seed)
+        # todo: seeding
+        env = self.__get_environment()
 
-        env = Pyro4.Proxy(env_uri)
         for _ in range(number_of_episodes):
             state = env.reset()
             done = False

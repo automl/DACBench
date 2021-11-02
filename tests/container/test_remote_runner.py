@@ -27,18 +27,13 @@ class TestRemoteRunner(unittest.TestCase):
             ]
         )
 
-
-
-
-
     def test_step(self):
-        benchmark = SigmoidBenchmark
-        config = SIGMOID_DEFAULTS
-        agent = StaticAgent(env=None, action= 0)
+        benchmark = SigmoidBenchmark()
+        agent = StaticAgent(env=None, action=0)
         server_uri = f"PYRONAME:RemoteRunnerServer"
 
-        remote_runner = RemoteRunner(config, benchmark, server_uri)
-        #remote_runner.run(agent, 1, 42)
+        remote_runner = RemoteRunner(benchmark, server_uri)
+        remote_runner.run(agent, 1, 42)
 
     def tearDown(self) -> None:
         self.name_server_process.send_signal(signal.SIGTERM)

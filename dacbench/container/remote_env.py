@@ -1,84 +1,72 @@
+import json
 from numbers import Number
+
 from typing import Dict, Union, List, Tuple
 
+import Pyro4
 import numpy as np
 
 
 from dacbench.abstract_env import AbstractEnv
+from dacbench.container.container_utils import Encoder, Decoder
+
+NumpyTypes = Union[np.ndarray, np.int, np.float, np.random.RandomState]
+DefaultJsonable = Union[
+    bool, None, Dict[str, 'DefaultJsonable'], List['DefaultJsonable'], Tuple['DefaultJsonable'], str, float, int]
+Jsonable = Union[List['Jsonable'], Dict[str, 'Jsonable'], Tuple['Jsonable'], DefaultJsonable, NumpyTypes]
 
 
-def from_space_to_simple(
-        self, sample: Union[Dict[str, np.ndarray], np.ndarray]
-) -> Union[Dict[str, List[Number]], List[Number]]:
-    # this way is ok
-    raise NotImplementedError()
-    return sample
-
-def from_simple_to_space(
-        self, sample: Union[Dict[str, List[Number]], List[Number]]
-) -> Union[Dict[str, np.ndarray], np.ndarray]:
-    # no information about the numpy data type!?
-    raise NotImplementedError()
-    return sample
-
-def from_info_to_dict(self, info):
-    # no idea
-    raise NotImplementedError()
-    return info
+def json_encode(obj: Jsonable) -> str:
+    return json.dumps(obj, indent=None, cls=Encoder)
 
 
-def from_dict_info(info):
-    pass
+def json_decode(json_str: str) -> Jsonable:
+    return json.loads(json_str, cls=Decoder)
 
 
-class RemoteEnvironmentServer(AbstractEnv):
+@Pyro4.expose
+class RemoteEnvironmentServer:
 
     def __init__(self, env):
-        # todo: config contains also complex types: convertable to simple types using benchmark class....
-        self.env : env
+        self.env: AbstractEnv = env
 
     def step(self, action: Union[Dict[str, List[Number]], List[Number]]):
-        # are action always convertable to list of float / int ?
-
-        action = from_simple_to_space(action)
-        state, reward, done, info = self.env.step(action)
-
-        state = from_space_to_simple(state)
-        info = from_info_to_dict(info)
-
-        return state, reward, done, info
+        action = json_decode(action)
+        json_str = json_encode(self.env.step(action))
+        return json_str
 
     def reset(self):
         state = self.env.reset()
-        state = self.from_simple_to_space(state)
+        state = json_encode(state)
         return state
 
     def render(self, mode="human"):
         # ever used?
         pass
 
-    # instance sets and instances
-    # close ...
+    def close(self):
+        self.env.close()
 
 
-class RemoteEnvironmentClient(AbstractEnv):
+class RemoteEnvironmentClient:
 
-    def __init(self, env: RemoteEnvironmentServer):
+    def __init__(self, env: RemoteEnvironmentServer):
         self.env = env
 
     def step(self, action: Union[Dict[str, np.ndarray], np.ndarray]) \
             -> Tuple[Union[Dict[str, np.ndarray], np.ndarray], Number, bool, dict]:
-        action = from_space_to_simple(action)
-        state, reward, done, info = self.env.step(action)
+        action = json_encode(action)
 
-        state = from_simple_to_space(state)
-        info = from_dict_info(info)
+        json_str = self.env.step(action)
+
+        state, reward, done, info = json_decode(json_str)
 
         return state, reward, done, info
 
     def reset(self) -> Union[Dict[str, np.ndarray], np.ndarray]:
         state = self.env.reset()
-        state = self.env.reset()
-        state = from_simple_to_space(state)
+        state = json_decode(state)
         return state
 
+    def close(self):
+        self.env.close()

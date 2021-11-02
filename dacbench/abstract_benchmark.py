@@ -49,6 +49,7 @@ class AbstractBenchmark:
         """
         return self.config
 
+
     def serialize_config(self):
         """
         Save configuration to json
@@ -97,10 +98,10 @@ class AbstractBenchmark:
 
         return conf
 
-    @staticmethod
-    def from_json(json_config):
+    @classmethod
+    def from_json(cls, json_config):
         config = objdict(json.loads(json_config))
-        return AbstractBenchmark(config=config)
+        return cls(config=config)
     
     def to_json(self):
         conf = self.serialize_config()
@@ -155,7 +156,7 @@ class AbstractBenchmark:
             self.wrap_funcs.append(partial(func, *args))
 
     @staticmethod
-    def __import_from(module : str, name : str):
+    def import_from(module : str, name : str):
         """
         Imports the class / function / ... with name from module
         Parameters
@@ -169,6 +170,10 @@ class AbstractBenchmark:
         """
         module = __import__(module, fromlist=[name])
         return getattr(module, name)
+
+    @classmethod
+    def class_to_str(cls):
+        return cls.__module__, cls.__name__
 
     @staticmethod
     def __decorate_config_with_functions(conf : dict):
@@ -184,7 +189,7 @@ class AbstractBenchmark:
         """
         for key, value in {k: v for k, v in conf.items() if isinstance(v, list) and len(v) == 3 and v[0] == 'function'}.items():
             _, module_name, function_name = value
-            conf[key] = AbstractBenchmark.__import_from(module_name, function_name)
+            conf[key] = AbstractBenchmark.import_from(module_name, function_name)
         return conf
 
     @staticmethod
