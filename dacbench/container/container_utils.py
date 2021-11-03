@@ -5,7 +5,7 @@ import numpy as np
 import enum
 
 from typing import Any, Union, Tuple, List, Dict
-
+gym.spaces.Tuple
 class Encoder(json.JSONEncoder):
     """ Json Encoder to save tuple and or numpy arrays | numpy floats / integer.
     Adapted from: https://github.com/automl/HPOBench/blob/master/hpobench/util/container_utils.py
@@ -111,16 +111,22 @@ class Decoder(json.JSONDecoder):
 
         args = {name:value for name, value in space_dict.items() if name not in ['__type__', 'np_random', 'shape']}
 
+        # temporally remove subspace since constructor reseeds them
+        if issubclass(__class,(gym.spaces.Tuple, gym.spaces.Dict)):
+            spaces = args['spaces']
+            args['spaces'] = type(args['spaces'])()
+
         space_object = __class(**args)
+
+        # re-insert afterwards
+        if issubclass(__class, (gym.spaces.Tuple, gym.spaces.Dict)):
+            space_object.spaces = spaces
 
         if isinstance(space_object, gym.spaces.Tuple):
             space_object.spaces = tuple(space_object.spaces)
 
         if not isinstance(space_object, (gym.spaces.Dict, gym.spaces.Tuple)):
             space_object.np_random = space_dict['np_random']
-        else:
-            raise Warning("Restoring of nested random generator does not work reliable")
-
 
         return space_object
 

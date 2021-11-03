@@ -31,7 +31,7 @@ class TestEncoder(unittest.TestCase):
 
     def test_recursive_spaces(self):
         tuple_space = Tuple((Box(low=-1, high=1, shape=(2,)), Box(low=-1, high=1, shape=(2,))))
-        dict_space = Dict({'a': Box(low=-1, high=1, shape=(2,)), 'b': MultiBinary([2, 2])})
+        dict_space = Dict({'a': Box(low=-1, high=1, shape=(2,)), 'b': MultiBinary([2, 2]), 'c': Tuple((Box(low=-1, high=1, shape=(2,)), Box(low=-1, high=1, shape=(2,))))})
 
         spaces = [tuple_space, dict_space]
 
