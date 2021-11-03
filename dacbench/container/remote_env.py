@@ -28,7 +28,7 @@ def json_decode(json_str: str) -> Jsonable:
 class RemoteEnvironmentServer:
 
     def __init__(self, env):
-        self.env: AbstractEnv = env
+        self.__env: AbstractEnv = env
 
     def step(self, action: Union[Dict[str, List[Number]], List[Number]]):
         action = json_decode(action)
@@ -47,26 +47,35 @@ class RemoteEnvironmentServer:
     def close(self):
         self.env.close()
 
+    @property
+    def action_space(self):
+        return json_encode(self.__env.action_space)
+
+
 
 class RemoteEnvironmentClient:
 
     def __init__(self, env: RemoteEnvironmentServer):
-        self.env = env
+        self.__env = env
 
     def step(self, action: Union[Dict[str, np.ndarray], np.ndarray]) \
             -> Tuple[Union[Dict[str, np.ndarray], np.ndarray], Number, bool, dict]:
         action = json_encode(action)
 
-        json_str = self.env.step(action)
+        json_str = self.__env.step(action)
 
         state, reward, done, info = json_decode(json_str)
 
         return state, reward, done, info
 
     def reset(self) -> Union[Dict[str, np.ndarray], np.ndarray]:
-        state = self.env.reset()
+        state = self.__env.reset()
         state = json_decode(state)
         return state
 
     def close(self):
-        self.env.close()
+        self.__env.close()
+
+    @property
+    def action_space(self):
+        return json_decode(self.__env.action_space)

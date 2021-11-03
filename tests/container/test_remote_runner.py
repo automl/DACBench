@@ -1,14 +1,9 @@
 import subprocess
-import time
-from time import sleep
 import unittest
 import signal
 
-import Pyro4
-
 from dacbench.agents import StaticAgent
 from dacbench.benchmarks import SigmoidBenchmark
-from dacbench.benchmarks.sigmoid_benchmark import SIGMOID_DEFAULTS
 from dacbench.container.remote_runner import RemoteRunner
 
 

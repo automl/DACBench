@@ -45,17 +45,19 @@ class RemoteRunner:
         serialized_config = benchmark.to_json()
         serialized_type = benchmark.class_to_str()
         self.remote_runner.start(serialized_config, serialized_type)
+        self.env = None
 
-    def __get_environment(self):
-        env_uri = self.remote_runner.get_environment()
-        remote_env_server = Pyro4.Proxy(env_uri)
-        remote_env = RemoteEnvironmentClient(remote_env_server)
-        return remote_env
+    def get_environment(self):
+        if self.env is None:
+            env_uri = self.remote_runner.get_environment()
+            remote_env_server = Pyro4.Proxy(env_uri)
+            self.env = RemoteEnvironmentClient(remote_env_server)
 
-    def run(self, agent : AbstractDACBenchAgent, number_of_episodes : int, seed : int = None):
-        # todo: agent often needs env for creation ...
+        return self.env
+
+    def run(self, agent : AbstractDACBenchAgent, number_of_episodes : int):
         # todo: seeding
-        env = self.__get_environment()
+        env = self.get_environment()
 
         for _ in range(number_of_episodes):
             state = env.reset()
@@ -69,6 +71,7 @@ class RemoteRunner:
             agent.end_episode(state, reward)
 
         env.close()
+        self.env = None
 
 if __name__ == '__main__':
 
