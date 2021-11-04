@@ -97,10 +97,10 @@ class AbstractBenchmark:
 
         return conf
 
-    @staticmethod
-    def from_json(json_config):
+    @classmethod
+    def from_json(cls, json_config):
         config = objdict(json.loads(json_config))
-        return AbstractBenchmark(config=config)
+        return cls(config=config)
     
     def to_json(self):
         conf = self.serialize_config()
@@ -388,6 +388,9 @@ class AbstractBenchmark:
         else:
             self.wrap_funcs.append(wrap_func)
 
+    def __eq__(self, other):
+        return type(self) == type(other) and self.config == other.config
+
 
 # This code is taken from https://goodcode.io/articles/python-dict-object/
 class objdict(dict):
@@ -412,3 +415,27 @@ class objdict(dict):
 
     def copy(self):
         return objdict(**super().copy())
+
+    def __eq__(self, other):
+        """return isinstance(other, dict) \
+               and set(other.keys()) == set(self.keys()) \
+               and all(
+                        np.array_equal(self[key], other[key])
+                        if any(isinstance(obj[key], np.ndarray) for obj in (self, other))
+                        else other[key] == self[key]
+                    for key in self.keys()
+                )"""
+        if not isinstance(other, dict):
+            return False
+        if not set(other.keys()) == set(self.keys()):
+            return False
+        truth = []
+        for key in self.keys():
+            if  any(isinstance(obj[key], np.ndarray) for obj in (self, other)):
+                truth.append(np.array_equal(self[key], other[key]))
+            else:
+                truth.append( other[key] == self[key])
+        return all(truth)
+
+    def __ne__(self, other):
+        return not self == other
