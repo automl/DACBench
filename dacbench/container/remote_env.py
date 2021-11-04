@@ -32,11 +32,11 @@ class RemoteEnvironmentServer:
 
     def step(self, action: Union[Dict[str, List[Number]], List[Number]]):
         action = json_decode(action)
-        json_str = json_encode(self.env.step(action))
+        json_str = json_encode(self.__env.step(action))
         return json_str
 
     def reset(self):
-        state = self.env.reset()
+        state = self.__env.reset()
         state = json_encode(state)
         return state
 
@@ -45,7 +45,7 @@ class RemoteEnvironmentServer:
         pass
 
     def close(self):
-        self.env.close()
+        self.__env.close()
 
     @property
     def action_space(self):

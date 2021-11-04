@@ -5,7 +5,7 @@ import numpy as np
 import enum
 
 from typing import Any, Union, Tuple, List, Dict
-gym.spaces.Tuple
+
 class Encoder(json.JSONEncoder):
     """ Json Encoder to save tuple and or numpy arrays | numpy floats / integer.
     Adapted from: https://github.com/automl/HPOBench/blob/master/hpobench/util/container_utils.py
@@ -27,7 +27,6 @@ class Encoder(json.JSONEncoder):
             return str(item)
         if isinstance(item, np.random.RandomState):
             return serialize_random_state(item)
-
         if isinstance(item, gym.Space):
             return Encoder.encode_space(item)
         if isinstance(item, np.dtype):
@@ -87,7 +86,6 @@ class Decoder(json.JSONDecoder):
     def object_hook(self, obj: Any) -> Union[Union[tuple, np.ndarray, float, float, int], Any]:
         if '__type__' in obj:
             __type = obj['__type__']
-
             if __type == 'tuple':
                 return tuple(obj['__items__'])
             if __type == 'np.ndarray':
@@ -129,8 +127,6 @@ class Decoder(json.JSONDecoder):
             space_object.np_random = space_dict['np_random']
 
         return space_object
-
-
 
 
 def deserialize_random_state(random_state_dict: Dict) -> np.random.RandomState:
