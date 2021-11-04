@@ -38,6 +38,11 @@ class TestSigmoidBenchmark(unittest.TestCase):
             self.assertTrue(k in recovered.keys())
         os.remove("test_conf.json")
 
+    def test_from_to_json(self):
+        bench = SigmoidBenchmark()
+        restored_bench = SigmoidBenchmark.from_json(bench.to_json())
+        self.assertEqual(bench, restored_bench)
+
     def test_read_instances(self):
         bench = SigmoidBenchmark()
         bench.read_instance_set()

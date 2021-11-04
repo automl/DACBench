@@ -46,3 +46,8 @@ class TestCMABenchmark(unittest.TestCase):
         bench = ModeaBenchmark()
         env = bench.get_benchmark()
         self.assertTrue(issubclass(type(env), ModeaEnv))
+
+    def test_from_to_json(self):
+        bench = ModeaBenchmark()
+        restored_bench = ModeaBenchmark.from_json(bench.to_json())
+        self.assertEqual(bench, restored_bench)

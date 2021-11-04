@@ -53,7 +53,10 @@ class TestOneLLBenchmark(unittest.TestCase):
         env = bench2.get_environment()
         self.assertTrue(env.instance_set[0] == first_inst)
 
-
+    def test_from_to_json(self):
+        bench = OneLLBenchmark()
+        restored_bench = OneLLBenchmark.from_json(bench.to_json())
+        self.assertEqual(bench, restored_bench)
 # TestOneLLBenchmark().test_get_env()
 # TestOneLLBenchmark().test_scenarios()
 # TestOneLLBenchmark().test_read_instances()

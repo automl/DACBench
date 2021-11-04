@@ -49,7 +49,7 @@ class TestAbstractBenchmark(unittest.TestCase):
         bench1 = AbstractBenchmark(config_path="tests/test_config.json")
         json1 = bench1.serialize_config()
         bench2 = AbstractBenchmark(config=objdict(json1))
-        json2 = bench1.serialize_config()
+        json2 = bench2.serialize_config()
 
         print(json1)
         print(json2)
@@ -157,3 +157,10 @@ class TestAbstractBenchmark(unittest.TestCase):
             del d["error"]
         with self.assertRaises(AttributeError):
             del d.error
+
+    def test_objdict_equal(self):
+        self.assertEqual(objdict({"dummy": 0}), objdict({"dummy": 0}))
+        self.assertEqual(objdict({"dummy": np.array([1, 2])}), objdict({"dummy": np.array([1, 2])}))
+
+        self.assertNotEqual(objdict({"dummy": np.array([1, 2])}), objdict({"dummy": np.array([1, 0])}))
+        self.assertNotEqual(objdict({"dummy": np.array([1, 2])}), objdict({"dummy": 0}))

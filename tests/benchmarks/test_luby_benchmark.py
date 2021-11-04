@@ -66,3 +66,8 @@ class TestLubyBenchmark(unittest.TestCase):
         bench = LubyBenchmark()
         bench.set_history_length(20)
         self.assertTrue(len(bench.config.observation_space_args[0]) == 21)
+
+    def test_from_to_json(self):
+        bench = LubyBenchmark()
+        restored_bench = LubyBenchmark.from_json(bench.to_json())
+        self.assertEqual(bench, restored_bench)

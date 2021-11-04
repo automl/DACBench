@@ -32,6 +32,12 @@ class TestCMABenchmark(unittest.TestCase):
             self.assertTrue(k in recovered.keys())
         os.remove("test_conf.json")
 
+    def test_from_to_json(self):
+        bench = CMAESBenchmark()
+        restored_bench = CMAESBenchmark.from_json(bench.to_json())
+        self.assertEqual(bench, restored_bench)
+
+
     def test_read_instances(self):
         bench = CMAESBenchmark()
         bench.read_instance_set()
