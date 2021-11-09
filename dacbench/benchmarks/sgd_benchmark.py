@@ -3,9 +3,17 @@ import os
 
 import numpy as np
 from gym import spaces
+import torch.optim
+from torch.nn import NLLLoss
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import SGDEnv
+from dacbench.envs import SGDEnv, log_diff_training_loss
+from dacbench.envs.sgd import Reward
+
+
+def __default_loss_function(**kwargs):
+    return NLLLoss(reduction = 'none', **kwargs)
+
 
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
@@ -13,7 +21,7 @@ INPUT_DIM = 10
 INFO = {
     "identifier": "LR",
     "name": "Learning Rate Adaption for Neural Networks",
-    "reward": "Validation Loss",
+    "reward": "Negative Log Differential Validation Loss",
     "state_description": [
         "Predictive Change Variance (Discounted Average)",
         "Predictive Change Variance (Uncertainty)",
@@ -22,13 +30,17 @@ INFO = {
         "Current Learning Rate",
         "Training Loss",
         "Validation Loss",
+        "Step",
+        "Alignment",
+        "Crashed"
     ],
 }
+
 
 SGD_DEFAULTS = objdict(
     {
         "action_space_class": "Box",
-        "action_space_args": [np.array([0]), np.array([10])],
+        "action_space_args": [],
         "observation_space_class": "Dict",
         "observation_space_type": None,
         "observation_space_args": [
@@ -46,19 +58,44 @@ SGD_DEFAULTS = objdict(
                 "currentLR": spaces.Box(low=0, high=1, shape=(1,)),
                 "trainingLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
                 "validationLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
+                "step": spaces.Box(low=0, high=np.inf, shape=(1,)),
+                "alignment": spaces.Box(low=0, high=1, shape=(1,)),
+                "crashed": spaces.Discrete(2),
             }
         ],
-        "reward_range": (-(10 ** 9), 0),
-        "cutoff": 5e1,
+        "reward_type": log_diff_training_loss,
+        "cutoff": 1e3,
         "lr": 1e-3,
+        "actions": {'lr': [0.0, 1.0]},
+        "optimizer": torch.optim.RMSprop,
+        "optimizer_kwargs": {},
+        "loss_function": __default_loss_function,
+        "loss_function_kwargs": {},
+        "val_loss_function": __default_loss_function,
+        "val_loss_function_kwargs": {},
         "training_batch_size": 64,
         "validation_batch_size": 64,
-        "no_cuda": True,
-        "beta1": 0.9,
-        "beta2": 0.999,
+        "train_validation_ratio": 0.8,
+        "no_cuda": False,
         "seed": 0,
-        "instance_set_path": "../instance_sets/sgd/sgd_train.csv",
+        "cd_paper_reconstruction": False,
+        "cd_bias_correction": True,
+        "terminate_on_crash": True,
+        "crash_penalty": 0.0,
+        "instance_set_path": "../instance_sets/sgd/sgd_train_100instances.csv",
         "benchmark_info": INFO,
+        "features": [
+            "predictiveChangeVarDiscountedAverage",
+            "predictiveChangeVarUncertainty",
+            "lossVarDiscountedAverage",
+            "lossVarUncertainty",
+            "currentLR",
+            "trainingLoss",
+            "validationLoss",
+            "step",
+            "alignment",
+            "crashed"
+        ],
     }
 )
 
@@ -68,7 +105,7 @@ class SGDBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for SGD
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, **kwargs):
         """
         Initialize SGD Benchmark
 
@@ -84,6 +121,9 @@ class SGDBenchmark(AbstractBenchmark):
         for key in SGD_DEFAULTS:
             if key not in self.config:
                 self.config[key] = SGD_DEFAULTS[key]
+
+        for k in kwargs:
+            self.config[k] = kwargs[k]
 
     def get_environment(self):
         """
@@ -117,14 +157,23 @@ class SGDBenchmark(AbstractBenchmark):
         with open(path, "r") as fh:
             reader = csv.DictReader(fh, delimiter=";")
             for row in reader:
+                if "_" in row["dataset"]:
+                    dataset_info = row["dataset"].split("_")
+                    dataset_name = dataset_info[0]
+                    dataset_size = int(dataset_info[1])
+                else:
+                    dataset_name = row["dataset"]
+                    dataset_size = None
                 instance = [
-                    row["dataset"],
+                    dataset_name,
                     int(row["seed"]),
                     row["architecture"],
+                    int(row["steps"]),
+                    dataset_size
                 ]
                 self.config["instance_set"][int(row["ID"])] = instance
 
-    def get_benchmark(self, seed=0):
+    def get_benchmark(self, instance_set_path=None, seed=0):
         """
         Get benchmark from the LTO paper
 
@@ -139,6 +188,8 @@ class SGDBenchmark(AbstractBenchmark):
             SGD environment
         """
         self.config = objdict(SGD_DEFAULTS.copy())
+        if instance_set_path is not None:
+            self.config["instance_set_path"] = instance_set_path
         self.config.seed = seed
         self.read_instance_set()
         return SGDEnv(self.config)
