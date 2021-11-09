@@ -44,6 +44,7 @@ class GeometricEnv(AbstractEnv):
         self.correlation_table = config["correlation_table"]
         self.correlation_active = config["correlation_active"]
         self.correlation_depth = config["correlation_depth"]
+        self.n_steps = config["cutoff"]
 
         self._prev_state = None
         self.action = None

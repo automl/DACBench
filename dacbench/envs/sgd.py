@@ -2,8 +2,8 @@ import math
 import numbers
 import warnings
 import json
-from functools import reduce, singledispatchmethod
-import copy
+from functools import reduce, singledispatch
+from copy import deepcopy
 from contextlib import contextmanager
 import random
 import inspect
@@ -34,14 +34,16 @@ class ExponentialMovingAverage:
         bias_correction = 1 - self.alpha ** self.t if self.bias_correction else 1
         self.mean = self.alpha * self.mean + (1 - self.alpha) * value
         mean_hat = self.mean / bias_correction
-        self.variance = self.alpha * self.variance + (1 - self.alpha) * (value - mean_hat) ** 2
+        self.variance = (
+            self.alpha * self.variance + (1 - self.alpha) * (value - mean_hat) ** 2
+        )
         return mean_hat, self.variance / bias_correction
 
 
 @contextmanager
 def fake_step(model, optimizer):
-    optimizer_state = copy.deepcopy(optimizer.state_dict())
-    model_state = copy.deepcopy(model.state_dict())
+    optimizer_state = deepcopy(optimizer.state_dict())
+    model_state = deepcopy(model.state_dict())
     try:
         yield optimizer
     finally:
@@ -54,25 +56,52 @@ class Reward:
     low: float
     high: float
 
-class TrainingLoss(Reward): pass
-class ValidationLoss(Reward): pass
-class LogTrainingLoss(Reward): pass
-class LogValidationLoss(Reward): pass
-class DiffTraining(Reward): pass
-class DiffValidation(Reward): pass
-class LogDiffTraining(Reward): pass
-class LogDiffValidation(Reward): pass
-class FullTraining(Reward): pass
 
-training_loss = TrainingLoss(-(10**9), 0)
-validation_loss = ValidationLoss(-(10**9), 10**9)
-log_training_loss = LogTrainingLoss(-(10**9), 10**9)
-log_validation_loss = LogTrainingLoss(-(10**9), 10**9)
-diff_training_loss = DiffTraining(-(10**9), 10**9)
-diff_validation_loss = DiffValidation(-(10**9), 10**9)
-log_diff_training_loss = LogDiffTraining(-(10**9), 10**9)
-log_diff_validation_loss = LogDiffValidation(-(10**9), 10**9)
-full_training_loss = FullTraining(-(10**9), 0)
+class TrainingLoss(Reward):
+    pass
+
+
+class ValidationLoss(Reward):
+    pass
+
+
+class LogTrainingLoss(Reward):
+    pass
+
+
+class LogValidationLoss(Reward):
+    pass
+
+
+class DiffTraining(Reward):
+    pass
+
+
+class DiffValidation(Reward):
+    pass
+
+
+class LogDiffTraining(Reward):
+    pass
+
+
+class LogDiffValidation(Reward):
+    pass
+
+
+class FullTraining(Reward):
+    pass
+
+
+training_loss = TrainingLoss(-(10 ** 9), 0)
+validation_loss = ValidationLoss(-(10 ** 9), 10 ** 9)
+log_training_loss = LogTrainingLoss(-(10 ** 9), 10 ** 9)
+log_validation_loss = LogTrainingLoss(-(10 ** 9), 10 ** 9)
+diff_training_loss = DiffTraining(-(10 ** 9), 10 ** 9)
+diff_validation_loss = DiffValidation(-(10 ** 9), 10 ** 9)
+log_diff_training_loss = LogDiffTraining(-(10 ** 9), 10 ** 9)
+log_diff_validation_loss = LogDiffValidation(-(10 ** 9), 10 ** 9)
+full_training_loss = FullTraining(-(10 ** 9), 0)
 
 
 class SGDEnv(AbstractEnv):
@@ -89,21 +118,28 @@ class SGDEnv(AbstractEnv):
         config : objdict
             Environment configuration
         """
-        self.config = copy.deepcopy(config)
+        self.config = config.copy()
         sig = inspect.signature(self.config.optimizer)
         for name, _ in self.config.actions.items():
             if name not in sig.parameters:
-                raise ValueError(f'{name} is not a valid {self.config.optimizer} param.')
-        self.config.action_space_args = np.array(list(zip(*self.config.actions.values())))
+                raise ValueError(
+                    f"{name} is not a valid {self.config.optimizer} param."
+                )
+        self.config.action_space_args = np.array(
+            list(zip(*self.config.actions.values()))
+        )
         self.action_names = self.config.actions.keys()
 
         if isinstance(self.config.reward_type, str):
             try:
                 self.config.reward_type = globals()[config.reward_type]
             except AttributeError:
-                raise ValueError(f'{config.reward_type} is not a valid reward type!')
+                raise ValueError(f"{config.reward_type} is not a valid reward type!")
         assert isinstance(self.config.reward_type, Reward)
-        self.config.reward_range = [self.config.reward_type.low, self.config.reward_type.high]
+        self.config.reward_range = [
+            self.config.reward_type.low,
+            self.config.reward_type.high,
+        ]
 
         super(SGDEnv, self).__init__(self.config)
 
@@ -138,8 +174,12 @@ class SGDEnv(AbstractEnv):
 
         self.model = None
         self.val_model = None
-        self.parameter_count = 0  # TODO: Verify that we still need this if we use pytorch.optim
-        self.layer_sizes = []  # TODO: Verify that we still need this if we use pytorch.optim
+        self.parameter_count = (
+            0  # TODO: Verify that we still need this if we use pytorch.optim
+        )
+        self.layer_sizes = (
+            []
+        )  # TODO: Verify that we still need this if we use pytorch.optim
 
         self.loss_function = config.loss_function(**config.loss_function_kwargs)
         self.loss_function = extend(self.loss_function)
@@ -164,7 +204,7 @@ class SGDEnv(AbstractEnv):
         else:
             self.get_state = self.get_default_state
 
-    @singledispatchmethod
+    @singledispatch
     def get_reward(self, reward_type):
         raise NotImplementedError
 
@@ -186,11 +226,16 @@ class SGDEnv(AbstractEnv):
 
     @get_reward.register
     def _(self, reward_type: LogDiffTraining):
-        return -(torch.log(self.current_training_loss) - torch.log(self.prev_training_loss)).item()
+        return -(
+            torch.log(self.current_training_loss) - torch.log(self.prev_training_loss)
+        ).item()
 
     @get_reward.register
     def _(self, reward_type: LogDiffValidation):
-        return -(torch.log(self.current_validation_loss) - torch.log(self.prev_validation_loss)).item()
+        return -(
+            torch.log(self.current_validation_loss)
+            - torch.log(self.prev_validation_loss)
+        ).item()
 
     @get_reward.register
     def _(self, reward_type: DiffTraining):
@@ -207,7 +252,12 @@ class SGDEnv(AbstractEnv):
     @property
     def crash(self):
         self.crashed = True
-        return self.get_state(self), self.config.crash_penalty, self.config.terminate_on_crash, {}
+        return (
+            self.get_state(self),
+            self.config.crash_penalty,
+            self.config.terminate_on_crash,
+            {},
+        )
 
     def seed(self, seed=None, seed_action_space=False):
         """
@@ -261,7 +311,7 @@ class SGDEnv(AbstractEnv):
                 if np.isnan(action[idx]):
                     return self.crash
                 g[action_name] = action[idx]
-            if action_name == 'lr':
+            if action_name == "lr":
                 self.current_lr = torch.Tensor([action[idx]]).to(self.device)
 
         self.optimizer.step()
@@ -334,18 +384,23 @@ class SGDEnv(AbstractEnv):
         if self.config.cd_paper_reconstruction:
             self.model.apply(init_weights)
 
-        train_dataloader_args = {"batch_size": self.config.training_batch_size, "drop_last": True}
-        validation_dataloader_args = {"batch_size": self.config.validation_batch_size, "drop_last": True}
+        train_dataloader_args = {
+            "batch_size": self.config.training_batch_size,
+            "drop_last": True,
+        }
+        validation_dataloader_args = {
+            "batch_size": self.config.validation_batch_size,
+            "drop_last": True,
+        }
         if self.use_cuda:
             param = {"num_workers": 1, "pin_memory": True}
             train_dataloader_args.update(param)
             validation_dataloader_args.update(param)
 
         if dataset == "MNIST":
-            transform = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize((0.1307,), (0.3081,))
-            ])
+            transform = transforms.Compose(
+                [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
+            )
 
             # hot fix for https://github.com/pytorch/vision/issues/3549
             # If fix is available in stable version (0.9.1), we should update and be removed this.
@@ -360,10 +415,14 @@ class SGDEnv(AbstractEnv):
             )
             # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
         elif dataset == "CIFAR":
-            transform = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-            ])
+            transform = transforms.Compose(
+                [
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        (0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)
+                    ),
+                ]
+            )
 
             train_dataset = datasets.CIFAR10(
                 "../data", train=True, download=True, transform=transform
@@ -417,12 +476,16 @@ class SGDEnv(AbstractEnv):
         self.current_training_loss = None
         self.loss_batch = None
 
-        self.optimizer = self.config.optimizer(self.model.parameters(),
-                                               lr=self.initial_lr.item(),
-                                               **self.config.optimizer_kwargs)
+        self.optimizer = self.config.optimizer(
+            self.model.parameters(),
+            lr=self.initial_lr.item(),
+            **self.config.optimizer_kwargs,
+        )
         self.optimizer.zero_grad()
 
-        self.current_lr = self.initial_lr  # TODO: Should not need these anymore if we use torch.optim as the initial LR is specified in config.optimizer_kwargs
+        self.current_lr = (
+            self.initial_lr
+        )  # TODO: Should not need these anymore if we use torch.optim as the initial LR is specified in config.optimizer_kwargs
         self.prev_direction = torch.zeros(
             (self.parameter_count,), device=self.device, requires_grad=False
         )
@@ -444,8 +507,12 @@ class SGDEnv(AbstractEnv):
         self.prev_validation_loss = torch.zeros(
             1, device=self.device, requires_grad=False
         )
-        self.ema_loss_var = ExponentialMovingAverage(self.discount_factor, self.config.cd_bias_correction)
-        self.ema_predictive_change = ExponentialMovingAverage(self.discount_factor, self.config.cd_bias_correction)
+        self.ema_loss_var = ExponentialMovingAverage(
+            self.discount_factor, self.config.cd_bias_correction
+        )
+        self.ema_predictive_change = ExponentialMovingAverage(
+            self.discount_factor, self.config.cd_bias_correction
+        )
 
         self.fake_train()
 
@@ -460,7 +527,9 @@ class SGDEnv(AbstractEnv):
         with fake_step(self.optimizer, self.model):
             prev_values = torch.nn.utils.parameters_to_vector(self.model.parameters())
             self.optimizer.step()
-            current_values = torch.nn.utils.parameters_to_vector(self.model.parameters())
+            current_values = torch.nn.utils.parameters_to_vector(
+                self.model.parameters()
+            )
             self.update_value = current_values - prev_values
 
     def close(self):
@@ -498,52 +567,61 @@ class SGDEnv(AbstractEnv):
             Environment state
 
         """
-        if ('predictiveChange' in self.config.features or
-            'predictiveChangeVarDiscountedAverage' in self.config.features or
-            'predictiveChangeVarUncertainty' in self.config.features):
-            predictive_change = self._get_predictive_change_feature(self.current_lr).item()
-            predictive_change_average, predictive_change_uncertainty = self.ema_predictive_change.update(predictive_change)
+        if (
+            "predictiveChange" in self.config.features
+            or "predictiveChangeVarDiscountedAverage" in self.config.features
+            or "predictiveChangeVarUncertainty" in self.config.features
+        ):
+            predictive_change = self._get_predictive_change_feature(
+                self.current_lr
+            ).item()
+            (
+                predictive_change_average,
+                predictive_change_uncertainty,
+            ) = self.ema_predictive_change.update(predictive_change)
 
-        if ('lossVar' in self.config.features or
-            'lossVarDiscountedAverage' in self.config.features or
-            'lossVarUncertainty' in self.config.features):
+        if (
+            "lossVar" in self.config.features
+            or "lossVarDiscountedAverage" in self.config.features
+            or "lossVarUncertainty" in self.config.features
+        ):
             loss_var = self._get_loss_feature().item()
             loss_var_average, loss_var_uncertainty = self.ema_loss_var.update(loss_var)
 
-        if 'alignment' in self.config.features:
+        if "alignment" in self.config.features:
             alignment = self._get_alignment()
 
         state = {}
 
-        if 'predictiveChange' in self.config.features:
+        if "predictiveChange" in self.config.features:
             state["predictiveChange"] = predictive_change
-        if 'predictiveChangeVarDiscountedAverage' in self.config.features:
+        if "predictiveChangeVarDiscountedAverage" in self.config.features:
             state["predictiveChangeVarDiscountedAverage"] = predictive_change_average
-        if 'predictiveChangeVarUncertainty' in self.config.features:
+        if "predictiveChangeVarUncertainty" in self.config.features:
             state["predictiveChangeVarUncertainty"] = predictive_change_uncertainty
-        if 'lossVar' in self.config.features:
+        if "lossVar" in self.config.features:
             state["lossVar"] = loss_var
-        if 'lossVarDiscountedAverage' in self.config.features:
+        if "lossVarDiscountedAverage" in self.config.features:
             state["lossVarDiscountedAverage"] = loss_var_average
-        if 'lossVarUncertainty' in self.config.features:
+        if "lossVarUncertainty" in self.config.features:
             state["lossVarUncertainty"] = loss_var_uncertainty
-        if 'currentLR' in self.config.features:
+        if "currentLR" in self.config.features:
             state["currentLR"] = self.current_lr.item()
-        if 'trainingLoss' in self.config.features:
+        if "trainingLoss" in self.config.features:
             if self.crashed:
                 state["trainingLoss"] = 0.0
             else:
                 state["trainingLoss"] = self.current_training_loss.item()
-        if 'validationLoss' in self.config.features:
+        if "validationLoss" in self.config.features:
             if self.crashed:
                 state["validationLoss"] = 0.0
             else:
                 state["validationLoss"] = self.current_validation_loss.item()
-        if 'step' in self.config.features:
+        if "step" in self.config.features:
             state["step"] = self.step_count
-        if 'alignment' in self.config.features:
+        if "alignment" in self.config.features:
             state["alignment"] = alignment.item()
-        if 'crashed' in self.config.features:
+        if "crashed" in self.config.features:
             state["crashed"] = self.crashed
 
         return state
@@ -574,9 +652,13 @@ class SGDEnv(AbstractEnv):
             loss = self._epoch()
         return loss
 
-    def transfer_model_parameters(self):  # TODO: If this is only used in validation loss calculation you can probably hide it there.
+    def transfer_model_parameters(
+        self,
+    ):  # TODO: If this is only used in validation loss calculation you can probably hide it there.
         # self.val_model.load_state_dict(self.model.state_dict())
-        for target_param, param in zip(self.val_model.parameters(), self.model.parameters()):
+        for target_param, param in zip(
+            self.val_model.parameters(), self.model.parameters()
+        ):
             target_param.data.copy_(param.data)
 
     def _get_full_training_loss(self):
@@ -637,7 +719,11 @@ class SGDEnv(AbstractEnv):
     def _get_loss_feature(self):
         if self.crashed:
             return torch.tensor(0.0)
-        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.config.cd_bias_correction else 1
+        bias_correction = (
+            (1 - self.discount_factor ** (self.c_step + 1))
+            if self.config.cd_bias_correction
+            else 1
+        )
         with torch.no_grad():
             loss_var = torch.log(torch.var(self.loss_batch))
         return loss_var
@@ -645,7 +731,11 @@ class SGDEnv(AbstractEnv):
     def _get_predictive_change_feature(self, lr):
         if self.crashed:
             return torch.tensor(0.0)
-        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.config.cd_bias_correction else 1
+        bias_correction = (
+            (1 - self.discount_factor ** (self.c_step + 1))
+            if self.config.cd_bias_correction
+            else 1
+        )
         batch_gradients = []
         for i, param in enumerate(self.model.parameters()):
             grad_batch = param.grad_batch.reshape(
@@ -663,55 +753,59 @@ class SGDEnv(AbstractEnv):
         if self.crashed:
             return torch.tensor(0.0)
         a = torch.mul(self.prev_direction, self.current_direction)
-        alignment = torch.mean(torch.sign(torch.mul(self.prev_direction, self.current_direction)))
+        alignment = torch.mean(
+            torch.sign(torch.mul(self.prev_direction, self.current_direction))
+        )
         alignment = torch.unsqueeze(alignment, dim=0)
         self.prev_direction.data.copy_(self.current_direction)
         return alignment
 
-    def generate_instance_file(self, file_name, mode='test', n=100):
-        header = ['ID', 'dataset', 'architecture', 'seed', 'steps']
+    def generate_instance_file(self, file_name, mode="test", n=100):
+        header = ["ID", "dataset", "architecture", "seed", "steps"]
 
         # dataset name, architecture, dataset size, sample dimension, number of max pool layers, hidden layers, test architecture convolutional layers
         architectures = [
-            ('MNIST',
-             'Conv2d(1, {0}, 3, 1, 1)-'
-             'MaxPool2d(2, 2)-'
-             'Conv2d({0}, {1}, 3, 1, 1)-'
-             'MaxPool2d(2, 2)-'
-             'Conv2d({1}, {2}, 3, 1, 1)-'
-             'ReLU-'
-             'Flatten-'
-             'Linear({3}, 10)-'
-             'LogSoftmax(1)',
-             60000,
-             28,
-             2,
-             3,
-             [20, 50, 500]
+            (
+                "MNIST",
+                "Conv2d(1, {0}, 3, 1, 1)-"
+                "MaxPool2d(2, 2)-"
+                "Conv2d({0}, {1}, 3, 1, 1)-"
+                "MaxPool2d(2, 2)-"
+                "Conv2d({1}, {2}, 3, 1, 1)-"
+                "ReLU-"
+                "Flatten-"
+                "Linear({3}, 10)-"
+                "LogSoftmax(1)",
+                60000,
+                28,
+                2,
+                3,
+                [20, 50, 500],
             ),
-            ('CIFAR',
-             'Conv2d(3, {0}, 3, 1, 1)-'
-             'MaxPool2d(2, 2)-'
-             'ReLU-'
-             'Conv2d({0}, {1}, 3, 1, 1)-'
-             'ReLU-'
-             'MaxPool2d(2, 2)-'
-             'Conv2d({1}, {2}, 3, 1, 1)-'
-             'ReLU-'
-             'MaxPool2d(2, 2)-'
-             'Conv2d({2}, {3}, 3, 1, 1)-'
-             'ReLU-'
-             'Flatten-'
-             'Linear({4}, 10)-'
-             'LogSoftmax(1)',
-             60000,
-             32,
-             3,
-             4,
-             [32, 32, 64, 64]
-            )
+            (
+                "CIFAR",
+                "Conv2d(3, {0}, 3, 1, 1)-"
+                "MaxPool2d(2, 2)-"
+                "ReLU-"
+                "Conv2d({0}, {1}, 3, 1, 1)-"
+                "ReLU-"
+                "MaxPool2d(2, 2)-"
+                "Conv2d({1}, {2}, 3, 1, 1)-"
+                "ReLU-"
+                "MaxPool2d(2, 2)-"
+                "Conv2d({2}, {3}, 3, 1, 1)-"
+                "ReLU-"
+                "Flatten-"
+                "Linear({4}, 10)-"
+                "LogSoftmax(1)",
+                60000,
+                32,
+                3,
+                4,
+                [32, 32, 64, 64],
+            ),
         ]
-        if mode is 'test':
+        if mode is "test":
 
             seed_list = [random.randrange(start=0, stop=1e9) for _ in range(n)]
 
@@ -726,15 +820,21 @@ class SGDEnv(AbstractEnv):
 
                 sample_size = architectures[i][3]
                 pool_layer_count = architectures[i][4]
-                linear_layer_size = conv[-1] * pow(sample_size / pow(2, pool_layer_count), 2)
+                linear_layer_size = conv[-1] * pow(
+                    sample_size / pow(2, pool_layer_count), 2
+                )
                 linear_layer_size = int(round(linear_layer_size))
 
                 dataset = architectures[i][0]
 
                 if hidden_layers == 3:
-                    architecture = architectures[i][1].format(conv[0], conv[1], conv[2], linear_layer_size)
+                    architecture = architectures[i][1].format(
+                        conv[0], conv[1], conv[2], linear_layer_size
+                    )
                 else:
-                    architecture = architectures[i][1].format(conv[0], conv[1], conv[2], conv[3], linear_layer_size)
+                    architecture = architectures[i][1].format(
+                        conv[0], conv[1], conv[2], conv[3], linear_layer_size
+                    )
 
                 # args = conv
                 # args.append(linear_layer_size)
@@ -742,7 +842,7 @@ class SGDEnv(AbstractEnv):
                 # args = {0: conv[0], 1: conv[1], 2: conv[2], 3: linear_layer_size}
                 # architecture = architectures[i][1].format(**args)
 
-                with open(fname, 'w', encoding='UTF8') as f:
+                with open(fname, "w", encoding="UTF8") as f:
                     for h in header:
                         f.write(h + ";")
 
@@ -780,18 +880,28 @@ class SGDEnv(AbstractEnv):
 
             dataset_list = [dataset_index for _ in range(n)]
 
-            dataset_size_list = [random.uniform(dataset_size_start, dataset_size_stop) for _ in range(n)]
+            dataset_size_list = [
+                random.uniform(dataset_size_start, dataset_size_stop) for _ in range(n)
+            ]
 
             seed_list = [random.randrange(start=0, stop=1e9) for _ in range(n)]
 
-            steps_list = [random.randrange(start=steps_start, stop=steps_stop) for _ in range(n)]
+            steps_list = [
+                random.randrange(start=steps_start, stop=steps_stop) for _ in range(n)
+            ]
 
-            conv1_list = [random.randrange(start=conv1_start, stop=conv1_stop) for _ in range(n)]
-            conv2_list = [random.randrange(start=conv2_start, stop=conv2_stop) for _ in range(n)]
-            conv3_list = [random.randrange(start=conv3_start, stop=conv3_stop) for _ in range(n)]
+            conv1_list = [
+                random.randrange(start=conv1_start, stop=conv1_stop) for _ in range(n)
+            ]
+            conv2_list = [
+                random.randrange(start=conv2_start, stop=conv2_stop) for _ in range(n)
+            ]
+            conv3_list = [
+                random.randrange(start=conv3_start, stop=conv3_stop) for _ in range(n)
+            ]
 
             fname = file_name + ".csv"
-            with open(fname, 'w', encoding='UTF8') as f:
+            with open(fname, "w", encoding="UTF8") as f:
                 for h in header:
                     f.write(h + ";")
 
@@ -802,12 +912,23 @@ class SGDEnv(AbstractEnv):
 
                     sample_size = architectures[dataset_list[id]][3]
                     pool_layer_count = architectures[dataset_list[id]][4]
-                    linear_layer_size = conv3_list[id] * pow(sample_size / pow(2, pool_layer_count), 2)
+                    linear_layer_size = conv3_list[id] * pow(
+                        sample_size / pow(2, pool_layer_count), 2
+                    )
                     linear_layer_size = int(round(linear_layer_size))
 
-                    dataset_size = int(dataset_size_list[id] * architectures[dataset_list[id]][2])
-                    dataset = architectures[dataset_list[id]][0] + "_" + str(dataset_size)
-                    architecture = architectures[dataset_list[id]][1].format(conv1_list[id], conv2_list[id], conv3_list[id], linear_layer_size)
+                    dataset_size = int(
+                        dataset_size_list[id] * architectures[dataset_list[id]][2]
+                    )
+                    dataset = (
+                        architectures[dataset_list[id]][0] + "_" + str(dataset_size)
+                    )
+                    architecture = architectures[dataset_list[id]][1].format(
+                        conv1_list[id],
+                        conv2_list[id],
+                        conv3_list[id],
+                        linear_layer_size,
+                    )
 
                     f.write(dataset + ";")
                     f.write(architecture + ";")
