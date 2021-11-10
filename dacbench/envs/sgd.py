@@ -2,7 +2,7 @@ import math
 import numbers
 import warnings
 import json
-from functools import reduce, singledispatch
+from functools import reduce, singledispatchmethod
 from copy import deepcopy
 from contextlib import contextmanager
 import random
@@ -204,7 +204,7 @@ class SGDEnv(AbstractEnv):
         else:
             self.get_state = self.get_default_state
 
-    @singledispatch
+    @singledispatchmethod
     def get_reward(self, reward_type):
         raise NotImplementedError
 
