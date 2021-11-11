@@ -1,5 +1,6 @@
 from __future__ import generators
 from typing import Dict
+import random
 import numpy as np
 import os
 
@@ -9,8 +10,8 @@ FILE_PATH = os.path.dirname(__file__)
 FUNCTION_CONFIG = {
     "sigmoid": 1,
     "linear": 1,
-    "polynomial2D": 1,
-    "polynomial3D": 1,
+    "parabel": 1,
+    "cubic": 1,
     "exponential": 1,
     "logarithmic": 1,
     "constant": 1,
@@ -21,8 +22,8 @@ FUNCTION_CONFIG = {
 FUNCTION_PARAMETER_NUMBERS = {
     "sigmoid": 2,
     "linear": 2,
-    "polynomial2D": 3,
-    "polynomial3D": 4,
+    "parabel": 3,
+    "cubic": 3,
     "exponential": 1,
     "logarithmic": 1,
     "constant": 1,
@@ -32,7 +33,9 @@ FUNCTION_PARAMETER_NUMBERS = {
 SAMPLE_SIZE = 100
 
 
-def save_geometric_instances(filename: str, config: Dict = FUNCTION_CONFIG):
+def save_geometric_instances(
+    filename: str, config: Dict = FUNCTION_CONFIG, path: str = ""
+):
     """
     First delete old isntance_set.
     Create new instances based on config.
@@ -44,7 +47,10 @@ def save_geometric_instances(filename: str, config: Dict = FUNCTION_CONFIG):
     config : Dict, optional
         config that has info about which functions will get selected, by default FUNCTION_CONFIG
     """
-    csv_path = os.path.join(FILE_PATH, filename)
+    if path:
+        csv_path = os.path.join(path, filename)
+    else:
+        csv_path = os.path.join(FILE_PATH, filename)
 
     if os.path.exists(csv_path):
         os.remove(csv_path)
@@ -88,19 +94,20 @@ def _create_csv_string(index, func_name: str) -> str:
 
     if func_name == "sigmoid":
         value_generator = sample_sigmoid_value()
-    elif "polynomial" in func_name:
-        value_generator = sample_polynomial_value()
+    elif func_name == "cubic" or func_name == "parabel":
+        value_generator = sample_parabel_cubic_value()
 
     for i in range(max_count):
 
         if i < count:
-
             if func_name == "sinus":
                 value = np.round(sample_sinus_value(), 1)
             elif func_name == "sigmoid":
                 value = np.round(next(value_generator), 1)
-            elif "polynomial" in func_name:
-                value = np.round(next(value_generator), 1)
+            elif func_name == "cubic":
+                value = next(value_generator)
+            elif func_name == "parabel":
+                value = next(value_generator)
             else:
                 value = np.round(np.random.uniform(low=-10.0, high=10.0), 1)
 
@@ -123,12 +130,15 @@ def sample_sigmoid_value():
     yield infliction
 
 
-def sample_polynomial_value():
-    start_value = np.round(np.random.uniform(low=1, high=10), 1)
+def sample_parabel_cubic_value():
+    sig = [-1, 1]
+    yield random.choice(sig)
 
-    for n in range(1, 999):
-        value = np.power(start_value, 1 / n)
-        yield value * np.random.choice([-1, 1])
+    x_int = list(range(3, 8))
+    yield random.choice(x_int)
+
+    y_int = [-50, -20, -10, -5, -1, 0, 1, 5, 10, 20, 50]
+    yield random.choice(y_int)
 
 
 if __name__ == "__main__":
