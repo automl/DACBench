@@ -552,8 +552,15 @@ class Functions:
         elif "logarithmic" == function_name:
             function_value = self._logarithmic(time_step, coefficients[0])
 
-        elif "polynomial" in function_name:
-            function_value = self._polynom(time_step, coefficients)
+        elif "cubic" in function_name:
+            function_value = self._cubic(
+                time_step, coefficients[0], coefficients[1], coefficients[2]
+            )
+
+        elif "parabel" in function_name:
+            function_value = self._parabel(
+                time_step, coefficients[0], coefficients[1], coefficients[2]
+            )
 
         elif "sinus" in function_name:
             function_value = self._sinus(time_step, coefficients[0])
@@ -605,14 +612,13 @@ class Functions:
         """Linear function"""
         return a * t + b
 
-    def _polynom(self, t: float, coeff_list: List[float]):
-        """Polynomial function. Dimension depends on length of coefficient list."""
-        pol_value = 0
+    def _parabel(self, t: float, sig: int, x_int: int, y_int: int):
+        """Parabel function"""
+        return sig * (t - x_int) ** 2 + y_int
 
-        for dim, coeff in enumerate(coeff_list):
-            pol_value += coeff * t ** dim
-
-        return pol_value
+    def _cubic(self, t: float, sig: int, x_int: int, y_int: int):
+        """cubic function"""
+        return sig * (t - x_int) ** 3 + y_int
 
     def _logarithmic(self, t: float, a: float):
         """Logarithmic function"""

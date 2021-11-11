@@ -32,14 +32,13 @@ GEOMETRIC_DEFAULTS = objdict(
         "action_value_default": 4,
         # if action_values_variable True action_value_mapping will be used instead of action_value_default to define action values
         # action_value_mapping defines number of action values for differnet functions
-        # sigmoid is split in 3 actions, polynomial3D in 7 etc.
+        # sigmoid is split in 3 actions, cubic in 7 etc.
         "action_values_variable": True,
         "action_value_mapping": {
             "sigmoid": 3,
             "linear": 3,
-            "polynomial2D": 5,
-            "polynomial3D": 7,
-            "polynomial7D": 11,
+            "parabel": 5,
+            "cubic": 7,
             "exponential": 4,
             "logarithmic": 4,
             "constant": 1,
