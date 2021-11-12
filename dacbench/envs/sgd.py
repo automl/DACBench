@@ -146,6 +146,8 @@ class SGDEnv(AbstractEnv):
         self.sgd_momentum_v = 0
         self.sgd_rho = 0.9
 
+        self.clip_grad = config.clip_grad
+
         self.t = 0
         self.step_count = torch.zeros(1, device=self.device, requires_grad=False)
 
@@ -297,6 +299,7 @@ class SGDEnv(AbstractEnv):
         self.current_lr = new_lr
 
         direction = self.get_optimizer_direction()
+        direction = direction.clip(*self.clip_grad)
         if any(np.isnan(direction)):
             return self.crash
 
