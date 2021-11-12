@@ -76,7 +76,7 @@ SGD_DEFAULTS = objdict(
         "train_validation_ratio": 0.8,
         "no_cuda": False,
         "beta1": 0.9,
-        "beta2": 0.999,
+        "beta2": 0.9,
         "seed": 0,
         "cd_paper_reconstruction": False,
         "cd_bias_correction": True,
