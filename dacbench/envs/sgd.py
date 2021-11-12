@@ -383,7 +383,7 @@ class SGDEnv(AbstractEnv):
         train_dataloader_args = {"batch_size": self.batch_size, "drop_last": True}
         validation_dataloader_args = {"batch_size": self.validation_batch_size, "drop_last": True}
         if self.use_cuda:
-            param = {"num_workers": 1, "pin_memory": True, "shuffle": True}
+            param = {"num_workers": 1, "pin_memory": True}
             train_dataloader_args.update(param)
             validation_dataloader_args.update(param)
 
