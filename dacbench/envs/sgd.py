@@ -137,7 +137,7 @@ class SGDEnv(AbstractEnv):
 
         self.beta1 = config.beta1
         self.beta2 = config.beta2
-        self.epsilon = 1.0e-06
+        self.epsilon = config.epsilon
         # RMSprop parameters
         self.beta2 = config.beta2
         self.m = 0

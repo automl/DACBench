@@ -77,6 +77,7 @@ SGD_DEFAULTS = objdict(
         "no_cuda": False,
         "beta1": 0.9,
         "beta2": 0.9,
+        "epsilon": 1.0e-06,
         "seed": 0,
         "cd_paper_reconstruction": False,
         "cd_bias_correction": True,
