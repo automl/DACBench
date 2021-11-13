@@ -38,11 +38,14 @@ HYFLEX_DEFAULTS = objdict(
                 )
             }
         ],
+        "state_method": HyFlexEnv.get_default_state,
+        "state_features": None,
+        "reward_function": HyFlexEnv.get_default_reward,        
         "reward_range": (0, sys.float_info.max),
         "cutoff": 1e3,
         "seed": 42,
         "instance_set_path": "../instance_sets/hyflex/chesc.csv",
-        "benchmark_info": INFO
+        "benchmark_info": INFO,        
     }
 )
 
@@ -111,7 +114,6 @@ class HyFlexBenchmark(AbstractBenchmark):
             reader = csv.DictReader(fh)
             single_domain = None
             for row in reader:
-                instance_index = int(row["instance"])
                 instance = [
                     row["domain"],
                     int(row["instance"]),
@@ -131,7 +133,7 @@ class HyFlexBenchmark(AbstractBenchmark):
         # configure action space
         if self.config["learn_select"] and self.config["learn_accept"]:
             self.config["action_space_class"] = "MultiDiscrete"
-            self.config["action_space_args"] = [[DOMAINS[single_domain]["n_heuristics"], 2]]
+            self.config["action_space_args"] = [[2, DOMAINS[single_domain]["n_heuristics"]]]
         else:
             self.config["action_space_class"] = "Discrete"
             if self.config["learn_select"]:

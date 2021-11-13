@@ -5,12 +5,15 @@ Python wrapper classes for HyFlex (should be a separate file, or even project)
 from enum import Enum
 
 from typing import List
+from collections import deque
 
 import numpy as np
 import requests
 
 HeuristicType = Enum('HeuristicType', 'CROSSOVER LOCAL_SEARCH MUTATION OTHER RUIN_RECREATE')
 H_TYPE = HeuristicType
+HISTORY_LENGTH = 5
+MAXINT = 1e8
 
 
 class ToyProblemDomain:
@@ -50,6 +53,19 @@ class ToyProblemDomain:
         self.mem_size = 2
         self.mem = None
         self.base = None
+        
+    def getHeuristicDescription(heuristic_id, current_f_inc):
+        if heuristic_id==-1:
+            return " x"
+        if heuristic_id==0:
+            return "-2"
+        if heuristic_id==1:
+            return "+1"
+        if heuristic_id==2:
+            return "+2"
+        if current_f_inc%2==0:
+            return "/2"
+        return "*2"
 
     def getHeuristicsOfType(self, heuristicType: HeuristicType) -> List[int]:
         """
@@ -446,6 +462,8 @@ class HyFlexEnv(AbstractEnv):
         self.f_best = None  # fitness of current best
         self.f_prop = None  # fitness of proposal
         self.f_inc = None  # fitness of incumbent
+        self.h = None # index of the currently proposed heuristic
+        self.f_delta = None # self.f_inc - self.f_prop
 
         # action parser
         def value_of(action):
@@ -454,23 +472,71 @@ class HyFlexEnv(AbstractEnv):
             except (TypeError, IndexError):
                 return action
         if config["learn_select"] and config["learn_accept"]:
-            self._parse_action = lambda action: (action[0], action[1])
+            self._parse_action = lambda action: (action[0], action[1]-1) # (nguyen) heuristic index starting from -1, while gym.spaces.Discrete starts from 0
         elif config["learn_select"]:
-            self._parse_action = lambda action: (None, value_of(action))
+            self._parse_action = lambda action: (None, value_of(action)-1) # (nguyen) heuristic index starting from -1, while gym.spaces.Discrete starts from 0
         elif config["learn_accept"]:
             self._parse_action = lambda action: (value_of(action), None)
         else:
             raise Exception("No learning target: Either selection and/or acceptance must be learned!")
 
+        # set reward function
         if "reward_function" in config.keys():
-            self.get_reward = config["reward_function"]
+            if isinstance(config["reward_function"],str): # reward_function is the name of a function in HyFlexEnv      
+                self.get_reward = getattr(HyFlexEnv, config["reward_function"])
+            else: # reward function is a function pointer
+                self.get_reward = config["reward_function"] 
         else:
             self.get_reward = self.get_default_reward
 
-        if "state_method" in config.keys():
-            self.get_state = config["state_method"]
+        # set state method
+        if "state_method" in config.keys(): 
+            if isinstance(config["state_method"], str) and (config["state_method"].strip()!=""): 
+                try:
+                    # state method is just the name of a function in HyFlexEnv
+                    self.get_state = getattr(HyFlexEnv, config["state_method"])
+                except:
+                    # state method is described by a string listing names of features in the state. In this case we'll construct self.get_state based on the description
+                    # Examples:
+                    #   a state space with information of the current step only: "f_best, f_delta, f_prop, f_inc, h"
+                    #   a state space with information of multiple time steps: "f_best, f_best_{t-1}, f_best_{t-4}, f_prop, f_prop_{t-1}, f_prop_{t-4}"
+                    #   a state space with information of multiple time steps: "f_best_{t-0..4}, f_prop_{t-0..4}"
+                    state_features = [s.strip() for s in config["state_method"].split(',')]
+                    self._state_feat_funcs = self._get_state_function_from_feature_names(state_features)
+                    self.get_state = self.get_state_from_features
+            else: # state method is a function pointer
+                self.get_state = config["state_method"]            
         else:
             self.get_state = self.get_default_state
+
+    def _get_state_function_from_feature_names(self, features):
+        state_feat_funcs = []
+        for feat in features:            
+            if feat in ['f_best','f_delta','f_prop','f_inc','h']: # get values at current iteration
+                state_feat_funcs.append(lambda history='history_'+feat: [vars(self)[history][-1]])
+            elif "_{t-" in feat: # get values from histories, e.g., "f_prop_{t-1}" will return self.history_f_best[-2], and "f_prop_{t-0..4}" will return self.history_f_best[-1:-5]
+                ids = feat.split("_{t-")[1]
+                name = feat.split("_{t-")[0]
+                if '..' in ids: # it's a range
+                    start = int(ids.split('..')[0]) + 1
+                    end = int(ids.split('..')[1][:-1]) + 1
+                    assert (start>=1 and start<=end and end<=HISTORY_LENGTH), "Error: " + feat + ": invalid range (must be within 0.." + str(HISTORY_LENGTH-1) + ")"
+                    state_feat_funcs.append(lambda his='history_'+name: [vars(self)[his][k] for k in range(-end,-start+1)])
+                else: # it's just one value
+                    k = int(feat.split("_{t-")[1][:-1]) + 1                    
+                    assert (k>=1 and k<=HISTORY_LENGTH), "Error: " + feat + ": invalid range (must be within 0.." + str(HISTORY_LENGTH-1) + ")"
+                    assert k<=HISTORY_LENGTH, "Error: " + feat + ": index out of range history limit (" + str(HISTORY_LENGTH) + ") exceeded, please increase HISTORY_LENGTH"
+                    state_feat_funcs.append(lambda his='history_'+name: [vars(self)[his][-k]])          
+            else:
+                raise Exception("Error: invalid state features: " + feat)
+        return state_feat_funcs
+        
+    # TODO: to be removed
+    def get_state_from_features(self):
+        state_vals = np.asarray([val for f in self._state_feat_funcs for val in f()])
+        if len(state_vals.shape)>1: # flatten the state if necessary
+            state_vals = np.concatenate(state_vals)
+        return state_vals
 
     def step(self, action):
         """
@@ -496,15 +562,54 @@ class HyFlexEnv(AbstractEnv):
             self.f_inc = self.f_prop
 
         # generate a new proposal
-        self.f_prop = self._generate_proposal(next_select_action)
+        self.f_prop, (nary, h)  = self._generate_proposal(next_select_action)
 
         # calculate reward (note: assumes f_best is not yet updated!)
         reward = self.get_reward(self)
 
         # update best
         self._update_best()
+        
+        # update self.h and self.f_delta
+        self.f_delta = self.f_inc - self.f_prop
+        self.h = h
+        
+        # update histories
+        acceptance = prev_accept_action
+        if acceptance is None:
+            acceptance = self.accept
+        self.history_acceptance.append(acceptance)
+        self.history_f_best.append(self.f_best)
+        self.history_f_inc.append(self.f_inc)
+        self.history_f_prop.append(self.f_prop)
+        self.history_f_delta.append(self.f_delta)
+        self.history_h.append(h)
 
-        return self.get_state(self), reward, done, {'f_best': self.f_best}
+        # update logs
+        self.log_acceptance.append(acceptance)
+        self.log_f_best.append(self.f_best)
+        self.log_f_inc.append(self.f_inc)
+        self.log_f_prop.append(self.f_prop)
+        self.log_reward.append(reward)
+        self.log_h.append((nary,h))
+        if isinstance(self.problem, ToyProblemDomain):
+            self.log_h_str.append(ToyProblemDomain.getHeuristicDescription(h,self.f_inc))
+
+        # info
+        if done:
+            info = {'f_best': self.f_best,
+                    'log_acceptance': self.log_acceptance,
+                    'log_f_best': self.log_f_best,
+                    'log_f_inc': self.log_f_inc,
+                    'log_f_prop': self.log_f_prop,
+                    'log_reward': self.log_reward,                  
+                    'log_h': self.log_h,
+                    'log_h_str': self.log_h_str,
+                    'instance': self.instance}
+        else:
+            info = {'f_best': self.f_best}
+
+        return self.get_state(), reward, done, info
 
     def reset(self):
         """
@@ -533,7 +638,7 @@ class HyFlexEnv(AbstractEnv):
         self.unary_heuristics += self.problem.getHeuristicsOfType(H_TYPE.OTHER)
         self.binary_heuristics = self.problem.getHeuristicsOfType(H_TYPE.CROSSOVER)
         self.heuristic_indices = list(range(-1, len(self.unary_heuristics) + len(self.binary_heuristics)))
-        self.heuristic_arities = {**{-1: 0},
+        self.heuristic_arities = {**{-1: 0}, 
                                   **{h: 1 for h in self.unary_heuristics},
                                   **{h: 2 for h in self.binary_heuristics}}
         # load instance
@@ -546,10 +651,45 @@ class HyFlexEnv(AbstractEnv):
         self.f_best = self.problem.getFunctionValue(self.s_best)
         self.f_inc = self.f_best
         # generate a proposal
-        self.f_prop = self._generate_proposal()
+        self.f_prop, (nary,h) = self._generate_proposal()
+        self.h = h
+                
         # update best
         self._update_best()
-        return self.get_state(self)
+        
+        # reset histories
+        self.history_acceptance = deque([-1]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)
+        self.history_f_best =  deque([self.f_best]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)  # used to be MAXINT
+        self.history_f_inc =  deque([self.f_inc]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)   # used to be MAXINT
+        self.history_f_prop =  deque([self.f_prop]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)  # used to be MAXINT
+        self.history_f_delta = deque([0]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)
+        self.history_h = deque([-2]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH) # history of heuristic ids being proposed, starting from -1
+
+        # for logging
+        self.log_acceptance = []
+        self.log_f_best = []
+        self.log_f_inc = []
+        self.log_f_prop = []
+        self.log_reward = []
+        self.log_h = []
+        self.log_h_str = []
+        
+        # update histories
+        self.history_f_best.append(self.f_best)
+        self.history_f_inc.append(self.f_inc)
+        self.history_f_prop.append(self.f_prop)
+        self.history_f_delta.append(self.f_inc-self.f_prop)
+        self.history_h.append(h)
+
+        # update logs
+        self.log_f_best.append(self.f_best)
+        self.log_f_inc.append(self.f_inc)
+        self.log_f_prop.append(self.f_prop)        
+        self.log_h.append((nary,h))                
+        if isinstance(self.problem, ToyProblemDomain):
+            self.log_h_str.append(ToyProblemDomain.getHeuristicDescription(h,self.f_inc))
+
+        return self.get_state()
 
     def _generate_proposal(self, select_action=None):
         if select_action is None:
@@ -562,7 +702,7 @@ class HyFlexEnv(AbstractEnv):
         else:
             # note: the best solution found thus far is used as 2nd argument for crossover
             f_prop = self.problem.applyHeuristicBinary(select_action, self.s_inc, self.s_best, self.s_prop)
-        return f_prop
+        return f_prop, (self.heuristic_arities[select_action], select_action)
 
     def _update_best(self):
         if self.f_prop < self.f_best:
@@ -605,6 +745,9 @@ class HyFlexEnv(AbstractEnv):
 
         """
         return max(self.f_best - self.f_prop, 0)
+
+    def get_auc_reward(self):
+        return -min(self.f_best, self.f_prop)
 
     def get_default_state(self, _):
         """
