@@ -143,8 +143,8 @@ class GeometricBenchmark(AbstractBenchmark):
                     known_ids.append(id)
 
                 for index, element in enumerate(row.values()):
-                    if element == "0" and index != 0:
-                        break
+                    # if element == "0" and index != 0:
+                    #     break
 
                     # read numbers from csv as floats
                     element = float(element) if index != 1 else element
