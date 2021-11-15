@@ -96,7 +96,7 @@ class AbstractBenchmark:
             del conf["instance_set"]
 
         with open(path, "w") as fp:
-            json.dump(conf, fp)
+            json.dump(conf, fp, default=lambda o: "not serializable")
 
     def jsonify_wrappers(self):
         wrappers = []
