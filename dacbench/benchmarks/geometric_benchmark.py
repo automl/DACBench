@@ -47,7 +47,9 @@ GEOMETRIC_DEFAULTS = objdict(
         "action_interval_mapping": {},  # maps actions to equally sized intervalls in interval [-1, 1]
         "derivative_interval": 3,  # defines how many values are used for derivative calculation
         "realistic_trajectory": True,  # True: coordiantes are used as trajectory, False: Actions are used as trajectories
-        "instance_set_path": "../instance_sets/geometric/geometric_test.csv",
+        "instance_set_path": os.path.join(
+            FILE_PATH, "../instance_sets/geometric/geometric_test.csv"
+        ),
         # correlation table to chain dimensions -> if dim x changes dim y changes as well
         # either assign numpy array to correlation table or use create_correlation_table()
         "correlation_active": False,
@@ -125,7 +127,7 @@ class GeometricBenchmark(AbstractBenchmark):
         Creates a nested List for every Intance.
         The List contains all functions with their respective values.
         """
-        path = os.path.join(FILE_PATH, self.config.instance_set_path)
+        path = self.config.instance_set_path
         self.config["instance_set"] = {}
         with open(path, "r") as fh:
 
