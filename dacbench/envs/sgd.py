@@ -380,10 +380,10 @@ class SGDEnv(AbstractEnv):
         if self.cd_paper_reconstruction:
             self.model.apply(init_weights)
 
-        train_dataloader_args = {"batch_size": self.batch_size}
-        validation_dataloader_args = {"batch_size": self.validation_batch_size}
+        train_dataloader_args = {"batch_size": self.batch_size, "drop_last": True, "shuffle": True}
+        validation_dataloader_args = {"batch_size": self.validation_batch_size, "drop_last": True, "shuffle": True}
         if self.use_cuda:
-            param = {"num_workers": 1, "pin_memory": True, "shuffle": True}
+            param = {"num_workers": 1, "pin_memory": True}
             train_dataloader_args.update(param)
             validation_dataloader_args.update(param)
 
@@ -429,26 +429,34 @@ class SGDEnv(AbstractEnv):
             len(train_dataset) * self.training_validation_ratio
         )
         validation_dataset_limit = len(train_dataset)
+        validation_dataset_size = validation_dataset_limit - training_dataset_limit
 
         self.train_dataset = torch.utils.data.Subset(
             train_dataset, range(0, training_dataset_limit - 1)
         )
-        self.validation_dataset = torch.utils.data.Subset(
-            train_dataset, range(training_dataset_limit, validation_dataset_limit)
-        )
-
         self.train_loader = torch.utils.data.DataLoader(
             self.train_dataset, **train_dataloader_args
         )
+        self.train_loader_it = iter(self.train_loader)
+
+        if validation_dataset_size != 0:
+            self.validation_dataset = torch.utils.data.Subset(
+                train_dataset, range(training_dataset_limit, validation_dataset_limit)
+            )
+            self.validation_loader = torch.utils.data.DataLoader(
+                self.validation_dataset, **validation_dataloader_args
+            )
+            self.validation_loader_it = iter(self.validation_loader)
+        else:
+            self.validation_dataset = None
+            self.validation_loader = None
+            self.validation_loader_it = None
+
+
         # self.test_loader = torch.utils.data.DataLoader(self.test_dataset, **train_dataloader_args)
-        self.validation_loader = torch.utils.data.DataLoader(
-            self.validation_dataset, **validation_dataloader_args
-        )
 
         self.train_batch_index = 0
         self.epoch_index = 0
-        self.train_loader_it = iter(self.train_loader)
-        self.validation_loader_it = iter(self.validation_loader)
 
         self.parameter_count = 0
         self.layer_sizes = []
