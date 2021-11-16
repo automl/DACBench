@@ -65,6 +65,7 @@ class SGDEnv(AbstractEnv):
         self.on_features = config.features
         self.cd_paper_reconstruction = config.cd_paper_reconstruction
         self.cd_bias_correction = config.cd_bias_correction
+        self.is_test = config.test
 
         if isinstance(config.reward_type, Reward):
             self.reward_type = config.reward_type
@@ -399,21 +400,23 @@ class SGDEnv(AbstractEnv):
                 ("/".join([new_mirror, url.split("/")[-1]]), md5)
                 for url, md5 in datasets.MNIST.resources
             ]
-
-            train_dataset = datasets.MNIST(
-                "../data", train=True, download=True, transform=transform
-            )
-            # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
+            if not self.is_test:
+                train_dataset = datasets.MNIST(
+                    "../data", train=True, download=True, transform=transform
+                )
+            else:
+                train_dataset = datasets.MNIST('../data', train=False, download=True, transform=transform)
         elif dataset == "CIFAR":
             transform = transforms.Compose([
                 transforms.ToTensor(),
                 transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
             ])
-
-            train_dataset = datasets.CIFAR10(
-                "../data", train=True, download=True, transform=transform
-            )
-            # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
+            if not self.is_test:
+                train_dataset = datasets.CIFAR10(
+                    "../data", train=True, download=True, transform=transform
+                )
+            else:
+                train_dataset = datasets.MNIST('../data', train=False, download=True, transform=transform)
         else:
             raise NotImplementedError
 
