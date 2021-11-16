@@ -12,7 +12,7 @@ from dacbench.envs.sgd import Reward
 
 
 def __default_loss_function(**kwargs):
-    return NLLLoss(reduction = 'none', **kwargs)
+    return NLLLoss(reduction="none", **kwargs)
 
 
 HISTORY_LENGTH = 40
@@ -32,7 +32,7 @@ INFO = {
         "Validation Loss",
         "Step",
         "Alignment",
-        "Crashed"
+        "Crashed",
     ],
 }
 
@@ -66,7 +66,7 @@ SGD_DEFAULTS = objdict(
         "reward_type": log_diff_training_loss,
         "cutoff": 1e3,
         "lr": 1e-3,
-        "actions": {'lr': [0.0, 1.0]},
+        "actions": {"lr": [0.0, 1.0]},
         "optimizer": torch.optim.RMSprop,
         "optimizer_kwargs": {},
         "loss_function": __default_loss_function,
@@ -94,7 +94,7 @@ SGD_DEFAULTS = objdict(
             "validationLoss",
             "step",
             "alignment",
-            "crashed"
+            "crashed",
         ],
     }
 )
@@ -148,11 +148,8 @@ class SGDBenchmark(AbstractBenchmark):
         Read path of instances from config into list
         """
 
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
+        path = self.config.instance_set_path
+
         self.config["instance_set"] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh, delimiter=";")
@@ -169,7 +166,7 @@ class SGDBenchmark(AbstractBenchmark):
                     int(row["seed"]),
                     row["architecture"],
                     int(row["steps"]),
-                    dataset_size
+                    dataset_size,
                 ]
                 self.config["instance_set"][int(row["ID"])] = instance
 
