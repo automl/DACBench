@@ -400,23 +400,21 @@ class SGDEnv(AbstractEnv):
                 ("/".join([new_mirror, url.split("/")[-1]]), md5)
                 for url, md5 in datasets.MNIST.resources
             ]
-            if not self.is_test:
-                train_dataset = datasets.MNIST(
-                    "../data", train=True, download=True, transform=transform
-                )
-            else:
-                train_dataset = datasets.MNIST('../data', train=False, download=True, transform=transform)
+
+            train_dataset = datasets.MNIST(
+                "../data", train=True, download=True, transform=transform
+            )
+            test_dataset = datasets.MNIST('../data', train=False, download=True, transform=transform)
         elif dataset == "CIFAR":
             transform = transforms.Compose([
                 transforms.ToTensor(),
                 transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
             ])
-            if not self.is_test:
-                train_dataset = datasets.CIFAR10(
-                    "../data", train=True, download=True, transform=transform
-                )
-            else:
-                train_dataset = datasets.MNIST('../data', train=False, download=True, transform=transform)
+
+            train_dataset = datasets.CIFAR10(
+                "../data", train=True, download=True, transform=transform
+            )
+            test_dataset = datasets.MNIST('../data', train=False, download=True, transform=transform)
         else:
             raise NotImplementedError
 
@@ -443,6 +441,12 @@ class SGDEnv(AbstractEnv):
             self.validation_dataset = torch.utils.data.Subset(
                 train_dataset, range(training_dataset_limit, validation_dataset_limit)
             )
+            self.validation_loader = torch.utils.data.DataLoader(
+                self.validation_dataset, **validation_dataloader_args
+            )
+            self.validation_loader_it = iter(self.validation_loader)
+        elif self.is_test:
+            self.validation_dataset = test_dataset
             self.validation_loader = torch.utils.data.DataLoader(
                 self.validation_dataset, **validation_dataloader_args
             )
@@ -671,7 +675,7 @@ class SGDEnv(AbstractEnv):
 
         validation_loss /= len(self.validation_loader.dataset)
         # self.model.train()
-        return -validation_loss.item()
+        return validation_loss
 
     @property
     def current_validation_loss(self):
