@@ -40,7 +40,6 @@ LUBY_DEFAULTS = objdict(
         "min_steps": 2 ** 3,
         "seed": 0,
         "instance_set_path": "../instance_sets/luby/luby_default.csv",
-        "test_set_path": None,
         "benchmark_info": INFO,
     }
 )
@@ -68,7 +67,7 @@ class LubyBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = LUBY_DEFAULTS[key]
 
-    def get_environment(self, test=False):
+    def get_environment(self):
         """
         Return Luby env with current configuration
 
@@ -78,7 +77,11 @@ class LubyBenchmark(AbstractBenchmark):
             Luby environment
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set(test)
+            self.read_instance_set()
+
+        # Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
 
         env = LubyEnv(self.config)
         for func in self.wrap_funcs:
@@ -131,22 +134,24 @@ class LubyBenchmark(AbstractBenchmark):
                 + "/"
                 + self.config.test_set_path
             )
+            keyword = "test_set"
         else:
             path = (
                 os.path.dirname(os.path.abspath(__file__))
                 + "/"
                 + self.config.instance_set_path
             )
-        self.config["instance_set"] = {}
+            keyword = "instance_set"
+
+        self.config[keyword] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh)
             for row in reader:
-                self.config["instance_set"][int(row["ID"])] = [
+                self.config[keyword][int(row["ID"])] = [
                     float(shift) for shift in row["start"].split(",")
                 ] + [float(slope) for slope in row["sticky"].split(",")]
-        self.config["instance_set"] = self.config["instance_set"]
 
-    def get_benchmark(self, L=8, fuzziness=1.5, seed=0, test=False):
+    def get_benchmark(self, L=8, fuzziness=1.5, seed=0):
         """
         Get Benchmark from DAC paper
 

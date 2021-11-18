@@ -61,9 +61,13 @@ class ModCMABenchmark(AbstractBenchmark):
         self.config = objdict(MODCMA_DEFAULTS.copy(), **(self.config or dict()))
         self.step_size = step_size
 
-    def get_environment(self, test=False):
+    def get_environment(self):
         if "instance_set" not in self.config:
-            self.read_instance_set(test)
+            self.read_instance_set()
+
+        # Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
 
         if self.step_size:
             self.config.action_space_class = "Box"
@@ -78,22 +82,25 @@ class ModCMABenchmark(AbstractBenchmark):
     def read_instance_set(self, test=False):
         if test:
             path = self.config.test_set_path
+            keyword = "test_set"
         else:
             path = self.config.instance_set_path
+            keyword = "instance_set"
 
-        self.config["instance_set"] = dict()
+        self.config[keyword] = dict()
         with open(path, "r") as fh:
             for line in itertools.islice(fh, 1, None):
                 _id, dim, fid, iid, *representation = line.strip().split(",")
-                self.config["instance_set"][int(_id)] = [
+                self.config[keyword][int(_id)] = [
                     int(dim),
                     int(fid),
                     int(iid),
                     list(map(int, representation)),
                 ]
 
-    def get_benchmark(self, seed: int = 0, test: bool = False):
+    def get_benchmark(self, seed: int = 0):
         self.config = MODCMA_DEFAULTS.copy()
         self.config.seed = seed
-        self.read_instance_set(test)
+        self.read_instance_set()
+        self.read_instance_set(test=True)
         return ModCMAEnv(self.config)

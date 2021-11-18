@@ -80,7 +80,7 @@ class CMAESBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = CMAES_DEFAULTS[key]
 
-    def get_environment(self, test=False):
+    def get_environment(self):
         """
         Return CMAESEnv env with current configuration
 
@@ -90,7 +90,11 @@ class CMAESBenchmark(AbstractBenchmark):
             CMAES environment
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set(test)
+            self.read_instance_set()
+
+        #Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
 
         env = CMAESEnv(self.config)
         for func in self.wrap_funcs:
@@ -108,14 +112,16 @@ class CMAESBenchmark(AbstractBenchmark):
                 + "/"
                 + self.config.test_set_path
             )
+            keyword = "test_set"
         else:
             path = (
                 os.path.dirname(os.path.abspath(__file__))
                 + "/"
                 + self.config.instance_set_path
             )
+            keyword = "instance_set"
 
-        self.config["instance_set"] = {}
+        self.config[keyword] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh)
             for row in reader:
@@ -126,9 +132,9 @@ class CMAESBenchmark(AbstractBenchmark):
                     float(row["init_sigma"]),
                     init_locs,
                 ]
-                self.config["instance_set"][int(row["ID"])] = instance
+                self.config[keyword][int(row["ID"])] = instance
 
-    def get_benchmark(self, seed=0, test=False):
+    def get_benchmark(self, seed=0):
         """
         Get benchmark from the LTO paper
 
@@ -144,5 +150,6 @@ class CMAESBenchmark(AbstractBenchmark):
         """
         self.config = objdict(CMAES_DEFAULTS.copy())
         self.config.seed = seed
-        self.read_instance_set(test)
+        self.read_instance_set()
+        self.read_instance_set(test=True)
         return CMAESEnv(self.config)

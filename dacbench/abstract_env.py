@@ -20,11 +20,30 @@ class AbstractEnv(gym.Env):
         """
         super(AbstractEnv, self).__init__()
         self.config = config
+        if "instance_update_func" in self.config.keys():
+            self.instance_updates = self.config["instance_update_func"]
+        else:
+            self.instance_updates = "round_robin"
         self.instance_set = config["instance_set"]
         self.instance_id_list = sorted(list(self.instance_set.keys()))
         self.instance_index = 0
         self.inst_id = self.instance_id_list[self.instance_index]
         self.instance = self.instance_set[self.inst_id]
+
+        self.test = False
+        if "test_set" in self.config.keys():
+            self.test_set = config["test_set"]
+            self.test_instance_id_list = sorted(list(self.test_set.keys()))
+            self.test_instance_index = 0
+            self.test_inst_id = self.test_instance_id_list[self.test_instance_index]
+            self.test_instance = self.test_set[self.test_inst_id]
+
+            self.training_set = self.instance_set
+            self.training_id_list = self.instance_id_list
+            self.training_inst_id = self.inst_id
+            self.training_instance = self.instance
+        else:
+            self.test_set = None
 
         self.benchmark_info = config["benchmark_info"]
         self.initial_seed = None
@@ -99,12 +118,38 @@ class AbstractEnv(gym.Env):
 
     def reset_(self):
         """
-        Pre-reset function for round robin schedule through instance set
+        Pre-reset function for progressing through the instance set
+        Will either use round robin, random or no progression scheme
         """
-        self.instance_index = (self.instance_index + 1) % len(self.instance_id_list)
-        self.inst_id = self.instance_id_list[self.instance_index]
-        self.instance = self.instance_set[self.inst_id]
         self.c_step = 0
+        self.use_next_instance(scheme=self.instance_updates)
+
+    def use_next_instance(self, instance=None, instance_id=None, scheme=None):
+        """
+        Changes instance according to chosen instance progession
+
+        Parameters
+        -------
+        instance
+            Instance specification for potentional new instances
+        instance_id
+            ID of the instance to switch to
+        scheme
+            Update scheme for this progression step (either round robin, random or no progression)
+        """
+        if instance is not None:
+            self.instance = instance
+        elif instance_id is not None:
+            self.inst_id = instance_id
+            self.instance = self.instance_set[self.inst_id]
+        elif scheme == "round_robin":
+            self.instance_index = (self.instance_index + 1) % len(self.instance_id_list)
+            self.inst_id = self.instance_id_list[self.instance_index]
+            self.instance = self.instance_set[self.inst_id]
+        elif scheme == "random":
+            self.inst_id = np.random.choice(self.instance_id_list)
+            self.instance = self.instance_set[self.inst_id]
+
 
     def step(self, action):
         """
@@ -247,3 +292,36 @@ class AbstractEnv(gym.Env):
             self.seed_action_space()
 
         return [seed]
+
+    def use_test_set(self):
+        """
+        Change to test instance set
+        """
+        if self.test_set is None:
+            raise ValueError("No test set was provided, please check your benchmark config.")
+
+        self.test = True
+        self.training_set = self.instance_set
+        self.training_id_list = self.instance_id_list
+        self.training_inst_id = self.inst_id
+        self.training_instance = self.instance
+
+        self.instance_set = self.test_set
+        self.instance_id_list = self.test_instance_id_list
+        self.inst_id = self.test_inst_id
+        self.instance = self.test_instance
+
+    def use_training_set(self):
+        """
+        Change to training instance set
+        """
+        self.test = False
+        self.test_set = self.instance_set
+        self.test_instance_id_list = self.instance_id_list
+        self.test_inst_id = self.inst_id
+        self.test_instance = self.instance
+
+        self.instance_set = self.training_instances
+        self.instance_id_list = self.training_id_list
+        self.inst_id = self.training_inst_id
+        self.instance = self.training_instance
