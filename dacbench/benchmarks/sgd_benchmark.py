@@ -71,6 +71,7 @@ SGD_DEFAULTS = objdict(
         "training_batch_size": 64,
         "validation_batch_size": 64,
         "train_validation_ratio": 0.8,
+        "dataloader_shuffle": True,
         "no_cuda": False,
         "beta1": 0.9,
         "beta2": 0.9,

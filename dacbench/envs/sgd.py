@@ -83,6 +83,7 @@ class SGDEnv(AbstractEnv):
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
 
         self.training_validation_ratio = config.train_validation_ratio
+        self.dataloader_shuffle = config.dataloader_shuffle
         # self.test_dataset = None
         self.train_dataset = None
         self.validation_dataset = None
@@ -383,8 +384,10 @@ class SGDEnv(AbstractEnv):
         if self.cd_paper_reconstruction:
             self.model.apply(init_weights)
 
-        train_dataloader_args = {"batch_size": self.batch_size, "drop_last": True}
-        validation_dataloader_args = {"batch_size": self.validation_batch_size, "drop_last": True}
+        train_dataloader_args = {"batch_size": self.batch_size, "drop_last": True,
+                'shuffle': self.dataloader_shuffle}
+        validation_dataloader_args = {"batch_size": self.validation_batch_size,
+                "drop_last": True, 'shuffle': self.dataloader_shuffle}
         if self.use_cuda:
             param = {"num_workers": 1, "pin_memory": True}
             train_dataloader_args.update(param)
