@@ -14,9 +14,6 @@ def __default_loss_function(**kwargs):
     return NLLLoss(reduction = 'none', **kwargs)
 
 
-HISTORY_LENGTH = 40
-INPUT_DIM = 10
-
 INFO = {
     "identifier": "LR",
     "name": "Learning Rate Adaption for Neural Networks",
@@ -78,7 +75,7 @@ SGD_DEFAULTS = objdict(
         "beta1": 0.9,
         "beta2": 0.9,
         "epsilon": 1.0e-06,
-        "clip_grad": (-1, 1),
+        "clip_grad": (-1.0, 1.0),
         "seed": 0,
         "cd_paper_reconstruction": False,
         "cd_bias_correction": True,

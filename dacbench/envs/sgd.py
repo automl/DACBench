@@ -299,7 +299,6 @@ class SGDEnv(AbstractEnv):
         self.current_lr = new_lr
 
         direction = self.get_optimizer_direction()
-        direction = direction.clip(*self.clip_grad)
         if any(np.isnan(direction)):
             return self.crash
 
@@ -545,6 +544,8 @@ class SGDEnv(AbstractEnv):
 
         """
         self.gradients = self._get_gradients()
+        self.gradients = self.gradients.clip(*self.clip_grad)
+
         self.firstOrderMomentum, self.secondOrderMomentum, self.sgdMomentum = self._get_momentum(self.gradients)
 
         if 'predictiveChangeVarDiscountedAverage' in self.on_features or 'predictiveChangeVarUncertainty' in self.on_features:
