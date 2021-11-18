@@ -40,7 +40,6 @@ LUBY_DEFAULTS = objdict(
         "min_steps": 2 ** 3,
         "seed": 0,
         "instance_set_path": "../instance_sets/luby/luby_default.csv",
-        "test_set_path": None,
         "benchmark_info": INFO,
     }
 )

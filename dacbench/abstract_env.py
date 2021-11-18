@@ -30,7 +30,7 @@ class AbstractEnv(gym.Env):
         self.inst_id = self.instance_id_list[self.instance_index]
         self.instance = self.instance_set[self.inst_id]
 
-        self.test = self.config["test"]
+        self.test = False
         if "test_set" in self.config.keys():
             self.test_set = config["test_set"]
             self.test_instance_id_list = sorted(list(self.test_set.keys()))
