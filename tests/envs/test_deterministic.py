@@ -70,8 +70,9 @@ class TestDeterministic(unittest.TestCase):
     def test_CMAESBenchmark(self):
         self.run_deterministic_test("CMAESBenchmark")
 
-    def test_ModeaBenchmark(self):
-        self.run_deterministic_test("ModeaBenchmark")
+    # This has no get_benchmark method
+    #def test_ModeaBenchmark(self):
+    #    self.run_deterministic_test("ModeaBenchmark")
 
     def test_SGDBenchmark(self):
         self.run_deterministic_test("SGDBenchmark")
