@@ -299,7 +299,7 @@ class SGDEnv(AbstractEnv):
         self.current_lr = new_lr
 
         direction = self.get_optimizer_direction()
-        if any(np.isnan(direction)):
+        if np.isnan(direction).any():
             return self.crash
 
         self.current_direction = direction
@@ -321,6 +321,7 @@ class SGDEnv(AbstractEnv):
 
         self.train_network()
         reward = self.get_reward()
+
         if np.isnan(reward):
             return self.crash
 
