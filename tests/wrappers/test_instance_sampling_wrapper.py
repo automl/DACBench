@@ -39,10 +39,6 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
 
         wrapped.reset()
         self.assertTrue(np.array_equal(wrapped.instance, sample()))
-        self.assertTrue(
-            np.array_equal(list(wrapped.instance_set.values())[0], sample())
-        )
-        self.assertTrue(wrapped.inst_id == 0)
 
     def test_fit(self):
         bench = LubyBenchmark()
