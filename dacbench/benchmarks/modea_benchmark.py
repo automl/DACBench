@@ -29,7 +29,6 @@ MODEA_DEFAULTS = objdict(
         "cutoff": 1e6,
         "seed": 0,
         "instance_set_path": "../instance_sets/modea/modea_train.csv",
-        "test_set_path": "../instance_sets/modea/modea_test.csv",
         "benchmark_info": INFO,
     }
 )
