@@ -387,7 +387,7 @@ class SGDEnv(AbstractEnv):
         train_dataloader_args = {"batch_size": self.batch_size, "drop_last": True,
                 'shuffle': self.dataloader_shuffle}
         validation_dataloader_args = {"batch_size": self.validation_batch_size,
-                "drop_last": True, 'shuffle': self.dataloader_shuffle}
+                "drop_last": True, 'shuffle': False}  # SA: shuffling empty data loader causes exception
         if self.use_cuda:
             param = {"num_workers": 1, "pin_memory": True}
             train_dataloader_args.update(param)
