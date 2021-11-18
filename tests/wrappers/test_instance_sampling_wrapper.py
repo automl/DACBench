@@ -10,6 +10,7 @@ from dacbench.wrappers import InstanceSamplingWrapper
 class TestInstanceSamplingWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
+        bench.config.instance_update_func = "none"
         env = bench.get_environment()
 
         with self.assertRaises(Exception):
