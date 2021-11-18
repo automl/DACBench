@@ -24,6 +24,7 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
 
     def test_reset(self):
         bench = LubyBenchmark()
+        bench.config.instance_update_func = "none"
         env = bench.get_environment()
 
         def sample():
@@ -45,6 +46,7 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
 
     def test_fit(self):
         bench = LubyBenchmark()
+        bench.config.instance_update_func = "none"
         bench.config.instance_set_path = "../instance_sets/luby/luby_train.csv"
         bench.read_instance_set()
         instances = bench.config.instance_set
