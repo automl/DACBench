@@ -4,9 +4,15 @@ from gym import spaces
 import numpy as np
 import os
 import csv
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+STEP_SIZE = CSH.UniformFloatHyperparameter(name='Step_size', lower=0, upper=10)
+DEFAULT_CFG_SPACE.add_hyperparameter(STEP_SIZE)
 
 INFO = {
     "identifier": "CMA-ES",
@@ -26,6 +32,7 @@ CMAES_DEFAULTS = objdict(
     {
         "action_space_class": "Box",
         "action_space_args": [np.array([0]), np.array([10])],
+        "config_space": DEFAULT_CFG_SPACE,
         "observation_space_class": "Dict",
         "observation_space_type": None,
         "observation_space_args": [

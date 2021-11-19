@@ -84,7 +84,39 @@ class AbstractEnv(gym.Env):
                     )
                     raise TypeError
 
-        if "action_space" in config.keys():
+        # TODO: use dicts by default for actions and observations
+        # The config could change this for RL purposes
+        if "config_space" in config.keys():
+            actions = config["config_space"].get_hyperparameters()
+            action_types = [type(a) for a in actions]
+            # Uniform action space
+            if np.all(action_types == action_types[0]):
+                if "Float" in action_types[0].__name__:
+                    low = [a.lower for a in actions]
+                    high = [a.upper for a in actions]
+                    self.action_space = gym.spaces.Box(low=low, high=high)
+                elif "Integer" in action_types[0].__name__ or "Categorical" in action_types[0].__name__:
+                    if len(action_types) == 1:
+                        try:
+                            n = actions[0].upper - actions[0].lower
+                        except:
+                            n = len(actions[0].sequence)
+                        self.action_space = gym.spaces.Discrete(n)
+                    else:
+                        ns = []
+                        for i in range(len(actions)):
+                            try:
+                                ns.append(a.upper - a.lower)
+                            except:
+                                ns.append(len(a.sequence))
+                        self.action_space = gym.spaces.MultiDiscrete(ns)
+                else:
+                    raise ValueError("Only float, integer and categorical hyperparameters are supported as of now")
+            # Mixed action space
+            # TODO: implement this
+            else:
+                raise ValueError("Mixed type config spaces are currently not supported")
+        elif "action_space" in config.keys():
             self.action_space = config["action_space"]
         else:
             try:
