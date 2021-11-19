@@ -1,30 +1,29 @@
+import logging
 import subprocess
 import unittest
 import signal
 
-from icecream import ic
+
 
 from dacbench.agents import StaticAgent, RandomAgent
 import dacbench.benchmarks
 from dacbench.container.remote_runner import RemoteRunner
 from dacbench.run_baselines import DISCRETE_ACTIONS
+from dacbench.container.container_utils import wait_for_port
 
-from time import sleep
+# todo load from config if existent
+PORT = 8888
+HOST = 'localhost'
+
 class TestRemoteRunner(unittest.TestCase):
     def setUp(self) -> None:
-        self.name_server_process = subprocess.Popen(
-            [
-                "pyro4-ns"
-            ]
-        )
-        sleep(1)
         self.daemon_process = subprocess.Popen(
             [
                 "python",
                 "dacbench/container/remote_runner.py"
             ]
         )
-        sleep(1)
+        wait_for_port(PORT, HOST)
 
 
 
@@ -34,9 +33,17 @@ class TestRemoteRunner(unittest.TestCase):
         remote_runner.run(agent, 1)
 
     def test_step(self):
+        skip_benchmarks = ['CMAESBenchmark']
         benchmarks = dacbench.benchmarks .__all__[1:]
 
         for benchmark in benchmarks:
+            if benchmark in skip_benchmarks:
+                continue
+                # todo Skipping since serialization is not done yet. https://github.com/automl/DACBench/issues/107
+                # self.skipTest(reason="Skipping since serialization is not done yet. https://github.com/automl/DACBench/issues/107")
+            if benchmark not in DISCRETE_ACTIONS:
+                logging.warning(f"Skipping test for {benchmark} since no discrete actions are available")
+                continue
             benchmark_class = getattr(dacbench.benchmarks, benchmark)
             benchmark_instance = benchmark_class()
 
@@ -47,12 +54,10 @@ class TestRemoteRunner(unittest.TestCase):
             ]
             for agent_creation_function, agent_info in agent_creation_functions:
                 with self.subTest(msg=f"[Benchmark]{benchmark}, [Agent]{agent_info}", agent_creation_function=agent_creation_function, benchmark=benchmark):
-                    ic(benchmark, agent_info)
                     self.run_agent_on_benchmark_test(benchmark_instance, agent_creation_function)
 
 
 
 
     def tearDown(self) -> None:
-        self.name_server_process.send_signal(signal.SIGTERM)
         self.daemon_process.send_signal(signal.SIGTERM)

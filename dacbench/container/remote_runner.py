@@ -1,16 +1,35 @@
 import os
+import sys
 from typing import Tuple
 
-from icecream import ic
-
-os.environ["PYRO_LOGFILE"] = "pyro.log"
-os.environ["PYRO_LOGLEVEL"] = "DEBUG"
+import logging
 
 from dacbench.abstract_agent import AbstractDACBenchAgent
-from dacbench.abstract_benchmark import objdict, AbstractBenchmark
-import Pyro4
+from dacbench.abstract_benchmark import AbstractBenchmark
+import Pyro4, Pyro4.naming
 
 from dacbench.container.remote_env import RemoteEnvironmentServer, RemoteEnvironmentClient
+
+# Needed in order to combine event loops of name_server and daemon
+Pyro4.config.SERVERTYPE = "multiplex"
+
+# Read in the verbosity level from the environment variable
+log_level_str = os.environ.get('DACBENCH_DEBUG', 'false')
+LOG_LEVEL = logging.DEBUG if log_level_str == 'true' else logging.INFO
+
+root = logging.getLogger()
+root.setLevel(level=LOG_LEVEL)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(level=LOG_LEVEL)
+
+# This option improves the quality of stacktraces if a container crashes
+sys.excepthook = Pyro4.util.excepthook
+#os.environ["PYRO_LOGFILE"] = "pyro.log"
+#os.environ["PYRO_LOGLEVEL"] = "DEBUG"
+
+# Number of tries to connect to server
+MAX_TRIES = 5
 
 
 @Pyro4.expose
@@ -25,10 +44,9 @@ class RemoteRunnerServer:
         self.benchmark = benchmark.from_json(config)
 
     def get_environment(self) -> str:
-        ic(self.benchmark)
 
         env = self.benchmark.get_environment()
-        ic(env)
+
         # set up logger and stuff
 
         self.env = RemoteEnvironmentServer(env)
@@ -48,7 +66,6 @@ class RemoteRunner:
 
         serialized_config = benchmark.to_json()
         serialized_type = benchmark.class_to_str()
-        ic(serialized_config)
         self.remote_runner.start(serialized_config, serialized_type)
         self.env = None
 
@@ -94,10 +111,11 @@ if __name__ == '__main__':
 
     PORT = 8888
     HOST = "localhost" # add arguments
-    name_server = Pyro4.locateNS()
+    name_server_uir, name_server_daemon, _ = Pyro4.naming.startNS()
     daemon = Pyro4.Daemon(HOST, PORT)
+    daemon.combine(name_server_daemon)
     factory = RemoteRunnerServerFactory(daemon)
     factory_uri = daemon.register(factory)
-    name_server.register("RemoteRunnerServerFactory", factory_uri)
+    name_server_daemon.nameserver.register("RemoteRunnerServerFactory", factory_uri)
 
     daemon.requestLoop()
