@@ -116,13 +116,15 @@ class AbstractEnv(gym.Env):
             done = True
         return done
 
-    def reset_(self):
+    def reset_(self, instance=None, instance_id=None, scheme=None):
         """
         Pre-reset function for progressing through the instance set
         Will either use round robin, random or no progression scheme
         """
         self.c_step = 0
-        self.use_next_instance(scheme=self.instance_updates)
+        if scheme is None:
+            scheme = self.instance_updates
+        self.use_next_instance(instance, instance_id, scheme=scheme)
 
     def use_next_instance(self, instance=None, instance_id=None, scheme=None):
         """
@@ -149,7 +151,6 @@ class AbstractEnv(gym.Env):
         elif scheme == "random":
             self.inst_id = np.random.choice(self.instance_id_list)
             self.instance = self.instance_set[self.inst_id]
-
 
     def step(self, action):
         """
@@ -298,7 +299,9 @@ class AbstractEnv(gym.Env):
         Change to test instance set
         """
         if self.test_set is None:
-            raise ValueError("No test set was provided, please check your benchmark config.")
+            raise ValueError(
+                "No test set was provided, please check your benchmark config."
+            )
 
         self.test = True
         self.training_set = self.instance_set
