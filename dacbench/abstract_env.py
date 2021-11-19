@@ -88,14 +88,15 @@ class AbstractEnv(gym.Env):
         # The config could change this for RL purposes
         if "config_space" in config.keys():
             actions = config["config_space"].get_hyperparameters()
-            action_types = [type(a) for a in actions]
+            action_types = [type(a).__name__ for a in actions]
+
             # Uniform action space
-            if np.all(action_types == action_types[0]):
-                if "Float" in action_types[0].__name__:
-                    low = [a.lower for a in actions]
-                    high = [a.upper for a in actions]
+            if all(t == action_types[0] for t in action_types):
+                if "Float" in action_types[0]:
+                    low = np.array([a.lower for a in actions])
+                    high = np.array([a.upper for a in actions])
                     self.action_space = gym.spaces.Box(low=low, high=high)
-                elif "Integer" in action_types[0].__name__ or "Categorical" in action_types[0].__name__:
+                elif "Integer" in action_types[0] or "Categorical" in action_types[0]:
                     if len(action_types) == 1:
                         try:
                             n = actions[0].upper - actions[0].lower
@@ -104,14 +105,16 @@ class AbstractEnv(gym.Env):
                         self.action_space = gym.spaces.Discrete(n)
                     else:
                         ns = []
-                        for i in range(len(actions)):
+                        for a in actions:
                             try:
                                 ns.append(a.upper - a.lower)
                             except:
                                 ns.append(len(a.sequence))
-                        self.action_space = gym.spaces.MultiDiscrete(ns)
+                        self.action_space = gym.spaces.MultiDiscrete(np.array(ns))
                 else:
-                    raise ValueError("Only float, integer and categorical hyperparameters are supported as of now")
+                    raise ValueError(
+                        "Only float, integer and categorical hyperparameters are supported as of now"
+                    )
             # Mixed action space
             # TODO: implement this
             else:
@@ -181,7 +184,6 @@ class AbstractEnv(gym.Env):
         elif scheme == "random":
             self.inst_id = np.random.choice(self.instance_id_list)
             self.instance = self.instance_set[self.inst_id]
-
 
     def step(self, action):
         """
@@ -330,7 +332,9 @@ class AbstractEnv(gym.Env):
         Change to test instance set
         """
         if self.test_set is None:
-            raise ValueError("No test set was provided, please check your benchmark config.")
+            raise ValueError(
+                "No test set was provided, please check your benchmark config."
+            )
 
         self.test = True
         self.training_set = self.instance_set
