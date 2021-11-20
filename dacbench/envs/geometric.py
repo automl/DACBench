@@ -5,6 +5,7 @@ Original environment authors: Rasmus von Glahn
 import bisect
 import os
 import itertools
+import math
 from typing import List, Dict, Tuple
 
 from mpl_toolkits import mplot3d
@@ -174,6 +175,13 @@ class GeometricEnv(AbstractEnv):
 
         next_state = self.get_state(self)
         self._prev_state = next_state
+
+        reward = self.get_reward(self)
+        if reward > 1:
+            print(f"Reward zu Hoch Coords: {coords}, step: {self.c_step}")
+        if math.isnan(reward):
+            print(f"Reward NAN Coords: {coords}, step: {self.c_step}")
+
         return next_state, self.get_reward(self), self.done, {}
 
     def reset(self) -> List[int]:
