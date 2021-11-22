@@ -39,7 +39,6 @@ GEOMETRIC_DEFAULTS = objdict(
             "linear": 3,
             "parabel": 5,
             "cubic": 7,
-            "exponential": 4,
             "logarithmic": 4,
             "constant": 1,
             "sinus": 9,
@@ -273,15 +272,23 @@ class GeometricBenchmark(AbstractBenchmark):
 
 
 if __name__ == "__main__":
+    from dacbench.challenge_benchmarks.reward_quality_challenge.reward_functions import (
+        quadratic_euclidean_distance_reward_geometric,
+    )
+
     geo_bench = GeometricBenchmark()
     geo_bench.config["correlation_active"] = True
+    geo_bench.config["reward_function"] = quadratic_euclidean_distance_reward_geometric
+
     env = geo_bench.get_environment()
 
     opt_policy = env.get_optimal_policy()
-    env.render_dimensions([0, 1, 2, 3, 4, 7], "/home/vonglahn/tmp")
+    # env.render_dimensions([0], "/home/vonglahn/tmp/MultiDAC")
     # env.render_3d_dimensions([1, 3], "/home/vonglahn/tmp")
-    env.reset()
 
-    for step in range(env.n_steps):
-        state, reward, done, info = env.step(np.random.randint(env.action_space.n))
-        print(reward)
+    while True:
+        env.reset()
+        done = False
+        while not done:
+            state, reward, done, info = env.step(np.random.randint(env.action_space.n))
+            print(reward)

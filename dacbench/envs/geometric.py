@@ -178,11 +178,12 @@ class GeometricEnv(AbstractEnv):
 
         reward = self.get_reward(self)
         if reward > 1:
+            print(f"Instance: {self.instance}, Reward:{reward}, step: {self.c_step}")
             print(f"Reward zu Hoch Coords: {coords}, step: {self.c_step}")
         if math.isnan(reward):
             print(f"Reward NAN Coords: {coords}, step: {self.c_step}")
 
-        return next_state, self.get_reward(self), self.done, {}
+        return next_state, reward, self.done, {}
 
     def reset(self) -> List[int]:
         """
@@ -540,6 +541,8 @@ class Functions:
         coefficients = function_infos[2:]
         if self.norm_calculated:
             norm_value = self.norm_values[self.instance_idx, func_idx]
+            if norm_value == 0:
+                norm_value = 1
         else:
             norm_value = 1
 
@@ -553,9 +556,6 @@ class Functions:
 
         elif "constant" == function_name:
             function_value = self._constant(coefficients[0])
-
-        elif "exponential" == function_name:
-            function_value = self._exponential(time_step, coefficients[0])
 
         elif "logarithmic" == function_name:
             function_value = self._logarithmic(time_step, coefficients[0])
@@ -573,7 +573,7 @@ class Functions:
         elif "sinus" in function_name:
             function_value = self._sinus(time_step, coefficients[0])
 
-        return np.round(function_value / norm_value, 5)
+        return min(np.round(function_value / norm_value, 5), 1)
 
     def _add_correlation(self, value_array: np.ndarray, time_step: int):
         """
@@ -634,10 +634,6 @@ class Functions:
             return a * np.log(t)
         else:
             return 1000
-
-    def _exponential(self, t: float, a: int):
-        """Exponential function"""
-        return a * np.exp(t)
 
     def _constant(self, c: float):
         """Constant function"""
