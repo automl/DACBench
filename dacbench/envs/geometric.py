@@ -179,9 +179,9 @@ class GeometricEnv(AbstractEnv):
         reward = self.get_reward(self)
         if reward > 1:
             print(f"Instance: {self.instance}, Reward:{reward}, step: {self.c_step}")
-            print(f"Reward zu Hoch Coords: {coords}, step: {self.c_step}")
+            raise ValueError(f"Reward zu Hoch Coords: {coords}, step: {self.c_step}")
         if math.isnan(reward):
-            print(f"Reward NAN Coords: {coords}, step: {self.c_step}")
+             raise ValueError(f"Reward NAN Coords: {coords}, step: {self.c_step}")
 
         return next_state, reward, self.done, {}
 
