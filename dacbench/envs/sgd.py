@@ -125,10 +125,19 @@ class SGDEnv(AbstractEnv):
                 raise ValueError(
                     f"{name} is not a valid {self.config.optimizer} param."
                 )
-        self.config.action_space_args = np.array(
-            list(zip(*self.config.actions.values()))
-        )
+
+        ######################## Custom ###############################
         self.action_names = self.config.actions.keys()
+        num_actions = [len(values) for values in config.actions.values()]
+        self.config.action_space_args = [int(np.prod(num_actions))]
+
+        # alle permutationen mappen  [[0.2, 0.9, ...], ...]
+        import itertools
+
+        s = [values for values in config.actions.values()]
+        all_permutations = list(itertools.product(*s))
+        self.action_mapping = [perm for perm in all_permutations]
+        ######################## END ###############################
 
         if isinstance(self.config.reward_type, str):
             try:
@@ -285,7 +294,7 @@ class SGDEnv(AbstractEnv):
 
         Parameters
         ----------
-        action : list
+        action : int
             action to execute
 
         Returns
@@ -297,6 +306,7 @@ class SGDEnv(AbstractEnv):
 
         self.step_count += 1
         index = 0
+        action = self.action_mapping[action]
 
         if isinstance(action, numbers.Number):
             action = [action]
@@ -805,7 +815,7 @@ class SGDEnv(AbstractEnv):
                 [32, 32, 64, 64],
             ),
         ]
-        if mode is "test":
+        if mode == "test":
 
             seed_list = [random.randrange(start=0, stop=1e9) for _ in range(n)]
 

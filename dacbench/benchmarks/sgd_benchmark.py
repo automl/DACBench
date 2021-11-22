@@ -39,7 +39,7 @@ INFO = {
 
 SGD_DEFAULTS = objdict(
     {
-        "action_space_class": "Box",
+        "action_space_class": "Discrete",
         "action_space_args": [],
         "observation_space_class": "Dict",
         "observation_space_type": None,
