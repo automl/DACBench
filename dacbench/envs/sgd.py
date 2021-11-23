@@ -247,7 +247,11 @@ class SGDEnv(AbstractEnv):
     @property
     def crash(self):
         self.crashed = True
-        return self.get_state(self), self.crash_penalty, self.terminate_on_crash, {}
+        if self.c_step >= self.n_steps:
+            done = True
+        else:
+            done = self.terminate_on_crash
+        return self.get_state(self), self.crash_penalty, done, {}
 
     def seed(self, seed=None, seed_action_space=False):
         """
