@@ -1,12 +1,13 @@
+import enum
 import json
+import os
+import socket
+import time
+from typing import Any, Union, Tuple, List, Dict
 
 import gym
 import numpy as np
-import enum
-import time
-import socket
 
-from typing import Any, Union, Tuple, List, Dict
 
 class Encoder(json.JSONEncoder):
     """ Json Encoder to save tuple and or numpy arrays | numpy floats / integer.
@@ -144,18 +145,37 @@ def serialize_random_state(random_state: np.random.RandomState) -> Tuple[int, Li
     return {'__type__': 'random_state', '__items__': [rnd0, rnd1, rnd2, rnd3, rnd4]}
 
 
+def wait_for_unixsocket(path: str, timeout: float = 10.0) -> None:
+    """
+    Wait for a UNIX socket to be created.
 
+    :param path: path to the socket
+    :param timeout: timeout in seconds
+    :return:
+    """
+    start = time.time()
+    while not os.path.exists(path):
+        if time.time() - start > timeout:
+            raise TimeoutError(f"Timeout ({timeout}s) waiting for UNIX socket {path} to be created")
+        time.sleep(0.1)
 
 def wait_for_port(port, host='localhost', timeout=5.0):
     """
     Taken from https://gist.github.com/butla/2d9a4c0f35ea47b7452156c96a4e7b12
     Wait until a port starts accepting TCP connections.
-    Args:
-        port (int): Port number.
-        host (str): Host address on which the port should exist.
-        timeout (float): In seconds. How long to wait before raising errors.
+
+    Parameters
+    ----------
+    port : int
+        Port number to check.
+    host : str
+        Host to check.
+    timeout : float
+        Timeout in seconds.
+
     Raises:
-        TimeoutError: The port isn't accepting connection after time specified in `timeout`.
+    ------
+    TimeoutError: The port isn't accepting connection after time specified in `timeout`.
     """
     start_time = time.perf_counter()
     while True:

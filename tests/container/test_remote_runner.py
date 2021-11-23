@@ -1,31 +1,45 @@
 import logging
+import signal
 import subprocess
 import unittest
-import signal
 
+import Pyro4
 
-
-from dacbench.agents import StaticAgent, RandomAgent
 import dacbench.benchmarks
+from dacbench.agents import StaticAgent, RandomAgent
+from dacbench.container.container_utils import wait_for_unixsocket
 from dacbench.container.remote_runner import RemoteRunner
 from dacbench.run_baselines import DISCRETE_ACTIONS
-from dacbench.container.container_utils import wait_for_port
 
-# todo load from config if existent
-PORT = 8888
-HOST = 'localhost'
 
-class TestRemoteRunner(unittest.TestCase):
+class TestRemoteRunnerServerFactory(unittest.TestCase):
     def setUp(self) -> None:
+        self.socket_id = RemoteRunner.id_generator()
+        self.socket = RemoteRunner.socket_from_id(self.socket_id)
+
         self.daemon_process = subprocess.Popen(
             [
                 "python",
-                "dacbench/container/remote_runner.py"
+                "dacbench/container/remote_runner.py",
+                "-u",
+                str(self.socket)
             ]
         )
-        wait_for_port(PORT, HOST)
+
+        wait_for_unixsocket(self.socket)
+
+    def test_running(self):
+        ns = Pyro4.Proxy(f"PYRO:Pyro.NameServer@./u:{self.socket}")
+        factory_uri = ns.lookup(RemoteRunner.FACTORY_NAME)
+        factory = Pyro4.Proxy(factory_uri)
+
+        remote_runner = factory.create()
+
+    def tearDown(self) -> None:
+        self.daemon_process.send_signal(signal.SIGINT)
 
 
+class TestRemoteRunner(unittest.TestCase):
 
     def run_agent_on_benchmark_test(self, benchmark, agent_creation_function):
         remote_runner = RemoteRunner(benchmark)
@@ -33,8 +47,8 @@ class TestRemoteRunner(unittest.TestCase):
         remote_runner.run(agent, 1)
 
     def test_step(self):
-        skip_benchmarks = ['CMAESBenchmark']
-        benchmarks = dacbench.benchmarks .__all__[1:]
+        skip_benchmarks = ['CMAESBenchmark', 'LubyBenchmark']
+        benchmarks = dacbench.benchmarks.__all__
 
         for benchmark in benchmarks:
             if benchmark in skip_benchmarks:
@@ -55,9 +69,3 @@ class TestRemoteRunner(unittest.TestCase):
             for agent_creation_function, agent_info in agent_creation_functions:
                 with self.subTest(msg=f"[Benchmark]{benchmark}, [Agent]{agent_info}", agent_creation_function=agent_creation_function, benchmark=benchmark):
                     self.run_agent_on_benchmark_test(benchmark_instance, agent_creation_function)
-
-
-
-
-    def tearDown(self) -> None:
-        self.daemon_process.send_signal(signal.SIGTERM)
