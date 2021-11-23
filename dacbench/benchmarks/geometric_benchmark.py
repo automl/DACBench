@@ -33,7 +33,7 @@ GEOMETRIC_DEFAULTS = objdict(
         # if action_values_variable True action_value_mapping will be used instead of action_value_default to define action values
         # action_value_mapping defines number of action values for differnet functions
         # sigmoid is split in 3 actions, cubic in 7 etc.
-        "action_values_variable": True,
+        "action_values_variable": False,
         "action_value_mapping": {
             "sigmoid": 3,
             "linear": 3,
@@ -56,7 +56,7 @@ GEOMETRIC_DEFAULTS = objdict(
         "correlation_info": {
             "high": [(1, 2, "+"), (2, 3, "-"), (1, 5, "+")],
             "middle": [(4, 5, "-")],
-            "low": [(4, 7, "+"), (2, 3, "+"), (0, 2, "-")],
+            "low": [(4, 6, "+"), (2, 3, "+"), (0, 2, "-")],
         },
         "correlation_mapping": {
             "high": (0.5, 1),
@@ -283,7 +283,7 @@ if __name__ == "__main__":
     env = geo_bench.get_environment()
 
     opt_policy = env.get_optimal_policy()
-    # env.render_dimensions([0], "/home/vonglahn/tmp/MultiDAC")
+    env.render_dimensions([0, 1, 2, 3, 4, 5, 6], "/home/vonglahn/tmp/MultiDAC")
     # env.render_3d_dimensions([1, 3], "/home/vonglahn/tmp")
 
     while True:

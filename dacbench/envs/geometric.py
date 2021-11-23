@@ -181,7 +181,7 @@ class GeometricEnv(AbstractEnv):
             print(f"Instance: {self.instance}, Reward:{reward}, step: {self.c_step}")
             raise ValueError(f"Reward zu Hoch Coords: {coords}, step: {self.c_step}")
         if math.isnan(reward):
-             raise ValueError(f"Reward NAN Coords: {coords}, step: {self.c_step}")
+            raise ValueError(f"Reward NAN Coords: {coords}, step: {self.c_step}")
 
         return next_state, reward, self.done, {}
 
@@ -418,7 +418,7 @@ class Functions:
             optimal_coords = np.zeros((self.n_actions, self.n_steps))
             for time_step in range(self.n_steps):
                 optimal_coords[:, time_step] = self.get_coordinates_at_time_step(
-                    time_step
+                    time_step + 1
                 )
 
             if self.norm_calculated:
@@ -444,14 +444,17 @@ class Functions:
         np.array
             array of function values at timestep
         """
-        value_array = np.zeros(self.n_actions)
-        for index, function_info in enumerate(self.instance):
-            value_array[index] = self._calculate_function_value(
-                time_step, function_info, index
-            )
+        if self.instance_idx in self.coords_calculated:
+            value_array = self.coord_array[self.instance_idx, :, time_step - 1]
+        else:
+            value_array = np.zeros(self.n_actions)
+            for index, function_info in enumerate(self.instance):
+                value_array[index] = self._calculate_function_value(
+                    time_step, function_info, index
+                )
 
-        if self.correlation and time_step > 0 and self.norm_calculated:
-            value_array = self._add_correlation(value_array, time_step)
+            if self.correlation and time_step > 1 and self.norm_calculated:
+                value_array = self._add_correlation(value_array, time_step)
 
         return value_array
 
@@ -573,7 +576,11 @@ class Functions:
         elif "sinus" in function_name:
             function_value = self._sinus(time_step, coefficients[0])
 
-        return min(np.round(function_value / norm_value, 5), 1)
+        function_value = np.round(function_value / norm_value, 5)
+        if self.norm_calculated:
+            function_value = max(min(function_value, 1), -1)
+
+        return function_value
 
     def _add_correlation(self, value_array: np.ndarray, time_step: int):
         """
