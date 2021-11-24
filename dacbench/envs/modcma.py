@@ -25,7 +25,7 @@ class ModCMAEnv(AbstractEnv):
         self.es = ModularCMAES(
             self.objective,
             parameters=Parameters.from_config_array(
-                self.dim, self.representation.astype(int)
+                self.dim, np.array(self.representation).astype(int)
             ),
         )
         return self.get_state(self)
