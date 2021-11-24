@@ -71,6 +71,10 @@ class AbstractBenchmark:
         if "action_space" in self.config:
             conf["action_space"] = self.space_to_list(conf["action_space"])
 
+        #TODO: how can we use the built in serialization of configspace here?
+        if "config_space" in self.config:
+            del conf["config_space"]
+
         conf = AbstractBenchmark.__stringify_functions(conf)
 
         for k in self.config.keys():
