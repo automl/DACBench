@@ -14,8 +14,8 @@ import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
-LR = CSH.UniformFloatHyperparameter(name='learning_rate', lower=0, upper=10)
-MOMENTUM = CSH.UniformFloatHyperparameter(name='momentum', lower=0, upper=10)
+LR = CSH.UniformFloatHyperparameter(name='0_learning_rate', lower=0, upper=10)
+MOMENTUM = CSH.UniformFloatHyperparameter(name='1_momentum', lower=0, upper=10)
 DEFAULT_CFG_SPACE.add_hyperparameter(LR)
 DEFAULT_CFG_SPACE.add_hyperparameter(MOMENTUM)
 
@@ -51,7 +51,6 @@ DEFAULTS = objdict(
         "cutoff": 10,
         "seed": 0,
         "instance_set_path": "../instance_sets/toysgd/toysgd_default.csv",
-        "test_set_path": None,
         "benchmark_info": INFO,
     }
 )
