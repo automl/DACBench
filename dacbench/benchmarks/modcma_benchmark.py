@@ -20,7 +20,7 @@ STEP_SIZE_ADAPTION = CSH.CategoricalHyperparameter(name='5_step_size_adaption', 
 MIRRORED = CSH.CategoricalHyperparameter(name='6_mirrored', choices=["None", "mirrored", "mirrored pairwise"])
 BASE_SAMPLER = CSH.CategoricalHyperparameter(name='7_base_sampler', choices=["gaussian", "sobol", "halton"])
 WEIGHTS_OPTION = CSH.CategoricalHyperparameter(name='8_weights_option', choices=["default", "equal", "1/2^lambda"])
-LOCAL_RESTART = CSH.CategoricalHyperparameter(name='9_local_restart', choices=["None", "IPOP", "BIPOP"])
+LOCAL_RESTART = CSH.CategoricalHyperparameter(name='90_local_restart', choices=["None", "IPOP", "BIPOP"])
 BOUND_CORRECTION = CSH.CategoricalHyperparameter(name='91_bound_correction', choices=["None", "saturate", "unif_resample", "COTN", "toroidal", "mirror"])
 
 DEFAULT_CFG_SPACE.add_hyperparameter(ACTIVE)
