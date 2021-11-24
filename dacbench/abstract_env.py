@@ -101,7 +101,7 @@ class AbstractEnv(gym.Env):
                         try:
                             n = actions[0].upper - actions[0].lower
                         except:
-                            n = len(actions[0].sequence)
+                            n = len(actions[0].choices)
                         self.action_space = gym.spaces.Discrete(n)
                     else:
                         ns = []
@@ -109,7 +109,7 @@ class AbstractEnv(gym.Env):
                             try:
                                 ns.append(a.upper - a.lower)
                             except:
-                                ns.append(len(a.sequence))
+                                ns.append(len(a.choices))
                         self.action_space = gym.spaces.MultiDiscrete(np.array(ns))
                 else:
                     raise ValueError(
