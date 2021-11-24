@@ -4,8 +4,14 @@ from dacbench.envs import SigmoidEnv, ContinuousSigmoidEnv, ContinuousStateSigmo
 import numpy as np
 import os
 import csv
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 
 ACTION_VALUES = (5, 10)
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+X = CSH.UniformIntegerHyperparameter(name='value_index', lower=0, upper=int(np.prod(ACTION_VALUES)))
+DEFAULT_CFG_SPACE.add_hyperparameter(X)
 
 INFO = {
     "identifier": "Sigmoid",
@@ -24,6 +30,7 @@ INFO = {
 
 SIGMOID_DEFAULTS = objdict(
     {
+        "config_space": DEFAULT_CFG_SPACE,
         "action_space_class": "Discrete",
         "action_space_args": [int(np.prod(ACTION_VALUES))],
         "observation_space_class": "Box",

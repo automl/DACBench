@@ -5,10 +5,16 @@ from dacbench.wrappers import RewardNoiseWrapper
 import numpy as np
 import os
 import csv
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 
 MAX_STEPS = 2 ** 6
 LUBY_SEQUENCE = np.log2([next(luby_gen(i)) for i in range(1, 2 * MAX_STEPS + 2)])
 HISTORY_LENGTH = 5
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+SEQ = CSH.UniformIntegerHyperparameter(name='sequence_element', lower=0, upper=np.log2(MAX_STEPS))
+DEFAULT_CFG_SPACE.add_hyperparameter(SEQ)
 
 INFO = {
     "identifier": "Luby",
@@ -26,8 +32,7 @@ INFO = {
 
 LUBY_DEFAULTS = objdict(
     {
-        "action_space_class": "Discrete",
-        "action_space_args": [int(np.log2(MAX_STEPS))],
+        "config_space": DEFAULT_CFG_SPACE,
         "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [
