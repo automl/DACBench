@@ -13,7 +13,6 @@ from dataclasses import dataclass, field
 import torch
 from backpack import backpack, extend
 from backpack.extensions import BatchGrad
-from numpy import float32
 from torchvision import datasets, transforms
 import numpy as np
 from dacbench import AbstractEnv
@@ -137,7 +136,7 @@ class SGDEnv(AbstractEnv):
         s = [values for values in config.actions.values()]
         all_permutations = list(itertools.product(*s))
         self.action_mapping = [perm for perm in all_permutations]
-        ######################## END ###############################
+        ########################## END #################################
 
         if isinstance(self.config.reward_type, str):
             try:
@@ -632,7 +631,15 @@ class SGDEnv(AbstractEnv):
         if "alignment" in self.config.features:
             state["alignment"] = alignment.item()
         if "crashed" in self.config.features:
-            state["crashed"] = self.crashed
+            state["crashed"] = 1 if self.crashed else 0
+
+        state = {
+            k: np.array([v], dtype=np.float32)
+            for k, v in state.items()
+            if k != "crashed"
+        }
+        if "crashed" in self.config.features:
+            state["crashed"] = 1 if self.crashed else 0
 
         return state
 

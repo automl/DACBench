@@ -46,20 +46,26 @@ SGD_DEFAULTS = objdict(
         "observation_space_args": [
             {
                 "predictiveChangeVarDiscountedAverage": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=(1,)
+                    low=-np.inf, high=np.inf, shape=(1,), dtype=np.float32
                 ),
                 "predictiveChangeVarUncertainty": spaces.Box(
-                    low=0, high=np.inf, shape=(1,)
+                    low=0, high=np.inf, shape=(1,), dtype=np.float64
                 ),
                 "lossVarDiscountedAverage": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=(1,)
+                    low=-np.inf, high=np.inf, shape=(1,), dtype=np.float32
                 ),
-                "lossVarUncertainty": spaces.Box(low=0, high=np.inf, shape=(1,)),
-                "currentLR": spaces.Box(low=0, high=1, shape=(1,)),
-                "trainingLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
-                "validationLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
-                "step": spaces.Box(low=0, high=np.inf, shape=(1,)),
-                "alignment": spaces.Box(low=0, high=1, shape=(1,)),
+                "lossVarUncertainty": spaces.Box(
+                    low=0, high=np.inf, shape=(1,), dtype=np.float32
+                ),
+                "currentLR": spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32),
+                "trainingLoss": spaces.Box(
+                    low=0, high=np.inf, shape=(1,), dtype=np.float32
+                ),
+                "validationLoss": spaces.Box(
+                    low=0, high=np.inf, shape=(1,), dtype=np.float32
+                ),
+                "step": spaces.Box(low=0, high=np.inf, shape=(1,), dtype=np.float32),
+                "alignment": spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32),
                 "crashed": spaces.Discrete(2),
             }
         ],
