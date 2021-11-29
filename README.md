@@ -57,4 +57,4 @@ For an introduction to the interface and structure of DACBench, see the
 ["Getting Started"](https://github.com/automl/DACBench/blob/main/Getting%20started.ipynb) jupyter notebook.
 You can also take a look at our [examples](https://github.com/automl/DACBench/tree/main/examples) in the repository 
 or our [documentation](https://dacbench.readthedocs.io).
-You can find baseline data of static and random policies for a given version of DACBench on our [TNT project site](https://www.tnt.uni-hannover.de/en/project/dacbench/).
+You can find baseline data of static and random policies for a given version of DACBench on our [TNT project site](https://www.tnt.uni-hannover.de/en/datasets/dacbench/).
