@@ -10,6 +10,16 @@ import dacbench.envs.toysgd
 
 importlib.reload(dacbench.envs.toysgd)
 
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+LR = CSH.UniformFloatHyperparameter(name='0_learning_rate', lower=0, upper=10)
+MOMENTUM = CSH.UniformFloatHyperparameter(name='1_momentum', lower=0, upper=10)
+DEFAULT_CFG_SPACE.add_hyperparameter(LR)
+DEFAULT_CFG_SPACE.add_hyperparameter(MOMENTUM)
+
+
 INFO = {
     "identifier": "toy_sgd",
     "name": "Learning Rate and Momentum Adaption for SGD on Toy Functions",
@@ -24,6 +34,7 @@ INFO = {
 
 DEFAULTS = objdict(
     {
+        "config_space": DEFAULT_CFG_SPACE,
         "action_space_class": "Box",
         "action_space_args": [-np.inf * np.ones((2,)), np.inf * np.ones((2,))],
         "observation_space_class": "Dict",
@@ -40,7 +51,6 @@ DEFAULTS = objdict(
         "cutoff": 10,
         "seed": 0,
         "instance_set_path": "../instance_sets/toysgd/toysgd_default.csv",
-        "test_set_path": None,
         "benchmark_info": INFO,
     }
 )

@@ -3,11 +3,17 @@ from dacbench.envs import FastDownwardEnv
 
 import numpy as np
 import os
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 
 HEURISTICS = [
     "tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)])",
     "tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])",
 ]
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+HEURISTIC = CSH.CategoricalHyperparameter(name='heuristic', choices=["toy1", "toy2"])
+DEFAULT_CFG_SPACE.add_hyperparameter(HEURISTIC)
 
 INFO = {
     "identifier": "FastDownward",
@@ -30,8 +36,7 @@ INFO = {
 FD_DEFAULTS = objdict(
     {
         "heuristics": HEURISTICS,
-        "action_space_class": "Discrete",
-        "action_space_args": [len(HEURISTICS)],
+        "config_space": DEFAULT_CFG_SPACE, 
         "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [

@@ -9,6 +9,13 @@ from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import SGDEnv
 from dacbench.envs.sgd import Reward
 
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+LR = CSH.UniformIntegerHyperparameter(name='learning_rate', lower=0, upper=10)
+DEFAULT_CFG_SPACE.add_hyperparameter(LR)
+
 
 def __default_loss_function(**kwargs):
     return NLLLoss(reduction = 'none', **kwargs)
@@ -35,6 +42,7 @@ INFO = {
 
 SGD_DEFAULTS = objdict(
     {
+        "config_space": DEFAULT_CFG_SPACE,
         "action_space_class": "Box",
         "action_space_args": [np.array([0]), np.array([10])],
         "observation_space_class": "Dict",

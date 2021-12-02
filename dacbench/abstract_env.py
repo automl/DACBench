@@ -84,7 +84,42 @@ class AbstractEnv(gym.Env):
                     )
                     raise TypeError
 
-        if "action_space" in config.keys():
+        # TODO: use dicts by default for actions and observations
+        # The config could change this for RL purposes
+        if "config_space" in config.keys():
+            actions = config["config_space"].get_hyperparameters()
+            action_types = [type(a).__name__ for a in actions]
+
+            # Uniform action space
+            if all(t == action_types[0] for t in action_types):
+                if "Float" in action_types[0]:
+                    low = np.array([a.lower for a in actions])
+                    high = np.array([a.upper for a in actions])
+                    self.action_space = gym.spaces.Box(low=low, high=high)
+                elif "Integer" in action_types[0] or "Categorical" in action_types[0]:
+                    if len(action_types) == 1:
+                        try:
+                            n = actions[0].upper - actions[0].lower
+                        except:
+                            n = len(actions[0].choices)
+                        self.action_space = gym.spaces.Discrete(n)
+                    else:
+                        ns = []
+                        for a in actions:
+                            try:
+                                ns.append(a.upper - a.lower)
+                            except:
+                                ns.append(len(a.choices))
+                        self.action_space = gym.spaces.MultiDiscrete(np.array(ns))
+                else:
+                    raise ValueError(
+                        "Only float, integer and categorical hyperparameters are supported as of now"
+                    )
+            # Mixed action space
+            # TODO: implement this
+            else:
+                raise ValueError("Mixed type config spaces are currently not supported")
+        elif "action_space" in config.keys():
             self.action_space = config["action_space"]
         else:
             try:
