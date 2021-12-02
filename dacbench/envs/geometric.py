@@ -197,11 +197,11 @@ class GeometricEnv(AbstractEnv):
         super(GeometricEnv, self).reset_()
         self.functions.set_instance(self.instance, self.instance_index)
 
-        self.action_trajectory = self.action_trajectory_set.get(
-            self.inst_id, [np.zeros(self.n_actions)]
-        )
+        if self.c_step:
+            self.action_trajectory = self.action_trajectory_set.get(self.inst_id)
+
         self.coord_trajectory = self.coord_trajectory_set.get(
-            self.inst_id, [np.zeros(self.n_actions)]
+            self.inst_id, [self.functions.get_coordinates_at_time_step(self.c_step)]
         )
 
         self.derivative = self.derivative_set.get(
@@ -257,7 +257,7 @@ class GeometricEnv(AbstractEnv):
             next_state += [0 for _ in range(self.n_actions)]
         else:
             next_state += list(self.derivative)
-            next_state += list(self.action)
+            next_state += list(self.coord_trajectory[self.c_step])
 
         return np.array(next_state, dtype="float32")
 
@@ -272,7 +272,7 @@ class GeometricEnv(AbstractEnv):
         """
         return True
 
-    def render_dimensions(self, dimensions: List, absolute_path: str):
+    def render(self, dimensions: List, absolute_path: str):
         """
         Multiplot for specific dimensions of benchmark with policy actions.
 

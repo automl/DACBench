@@ -242,13 +242,16 @@ class GeometricBenchmark(AbstractBenchmark):
 
     def set_action_description(self):
         """
-        Add Information about Derivative and Action to Description.
+        Add Information about Derivative and Coordinate to Description.
         """
+        if "Coordinate" in self.config.benchmark_info["state_description"]:
+            return
+
         for index in range(len(self.config.action_values)):
             self.config.benchmark_info["state_description"].append(f"Derivative{index}")
 
         for index in range(len(self.config.action_values)):
-            self.config.benchmark_info["state_description"].append(f"Action{index}")
+            self.config.benchmark_info["state_description"].append(f"Coordinate{index}")
 
     def create_correlation_table(self):
         """
