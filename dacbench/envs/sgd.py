@@ -376,7 +376,7 @@ class SGDEnv(AbstractEnv):
         dataset = self.instance[0]
         instance_seed = self.instance[1]
         construct_model = self._architecture_constructor(self.instance[2])
-        self.n_steps = self.instance[3]
+        self.n_steps = min(self.instance[3], self.config.cutoff)
         dataset_size = self.instance[4]
         self.step_count = 0
 
