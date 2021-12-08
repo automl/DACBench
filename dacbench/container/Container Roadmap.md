@@ -65,8 +65,26 @@ Todos:
 * [ ] Unify the way serialization is handled (currently in the benchmark and in the environment)
 * [ ] Communications via sockets currently via http
 * [ ] set up container registry
-* [ ] Make dependencies separately installable for each benchmark and remove all benchmark dependencies from default since default is to run in container? (or add container extra
-* [ ] command line interface for remote runner / integrate with `dacbench.runner.run()`. Proposed solution: add common baseclass for Runner and RemoteRunner that handles argument parsing and defines interface for method run()
+* [ ] Make dependencies separately installable for each benchmark and remove all benchmark dependencies from default
+  since default is to run in container? (or add container extra
+* [ ] command line interface for remote runner / integrate with `dacbench.runner.run()`. Proposed solution: add common
+  baseclass for Runner and RemoteRunner that handles argument parsing and defines interface for method run()
 * [ ] Improve experiment setup (currently only one experiment hardcoded in RemoteRunnerServer.get_environment()))
 * Measure performance of containerized version vs. non-containerized version
 * [ ] Add guide on how to build own containers also useful for internal usage
+
+## Building and Operating a Container
+
+A container is build based on the description in a `.def` file. The exiting definition files are places in `recipes`.
+
+Currently there is only one definition file available thats building a container containing a full installation
+of `DACbench`. This should be changed to separate files per benchmark (group) with common dependencies. Requires
+corresponding build targets / extras.
+
+To build the container file from the definition file run:
+`singularity build container_file.sif definition_file.def`
+
+Note that you need either to run the build process using root or the `--fakeroot` flag:
+`sudo singularity build dachbench.sif dacbench/container/recipes/dachbench.def`
+or
+`sudo singularity build --fakeroot dachbench.sif dacbench/container/recipes/dachbench.def`

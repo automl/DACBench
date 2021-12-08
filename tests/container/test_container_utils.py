@@ -2,15 +2,14 @@ import json
 import unittest
 
 import numpy as np
-from icecream import ic
+from gym.spaces import Box, Discrete, Tuple, MultiDiscrete, MultiBinary, Dict
 
 from dacbench.container.container_utils import Encoder, Decoder
-from gym.spaces import Box, Discrete, Tuple, MultiDiscrete, MultiBinary, Dict
 
 
 class TestEncoder(unittest.TestCase):
     def test_spaces(self):
-        box = Box(low=-1,     high=1, shape=(2,))
+        box = Box(low=-1, high=1, shape=(2,))
         multi_discrete = MultiDiscrete([[2, 1], [2, 1]])
         multi_binary = MultiBinary([2, 2])
         discrete = Discrete(2)

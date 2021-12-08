@@ -1,0 +1,39 @@
+Bootstrap: docker
+From: python:3.7-slim
+
+%labels
+MAINTAINER Maximilian Reimer
+VERSION v0.0.1
+
+%help
+    Container with all benchmark installed
+
+%post
+    echo "[LOG]: Installing gcc, git and build-essential..."
+    apt update -y
+    apt install build-essential gcc libssl-dev git wget -y
+
+    echo "[LOG]: Installing cmake..."
+    wget https://github.com/Kitware/CMake/releases/download/v3.10.2/cmake-3.10.2.tar.gz
+    tar xvf cmake-3.10.2.tar.gz
+    cd cmake-3.10.2
+    ./bootstrap
+    gmake
+    make install
+
+    cd /home
+    echo "[LO]: Cloning repo..."
+    git clone https://github.com/automl/DACBench.git
+    cd DACBench
+
+    git submodule update --init --recursive
+    echo "[LOG]: Installing pip package"
+    pip install -e .
+    echo "[LOG]: Compiling fast-downward"
+    ./dacbench/envs/rl-plan/fast-downward/build.py
+
+
+
+
+%runscript
+   python dacbench/container/remote_runner.py $@
