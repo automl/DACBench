@@ -136,6 +136,13 @@ class SGDEnv(AbstractEnv):
         s = [values for values in config.actions.values()]
         all_permutations = list(itertools.product(*s))
         self.action_mapping = [perm for perm in all_permutations]
+
+        self.action_mapper = {}
+        for idx, prod_idx in zip(
+            range(len(all_permutations)),
+            itertools.product(*[np.arange(val) for val in config["action_values"]]),
+        ):
+            self.action_mapper[idx] = prod_idx
         ########################## END #################################
 
         if isinstance(self.config.reward_type, str):
