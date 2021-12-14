@@ -53,24 +53,23 @@ agent = agent_creation_function(remote_runner.get_environment())
 remote_runner.run(agent, number_of_episodes=10)
 ```
 
-(todo):
 Classes:
-* `dacbench.container.RemoteRunner` 
-* `dacbench.container.RemoteRunnerServer`
-* `dacbench.container.RemoteEnvironmentClient`
-* `dacbench.container.RemoteEnvironmentServer`
+* `dacbench.container.RemoteRunner`: runs on the host system and is reposibible for: downloading the container file, starting the container, connection to the `RemoteRunnerServer` inside of the container and comunicating with the `RemoteRunnerServer` 
+* `dacbench.container.RemoteRunnerServer`: creates the environments and executes the experiment loop. Defines the experiment. 
+* `dacbench.container.RemoteEnvironmentClient`: Facade object for the actual environment. Exposes a limited interface of the environment. Translates the arguments of the calls to json, invokes the remote call using the serialized arguments and deserializes the returned values. 
+* `dacbench.container.RemoteEnvironmentServer`: Warpper of the actual environment that deserializes the arguments, passes the resutls to the environment object, serializes the results and returns them to the  `RemoteEnvironmentClient` 
 
 Todos:
-* [ ] Implement container setup and download for benchmarks
+* [ ] Implement automatic download for benchmarks
 * [ ] Unify the way serialization is handled (currently in the benchmark and in the environment)
-* [ ] Communications via sockets currently via http
-* [ ] set up container registry
-* [ ] Make dependencies separately installable for each benchmark and remove all benchmark dependencies from default
-  since default is to run in container? (or add container extra
+* [x] Communications via sockets currently via http
+* [ ] Set up container registry
+* [ ] Make dependencies separately installable for each benchmark, create containers for benchmarks and remove all benchmark dependencies from default
+  since default is to run in container? 
 * [ ] command line interface for remote runner / integrate with `dacbench.runner.run()`. Proposed solution: add common
   baseclass for Runner and RemoteRunner that handles argument parsing and defines interface for method run()
 * [ ] Improve experiment setup (currently only one experiment hardcoded in RemoteRunnerServer.get_environment()))
-* Measure performance of containerized version vs. non-containerized version
+* [ ] Measure performance of containerized version vs. non-containerized version
 * [ ] Add guide on how to build own containers also useful for internal usage
 
 ## Building and Operating a Container
