@@ -137,10 +137,12 @@ class SGDEnv(AbstractEnv):
         all_permutations = list(itertools.product(*s))
         self.action_mapping = [perm for perm in all_permutations]
 
+        action_values = tuple([len(values) for values in config.actions.values()])
+
         self.action_mapper = {}
         for idx, prod_idx in zip(
-            range(len(all_permutations)),
-            itertools.product(*[np.arange(val) for val in config["action_values"]]),
+            range(np.prod(action_values)),
+            itertools.product(*[np.arange(val) for val in action_values]),
         ):
             self.action_mapper[idx] = prod_idx
         ########################## END #################################
@@ -427,7 +429,10 @@ class SGDEnv(AbstractEnv):
             ]
 
             train_dataset = datasets.MNIST(
-                "../data", train=True, download=True, transform=transform
+                "/home/vonglahn/tmp/data",
+                train=True,
+                download=False,
+                transform=transform,
             )
             # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
         elif dataset == "CIFAR":
