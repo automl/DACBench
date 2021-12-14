@@ -8,7 +8,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Union
 from uuid import uuid1
 
 import Pyro4
@@ -120,8 +120,9 @@ class RemoteRunner:
 
         if not self.__proxy_only:
             self.__socket_id = self.id_generator()
-            # self.load_benchmark(benchmark_name=benchmark_name, container_name=container_name,
-            #                    container_source=container_source, container_tag=container_tag, **kwargs)
+            # todo for now only work with given container source (local)
+            self.load_benchmark(benchmark=benchmark, container_name=container_name,
+                                container_source=container_source, container_tag=container_tag,)
             self.__start_server(env_str=env_str, bind_str=bind_str, gpu=gpu)
         else:
             self.__socket_id = socket_id
@@ -155,23 +156,22 @@ class RemoteRunner:
             True if the container should use gpu, False otherwise
         """
         # start container
-        # todo replace with actual container start up
-        # todo add entry point
         logger.debug(f'Starting server on {self.socket}')
-
-        script_path = Path(__file__).resolve()
 
         # todo add mechanism to to retry if failing
         self.daemon_process = subprocess.Popen(
             [
-                "python",
-                str(script_path),
+                "singularity",
+                "run",
+                "-e",
+                str(self.container_source),
                 "-u",
                 str(self.socket)
             ]
         )
 
-        wait_for_unixsocket(self.socket)
+        # todo should be configurable
+        wait_for_unixsocket(self.socket, 10)
 
     def __connect_to_server(self, benchmark: AbstractBenchmark):
         """
@@ -223,6 +223,15 @@ class RemoteRunner:
 
     def __del__(self):
         self.close()
+
+    def load_benchmark(self, benchmark : AbstractBenchmark, container_name : str, container_source : Union[str, Path], container_tag : str):
+        # see for implementation guideline hpobench  hpobench/container/client_abstract_benchmark.py
+        # in the end self.container_source should contain the path to the file to run
+
+        logger.warning("Only container source is used")
+        container_source = container_source if isinstance(container_source, Path) else Path(container_source)
+
+        self.container_source = container_source
 
 
 @Pyro4.expose

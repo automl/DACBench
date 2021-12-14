@@ -25,10 +25,10 @@ VERSION v0.0.1
     echo "[LO]: Cloning repo..."
     git clone https://github.com/automl/DACBench.git
     cd DACBench
-
+    git checkout container_draft
     git submodule update --init --recursive
     echo "[LOG]: Installing pip package"
-    pip install -e .
+    pip install -e .[example]
     echo "[LOG]: Compiling fast-downward"
     ./dacbench/envs/rl-plan/fast-downward/build.py
 

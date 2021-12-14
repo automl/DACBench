@@ -2,6 +2,7 @@ import logging
 import signal
 import subprocess
 import unittest
+from pathlib import Path
 
 import Pyro4
 
@@ -42,13 +43,14 @@ class TestRemoteRunnerServerFactory(unittest.TestCase):
 class TestRemoteRunner(unittest.TestCase):
 
     def run_agent_on_benchmark_test(self, benchmark, agent_creation_function):
-        remote_runner = RemoteRunner(benchmark)
+        container_source = (Path(__file__).parent.parent.parent / "dacbench.sif").resolve()
+        remote_runner = RemoteRunner(benchmark, container_source=container_source)
         agent = agent_creation_function(remote_runner.get_environment())
         remote_runner.run(agent, 1)
 
     def test_step(self):
-        skip_benchmarks = ['CMAESBenchmark', 'LubyBenchmark']
-        benchmarks = ["SGDBenchmark"]  # dacbench.benchmarks.__all__
+        skip_benchmarks = ['CMAESBenchmark', 'LubyBenchmark',  'OneLLBenchmark']
+        benchmarks = dacbench.benchmarks.__all__
 
         for benchmark in benchmarks:
             if benchmark in skip_benchmarks:
