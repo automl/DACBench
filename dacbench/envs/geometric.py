@@ -608,7 +608,7 @@ class Functions:
 
     def _apply_correlation_update(self, idx: int, diff: float, depth):
         """
-        Recursive function vor correlation updates
+        Recursive function for correlation updates
         Call function recursively till depth is 0 or diff is too small.
         """
         if not depth or diff < 0.001:
