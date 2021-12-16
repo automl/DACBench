@@ -374,8 +374,8 @@ class Functions:
         self.instance = None
         self.instance_idx = None
 
-        self.coord_array = np.zeros((n_instances, n_actions, n_steps))
-        self.coords_calculated = []
+        self.coord_array = np.zeros((n_actions, n_steps))
+        self.calculated_instance = None
         self.norm_calculated = False
         self.norm_values = np.ones((n_instances, n_actions))
 
@@ -412,8 +412,8 @@ class Functions:
             instance = self.instance
         assert instance
 
-        if self.instance_idx in self.coords_calculated:
-            optimal_coords = self.coord_array[self.instance_idx][:][:]
+        if self.instance_idx == self.calculated_instance:
+            optimal_coords = self.coord_array
         else:
             optimal_coords = np.zeros((self.n_actions, self.n_steps))
             for time_step in range(self.n_steps):
@@ -422,8 +422,8 @@ class Functions:
                 )
 
             if self.norm_calculated:
-                self.coord_array[self.instance_idx][:][:] = optimal_coords
-                self.coords_calculated.append(self.instance_idx)
+                self.coord_array = optimal_coords
+                self.calculated_instance = self.instance_idx
 
         return optimal_coords
 
@@ -444,8 +444,8 @@ class Functions:
         np.array
             array of function values at timestep
         """
-        if self.instance_idx in self.coords_calculated:
-            value_array = self.coord_array[self.instance_idx, :, time_step - 1]
+        if self.instance_idx == self.calculated_instance:
+            value_array = self.coord_array[:, time_step - 1]
         else:
             value_array = np.zeros(self.n_actions)
             for index, function_info in enumerate(self.instance):
@@ -593,7 +593,7 @@ class Functions:
         correlation_table : np.array
             table that holds all values of correlation between dimensions [n,n]
         """
-        prev_values = self.coord_array[self.instance_idx, :, time_step - 1]
+        prev_values = self.coord_array[:, time_step - 1]
         diff_values = value_array - prev_values
 
         new_values = []
