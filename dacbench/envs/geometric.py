@@ -286,21 +286,33 @@ class GeometricEnv(AbstractEnv):
         fig, axes = plt.subplots(
             len(dimensions), sharex=True, sharey=True, figsize=(15, 4 * len(dimensions))
         )
-        plt.xlabel("time steps", fontsize=16)
+        plt.xlabel("time steps", fontsize=32)
         plt.ylim(-1.1, 1.1)
         plt.xlim(-0.1, self.n_steps - 0.9)
-        plt.xticks(np.arange(0, self.n_steps, 1))
+        plt.xticks(np.arange(0, self.n_steps, 1), fontsize=24.0)
 
         for idx, dim in zip(range(len(dimensions)), dimensions):
             function_info = self.instance[dim]
             title = function_info[1] + " - Dimension " + str(dim)
-
+            axes[idx].tick_params(axis="both", which="major", labelsize=24)
             axes[idx].set_yticks((np.arange(-1, 1.1, 2 / self.action_vals[dim])))
-            axes[idx].set_title(title)
-            axes[idx].plot(coordinates[dim], label="Function", marker="o")[0].axes
+            axes[idx].set_title(title, size=32)
+            axes[idx].plot(coordinates[dim], label="Function", marker="o", linewidth=3)[
+                0
+            ].axes
             axes[idx].xaxis.grid(False)
             axes[idx].vlines(x=[3.5, 7.5], ymin=-1, ymax=1, colors="white", ls="--")
-            axes[idx].legend(bbox_to_anchor=(1.0, 1), loc="upper left")
+            """
+            axes[idx].legend(
+                loc="lower right",
+                framealpha=1,
+                shadow=True,
+                borderpad=1,
+                frameon=True,
+                ncol=1,
+                edgecolor="0.2",
+            )
+            """
 
         fig_title = f"GeoBench-Dimensions{len(dimensions)}"
         fig.savefig(os.path.join(absolute_path, fig_title + ".jpg"))
