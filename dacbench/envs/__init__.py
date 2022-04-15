@@ -5,7 +5,7 @@ from dacbench.envs.cma_es import CMAESEnv
 from dacbench.envs.cma_step_size import CMAStepSizeEnv
 from dacbench.envs.modea import ModeaEnv
 from dacbench.envs.sgd import SGDEnv
-from dacbench.envs.onell_env import OneLLEnv
+from dacbench.envs.theory import RLSEnvDiscreteK, RLSEnv
 from dacbench.envs.modcma import ModCMAEnv
 from dacbench.envs.toysgd import ToySGDEnv
 
@@ -18,6 +18,6 @@ __all__ = [
     "CMAStepSizeEnv"
     "ModeaEnv",
     "SGDEnv",
-    "OneLLEnv",
+    "RLSEnvDiscreteK", "RLSEnv",
     "ModCMAEnv",
 ]
