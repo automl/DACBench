@@ -173,9 +173,8 @@ class DQN:
             return np.random.randint(self._action_dim)
         return u
 
-
-    def train(self, episodes: int, max_env_time_steps: int, epsilon: float, eval_eps: int = 1,
-              eval_every_n_steps: int = 1, max_train_time_steps: int = 1_000_000, 
+    def train(self, episodes: int, max_env_time_steps: int = 1_000_000, epsilon: float = 0.2, eval_eps: int = 10,
+              eval_every_n_steps: int = 1000, max_train_time_steps: int = 1_000_000, 
               begin_learning_after: int = 10_000, batch_size: int = 2_048,
               log_level=1, save_best=True, save_model_interval=1000):
         """

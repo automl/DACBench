@@ -1,0 +1,7 @@
+name:                           "Theory"
+discrete_action:                False
+min_action:                     1
+max_action:                     49
+problem:                        "LeadingOne"    
+instance_set_path:              "lo_rls_50_random.csv"
+

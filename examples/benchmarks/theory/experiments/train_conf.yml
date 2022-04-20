@@ -9,10 +9,10 @@ experiment:
 
 bench:
     name:                           "Theory"
-    env_class:                      "RLSEnvDiscreteK"    
+    discrete_action:                True
     action_choices:                 [1, 17, 33]
     problem:                        "LeadingOne"    
-    instance_set_path:              "lo_rls_50"
+    instance_set_path:              "lo_rls_50_random.csv"
     observation_description:        "n,f(x)"
     reward_choice:                  "imp_minus_evals"
     seed:                           0

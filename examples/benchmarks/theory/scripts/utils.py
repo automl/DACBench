@@ -20,7 +20,7 @@ def read_config(config_yml_fn: str = 'output/config.yml'):
     return params['experiment'], params['bench'], params['agent'], train_env_params, eval_env_params
 
 
-def make_env(bench_params, env_config=None):
+def make_env(bench_params, env_config=None, test_env=False):
     """
     env_config will override bench_params
     """
@@ -34,6 +34,6 @@ def make_env(bench_params, env_config=None):
     
     #pprint(params)
     bench = bench_class(config=params)
-    env = bench.get_environment()    
-    env = gym.wrappers.FlattenObservation(env) # should be enabled once env.observation_space is initialised properly    
+    env = bench.get_environment(test_env)    
+    env = gym.wrappers.FlattenObservation(env) 
     return env

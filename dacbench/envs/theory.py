@@ -14,12 +14,8 @@ class BinaryProblem:
     """
     An abstract class for an individual in binary representation
     """
-    def __init__(self, n, val=None, rng=np.random.default_rng()):
-        if val is not None:
-            assert isinstance(val, bool)
-            self.data = np.array([val] * n)
-        else:
-            self.data = rng.choice([True,False], size=n) 
+    def __init__(self, n, rng=np.random.default_rng()):
+        self.data = rng.choice([True,False], size=n) 
         self.n = n
         self.fitness = self.eval()
 
@@ -215,7 +211,16 @@ class LeadingOne(BinaryProblem):
     An individual for LeadingOne problem
     The aim is to maximise the number of leading (and consecutive) 1 bits in the string
     """
-
+    def __init__(self, n, rng=np.random.default_rng(), initObj=None):
+        if initObj is None:
+            super(LeadingOne, self).__init__(n=n, rng=rng)
+        else:
+            self.data = rng.choice([True,False], size=n)            
+            self.data[:int(initObj)] = True
+            self.data[int(initObj)] = False
+            self.n = n
+            self.fitness = self.eval()
+    
     def eval(self):
         k = self.data.argmin()
         if self.data[k]:
@@ -258,7 +263,7 @@ HISTORY_LENGTH = 5
 class RLSEnv(AbstractEnv):
     """
     Environment for RLS with step size
-    Current assumption: we only consider (1+1)-RLS, so there's only one parameter to tune (k)
+    Current assumption: we only consider (1+1)-RLS, so there's only one parameter to tune (r)
     """
 
     def __init__(self, config, test_env=False) -> None:
@@ -295,17 +300,17 @@ class RLSEnv(AbstractEnv):
         for var_name in self.obs_var_names:
             if var_name == 'n':
                 self.state_functions.append(lambda: self.n)
-            elif var_name in ['k']:
+            elif var_name in ['r']:
                 self.state_functions.append(lambda his='history_'+var_name: vars(self)[his][-1])
-            elif "_{t-" in var_name: # TODO: this implementation only allow accessing history of k, but not delta_f(x), optimal_k, etc
+            elif "_{t-" in var_name: # TODO: this implementation only allow accessing history of r, but not delta_f(x), optimal_k, etc
                 k = int(var_name.split("_{t-")[1][:-1]) # get the number in _{t-<number>}
-                name = var_name.split("_{t-")[0] # get the variable name (k, f(x), etc)
+                name = var_name.split("_{t-")[0] # get the variable name (r, f(x), etc)
                 self.state_functions.append(lambda his='history_'+name: vars(self)[his][-(k+1)]) # the last element is the value at the current time step, so we have to go one step back to access the history
             elif var_name == "f(x)":
                 self.state_functions.append(lambda: self.history_fx[-1])
             elif var_name == "delta_f(x)":
                 self.state_functions.append(lambda: self.history_fx[-1] - self.history_fx[-2])
-            elif var_name == "optimal_k":
+            elif var_name == "optimal_r":
                 self.state_functions.append(lambda: int(self.n/(self.history_fx[-1]+1)))
             else:
                 raise Exception("Error: invalid state variable name: " + var_name)
@@ -348,21 +353,27 @@ class RLSEnv(AbstractEnv):
 
         # current problem size (n) & evaluation limit (max_evals)
         self.n = self.instance.size
-        self.max_evals = self.instance.max_evals
+        if self.test_env:
+            self.max_evals = self.n_steps
+        else:
+            self.max_evals = int(0.8 * self.n * self.n)
         self.logger.info("n:%d, max_evals:%d" % (self.n, self.max_evals))
 
         # create an initial solution
-        self.x = self.problem(n=self.instance.size, rng=self.rng)
+        if self.instance.initObj == "random":
+            self.x = self.problem(n=self.instance.size, rng=self.rng)
+        else:
+            self.x = self.problem(n=self.instance.size, rng=self.rng, initObj=self.instance.initObj) 
 
         # total number of evaluations so far
         self.total_evals = 1                        
 
         # reset histories
-        self.history_k = deque([0]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)         
+        self.history_r = deque([0]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)         
         self.history_fx = deque([self.x.fitness]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH) 
 
         # for debug only
-        self.log_k = []
+        self.log_r = []
         self.log_reward = []     
         self.log_fx = []
         self.init_obj = self.x.fitness 
@@ -390,17 +401,17 @@ class RLSEnv(AbstractEnv):
 
         fitness_before_update = self.x.fitness
         
-        # get k
+        # get r
         if isinstance(action, np.ndarray) or isinstance(action, list):
             assert len(action)==1
-            k = action[0]
+            r = action[0]
         else:
-            k = action   
+            r = action   
             
-        # if k is out of range
+        # if r is out of range
         stop = False
-        if k<1 or k>self.n:
-            self.logger.info(f"WARNING: k={k} is out of bound")
+        if r<1 or r>self.n:
+            self.logger.info(f"WARNING: r={r} is out of bound")
             
             # if we're in the training phase, we return a large negative reward and stop the episode
             if self.test_env is False:
@@ -408,13 +419,13 @@ class RLSEnv(AbstractEnv):
                 n_evals = 0
                 reward = -MAX_INT
                 stop = True
-            # if we're in the test phase, just clip k back to the range and continue
+            # if we're in the test phase, just clip r back to the range and continue
             else:
-                k = np.clip(k,1,self.n)
+                r = np.clip(r,1,self.n)
                 
         if stop is False:                                
-            # flip k bits
-            y, f_y, n_evals = self.x.mutate_rls(k, self.rng)         
+            # flip r bits
+            y, f_y, n_evals = self.x.mutate_rls(r, self.rng)         
 
             # update x
             if self.x.fitness <= y.fitness:
@@ -424,7 +435,7 @@ class RLSEnv(AbstractEnv):
             self.total_evals += n_evals
 
             # check stopping criteria        
-            done = (self.total_evals>=self.instance.max_evals) or (self.x.is_optimal())        
+            done = (self.total_evals>=self.max_evals) or (self.x.is_optimal())        
 
             # calculate reward        
             if self.reward_choice=='imp_div_evals':            
@@ -443,10 +454,10 @@ class RLSEnv(AbstractEnv):
 
         # update histories
         self.history_fx.append(self.x.fitness)
-        self.history_k.append(k)        
+        self.history_r.append(r)        
 
         # update logs
-        self.log_k.append(k)
+        self.log_r.append(r)
         self.log_fx.append(self.x.fitness)
         self.log_reward.append(reward)
                     
@@ -456,7 +467,7 @@ class RLSEnv(AbstractEnv):
                 msg = "Env " + self.env_type + ". "
             else:
                 msg = ""    
-            msg += "Episode done: n=%d; obj=%d; init_obj=%d; evals=%d; max_evals=%d; steps=%d; k_min=%.1f; k_max=%.1f; k_mean=%.1f; R=%.4f" % (self.n, self.x.fitness, self.init_obj, self.total_evals, self.max_evals, self.c_step, min(self.log_k), max(self.log_k), sum(self.log_k)/len(self.log_k), sum(self.log_reward))      
+            msg += "Episode done: n=%d; obj=%d; init_obj=%d; evals=%d; max_evals=%d; steps=%d; r_min=%.1f; r_max=%.1f; r_mean=%.1f; R=%.4f" % (self.n, self.x.fitness, self.init_obj, self.total_evals, self.max_evals, self.c_step, min(self.log_r), max(self.log_r), sum(self.log_r)/len(self.log_r), sum(self.log_reward))      
             #self.logger.info(msg) 
             returned_info['msg'] = msg
             returned_info['values'] = {'n':int(self.n), 
@@ -465,11 +476,11 @@ class RLSEnv(AbstractEnv):
                                         'evals': int(self.total_evals), 
                                         'max_evals': int(self.max_evals), 
                                         'steps': int(self.c_step), 
-                                        'k_min': float(min(self.log_k)), 
-                                        'k_max': float(max(self.log_k)), 
-                                        'k_mean': float(sum(self.log_k)/len(self.log_k)), 
+                                        'r_min': float(min(self.log_r)), 
+                                        'r_max': float(max(self.log_r)), 
+                                        'r_mean': float(sum(self.log_r)/len(self.log_r)), 
                                         'R': float(sum(self.log_reward)),
-                                        'log_k': [int(x) for x in self.log_k],
+                                        'log_r': [int(x) for x in self.log_r],
                                         'log_fx':[int(x) for x in self.log_fx], 
                                         'log_reward': [float(x) for x in self.log_reward]}
         
@@ -489,12 +500,12 @@ class RLSEnv(AbstractEnv):
         return True
 
     
-class RLSEnvDiscreteK(RLSEnv):
+class RLSEnvDiscrete(RLSEnv):
     """
-    RLS environment where the choices of k is discretised
+    RLS environment where the choices of r is discretised
     """
     def __init__(self, config, test_env=False):
-        super(RLSEnvDiscreteK, self).__init__(config, test_env)
+        super(RLSEnvDiscrete, self).__init__(config, test_env)
         assert 'action_choices' in config, "Error: action_choices must be specified in benchmark's config"
         assert isinstance(self.action_space, gym.spaces.Discrete), "Error: action space must be discrete"
         assert self.action_space.n == len(config['action_choices']), "Error: action space's size (%d) must be equal to the len(action_choices) (%d)" % (self.action_space.n, len(config['action_choices']))        
@@ -504,4 +515,4 @@ class RLSEnvDiscreteK(RLSEnv):
         if isinstance(action, np.ndarray) or isinstance(action, list):
             assert len(action)==1
             action = action[0]
-        return super(RLSEnvDiscreteK, self).step(self.action_choices[action])
+        return super(RLSEnvDiscrete, self).step(self.action_choices[action])

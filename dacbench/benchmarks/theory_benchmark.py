@@ -1,5 +1,5 @@
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs.theory import RLSEnv, RLSEnvDiscreteK
+from dacbench.envs.theory import RLSEnv, RLSEnvDiscrete
 
 import numpy as np
 import os
@@ -7,18 +7,17 @@ import pandas as pd
 import gym
 
 THEORY_DEFAULTS = {
-    "env_class": "RLSEnv",
     "observation_description": "n, f(x)", # examples: n, f(x), delta_f(x), optimal_k, k, k_{t-0..4}, f(x)_{t-1}, f(x)_{t-0..4}     
     "reward_range": [-np.inf, np.inf],   # the true reward range is instance dependent
-    "reward_choice": "imp_minus_evals",
-    "cutoff": 1e9,  # we don't really use this, 
-                    # the real cutoff is in instance_set and is instance dependent
+    "reward_choice": "imp_minus_evals", # possible values: see envs/theory.py for more details
+    "cutoff": 1e6,  # if using as a "train" environment, a cutoff of 0.8*n^2 where n is problem size will be used (for more details, please see https://arxiv.org/abs/2202.03259)
+                    # see get_environment function of TheoryBenchmark on how to specify a train/test environment
     "seed": 0,        
-    "problem": "LeadingOne",
-    "instance_set_path": "lo_rls_50.csv",
-    "min_action": 1,
-    "max_action": 49,
-    "benchmark_info": "",
+    "problem": "LeadingOne", # possible values: "LeadingOne", "OneMax" 
+    "instance_set_path": "lo_rls_50.csv", # if the instance list file cannot be found in the running directory, it will be looked up in <DACBench>/dacbench/instance_sets/theory/ 
+    "discrete_action": True, # action space is discrete
+    "action_choices": [1,2,4,8,16],  # portfolio of k values
+    "benchmark_info": "DAC benchmark with RLS algorithm and LeadingOne problem", 
     "name": "LeadingOnesDAC"
 }
 
@@ -48,28 +47,28 @@ class TheoryBenchmark(AbstractBenchmark):
             for key, val in config.items():
                 self.config[key] = val        
 
-        self.read_instance_set()
+        self.read_instance_set()        
 
-        assert self.config.env_class in ['RLSEnv','RLSEnvDiscreteK']
-        
-        self.env_class = globals()[self.config.env_class]
-
-        # create observation space
-        self.config['observation_space'] = self.create_observation_space_from_description(self.config['observation_description'], self.env_class)
-
-        # initialise action space        
-        if "Discrete" in self.config['env_class']:
-            assert "action_choices" in config, "ERROR: action_choices is required for " + env_class
+        # initialise action space and environment class
+        if self.config.discrete_action:
+            assert "action_choices" in self.config, "ERROR: action_choices must be specified"            
+            assert ("min_action" not in self.config) and ("max_action" not in self.config), "ERROR: min_action and max_action should not be used for discrete action space"
+            assert "max_action" not in self.config, "ERROR: max_action should not be used for discrete action space"
+            self.config.env_class = "RLSEnvDiscrete"
             n_acts = len(config['action_choices'])
             self.config['action_space'] = gym.spaces.Discrete(n_acts) 
-        else:            
-            # TODO: this only works for 1-dim action space
-            assert "min_action" in self.config
-            assert "max_action" in self.config
+        else:
+            assert "action_chocies" not in self.config, "ERROR: action_choices is only used for discrete action space"
+            assert ("min_action" in self.config) and ("max_action" in self.config), "ERROR: min_action and max_action must be specified"  
+            self.config.env_class = "RLSEnv"
             self.config['action_space'] = gym.spaces.Box(low=np.array(self.config['min_action']), high=np.array(self.config['max_action']))
 
+        # create observation space
+        self.env_class = globals()[self.config.env_class]
+        self.config['observation_space'] = self.create_observation_space_from_description(self.config['observation_description'], self.env_class)
 
-    def create_observation_space_from_description(self, obs_description, env_class=RLSEnvDiscreteK):
+
+    def create_observation_space_from_description(self, obs_description, env_class=RLSEnvDiscrete):
         """
         Create a gym observation space (Box only) based on a string containing observation variable names, e.g. "n, f(x), k, k_{t-1}"
         Return:
@@ -89,6 +88,13 @@ class TheoryBenchmark(AbstractBenchmark):
     def get_environment(self, test_env=False):
         """
         Return an environment with current configuration        
+        
+        Parameters:
+            test_env:   whether the enviroment is used for train an agent or for testing.
+                        if test_env=False: 
+                            cutoff time for an episode is set to 0.8*n^2 (n: problem size)
+                            if an action is out of range, stop the episode immediately and return a large negative reward (see envs/theory.py for more details)
+                        otherwise: benchmark's original cutoff time is used, and out-of-range action will be clipped to nearest valid value and the episode will continue.
         """        
             
         env = self.env_class(self.config, test_env)
@@ -100,7 +106,10 @@ class TheoryBenchmark(AbstractBenchmark):
 
     
     def read_instance_set(self):
-        """Read instance set from file"""        
+        """
+        Read instance set from file
+            we look at the current directory first, if the file doesn't exist, we look in <DACBench>/dacbench/instance_sets/theory/
+        """        
         assert self.config.instance_set_path        
         if os.path.isfile(self.config.instance_set_path):
             path = self.config.instance_set_path
@@ -108,10 +117,14 @@ class TheoryBenchmark(AbstractBenchmark):
             path = (
                 os.path.dirname(os.path.abspath(__file__))
                 + "/../instance_sets/theory/"
-                + self.config.instance_set_path + ".csv"
+                + self.config.instance_set_path
             )                
 
         self.config["instance_set"] = pd.read_csv(path,index_col=0).to_dict('id')
+        
+        assert len(self.config['instance_set'].items()) > 0, "ERROR: empty instance set"
+        assert "initObj" in self.config['instance_set'][0].keys(), "ERROR: initial solution (initObj) must be specified in instance set"
+        assert "size" in self.config['instance_set'][0].keys(), "ERROR: problem size must be specified in instance set"
 
         for key, val in self.config['instance_set'].items():
             self.config['instance_set'][key] = objdict(val)

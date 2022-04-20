@@ -24,7 +24,7 @@ def main():
     env = None
     # load policy
     if args.policy in ['RandomPolicy','RLSOptimalPolicy','RLSFixedOnePolicy','RLSOptimalDiscretePolicy']:
-        env = make_env(bench_params)        
+        env = make_env(bench_params, test_env=True)        
         policy = globals()[args.policy](env)
     elif args.policy == 'DQNPolicy':
         # get path to the trained agent model
@@ -36,7 +36,7 @@ def main():
         assert "observation_description" in train_bench_params
         bench_params["observation_description"] = train_bench_params["observation_description"]
         # create env
-        env = make_env(bench_params)
+        env = make_env(bench_params, test_env=True)
         # create policy
         policy = DQNPolicy(env, agent_model_file)
     else:
