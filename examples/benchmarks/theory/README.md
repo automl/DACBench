@@ -1,8 +1,17 @@
 ## Randomised Local Search (RLS) for the LeadingOnes problem as a Dynamic Algorithm Configuration (DAC) benchmark
 
-This folder contains example scripts for running experiments on the benchmark, and some DDQN results. For more information about the benchmark and the DDQN results, please see:
-André Biedenkapp, Nguyen Dang, Martin S. Krejca, Frank Hutter, Carola Doerr (2022) *Theory-inspired Parameter Control Benchmarks for Dynamic Algorithm Configuration* ([arxiv](https://arxiv.org/abs/2202.03259)).
+This folder contains example scripts for running experiments on the DAC-LeadingOnes benchmark, and some DDQN results. For more information about the benchmark and the DDQN results, please see our paper ([arxiv](https://arxiv.org/abs/2202.03259), accepted at GECCO 2022).
 
+If you use this benchmark, please cite us:
+```
+@article{biedenkapp2022theory,
+  title={Theory-inspired Parameter Control Benchmarks for Dynamic Algorithm Configuration},
+  author={Biedenkapp, Andr{\'e} and Dang, Nguyen and Krejca, Martin S and Hutter, Frank and Doerr, Carola},
+  journal={arXiv preprint arXiv:2202.03259},
+  year={2022},
+  doi={https://doi.org/10.48550/arXiv.2202.03259}
+}
+```
 
 ### Benchmark Description:
 
