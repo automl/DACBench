@@ -13,7 +13,7 @@ If you use this benchmark, please cite us:
 }
 ```
 
-### Benchmark Description:
+### 1. Benchmark Description:
 
 The RLS algorithm only has one parameter to be controlled, namely *r*. This is the number of bits being flipped at each iteration of RLS. The aim is to find a policy that decide which *r* to be used at each iteration such that the total number of evaluations required for reaching the optimal solution is minimised. 
 
@@ -40,7 +40,7 @@ It is possible to use this benchmark with a continuous action space. In such set
 For both settings, instead of starting each RLS run from a random initial solution, it is possible to start from a specific objective function value. This gives us another factor for controlling the difficult of the benchmark: starting from a very good solution would make the averge episode length shorter and make it easier for the RL agent to learn.
 
 
-### Getting Started:
+### 2. Getting Started:
 
 A benchmark is defined via a configuration object (a dictionary). The following code create a benchmark with discrete action space (setting 1), with *n=50*, *k=5*, *powers of 2* portfolio type, and a cutoff time of 1e5 evaluations for each episode. Various initial objective functions are used and are specified in `<DACBench>/dacbench/instance_sets/theory/lo_rls_50.csv` (the code will automatically look into that folder if it cannot find the instance file in the current running folder).
 
@@ -67,7 +67,7 @@ The four examples demonstrate how to:
 - Evaluate a random policy and the optimal policies (discrete and non-discrete version) for a particular benchmark.
 - Train a DDQN agent, evaluate the learnt agent and compare it with the optimal policy of the same setting.
 
-### Running multiple experiments:
+### 3. Running multiple experiments:
 
 We also provide scripts for reproducing all experiments used in our paper, and the results of our experiments. Please see the script 
 
@@ -102,7 +102,7 @@ python ../scripts/run_policy.py --n-runs 2000 --bench test_conf.yml --policy Ran
 python ../scripts/run_policy.py --n-runs 2000 --bench test_conf.yml --policy RLSOptimalDiscretePolicy --out results/n50_evenly_spread/k3/optimal.pkl
 ```
 
-#### DDQN hyper-parameters:
+#### 4. DDQN hyper-parameters:
 
 We built our choice of DDQN hyperparameters based on prior literature using RL for dynamic tuning, in particular, each Q-networks has two hidden layers with 50 units (per layer) and ReLU activation function. The epsilon-greedy value is set to 0.2 (default value for DDQN in many cases). To allow the agent to collect enough information before the learning starts, 10000 random steps are done at the beginning of the training phase. 
 
