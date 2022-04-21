@@ -55,7 +55,7 @@ class TheoryBenchmark(AbstractBenchmark):
             assert ("min_action" not in self.config) and ("max_action" not in self.config), "ERROR: min_action and max_action should not be used for discrete action space"
             assert "max_action" not in self.config, "ERROR: max_action should not be used for discrete action space"
             self.config.env_class = "RLSEnvDiscrete"
-            n_acts = len(config['action_choices'])
+            n_acts = len(self.config['action_choices'])
             self.config['action_space'] = gym.spaces.Discrete(n_acts) 
         else:
             assert "action_chocies" not in self.config, "ERROR: action_choices is only used for discrete action space"
