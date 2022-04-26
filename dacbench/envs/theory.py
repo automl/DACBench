@@ -359,6 +359,10 @@ class RLSEnv(AbstractEnv):
             self.max_evals = int(0.8 * self.n * self.n)
         self.logger.info("n:%d, max_evals:%d" % (self.n, self.max_evals))
 
+        # set random seed
+        if 'seed' in self.instance:
+            self.rng = np.random.default_rng(self.instance.seed)   
+
         # create an initial solution
         if self.instance.initObj == "random":
             self.x = self.problem(n=self.instance.size, rng=self.rng)
