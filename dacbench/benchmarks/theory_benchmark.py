@@ -1,5 +1,5 @@
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs.theory import RLSEnvDiscrete
+from dacbench.envs.theory import RLSEnvDiscrete, RLSEnv
 
 import numpy as np
 import os
@@ -94,6 +94,8 @@ class TheoryBenchmark(AbstractBenchmark):
 
         # create observation space
         self.env_class = globals()[self.config.env_class]
+        assert self.env_class == RLSEnv or self.env_class == RLSEnvDiscrete
+
         self.config[
             "observation_space"
         ] = self.create_observation_space_from_description(
