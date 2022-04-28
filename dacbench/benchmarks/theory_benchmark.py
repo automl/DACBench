@@ -41,7 +41,7 @@ class TheoryBenchmark(AbstractBenchmark):
         """
         Initialize a theory benchmark
 
-        Parameters            
+        Parameters
         -------
         base_config_name: str
             OneLL's config name
@@ -126,7 +126,7 @@ class TheoryBenchmark(AbstractBenchmark):
 
         Parameters:
             test_env:   whether the enviroment is used for train an agent or for testing.
-                        if test_env=False: 
+                        if test_env=False:
                             cutoff time for an episode is set to 0.8*n^2 (n: problem size)
                             if an action is out of range, stop the episode immediately and return a large negative reward (see envs/theory.py for more details)
                         otherwise: benchmark's original cutoff time is used, and out-of-range action will be clipped to nearest valid value and the episode will continue.

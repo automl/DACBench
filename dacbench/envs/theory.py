@@ -3,42 +3,39 @@ from copy import deepcopy
 import logging
 from collections import deque
 
-import sys
-import os
 import uuid
 import gym
 
 from dacbench import AbstractEnv
 
+
 class BinaryProblem:
     """
     An abstract class for an individual in binary representation
     """
+
     def __init__(self, n, rng=np.random.default_rng()):
-        self.data = rng.choice([True,False], size=n) 
+        self.data = rng.choice([True, False], size=n)
         self.n = n
         self.fitness = self.eval()
 
-    
     def initialise_with_fixed_number_of_bits(self, k, rng=np.random.default_rng()):
-        nbits = self.data.sum()        
-        if nbits < k:            
-            ids = rng.choice(np.where(self.data==False)[0], size=k-nbits, replace=False)
+        nbits = self.data.sum()
+        if nbits < k:
+            ids = rng.choice(
+                np.where(self.data == False)[0], size=k - nbits, replace=False
+            )
             self.data[ids] = True
             self.eval()
-        
 
     def is_optimal(self):
         pass
 
-
     def get_optimal(self):
         pass
 
-
     def eval(self):
-        pass        
-
+        pass
 
     def get_fitness_after_flipping(self, locs):
         """
@@ -69,7 +66,7 @@ class BinaryProblem:
                 positions where we change to xprime's bits
 
         Returns: fitness of the new individual after crossover
-        -----------            
+        -----------
         """
         raise NotImplementedError
 
@@ -102,7 +99,7 @@ class BinaryProblem:
             locs_xprime: : 1d boolean/integer array
                 positions where we change to xprime's bits
 
-        Returns: the new individual after the crossover        
+        Returns: the new individual after the crossover
 
         """
         child = deepcopy(self)
@@ -114,87 +111,94 @@ class BinaryProblem:
         """
         Draw l ~ binomial(n, p), l>0
         Generate n_childs children by flipping exactly l bits
-        Return: the best child (maximum fitness), its fitness and number of evaluations used        
+        Return: the best child (maximum fitness), its fitness and number of evaluations used
         """
-        assert p>=0
+        assert p >= 0
 
-        if p==0:
+        if p == 0:
             return self, self.fitness, 0
 
         l = 0
-        while l==0:
-            l = rng.binomial(self.n, p)                
-        
+        while l == 0:
+            l = rng.binomial(self.n, p)
+
         best_obj = -1
         best_locs = None
         for i in range(n_childs):
-            locs = rng.choice(self.n, size=l, replace=False)        
+            locs = rng.choice(self.n, size=l, replace=False)
             obj = self.get_fitness_after_flipping(locs)
             if obj > best_obj:
                 best_locs = locs
-                best_obj = obj                       
+                best_obj = obj
 
-        best_child = self.flip(best_locs)                
+        best_child = self.flip(best_locs)
 
         return best_child, best_child.fitness, n_childs
 
     def mutate_rls(self, l, rng=np.random.default_rng()):
         """
         generate a child by flipping exactly l bits
-        Return: child, its fitness        
+        Return: child, its fitness
         """
-        assert l>=0
+        assert l >= 0
 
-        if l==0:
+        if l == 0:
             return self, self.fitness, 0
 
-        locs = rng.choice(self.n, size=l, replace=False) 
+        locs = rng.choice(self.n, size=l, replace=False)
         child = self.flip(locs)
 
-        return child, child.fitness, 1   
+        return child, child.fitness, 1
 
-    def crossover(self, xprime, p, n_childs, 
-                    include_xprime=True, count_different_inds_only=True,
-                    rng=np.random.default_rng()):
+    def crossover(
+        self,
+        xprime,
+        p,
+        n_childs,
+        include_xprime=True,
+        count_different_inds_only=True,
+        rng=np.random.default_rng(),
+    ):
         """
         Crossover operator:
             for each bit, taking value from x with probability p and from self with probability 1-p
         Arguments:
             x: the individual to crossover with
-            p (float): in [0,1]                                                
+            p (float): in [0,1]
         """
         assert p <= 1
-        
+
         if p == 0:
             if include_xprime:
                 return xprime, xprime.fitness, 0
             else:
-                return self, self.fitness, 0            
+                return self, self.fitness, 0
 
         if include_xprime:
             best_obj = xprime.fitness
         else:
-            best_obj = -1            
+            best_obj = -1
         best_locs = None
 
         n_evals = 0
-        ls = rng.binomial(self.n, p, size=n_childs)        
-        for l in ls:                   
+        ls = rng.binomial(self.n, p, size=n_childs)
+        for l in ls:
             locs_xprime = rng.choice(self.n, l, replace=False)
             locs_x = np.full(self.n, True)
             locs_x[locs_xprime] = False
-            obj = self.get_fitness_after_crossover(xprime, locs_x, locs_xprime) 
-                   
-            if (obj != self.fitness) and (obj!=xprime.fitness):
+            obj = self.get_fitness_after_crossover(xprime, locs_x, locs_xprime)
+
+            if (obj != self.fitness) and (obj != xprime.fitness):
                 n_evals += 1
-            elif (not np.array_equal(xprime.data[locs_xprime], self.data[locs_xprime])) and (not np.array_equal(self.data[locs_x], xprime.data[locs_x])):            
-                n_evals += 1            
+            elif (
+                not np.array_equal(xprime.data[locs_xprime], self.data[locs_xprime])
+            ) and (not np.array_equal(self.data[locs_x], xprime.data[locs_x])):
+                n_evals += 1
 
             if obj > best_obj:
                 best_obj = obj
                 best_locs = locs_xprime
-            
-            
+
         if best_locs is not None:
             child = self.combine(xprime, best_locs)
         else:
@@ -206,21 +210,22 @@ class BinaryProblem:
         return child, child.fitness, n_evals
 
 
-class LeadingOne(BinaryProblem):    
+class LeadingOne(BinaryProblem):
     """
     An individual for LeadingOne problem
     The aim is to maximise the number of leading (and consecutive) 1 bits in the string
     """
+
     def __init__(self, n, rng=np.random.default_rng(), initObj=None):
         if initObj is None:
             super(LeadingOne, self).__init__(n=n, rng=rng)
         else:
-            self.data = rng.choice([True,False], size=n)            
-            self.data[:int(initObj)] = True
+            self.data = rng.choice([True, False], size=n)
+            self.data[: int(initObj)] = True
             self.data[int(initObj)] = False
             self.n = n
             self.fitness = self.eval()
-    
+
     def eval(self):
         k = self.data.argmin()
         if self.data[k]:
@@ -230,12 +235,12 @@ class LeadingOne(BinaryProblem):
         return self.fitness
 
     def is_optimal(self):
-        return self.data.all()  
+        return self.data.all()
 
     def get_optimal(self):
-        return self.n    
+        return self.n
 
-    def get_fitness_after_flipping(self, locs):        
+    def get_fitness_after_flipping(self, locs):
         min_loc = locs.min()
         if min_loc < self.fitness:
             return min_loc
@@ -244,17 +249,16 @@ class LeadingOne(BinaryProblem):
         else:
             old_fitness = self.fitness
             self.data[locs] = ~self.data[locs]
-            new_fitness = self.eval()            
+            new_fitness = self.eval()
             self.data[locs] = ~self.data[locs]
             self.fitness = old_fitness
             return new_fitness
 
-
     def get_fitness_after_crossover(self, xprime, locs_x, locs_xprime):
-        child = self.combine(xprime, locs_xprime)                
+        child = self.combine(xprime, locs_xprime)
         child.eval()
         return child.fitness
-        
+
 
 MAX_INT = 1e8
 HISTORY_LENGTH = 5
@@ -275,71 +279,93 @@ class RLSEnv(AbstractEnv):
         config : objdict
             Environment configuration
         """
-        super(RLSEnv, self).__init__(config)        
-        self.logger = logging.getLogger(self.__str__())     
+        super(RLSEnv, self).__init__(config)
+        self.logger = logging.getLogger(self.__str__())
 
         self.test_env = test_env
-        
-        self.name = config.name   
-        
+
+        self.name = config.name
+
         # name of reward function
-        assert config.reward_choice in ['imp_div_evals', 'imp_div_evals_new', 'imp_minus_evals', 'minus_evals', 'imp', 'minus_evals_normalised', 'imp_minus_evals_normalised']
-        self.reward_choice = config.reward_choice        
-        #print("Reward choice: " + self.reward_choice)        
+        assert config.reward_choice in [
+            "imp_div_evals",
+            "imp_div_evals_new",
+            "imp_minus_evals",
+            "minus_evals",
+            "imp",
+            "minus_evals_normalised",
+            "imp_minus_evals_normalised",
+        ]
+        self.reward_choice = config.reward_choice
+        # print("Reward choice: " + self.reward_choice)
 
         # get problem
-        self.problem = globals()[config.problem]                
+        self.problem = globals()[config.problem]
 
         # read names of all observation variables
         self.obs_description = config.observation_description
-        self.obs_var_names = [s.strip() for s in config.observation_description.split(',')]
+        self.obs_var_names = [
+            s.strip() for s in config.observation_description.split(",")
+        ]
 
-        # functions to get values of the current state from histories 
-        # (see reset() function for those history variables)        
+        # functions to get values of the current state from histories
+        # (see reset() function for those history variables)
         self.state_functions = []
         for var_name in self.obs_var_names:
-            if var_name == 'n':
+            if var_name == "n":
                 self.state_functions.append(lambda: self.n)
-            elif var_name in ['r']:
-                self.state_functions.append(lambda his='history_'+var_name: vars(self)[his][-1])
-            elif "_{t-" in var_name: # TODO: this implementation only allow accessing history of r, but not delta_f(x), optimal_k, etc
-                k = int(var_name.split("_{t-")[1][:-1]) # get the number in _{t-<number>}
-                name = var_name.split("_{t-")[0] # get the variable name (r, f(x), etc)
-                self.state_functions.append(lambda his='history_'+name: vars(self)[his][-(k+1)]) # the last element is the value at the current time step, so we have to go one step back to access the history
+            elif var_name in ["r"]:
+                self.state_functions.append(
+                    lambda his="history_" + var_name: vars(self)[his][-1]
+                )
+            elif (
+                "_{t-" in var_name
+            ):  # TODO: this implementation only allow accessing history of r, but not delta_f(x), optimal_k, etc
+                k = int(
+                    var_name.split("_{t-")[1][:-1]
+                )  # get the number in _{t-<number>}
+                name = var_name.split("_{t-")[0]  # get the variable name (r, f(x), etc)
+                self.state_functions.append(
+                    lambda his="history_" + name: vars(self)[his][-(k + 1)]
+                )  # the last element is the value at the current time step, so we have to go one step back to access the history
             elif var_name == "f(x)":
                 self.state_functions.append(lambda: self.history_fx[-1])
             elif var_name == "delta_f(x)":
-                self.state_functions.append(lambda: self.history_fx[-1] - self.history_fx[-2])
+                self.state_functions.append(
+                    lambda: self.history_fx[-1] - self.history_fx[-2]
+                )
             elif var_name == "optimal_r":
-                self.state_functions.append(lambda: int(self.n/(self.history_fx[-1]+1)))
+                self.state_functions.append(
+                    lambda: int(self.n / (self.history_fx[-1] + 1))
+                )
             else:
                 raise Exception("Error: invalid state variable name: " + var_name)
-        
+
         # the random generator used by RLS
-        if 'seed' in config:
+        if "seed" in config:
             seed = config.seed
         else:
             seed = None
-        self.rng = np.random.default_rng(seed)   
-        
+        self.rng = np.random.default_rng(seed)
+
         # for logging
         self.outdir = None
-        if 'outdir' in config:
-            self.outdir = config.outdir + '/' + str(uuid.uuid4())
+        if "outdir" in config:
+            self.outdir = config.outdir + "/" + str(uuid.uuid4())
 
     def seed(self, seed=None, seed_action_space=False):
         super(RLSEnv, self).seed(seed, seed_action_space)
         self.rng = np.random.default_rng(seed)
-        
+
     def get_obs_domain_from_name(var_name):
         """
         Get default lower and upperbound of a observation variable based on its name.
-        The observation space will then be created 
+        The observation space will then be created
         Return:
             Two int values, e.g., 1, np.inf
-        """        
-        return 0, np.inf    
-    
+        """
+        return 0, np.inf
+
     def reset(self):
         """
         Resets env
@@ -348,8 +374,8 @@ class RLSEnv(AbstractEnv):
         -------
         numpy.array
             Environment state
-        """        
-        super(RLSEnv, self).reset_()        
+        """
+        super(RLSEnv, self).reset_()
 
         # current problem size (n) & evaluation limit (max_evals)
         self.n = self.instance.size
@@ -360,30 +386,34 @@ class RLSEnv(AbstractEnv):
         self.logger.info("n:%d, max_evals:%d" % (self.n, self.max_evals))
 
         # set random seed
-        if 'seed' in self.instance:
-            self.rng = np.random.default_rng(self.instance.seed)   
+        if "seed" in self.instance:
+            self.rng = np.random.default_rng(self.instance.seed)
 
         # create an initial solution
         if self.instance.initObj == "random":
             self.x = self.problem(n=self.instance.size, rng=self.rng)
         else:
-            self.x = self.problem(n=self.instance.size, rng=self.rng, initObj=self.instance.initObj) 
+            self.x = self.problem(
+                n=self.instance.size, rng=self.rng, initObj=self.instance.initObj
+            )
 
         # total number of evaluations so far
-        self.total_evals = 1                        
+        self.total_evals = 1
 
         # reset histories
-        self.history_r = deque([0]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH)         
-        self.history_fx = deque([self.x.fitness]*HISTORY_LENGTH, maxlen=HISTORY_LENGTH) 
+        self.history_r = deque([0] * HISTORY_LENGTH, maxlen=HISTORY_LENGTH)
+        self.history_fx = deque(
+            [self.x.fitness] * HISTORY_LENGTH, maxlen=HISTORY_LENGTH
+        )
 
         # for debug only
         self.log_r = []
-        self.log_reward = []     
+        self.log_reward = []
         self.log_fx = []
-        self.init_obj = self.x.fitness 
-        
+        self.init_obj = self.x.fitness
+
         return self.get_state()
-    
+
     def get_state(self):
         return np.asarray([f() for f in self.state_functions])
 
@@ -397,26 +427,26 @@ class RLSEnv(AbstractEnv):
             action to execute
 
         Returns
-        -------            
+        -------
             state, reward, done, info
             np.array, float, bool, dict
         """
-        super(RLSEnv, self).step_()     
+        super(RLSEnv, self).step_()
 
         fitness_before_update = self.x.fitness
-        
+
         # get r
         if isinstance(action, np.ndarray) or isinstance(action, list):
-            assert len(action)==1
+            assert len(action) == 1
             r = action[0]
         else:
-            r = action   
-            
+            r = action
+
         # if r is out of range
         stop = False
-        if r<1 or r>self.n:
+        if r < 1 or r > self.n:
             self.logger.info(f"WARNING: r={r} is out of bound")
-            
+
             # if we're in the training phase, we return a large negative reward and stop the episode
             if self.test_env is False:
                 done = True
@@ -425,69 +455,87 @@ class RLSEnv(AbstractEnv):
                 stop = True
             # if we're in the test phase, just clip r back to the range and continue
             else:
-                r = np.clip(r,1,self.n)
-                
-        if stop is False:                                
+                r = np.clip(r, 1, self.n)
+
+        if stop is False:
             # flip r bits
-            y, f_y, n_evals = self.x.mutate_rls(r, self.rng)         
+            y, f_y, n_evals = self.x.mutate_rls(r, self.rng)
 
             # update x
             if self.x.fitness <= y.fitness:
                 self.x = y
 
-            # update total number of evaluations        
+            # update total number of evaluations
             self.total_evals += n_evals
 
-            # check stopping criteria        
-            done = (self.total_evals>=self.max_evals) or (self.x.is_optimal())        
+            # check stopping criteria
+            done = (self.total_evals >= self.max_evals) or (self.x.is_optimal())
 
-            # calculate reward        
-            if self.reward_choice=='imp_div_evals':            
+            # calculate reward
+            if self.reward_choice == "imp_div_evals":
                 reward = (self.x.fitness - fitness_before_update - 0.5) / n_evals
-            elif self.reward_choice=='imp_minus_evals':
+            elif self.reward_choice == "imp_minus_evals":
                 reward = self.x.fitness - fitness_before_update - n_evals
-            elif self.reward_choice=='minus_evals':
+            elif self.reward_choice == "minus_evals":
                 reward = -n_evals
-            elif self.reward_choice=='minus_evals_normalised':
-                reward = -n_evals / self.max_evals            
-            elif self.reward_choice=='imp_minus_evals_normalised':
-                reward = (self.x.fitness - fitness_before_update - n_evals) / self.max_evals
-            elif self.reward_choice=='imp':
+            elif self.reward_choice == "minus_evals_normalised":
+                reward = -n_evals / self.max_evals
+            elif self.reward_choice == "imp_minus_evals_normalised":
+                reward = (
+                    self.x.fitness - fitness_before_update - n_evals
+                ) / self.max_evals
+            elif self.reward_choice == "imp":
                 reward = self.x.fitness - fitness_before_update - 0.5
             self.log_reward.append(reward)
 
         # update histories
         self.history_fx.append(self.x.fitness)
-        self.history_r.append(r)        
+        self.history_r.append(r)
 
         # update logs
         self.log_r.append(r)
         self.log_fx.append(self.x.fitness)
         self.log_reward.append(reward)
-                    
-        returned_info = {"msg": "", "values":{}}
-        if done:            
+
+        returned_info = {"msg": "", "values": {}}
+        if done:
             if hasattr(self, "env_type"):
                 msg = "Env " + self.env_type + ". "
             else:
-                msg = ""    
-            msg += "Episode done: n=%d; obj=%d; init_obj=%d; evals=%d; max_evals=%d; steps=%d; r_min=%.1f; r_max=%.1f; r_mean=%.1f; R=%.4f" % (self.n, self.x.fitness, self.init_obj, self.total_evals, self.max_evals, self.c_step, min(self.log_r), max(self.log_r), sum(self.log_r)/len(self.log_r), sum(self.log_reward))      
-            #self.logger.info(msg) 
-            returned_info['msg'] = msg
-            returned_info['values'] = {'n':int(self.n), 
-                                        'obj': int(self.x.fitness), 
-                                        'init_obj': int(self.init_obj), 
-                                        'evals': int(self.total_evals), 
-                                        'max_evals': int(self.max_evals), 
-                                        'steps': int(self.c_step), 
-                                        'r_min': float(min(self.log_r)), 
-                                        'r_max': float(max(self.log_r)), 
-                                        'r_mean': float(sum(self.log_r)/len(self.log_r)), 
-                                        'R': float(sum(self.log_reward)),
-                                        'log_r': [int(x) for x in self.log_r],
-                                        'log_fx':[int(x) for x in self.log_fx], 
-                                        'log_reward': [float(x) for x in self.log_reward]}
-        
+                msg = ""
+            msg += (
+                "Episode done: n=%d; obj=%d; init_obj=%d; evals=%d; max_evals=%d; steps=%d; r_min=%.1f; r_max=%.1f; r_mean=%.1f; R=%.4f"
+                % (
+                    self.n,
+                    self.x.fitness,
+                    self.init_obj,
+                    self.total_evals,
+                    self.max_evals,
+                    self.c_step,
+                    min(self.log_r),
+                    max(self.log_r),
+                    sum(self.log_r) / len(self.log_r),
+                    sum(self.log_reward),
+                )
+            )
+            # self.logger.info(msg)
+            returned_info["msg"] = msg
+            returned_info["values"] = {
+                "n": int(self.n),
+                "obj": int(self.x.fitness),
+                "init_obj": int(self.init_obj),
+                "evals": int(self.total_evals),
+                "max_evals": int(self.max_evals),
+                "steps": int(self.c_step),
+                "r_min": float(min(self.log_r)),
+                "r_max": float(max(self.log_r)),
+                "r_mean": float(sum(self.log_r) / len(self.log_r)),
+                "R": float(sum(self.log_reward)),
+                "log_r": [int(x) for x in self.log_r],
+                "log_fx": [int(x) for x in self.log_fx],
+                "log_reward": [float(x) for x in self.log_reward],
+            }
+
         return self.get_state(), reward, done, returned_info
 
     def close(self) -> bool:
@@ -500,23 +548,31 @@ class RLSEnv(AbstractEnv):
         -------
         bool
             Closing confirmation
-        """        
+        """
         return True
 
-    
+
 class RLSEnvDiscrete(RLSEnv):
     """
     RLS environment where the choices of r is discretised
     """
+
     def __init__(self, config, test_env=False):
         super(RLSEnvDiscrete, self).__init__(config, test_env)
-        assert 'action_choices' in config, "Error: action_choices must be specified in benchmark's config"
-        assert isinstance(self.action_space, gym.spaces.Discrete), "Error: action space must be discrete"
-        assert self.action_space.n == len(config['action_choices']), "Error: action space's size (%d) must be equal to the len(action_choices) (%d)" % (self.action_space.n, len(config['action_choices']))        
-        self.action_choices = config['action_choices']        
-        
+        assert (
+            "action_choices" in config
+        ), "Error: action_choices must be specified in benchmark's config"
+        assert isinstance(
+            self.action_space, gym.spaces.Discrete
+        ), "Error: action space must be discrete"
+        assert self.action_space.n == len(config["action_choices"]), (
+            "Error: action space's size (%d) must be equal to the len(action_choices) (%d)"
+            % (self.action_space.n, len(config["action_choices"]))
+        )
+        self.action_choices = config["action_choices"]
+
     def step(self, action):
         if isinstance(action, np.ndarray) or isinstance(action, list):
-            assert len(action)==1
+            assert len(action) == 1
             action = action[0]
         return super(RLSEnvDiscrete, self).step(self.action_choices[action])
