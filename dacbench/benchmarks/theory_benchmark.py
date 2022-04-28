@@ -23,7 +23,7 @@ THEORY_DEFAULTS = {
     "cutoff": 1e6,  # if using as a "train" environment, a cutoff of 0.8*n^2 where n is problem size will be used (for more details, please see https://arxiv.org/abs/2202.03259)
     # see get_environment function of TheoryBenchmark on how to specify a train/test environment
     "seed": 0,
-    "problem": "LeadingOne",  # possible values: "LeadingOne", "OneMax"
+    "problem": "LeadingOne",  # possible values: "LeadingOne"
     "instance_set_path": "lo_rls_50.csv",  # if the instance list file cannot be found in the running directory, it will be looked up in <DACBench>/dacbench/instance_sets/theory/
     "discrete_action": True,  # action space is discrete
     "action_choices": [1, 2, 4, 8, 16],  # portfolio of k values
