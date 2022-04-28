@@ -68,7 +68,7 @@ def example_03():
     """
     Example 3: run RLS discrete evenly_spread random policy with n=50, portfolio size of 3 and random initial solution
     """    
-    print("Example 3: run RLS discrete evenly_spread random policy with n=50, portfolio size of 3 and random initial solution")
+    print("\n###  Example 3: run RLS discrete evenly_spread random policy with n=50, portfolio size of 3 and random initial solution")
 
     # benchmark configuration
     bench_config = {"instance_set_path":"lo_rls_50_random.csv", 
@@ -96,7 +96,7 @@ def example_04():
     """
     Example 4: train a DDQN agent for RLS discrete power of 2 policy with n=50, portfolio size of 4 and initial solution of 40. Get the final trained agent and compare with the optimal policy for the same scenario.
     """    
-    print("Example 4: train a DDQN agent for RLS discrete power of 2 policy with n=50, portfolio size of 4 and initial solution of 40. Get the final trained agent and compare with the optimal policy for the same scenario.")
+    print("\n###  Example 4: train a DDQN agent for RLS discrete power of 2 policy with n=50, portfolio size of 4 and initial solution of 40. Get the final trained agent and compare with the optimal policy for the same scenario.")
 
     # benchmark configuration
     bench_config = {"instance_set_path":"lo_rls_50_easy.csv", 
