@@ -116,6 +116,7 @@ class LubyEnv(AbstractEnv):
         self._jenny_i = 1
         luby_t = max(1, int(np.round(self._jenny_i + self._start_shift + self.__error)))
         self._next_goal = self._seq[luby_t - 1]
+        self.done = False
         return self.get_state(self)
 
     def get_default_reward(self, _):

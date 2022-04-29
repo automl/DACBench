@@ -189,6 +189,18 @@ def log2dataframe(
     return dataframe.infer_objects()
 
 
+def seed_mapper(self):
+    if self.env is None:
+        return None
+    return self.env.initial_seed
+
+
+def instance_mapper(self):
+    if self.env is None:
+        return None
+    return self.env.get_inst_id()
+
+
 class AbstractLogger(metaclass=ABCMeta):
     """
     Logger interface.
@@ -231,7 +243,38 @@ class AbstractLogger(metaclass=ABCMeta):
         self.log_dir = self._init_logging_dir(self.output_path / self.experiment_name)
         self.step_write_frequency = step_write_frequency
         self.episode_write_frequency = episode_write_frequency
-        self.additional_info = {"instance": None}
+        self._additional_info = {}
+        self.additional_info_auto_mapper = {
+            "instance": instance_mapper,
+            "seed": seed_mapper,
+        }
+        self.env = None
+
+    @property
+    def additional_info(self):
+        additional_info = self._additional_info.copy()
+        auto_info = {
+            key: mapper(self)
+            for key, mapper in self.additional_info_auto_mapper.items()
+            if mapper(self) is not None
+        }
+
+        additional_info.update(auto_info)
+
+        return additional_info
+
+    def set_env(self, env: AbstractEnv) -> None:
+        """
+        Needed to infer automatically logged information like the instance id
+        Parameters
+        ----------
+        env: AbstractEnv
+
+        Returns
+        -------
+
+        """
+        self.env = env
 
     @staticmethod
     def _pretty_valid_types() -> str:
@@ -581,7 +624,7 @@ class ModuleLogger(AbstractLogger):
         -------
 
         """
-        self.additional_info.update(kwargs)
+        self._additional_info.update(kwargs)
 
     def log(
         self, key: str, value: Union[Dict, List, Tuple, str, int, float, bool]
@@ -732,6 +775,11 @@ class Logger(AbstractLogger):
         self.env: AbstractEnv = None
         self.module_logger: Dict[str, ModuleLogger] = dict()
 
+    def set_env(self, env: AbstractEnv) -> None:
+        super().set_env(env)
+        for _, module_logger in self.module_logger.items():
+            module_logger.set_env(env)
+
     def close(self):
         """
         Makes sure, that all remaining entries (from all sublogger) are written to files and the files are closed.
@@ -769,13 +817,6 @@ class Logger(AbstractLogger):
         """
         for _, module_logger in self.module_logger.items():
             module_logger.next_episode()
-        self.__update_auto_additional_info()
-
-    def __update_auto_additional_info(self):
-        # TODO add seed too if av?
-        if self.env is None:
-            raise ValueError("No environment found! Please set environment!")
-        self.set_additional_info(instance=self.env.get_inst_id())
 
     def reset_episode(self):
         for _, module_logger in self.module_logger.items():
@@ -823,9 +864,7 @@ class Logger(AbstractLogger):
                 self.episode_write_frequency,
             )
             if self.env is not None:
-                self.module_logger[module].set_additional_info(
-                    instance=self.env.get_inst_id()
-                )
+                self.module_logger[module].set_env(self.env)
 
         return self.module_logger[module]
 
@@ -842,20 +881,6 @@ class Logger(AbstractLogger):
         agent_config = {"type": str(agent.__class__)}
         with open(self.log_dir / "agent.json", "w") as f:
             json.dump(agent_config, f)
-
-    def set_env(self, env: AbstractEnv) -> None:
-        """
-        Needed to infer automatically logged information like the instance id
-        Parameters
-        ----------
-        env: AbstractEnv
-
-        Returns
-        -------
-
-        """
-        self.env = env
-        self.__update_auto_additional_info()
 
     def add_benchmark(self, benchmark: AbstractBenchmark) -> None:
         """

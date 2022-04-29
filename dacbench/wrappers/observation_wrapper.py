@@ -1,5 +1,3 @@
-from collections.abc import Iterable
-
 from gym import Wrapper, spaces
 import numpy as np
 
@@ -95,7 +93,12 @@ class ObservationWrapper(Wrapper):
         return state
 
     def flatten(self, state_dict):
+        keys = sorted(list(state_dict.keys()))
         values = []
-        for v in state_dict.values():
-            values.extend(v if isinstance(v, Iterable) else [v])
+        for k in keys:
+            if isinstance(state_dict[k], np.ndarray):
+                for s in state_dict[k]:
+                    values.append(s)
+            else:
+                values.append(state_dict[k])
         return np.array(values).astype(np.float32)

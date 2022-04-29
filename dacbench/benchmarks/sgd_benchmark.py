@@ -14,9 +14,6 @@ def __default_loss_function(**kwargs):
     return NLLLoss(reduction = 'none', **kwargs)
 
 
-HISTORY_LENGTH = 40
-INPUT_DIM = 10
-
 INFO = {
     "identifier": "LR",
     "name": "Learning Rate Adaption for Neural Networks",
@@ -30,7 +27,8 @@ INFO = {
         "Training Loss",
         "Validation Loss",
         "Step",
-        "Alignment"
+        "Alignment",
+        "Crashed"
     ],
 }
 
@@ -58,11 +56,13 @@ SGD_DEFAULTS = objdict(
                 "validationLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
                 "step": spaces.Box(low=0, high=np.inf, shape=(1,)),
                 "alignment": spaces.Box(low=0, high=1, shape=(1,)),
+                "crashed": spaces.Discrete(2),
             }
         ],
         "reward_type": Reward.LogDiffTraining,
         "cutoff": 1e3,
         "lr": 1e-3,
+        "discount_factor": 0.9,
         "optimizer": "rmsprop",
         "loss_function": __default_loss_function,
         "loss_function_kwargs": {},
@@ -71,13 +71,17 @@ SGD_DEFAULTS = objdict(
         "training_batch_size": 64,
         "validation_batch_size": 64,
         "train_validation_ratio": 0.8,
+        "dataloader_shuffle": True,
         "no_cuda": False,
         "beta1": 0.9,
         "beta2": 0.9,
+        "epsilon": 1.0e-06,
+        "clip_grad": (-1.0, 1.0),
         "seed": 0,
         "cd_paper_reconstruction": False,
         "cd_bias_correction": True,
-        "test": False,
+        "terminate_on_crash": False,
+        "crash_penalty": 0.0,
         "instance_set_path": "../instance_sets/sgd/sgd_train_100instances.csv",
         "benchmark_info": INFO,
         "features": [
@@ -135,23 +139,36 @@ class SGDBenchmark(AbstractBenchmark):
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
+        # Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
+
         env = SGDEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
 
         return env
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """
         Read path of instances from config into list
         """
 
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
-        self.config["instance_set"] = {}
+        if test:
+            path = (
+                    os.path.dirname(os.path.abspath(__file__))
+                    + "/"
+                    + self.config.test_set_path
+            )
+            keyword = "test_set"
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
+            keyword = "instance_set"
+        self.config[keyword] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh, delimiter=";")
             for row in reader:
@@ -169,7 +186,7 @@ class SGDBenchmark(AbstractBenchmark):
                     int(row["steps"]),
                     dataset_size
                 ]
-                self.config["instance_set"][int(row["ID"])] = instance
+                self.config[keyword][int(row["ID"])] = instance
 
     def get_benchmark(self, instance_set_path=None, seed=0):
         """

@@ -30,8 +30,6 @@ if __name__ == "__main__":
     performance_logger = logger.add_module(PerformanceTrackingWrapper)
 
     for s in seeds:
-        # Log the seed
-        logger.set_additional_info(seed=s)
 
         # Make & wrap benchmark environment
         env = bench.get_benchmark(seed=s)

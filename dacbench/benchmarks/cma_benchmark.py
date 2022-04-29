@@ -52,6 +52,7 @@ CMAES_DEFAULTS = objdict(
         "popsize": 10,
         "seed": 0,
         "instance_set_path": "../instance_sets/cma/cma_train.csv",
+        "test_set_path": "../instance_sets/cma/cma_test.csv",
         "benchmark_info": INFO,
     }
 )
@@ -62,7 +63,7 @@ class CMAESBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for CMA-ES
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize CMA Benchmark
 
@@ -71,7 +72,7 @@ class CMAESBenchmark(AbstractBenchmark):
         config_path : str
             Path to config file (optional)
         """
-        super(CMAESBenchmark, self).__init__(config_path)
+        super(CMAESBenchmark, self).__init__(config_path, config)
         if not self.config:
             self.config = objdict(CMAES_DEFAULTS.copy())
 
@@ -91,22 +92,36 @@ class CMAESBenchmark(AbstractBenchmark):
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
+        #Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
+
         env = CMAESEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
 
         return env
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """
         Read path of instances from config into list
         """
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
-        self.config["instance_set"] = {}
+        if test:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.test_set_path
+            )
+            keyword = "test_set"
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
+            keyword = "instance_set"
+
+        self.config[keyword] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh)
             for row in reader:
@@ -117,7 +132,7 @@ class CMAESBenchmark(AbstractBenchmark):
                     float(row["init_sigma"]),
                     init_locs,
                 ]
-                self.config["instance_set"][int(row["ID"])] = instance
+                self.config[keyword][int(row["ID"])] = instance
 
     def get_benchmark(self, seed=0):
         """
@@ -136,4 +151,5 @@ class CMAESBenchmark(AbstractBenchmark):
         self.config = objdict(CMAES_DEFAULTS.copy())
         self.config.seed = seed
         self.read_instance_set()
+        self.read_instance_set(test=True)
         return CMAESEnv(self.config)

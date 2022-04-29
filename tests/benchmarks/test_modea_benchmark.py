@@ -41,8 +41,3 @@ class TestCMABenchmark(unittest.TestCase):
         env = bench2.get_environment()
         self.assertTrue(len(env.instance_set.keys()) == 100)
         self.assertTrue(inst == env.instance_set[0])
-
-    def test_benchmark_env(self):
-        bench = ModeaBenchmark()
-        env = bench.get_benchmark()
-        self.assertTrue(issubclass(type(env), ModeaEnv))

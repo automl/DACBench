@@ -10,6 +10,7 @@ from dacbench.wrappers import InstanceSamplingWrapper
 class TestInstanceSamplingWrapper(unittest.TestCase):
     def test_init(self):
         bench = LubyBenchmark()
+        bench.config.instance_update_func = "none"
         env = bench.get_environment()
 
         with self.assertRaises(Exception):
@@ -23,6 +24,7 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
 
     def test_reset(self):
         bench = LubyBenchmark()
+        bench.config.instance_update_func = "none"
         env = bench.get_environment()
 
         def sample():
@@ -37,13 +39,10 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
 
         wrapped.reset()
         self.assertTrue(np.array_equal(wrapped.instance, sample()))
-        self.assertTrue(
-            np.array_equal(list(wrapped.instance_set.values())[0], sample())
-        )
-        self.assertTrue(wrapped.inst_id == 0)
 
     def test_fit(self):
         bench = LubyBenchmark()
+        bench.config.instance_update_func = "none"
         bench.config.instance_set_path = "../instance_sets/luby/luby_train.csv"
         bench.read_instance_set()
         instances = bench.config.instance_set

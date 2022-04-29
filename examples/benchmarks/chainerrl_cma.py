@@ -42,6 +42,7 @@ for i in range(num_episodes):
         next_state, reward, done, _ = env.step(action)
         r += reward
         logger.next_step()
+        state = next_state
     logger.next_episode()
     # Train agent after episode has ended
     agent.stop_episode_and_train(state, reward, done=done)
