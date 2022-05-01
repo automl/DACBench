@@ -346,16 +346,14 @@ class RLSEnv(AbstractEnv):
             seed = config.seed
         else:
             seed = None
-        self.rng = np.random.default_rng(seed)
+        if "seed" in self.instance:
+            seed = self.instance.seed
+        self.seed(seed)
 
         # for logging
         self.outdir = None
         if "outdir" in config:
             self.outdir = config.outdir + "/" + str(uuid.uuid4())
-
-    def seed(self, seed=None, seed_action_space=False):
-        super(RLSEnv, self).seed(seed, seed_action_space)
-        self.rng = np.random.default_rng(seed)
 
     def get_obs_domain_from_name(var_name):
         """
@@ -387,14 +385,14 @@ class RLSEnv(AbstractEnv):
 
         # set random seed
         if "seed" in self.instance:
-            self.rng = np.random.default_rng(self.instance.seed)
+            self.seed(self.instance.seed)
 
         # create an initial solution
         if self.instance.initObj == "random":
-            self.x = self.problem(n=self.instance.size, rng=self.rng)
+            self.x = self.problem(n=self.instance.size, rng=self.np_random)
         else:
             self.x = self.problem(
-                n=self.instance.size, rng=self.rng, initObj=self.instance.initObj
+                n=self.instance.size, rng=self.np_random, initObj=self.instance.initObj
             )
 
         # total number of evaluations so far
@@ -459,7 +457,8 @@ class RLSEnv(AbstractEnv):
 
         if stop is False:
             # flip r bits
-            y, f_y, n_evals = self.x.mutate_rls(r, self.rng)
+            r = int(r)
+            y, f_y, n_evals = self.x.mutate_rls(r, self.np_random)
 
             # update x
             if self.x.fitness <= y.fitness:
