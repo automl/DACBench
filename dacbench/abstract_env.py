@@ -48,7 +48,6 @@ class AbstractEnv(gym.Env):
         self.benchmark_info = config["benchmark_info"]
         self.initial_seed = None
         self.np_random = None
-        self.seed(config.get("seed", None), config.get("seed_action_space", False))
 
         self.n_steps = config["cutoff"]
         self.c_step = 0
@@ -135,6 +134,9 @@ class AbstractEnv(gym.Env):
             except TypeError:
                 print("Tuple and Dict action spaces are currently not supported")
                 raise TypeError
+       
+        # seeding the environment after initialising action space
+        self.seed(config.get("seed", None), config.get("seed_action_space", False))      
 
     def step_(self):
         """
