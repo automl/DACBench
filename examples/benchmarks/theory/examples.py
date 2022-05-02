@@ -1,11 +1,9 @@
 from dacbench.benchmarks import TheoryBenchmark
-from stable_baselines3 import PPO
 import sys
 import os
 
 sys.path.append(os.path.dirname(__file__))
-from scripts import rls_policies
-from rls_policies import (
+from script.rls_policies import (
     RandomPolicy,
     RLSOptimalPolicy,
     RLSFixedOnePolicy,
@@ -95,6 +93,7 @@ def example_03():
     bench_config = {
         "instance_set_path": "lo_rls_50_random.csv",
         "action_choices": [1, 17, 33],
+        "seed_action_space": True,  # set this to True for reproducibility
         "cutoff": 1e5,  # random policy can sometime perform badly so we put a reasonable cutoff here to be safe.
     }
 
@@ -128,6 +127,7 @@ def example_04():
     bench_config = {
         "instance_set_path": "lo_rls_50_easy.csv",
         "action_choices": [1, 2, 4, 8],
+        "seed_action_space": True,  # set this to True for reproducibility
     }
 
     bench = TheoryBenchmark(config=bench_config)
