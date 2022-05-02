@@ -1,0 +1,27 @@
+experiment:
+    n_cores:                        1
+    log_level:                      1
+    n_episodes:                     100000
+    n_steps:                        1000000
+    save_interval:                  2000
+    eval_interval:                  2000
+    eval_n_episodes:                50    
+
+bench:
+    name:                           "OneLL"
+    env_class:                      "RLSEnvDiscreteK"    
+    action_choices:                 [1, 8, 15, 22, 29, 36, 43]
+    problem:                        "LeadingOne"    
+    instance_set_path:              "lo_rls_50"
+    observation_description:        "n,f(x)"
+    reward_choice:                  "imp_minus_evals"
+    
+eval_env:
+    reward_choice:                  "minus_evals"
+    
+agent:
+    name:                           "ddqn_local"
+    epsilon:                        0.2
+    begin_learning_after:           10000
+    batch_size:                     2048
+    gamma:                          0.9998
