@@ -2,7 +2,6 @@ Bootstrap: docker
 From: python:3.7-slim
 
 %labels
-MAINTAINER Maximilian Reimer
 VERSION v0.0.1
 
 %help
