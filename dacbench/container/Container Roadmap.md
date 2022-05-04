@@ -84,6 +84,6 @@ To build the container file from the definition file run:
 `singularity build container_file.sif definition_file.def`
 
 Note that you need either to run the build process using root or the `--fakeroot` flag:
-`sudo singularity build dachbench.sif dacbench/container/recipes/dachbench.def`
+`sudo singularity build dacbench.sif dacbench/container/recipes/dacbench.def`
 or
-`sudo singularity build --fakeroot dachbench.sif dacbench/container/recipes/dachbench.def`
+`sudo singularity build --fakeroot dacbench.sif dacbench/container/recipes/dacbench.def`
