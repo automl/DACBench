@@ -2,7 +2,6 @@ Bootstrap: docker
 From: python:3.7-slim
 
 %labels
-MAINTAINER AREEB AHMAD
 VERSION v0.1
 
 %help
@@ -13,7 +12,7 @@ VERSION v0.1
     apt update -y
     apt install build-essential gcc libssl-dev git wget -y
 
-wget https://github.com/Kitware/CMake/releases/download/v3.10.2/cmake-3.10.2.tar.gz
+    wget https://github.com/Kitware/CMake/releases/download/v3.10.2/cmake-3.10.2.tar.gz
     tar xvf cmake-3.10.2.tar.gz
     cd cmake-3.10.2
     ./bootstrap
