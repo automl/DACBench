@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\dacbench",
+    "\\dacbench\\envs",
+    "\\dacbench\\envs\\rl-plan",
+    "\\dacbench\\envs\\rl-plan\\fast-downward"
+  ],
+  "SelectedNode": "\\dacbench\\envs\\rl-plan\\fast-downward\\build.py",
+  "PreviewInSolutionExplorer": false
+}
