@@ -12,6 +12,14 @@ VERSION v0.1
     apt update -y
     apt install build-essential gcc libssl-dev git -y
 
+    echo "[LOG]: Installing cmake..."
+    wget https://github.com/Kitware/CMake/releases/download/v3.10.2/cmake-3.10.2.tar.gz
+    tar xvf cmake-3.10.2.tar.gz
+    cd cmake-3.10.2
+    ./bootstrap
+    gmake
+    make install
+
     wget https://github.com/Kitware/CMake/releases/download/v3.10.2/cmake-3.10.2.tar.gz
     tar xvf cmake-3.10.2.tar.gz
     cd cmake-3.10.2
