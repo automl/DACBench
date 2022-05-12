@@ -1,7 +1,7 @@
 import setuptools
 import json
 import os
-
+from setuptools import setup, find_packages
 
 def other_requirements():
     other_requirements = {}
@@ -17,4 +17,6 @@ def file_rd(file_name):
         return text
 
 
-setuptools.setup()
+setup(
+    packages=find_packages()
+)
