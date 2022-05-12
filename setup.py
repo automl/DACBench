@@ -18,5 +18,5 @@ def file_rd(file_name):
 
 
 setup(
-    packages=find_packages()
+    packages=find_packages(exclude=['*.tests', 'tests'])
 )
