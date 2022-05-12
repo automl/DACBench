@@ -30,7 +30,7 @@ colorama==0.4.4
 colorful==0.5.4
 contextvars==2.4
 cycler==0.11.0
--e git+https://github.com/automl/DACBench.git@6f430d367bda2e262efcef6d773ca402e80ef2d4#egg=DACBench
+-e git+https://github.com/automl/DACBench.git@43c2c6b850c1e78e165ba3f4f4e227c414aed8ee#egg=DACBench
 dataclasses==0.8
 decorator==5.1.1
 defusedxml==0.7.1
