@@ -1,7 +1,6 @@
 import json
 import os
 from setuptools import setup, find_packages
-from pyparsing import *
 
 
 def get_other_requirements():
