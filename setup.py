@@ -1,12 +1,12 @@
-import setuptools
 import json
 import os
 from setuptools import setup, find_packages
 
+
 def other_requirements():
     other_requirements = {}
-    for file in os.listdir('./container/other_requirements'):
-        with open(f'./container/other_requirements/{file}', encoding='utf-8') as rq:
+    for file in os.listdir('./dacbench/container/other_requirements'):
+        with open(f'./dacbench/container/other_requirements/{file}', encoding='utf-8') as rq:
             requirements = json.load(rq)
             other_requirements.update(requirements)
             return other_requirements
