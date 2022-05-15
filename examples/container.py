@@ -1,6 +1,6 @@
 from pathlib import Path
 # in order to run this we need to build the container first by running
-# `singularity build --fakeroot dachbench.sif dacbench/container/recipes/dachbench.def` from project root.
+# `singularity build --fakeroot dachbench.sif dacbench/container/singularity_recipes/dachbench.def` from project root.
 # For more details refer to dacbench/container/Container Roadmap.md
 from dacbench.agents import RandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
