@@ -21,6 +21,5 @@ VERSION v0.1
     pip install .[modea]
 
 
-
 %runscript
-   python dacbench/container/remote_runner.py modea_benchmark.py $@
+   python dacbench/container/remote_runner.py modea $@
