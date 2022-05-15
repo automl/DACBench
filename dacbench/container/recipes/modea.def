@@ -22,4 +22,4 @@ VERSION v0.1
 
 
 %runscript
-   python dacbench/container/remote_runner.py modea $@
+   python dacbench/container/remote_runner.py dacbench/container/recipes/modea $@
