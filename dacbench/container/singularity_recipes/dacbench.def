@@ -35,4 +35,4 @@ VERSION v0.1
 
 
 %runscript
-   python dacbench/container/remote_runner.py dacbench $@
+   python dacbench/container/remote_runner.py $@
