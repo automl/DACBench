@@ -2,6 +2,7 @@ Bootstrap: docker
 From: python:3.7-slim
 
 %labels
+MAINTAINER AREEB AHMAD
 VERSION v0.1
 
 %help
@@ -30,8 +31,6 @@ VERSION v0.1
     pip install -e .[example]
     echo "[LOG]: Compiling fast-downward"
     ./dacbench/envs/rl-plan/fast-downward/build.py
-
-
 
 
 %runscript

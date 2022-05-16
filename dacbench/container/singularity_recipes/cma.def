@@ -9,7 +9,6 @@ VERSION v0.1
     Container with cma benchmark installed
 
 %post
-
     apt update -y
     apt install build-essential gcc libssl-dev git -y
 
@@ -22,4 +21,4 @@ VERSION v0.1
 
 
 %runscript
-   python dacbench/container/remote_runner.py dacbench/container/recipes/cma $@
+   python dacbench/container/remote_runner.py $@

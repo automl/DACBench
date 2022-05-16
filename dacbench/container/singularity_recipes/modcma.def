@@ -9,7 +9,6 @@ VERSION v0.1
     Container with modcma benchmark installed
 
 %post
-
     apt update -y
     apt install build-essential gcc libssl-dev git -y
 
@@ -19,8 +18,6 @@ VERSION v0.1
     git checkout container_benchmark
     git submodule update --init --recursive
     pip install .[modcma]
-
-
 
 
 %runscript

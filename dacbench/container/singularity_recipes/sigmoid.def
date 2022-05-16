@@ -9,17 +9,8 @@ VERSION v0.1
     Container with sigmoid benchmark installed
 
 %post
-
     apt update -y
-    apt install build-essential gcc libssl-dev git wget -y
-
-    echo "[LOG]: Installing cmake..."
-    wget https://github.com/Kitware/CMake/releases/download/v3.10.2/cmake-3.10.2.tar.gz
-    tar xvf cmake-3.10.2.tar.gz
-    cd cmake-3.10.2
-    ./bootstrap
-    gmake
-    make install
+    apt install build-essential gcc libssl-dev git -y
 
     cd /home
     git clone https://github.com/automl/DACBench.git
@@ -27,9 +18,7 @@ VERSION v0.1
     git checkout container_benchmark
     git submodule update --init --recursive
     pip install .[sigmoid]
-    ./dacbench/envs/rl-plan/fast-downward/build.py
-
 
 
 %runscript
-   python dacbench/container/remote_runner.py sigmoid_benchmark.py $@
+   python dacbench/container/remote_runner.py $@
