@@ -5,7 +5,7 @@
 DACBench is a benchmark library for Dynamic Algorithm Configuration.
 Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
-If you use DACBench in you research or application, please cite us:
+If you use DACBench in your research or application, please cite us:
 
 ```bibtex
 @inproceedings{eimer-ijcai21,
@@ -29,7 +29,7 @@ conda activate dacbench
 git clone https://github.com/automl/DACBench.git
 cd DACBench
 git submodule update --init --recursive
-pip install -e .[example]
+pip install .
 ```
 When using the Fast Downward Benchmark, you need to build it separately (we recommend cmake version 3.10.2).
 Make sure you have previously called:
