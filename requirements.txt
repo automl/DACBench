@@ -1,4 +1,18 @@
+certifi==2021.5.30
+cloudpickle==1.2.2
+cycler==0.11.0
+DACBench @ file:///C:/Users/User/DACBench
+future==0.18.2
+gym==0.15.3
+kiwisolver==1.3.1
+matplotlib==3.1.3
 numpy==1.18.0
-scipy==1.4.1
 pandas==1.0.3
-Pyro4==4.80
+pyglet==1.3.2
+pyparsing==3.0.9
+python-dateutil==2.8.2
+pytz==2022.1
+scipy==1.4.1
+seaborn==0.11.0
+six==1.16.0
+wincertstore==0.2
