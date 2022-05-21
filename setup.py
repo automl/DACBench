@@ -11,11 +11,6 @@ def get_other_requirements():
             other_requirements.update(requirements)
             return other_requirements
 
-def file_rd(file_name):
-    with open(file_name, enconding='utf-8') as rq:
-        text = rq.read()
-        return text
-
 
 setup(
     packages=find_packages(exclude=['tests', 'examples', 'dacbench.wrappers.*', 'dacbench.envs.fast-downward/*']),
