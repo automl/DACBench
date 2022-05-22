@@ -9,11 +9,9 @@ VERSION v0.1
     Container with all benchmark installed
 
 %post
-    echo "[LOG]: Installing gcc, git and build-essential..."
     apt update -y
     apt install build-essential gcc libssl-dev git wget -y
 
-    echo "[LOG]: Installing cmake..."
     wget https://github.com/Kitware/CMake/releases/download/v3.10.2/cmake-3.10.2.tar.gz
     tar xvf cmake-3.10.2.tar.gz
     cd cmake-3.10.2
@@ -22,14 +20,11 @@ VERSION v0.1
     make install
 
     cd /home
-    echo "[LO]: Cloning repo..."
     git clone https://github.com/automl/DACBench.git
     cd DACBench
-    git checkout container_draft
+    git checkout container_benchmark
     git submodule update --init --recursive
-    echo "[LOG]: Installing pip package"
-    pip install -e .[example]
-    echo "[LOG]: Compiling fast-downward"
+    pip install .
     ./dacbench/envs/rl-plan/fast-downward/build.py
 
 
