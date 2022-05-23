@@ -15,7 +15,7 @@ VERSION v0.1
 cd /home
     echo "All dependencies can be installed here"
     git clone https://github.com/automl/DACBench.git
-    echo "Clone and install DACBench"
+    echo "We clone and install DACBench"
     cd DACBench
     git checkout container_benchmark
     git submodule update --init --recursive
