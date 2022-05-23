@@ -47,12 +47,14 @@ DACBench can run containerized versions of Benchmarks using Singularity containe
 
 ### Building a Container
 
-Install Singularity and run the following to build the cma container
+For writing your own recipe to build a Container, you can refer to `dacbench/container/singularity_recipes/recipe_template`  
+
+Install Singularity and run the following to build the (in this case) cma container
 
 ```bash
 cd dacbench/container/singularity_recipes
 sudo singularity build cma cma.def
-```  
+```
 
 
 If want to work on DACBench as a developer you can use the `dev` extra option instead: 
