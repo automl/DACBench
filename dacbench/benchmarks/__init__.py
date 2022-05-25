@@ -4,8 +4,6 @@ from dacbench.benchmarks.sigmoid_benchmark import SigmoidBenchmark
 from dacbench.benchmarks.toysgd_benchmark import ToySGDBenchmark
 from dacbench.benchmarks.fast_downward_benchmark import FastDownwardBenchmark
 
-# TODO: separate Theory dependencies
-from dacbench.benchmarks.theory_benchmark import TheoryBenchmark
 
 __all__ = [
     "LubyBenchmark",
@@ -59,4 +57,15 @@ if found:
 else:
     warnings.warn(
         "SGD Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
+    )
+
+theory_spec = importlib.util.find_spec("uuid")
+found = theory_spec is not None
+if found:
+    from dacbench.benchmarks.theory_benchmark import TheoryBenchmark
+
+    __all__.append("TheoryBenchmark")
+else:
+    warnings.warn(
+        "Theory Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )

@@ -60,5 +60,14 @@ else:
         "SGD Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )
 
-# TODO: separate theory dependencies
-from dacbench.envs.theory import RLSEnvDiscrete, RLSEnv
+theory_spec = importlib.util.find_spec("uuid")
+found = theory_spec is not None
+if found:
+    from dacbench.envs.theory import RLSEnvDiscrete, RLSEnv
+
+    __all__.append("RLSEnv")
+    __all__.append("RLSEnvDiscrete")
+else:
+    warnings.warn(
+        "Theory Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
+    )
