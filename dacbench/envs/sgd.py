@@ -83,6 +83,7 @@ class SGDEnv(AbstractEnv):
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
 
         self.training_validation_ratio = config.train_validation_ratio
+        self.dataloader_shuffle = config.dataloader_shuffle
         # self.test_dataset = None
         self.train_dataset = None
         self.validation_dataset = None
@@ -137,7 +138,7 @@ class SGDEnv(AbstractEnv):
 
         self.beta1 = config.beta1
         self.beta2 = config.beta2
-        self.epsilon = 1.0e-06
+        self.epsilon = config.epsilon
         # RMSprop parameters
         self.beta2 = config.beta2
         self.m = 0
@@ -145,6 +146,8 @@ class SGDEnv(AbstractEnv):
         # Momentum parameters
         self.sgd_momentum_v = 0
         self.sgd_rho = 0.9
+
+        self.clip_grad = config.clip_grad
 
         self.t = 0
         self.step_count = torch.zeros(1, device=self.device, requires_grad=False)
@@ -241,10 +244,17 @@ class SGDEnv(AbstractEnv):
     def get_full_training_reward(self):
         return -self._get_full_training_loss(loader=self.train_loader).item()
 
+    def get_full_training_loss(self):
+        return -self.get_full_training_reward()
+
     @property
     def crash(self):
         self.crashed = True
-        return self.get_state(self), self.crash_penalty, self.terminate_on_crash, {}
+        if self.c_step >= self.n_steps:
+            done = True
+        else:
+            done = self.terminate_on_crash
+        return self.get_state(self), self.crash_penalty, done, {}
 
     def seed(self, seed=None, seed_action_space=False):
         """
@@ -297,7 +307,7 @@ class SGDEnv(AbstractEnv):
         self.current_lr = new_lr
 
         direction = self.get_optimizer_direction()
-        if any(np.isnan(direction)):
+        if np.isnan(direction).any():
             return self.crash
 
         self.current_direction = direction
@@ -319,6 +329,7 @@ class SGDEnv(AbstractEnv):
 
         self.train_network()
         reward = self.get_reward()
+
         if np.isnan(reward):
             return self.crash
 
@@ -380,10 +391,12 @@ class SGDEnv(AbstractEnv):
         if self.cd_paper_reconstruction:
             self.model.apply(init_weights)
 
-        train_dataloader_args = {"batch_size": self.batch_size, "drop_last": True}
-        validation_dataloader_args = {"batch_size": self.validation_batch_size, "drop_last": True}
+        train_dataloader_args = {"batch_size": self.batch_size, "drop_last": True,
+                'shuffle': self.dataloader_shuffle}
+        validation_dataloader_args = {"batch_size": self.validation_batch_size,
+                "drop_last": True, 'shuffle': False}  # SA: shuffling empty data loader causes exception
         if self.use_cuda:
-            param = {"num_workers": 1, "pin_memory": True, "shuffle": True}
+            param = {"num_workers": 1, "pin_memory": True}
             train_dataloader_args.update(param)
             validation_dataloader_args.update(param)
 
@@ -542,6 +555,8 @@ class SGDEnv(AbstractEnv):
 
         """
         self.gradients = self._get_gradients()
+        self.gradients = self.gradients.clip(*self.clip_grad)
+
         self.firstOrderMomentum, self.secondOrderMomentum, self.sgdMomentum = self._get_momentum(self.gradients)
 
         if 'predictiveChangeVarDiscountedAverage' in self.on_features or 'predictiveChangeVarUncertainty' in self.on_features:

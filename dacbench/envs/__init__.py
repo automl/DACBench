@@ -59,3 +59,6 @@ else:
     warnings.warn(
         "SGD Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )
+
+# TODO: separate theory dependencies
+from dacbench.envs.theory import RLSEnvDiscrete, RLSEnv

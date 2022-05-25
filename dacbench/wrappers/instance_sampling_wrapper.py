@@ -5,11 +5,11 @@ from scipy.stats import norm
 
 class InstanceSamplingWrapper(Wrapper):
     """
-    Wrapper to sample a new isntance each training episode.
+    Wrapper to sample a new instance at a given time point.
     Instances can either be sampled using a given method or a distribution infered from a given list of instances.
     """
 
-    def __init__(self, env, sampling_function=None, instances=None):
+    def __init__(self, env, sampling_function=None, instances=None, reset_interval=0):
         """
         Initialize wrapper
         Either sampling_function or instances must be given
@@ -30,6 +30,8 @@ class InstanceSamplingWrapper(Wrapper):
             self.sampling_function = self.fit_dist(instances)
         else:
             raise Exception("No distribution to sample from given")
+        self.reset_interval = reset_interval
+        self.reset_tracker = 0
 
     def __setattr__(self, name, value):
         """
@@ -76,9 +78,9 @@ class InstanceSamplingWrapper(Wrapper):
         np.array
             state
         """
-        instance = self.sampling_function()
-        self.env.set_instance_set({0: instance})
-        self.env.set_inst_id(0)
+        if self.reset_tracker >= self.reset_interval:
+            instance = self.sampling_function()
+            self.env.use_next_instance(instance=instance)
         return self.env.reset()
 
     def fit_dist(self, instances):

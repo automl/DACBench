@@ -10,6 +10,16 @@ import dacbench.envs.toysgd
 
 importlib.reload(dacbench.envs.toysgd)
 
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+LR = CSH.UniformFloatHyperparameter(name='0_learning_rate', lower=0, upper=10)
+MOMENTUM = CSH.UniformFloatHyperparameter(name='1_momentum', lower=0, upper=10)
+DEFAULT_CFG_SPACE.add_hyperparameter(LR)
+DEFAULT_CFG_SPACE.add_hyperparameter(MOMENTUM)
+
+
 INFO = {
     "identifier": "toy_sgd",
     "name": "Learning Rate and Momentum Adaption for SGD on Toy Functions",
@@ -24,6 +34,7 @@ INFO = {
 
 DEFAULTS = objdict(
     {
+        "config_space": DEFAULT_CFG_SPACE,
         "action_space_class": "Box",
         "action_space_args": [-np.inf * np.ones((2,)), np.inf * np.ones((2,))],
         "observation_space_class": "Dict",
@@ -40,7 +51,6 @@ DEFAULTS = objdict(
         "cutoff": 10,
         "seed": 0,
         "instance_set_path": "../instance_sets/toysgd/toysgd_default.csv",
-        "test_set_path": None,
         "benchmark_info": INFO,
     }
 )
@@ -64,7 +74,7 @@ class ToySGDBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = DEFAULTS[key]
 
-    def get_environment(self, test=False):
+    def get_environment(self):
         """
         Return SGDEnv env with current configuration
 
@@ -74,7 +84,11 @@ class ToySGDBenchmark(AbstractBenchmark):
             SGD environment
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set(test)
+            self.read_instance_set()
+
+        # Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
 
         env = dacbench.envs.toysgd.ToySGDEnv(self.config)
         for func in self.wrap_funcs:
@@ -92,51 +106,18 @@ class ToySGDBenchmark(AbstractBenchmark):
                 + "/"
                 + self.config.test_set_path
             )
+            keyword = "test_set"
         else:
             path = (
                 os.path.dirname(os.path.abspath(__file__))
                 + "/"
                 + self.config.instance_set_path
             )
-        self.config["instance_set"] = {}
+            keyword = "instance_set"
+
+        self.config[keyword] = {}
         with open(path, "r") as fh:
             # reader = csv.DictReader(fh, delimiter=";")
             df = pd.read_csv(fh, sep=";")
             for index, instance in df.iterrows():
-                self.config["instance_set"][int(instance["ID"])] = instance
-
-    def get_benchmark(self, seed=0, test=False):
-        """
-        Get benchmark from the LTO paper
-
-        Parameters
-        -------
-        seed : int
-            Environment seed
-
-        Returns
-        -------
-        env : SGDEnv
-            SGD environment
-        """
-        self.config = objdict(DEFAULTS.copy())
-        self.config.seed = seed
-        self.read_instance_set(test)
-        return dacbench.envs.toysgd.ToySGDEnv(self.config)
-
-
-if __name__ == "__main__":
-    benchmark = ToySGDBenchmark()
-    env = benchmark.get_environment()
-    log_learning_rate = -10
-    log_momentum = 0
-    action = (log_learning_rate, log_momentum)
-    action = log_learning_rate
-    for i in range(5):
-        state = env.reset()
-        done = False
-        while not done:
-            state, reward, done, info = env.step(action)
-            print(state, reward)
-        env.render()
-    env.close()
+                self.config[keyword][int(instance["ID"])] = instance

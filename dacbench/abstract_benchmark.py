@@ -1,6 +1,5 @@
 import json
 from types import FunctionType
-from typing import Callable
 
 import numpy as np
 from gym import spaces
@@ -10,13 +9,12 @@ from dacbench import wrappers
 # from dacbench import ModuleLogger
 
 
-
 class AbstractBenchmark:
     """
     Abstract template for benchmark classes
     """
 
-    def __init__(self, config_path=None, config:  'objdict'=None):
+    def __init__(self, config_path=None, config: "objdict" = None):
         """
         Initialize benchmark class
 
@@ -49,7 +47,6 @@ class AbstractBenchmark:
         """
         return self.config
 
-
     def serialize_config(self):
         """
         Save configuration to json
@@ -71,6 +68,10 @@ class AbstractBenchmark:
 
         if "action_space" in self.config:
             conf["action_space"] = self.space_to_list(conf["action_space"])
+
+        # TODO: how can we use the built in serialization of configspace here?
+        if "config_space" in self.config:
+            conf["config_space"] = self.process_configspace(self.config.config_space)
 
         conf = AbstractBenchmark.__stringify_functions(conf)
 
@@ -98,11 +99,94 @@ class AbstractBenchmark:
 
         return conf
 
-    @classmethod
-    def from_json(cls, json_config):
+    def process_configspace(self, configuration_space):
+        """
+        This is largely the builting cs.json.write method, but doesn't save the result directly
+        If this is ever implemented in cs, we can replace this method
+        """
+        from ConfigSpace.configuration_space import ConfigurationSpace
+        from ConfigSpace.hyperparameters import (
+            CategoricalHyperparameter,
+            UniformIntegerHyperparameter,
+            UniformFloatHyperparameter,
+            NormalIntegerHyperparameter,
+            NormalFloatHyperparameter,
+            OrdinalHyperparameter,
+            Constant,
+            UnParametrizedHyperparameter,
+        )
+        from ConfigSpace.read_and_write.json import (
+            _build_constant,
+            _build_condition,
+            _build_ordinal,
+            _build_forbidden,
+            _build_categorical,
+            _build_normal_int,
+            _build_normal_float,
+            _build_uniform_float,
+            _build_uniform_int,
+            _build_unparametrized_hyperparameter,
+        )
+
+        if not isinstance(configuration_space, ConfigurationSpace):
+            raise TypeError(
+                "pcs_parser.write expects an instance of %s, "
+                "you provided '%s'" % (ConfigurationSpace, type(configuration_space))
+            )
+
+        hyperparameters = []
+        conditions = []
+        forbiddens = []
+
+        for hyperparameter in configuration_space.get_hyperparameters():
+
+            if isinstance(hyperparameter, Constant):
+                hyperparameters.append(_build_constant(hyperparameter))
+            elif isinstance(hyperparameter, UnParametrizedHyperparameter):
+                hyperparameters.append(
+                    _build_unparametrized_hyperparameter(hyperparameter)
+                )
+            elif isinstance(hyperparameter, UniformFloatHyperparameter):
+                hyperparameters.append(_build_uniform_float(hyperparameter))
+            elif isinstance(hyperparameter, NormalFloatHyperparameter):
+                hyperparameters.append(_build_normal_float(hyperparameter))
+            elif isinstance(hyperparameter, UniformIntegerHyperparameter):
+                hyperparameters.append(_build_uniform_int(hyperparameter))
+            elif isinstance(hyperparameter, NormalIntegerHyperparameter):
+                hyperparameters.append(_build_normal_int(hyperparameter))
+            elif isinstance(hyperparameter, CategoricalHyperparameter):
+                hyperparameters.append(_build_categorical(hyperparameter))
+            elif isinstance(hyperparameter, OrdinalHyperparameter):
+                hyperparameters.append(_build_ordinal(hyperparameter))
+            else:
+                raise TypeError(
+                    "Unknown type: %s (%s)" % (type(hyperparameter), hyperparameter,)
+                )
+
+        for condition in configuration_space.get_conditions():
+            conditions.append(_build_condition(condition))
+
+        for forbidden_clause in configuration_space.get_forbiddens():
+            forbiddens.append(_build_forbidden(forbidden_clause))
+
+        rval = {}
+        if configuration_space.name is not None:
+            rval["name"] = configuration_space.name
+        rval["hyperparameters"] = hyperparameters
+        rval["conditions"] = conditions
+        rval["forbiddens"] = forbiddens
+
+        return rval
+
+    @staticmethod
+    def from_json(json_config):
         config = objdict(json.loads(json_config))
-        return cls(config=config)
-    
+        if "config_space" in config.keys():
+            from ConfigSpace.read_and_write import json as cs_json
+
+            config.config_space = cs_json.read(config.config_space)
+        return AbstractBenchmark(config=config)
+
     def to_json(self):
         conf = self.serialize_config()
         return json.dumps(conf)
@@ -156,7 +240,7 @@ class AbstractBenchmark:
             self.wrap_funcs.append(partial(func, *args))
 
     @staticmethod
-    def import_from(module : str, name : str):
+    def __import_from(module: str, name: str):
         """
         Imports the class / function / ... with name from module
         Parameters
@@ -176,7 +260,7 @@ class AbstractBenchmark:
         return cls.__module__, cls.__name__
 
     @staticmethod
-    def __decorate_config_with_functions(conf : dict):
+    def __decorate_config_with_functions(conf: dict):
         """
         Replaced the stringified functions with the callable objects
         Parameters
@@ -187,13 +271,17 @@ class AbstractBenchmark:
         -------
 
         """
-        for key, value in {k: v for k, v in conf.items() if isinstance(v, list) and len(v) == 3 and v[0] == 'function'}.items():
+        for key, value in {
+            k: v
+            for k, v in conf.items()
+            if isinstance(v, list) and len(v) == 3 and v[0] == "function"
+        }.items():
             _, module_name, function_name = value
-            conf[key] = AbstractBenchmark.import_from(module_name, function_name)
+            conf[key] = AbstractBenchmark.__import_from(module_name, function_name)
         return conf
 
     @staticmethod
-    def __stringify_functions(conf : dict) -> dict:
+    def __stringify_functions(conf: dict) -> dict:
         """
         Replaced all callables in the config with a
         triple ('function', module_name, function_name)
@@ -206,12 +294,10 @@ class AbstractBenchmark:
         -------
         modified dict
         """
-        for key, value in {k: v for k, v in conf.items() if isinstance(v, FunctionType)}.items():
-            conf[key] = [
-                'function',
-                conf[key].__module__,
-                conf[key].__name__
-            ]
+        for key, value in {
+            k: v for k, v in conf.items() if isinstance(v, FunctionType)
+        }.items():
+            conf[key] = ["function", conf[key].__module__, conf[key].__name__]
         return conf
 
     def space_to_list(self, space):
@@ -254,7 +340,9 @@ class AbstractBenchmark:
             keys.append(k)
             value = dict_space[k]
             if not isinstance(value, (spaces.Box, spaces.Discrete)):
-                raise ValueError(f"Only Dict spaces made up of Box spaces or discrete spaces are supported but got {type(value)}")
+                raise ValueError(
+                    f"Only Dict spaces made up of Box spaces or discrete spaces are supported but got {type(value)}"
+                )
 
             if isinstance(value, spaces.Box):
                 low = value.low.tolist()
@@ -276,11 +364,13 @@ class AbstractBenchmark:
             elif type == "discrete":
                 dict_space[type] = spaces.Discrete(*prepared_args)
             else:
-                raise TypeError(f"Currently only Discrete and Box spaces are allowed in Dict spaces got {type}")
+                raise TypeError(
+                    f"Currently only Discrete and Box spaces are allowed in Dict spaces got {type}"
+                )
 
         return dict_space
 
-    def load_config(self, config :  'objdict'):
+    def load_config(self, config: "objdict"):
         self.config = config
         if "observation_space_type" in self.config:
             # Types have to be numpy dtype (for gym spaces)s
@@ -330,9 +420,8 @@ class AbstractBenchmark:
         """
         with open(path, "r") as fp:
             config = objdict(json.load(fp))
-        
+
         self.load_config(config)
-    
 
     def get_environment(self):
         """
@@ -436,10 +525,10 @@ class objdict(dict):
             return False
         truth = []
         for key in self.keys():
-            if  any(isinstance(obj[key], np.ndarray) for obj in (self, other)):
+            if any(isinstance(obj[key], np.ndarray) for obj in (self, other)):
                 truth.append(np.array_equal(self[key], other[key]))
             else:
-                truth.append( other[key] == self[key])
+                truth.append(other[key] == self[key])
         return all(truth)
 
     def __ne__(self, other):

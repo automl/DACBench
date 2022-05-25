@@ -4,6 +4,9 @@ from dacbench.benchmarks.sigmoid_benchmark import SigmoidBenchmark
 from dacbench.benchmarks.toysgd_benchmark import ToySGDBenchmark
 from dacbench.benchmarks.fast_downward_benchmark import FastDownwardBenchmark
 
+# TODO: separate Theory dependencies
+from dacbench.benchmarks.theory_benchmark import TheoryBenchmark
+
 __all__ = [
     "LubyBenchmark",
     "SigmoidBenchmark",

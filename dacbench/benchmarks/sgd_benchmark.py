@@ -9,13 +9,17 @@ from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import SGDEnv
 from dacbench.envs.sgd import Reward
 
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+LR = CSH.UniformIntegerHyperparameter(name='learning_rate', lower=0, upper=10)
+DEFAULT_CFG_SPACE.add_hyperparameter(LR)
+
 
 def __default_loss_function(**kwargs):
     return NLLLoss(reduction = 'none', **kwargs)
 
-
-HISTORY_LENGTH = 40
-INPUT_DIM = 10
 
 INFO = {
     "identifier": "LR",
@@ -38,6 +42,7 @@ INFO = {
 
 SGD_DEFAULTS = objdict(
     {
+        "config_space": DEFAULT_CFG_SPACE,
         "action_space_class": "Box",
         "action_space_args": [np.array([0]), np.array([10])],
         "observation_space_class": "Dict",
@@ -74,9 +79,12 @@ SGD_DEFAULTS = objdict(
         "training_batch_size": 64,
         "validation_batch_size": 64,
         "train_validation_ratio": 0.8,
+        "dataloader_shuffle": True,
         "no_cuda": False,
         "beta1": 0.9,
-        "beta2": 0.999,
+        "beta2": 0.9,
+        "epsilon": 1.0e-06,
+        "clip_grad": (-1.0, 1.0),
         "seed": 0,
         "cd_paper_reconstruction": False,
         "cd_bias_correction": True,
@@ -140,23 +148,36 @@ class SGDBenchmark(AbstractBenchmark):
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
+        # Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
+
         env = SGDEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
 
         return env
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """
         Read path of instances from config into list
         """
 
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
-        self.config["instance_set"] = {}
+        if test:
+            path = (
+                    os.path.dirname(os.path.abspath(__file__))
+                    + "/"
+                    + self.config.test_set_path
+            )
+            keyword = "test_set"
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
+            keyword = "instance_set"
+        self.config[keyword] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh, delimiter=";")
             for row in reader:
@@ -174,7 +195,7 @@ class SGDBenchmark(AbstractBenchmark):
                     int(row["steps"]),
                     dataset_size
                 ]
-                self.config["instance_set"][int(row["ID"])] = instance
+                self.config[keyword][int(row["ID"])] = instance
 
     def get_benchmark(self, instance_set_path=None, seed=0):
         """

@@ -31,6 +31,7 @@ class TestSigmoidBenchmark(unittest.TestCase):
 
     def test_save_conf(self):
         bench = SigmoidBenchmark()
+        del bench.config["config_space"]
         bench.save_config("test_conf.json")
         with open("test_conf.json", "r") as fp:
             recovered = json.load(fp)

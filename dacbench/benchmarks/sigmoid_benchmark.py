@@ -4,8 +4,14 @@ from dacbench.envs import SigmoidEnv, ContinuousSigmoidEnv, ContinuousStateSigmo
 import numpy as np
 import os
 import csv
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 
 ACTION_VALUES = (5, 10)
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+X = CSH.UniformIntegerHyperparameter(name='value_index', lower=0, upper=int(np.prod(ACTION_VALUES)))
+DEFAULT_CFG_SPACE.add_hyperparameter(X)
 
 INFO = {
     "identifier": "Sigmoid",
@@ -24,6 +30,7 @@ INFO = {
 
 SIGMOID_DEFAULTS = objdict(
     {
+        "config_space": DEFAULT_CFG_SPACE,
         "action_space_class": "Discrete",
         "action_space_args": [int(np.prod(ACTION_VALUES))],
         "observation_space_class": "Box",
@@ -66,7 +73,7 @@ class SigmoidBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = SIGMOID_DEFAULTS[key]
 
-    def get_environment(self, test=False):
+    def get_environment(self):
         """
         Return Sigmoid env with current configuration
 
@@ -77,7 +84,11 @@ class SigmoidBenchmark(AbstractBenchmark):
 
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set(test)
+            self.read_instance_set()
+
+        # Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
 
         if (
             "env_type" in self.config
@@ -133,14 +144,16 @@ class SigmoidBenchmark(AbstractBenchmark):
                 + "/"
                 + self.config.test_set_path
             )
+            keyword = "test_set"
         else:
             path = (
                 os.path.dirname(os.path.abspath(__file__))
                 + "/"
                 + self.config.instance_set_path
             )
+            keyword = "instance_set"
 
-        self.config["instance_set"] = {}
+        self.config[keyword] = {}
         with open(path, "r") as f:
             reader = csv.reader(f)
             for row in reader:
@@ -159,9 +172,9 @@ class SigmoidBenchmark(AbstractBenchmark):
                             continue
 
                 if not len(f) == 0:
-                    self.config.instance_set[inst_id] = f
+                    self.config[keyword][inst_id] = f
 
-    def get_benchmark(self, dimension=None, seed=0, test=False):
+    def get_benchmark(self, dimension=None, seed=0):
         """
         Get Benchmark from DAC paper
 
@@ -235,6 +248,7 @@ class SigmoidBenchmark(AbstractBenchmark):
                 "Action 5",
             ]
         self.config.seed = seed
-        self.read_instance_set(test)
+        self.read_instance_set()
+        self.read_instance_set(test=True)
         env = SigmoidEnv(self.config)
         return env

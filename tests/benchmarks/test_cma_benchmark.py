@@ -25,6 +25,7 @@ class TestCMABenchmark(unittest.TestCase):
 
     def test_save_conf(self):
         bench = CMAESBenchmark()
+        del bench.config["config_space"]
         bench.save_config("test_conf.json")
         with open("test_conf.json", "r") as fp:
             recovered = json.load(fp)
@@ -36,7 +37,6 @@ class TestCMABenchmark(unittest.TestCase):
         bench = CMAESBenchmark()
         restored_bench = CMAESBenchmark.from_json(bench.to_json())
         self.assertEqual(bench, restored_bench)
-
 
     def test_read_instances(self):
         bench = CMAESBenchmark()

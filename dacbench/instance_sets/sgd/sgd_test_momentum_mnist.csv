@@ -1,0 +1,2 @@
+ID;dataset;architecture;seed;steps;
+0;MNIST;Conv2d(1, 20, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d(20, 50, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d(50, 500, 3, 1, 1)-ReLU-Flatten-Linear(24500, 10)-LogSoftmax(1);906691059;2000;

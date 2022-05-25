@@ -3,11 +3,17 @@ from dacbench.envs import FastDownwardEnv
 
 import numpy as np
 import os
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 
 HEURISTICS = [
     "tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)])",
     "tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])",
 ]
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+HEURISTIC = CSH.CategoricalHyperparameter(name='heuristic', choices=["toy1", "toy2"])
+DEFAULT_CFG_SPACE.add_hyperparameter(HEURISTIC)
 
 INFO = {
     "identifier": "FastDownward",
@@ -30,8 +36,7 @@ INFO = {
 FD_DEFAULTS = objdict(
     {
         "heuristics": HEURISTICS,
-        "action_space_class": "Discrete",
-        "action_space_args": [len(HEURISTICS)],
+        "config_space": DEFAULT_CFG_SPACE, 
         "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [
@@ -84,7 +89,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = FD_DEFAULTS[key]
 
-    def get_environment(self, test=False):
+    def get_environment(self):
         """
         Return Luby env with current configuration
 
@@ -94,7 +99,11 @@ class FastDownwardBenchmark(AbstractBenchmark):
             Luby environment
         """
         if "instance_set" not in self.config.keys():
-            self.read_instance_set(test)
+            self.read_instance_set()
+
+        # Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
 
         env = FastDownwardEnv(self.config)
         for func in self.wrap_funcs:
@@ -113,12 +122,14 @@ class FastDownwardBenchmark(AbstractBenchmark):
                 + "/"
                 + self.config.test_set_path
             )
+            keyword = "test_set"
         else:
             path = (
                 os.path.dirname(os.path.abspath(__file__))
                 + "/"
                 + self.config.instance_set_path
             )
+            keyword = "instance_set"
         import re
 
         for root, dirs, files in os.walk(path):
@@ -146,7 +157,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
                         index = p.split("/")[-2]
                     index = re.sub("[^0-9]", "", index)
                     instances[index] = p
-        self.config["instance_set"] = instances
+        self.config[keyword] = instances
 
         if instances[list(instances.keys())[0]].endswith(".pddl"):
             self.config.domain_file = os.path.join(path + "/domain.pddl")
@@ -159,7 +170,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
             np.array([np.inf for _ in range(5 * len(heuristics))]),
         ]
 
-    def get_benchmark(self, seed=0, test=False):
+    def get_benchmark(self, seed=0):
         """
         Get published benchmark
 
@@ -174,7 +185,8 @@ class FastDownwardBenchmark(AbstractBenchmark):
             FD environment
         """
         self.config = objdict(FD_DEFAULTS.copy())
-        self.read_instance_set(test)
+        self.read_instance_set()
+        self.read_instance_set(test=True)
         self.config.seed = seed
         env = FastDownwardEnv(self.config)
         return env
