@@ -178,14 +178,41 @@ class AbstractBenchmark:
 
         return rval
 
-    @staticmethod
-    def from_json(json_config):
+    @classmethod
+    def from_json(cls, json_config):
         config = objdict(json.loads(json_config))
         if "config_space" in config.keys():
-            from ConfigSpace.read_and_write import json as cs_json
+            from ConfigSpace import ConfigurationSpace
+            from ConfigSpace.read_and_write.json import (
+                _construct_hyperparameter,
+                _construct_forbidden,
+                _construct_condition,
+            )
 
-            config.config_space = cs_json.read(config.config_space)
-        return AbstractBenchmark(config=config)
+            if "name" in config.config_space:
+                configuration_space = ConfigurationSpace(
+                    name=config.config_space["name"]
+                )
+            else:
+                configuration_space = ConfigurationSpace()
+
+            for hyperparameter in config.config_space["hyperparameters"]:
+                configuration_space.add_hyperparameter(
+                    _construct_hyperparameter(hyperparameter,)
+                )
+
+            for condition in config.config_space["conditions"]:
+                configuration_space.add_condition(
+                    _construct_condition(condition, configuration_space,)
+                )
+
+            for forbidden in config.config_space["forbiddens"]:
+                configuration_space.add_forbidden_clause(
+                    _construct_forbidden(forbidden, configuration_space,)
+                )
+            config.config_space = configuration_space
+
+        return cls(config=config)
 
     def to_json(self):
         conf = self.serialize_config()
@@ -335,6 +362,7 @@ class AbstractBenchmark:
 
     def jsonify_dict_space(self, dict_space):
         keys = []
+        types = []
         arguments = []
         for k in dict_space.keys():
             keys.append(k)
@@ -345,29 +373,30 @@ class AbstractBenchmark:
                 )
 
             if isinstance(value, spaces.Box):
+                types.append("box")
                 low = value.low.tolist()
                 high = value.high.tolist()
                 arguments.append([low, high])
 
             if isinstance(value, spaces.Discrete):
+                types.append("discrete")
                 n = value.n
                 arguments.append([n])
-        return [keys, arguments]
+        return [keys, types, arguments]
 
     def dictify_json(self, dict_list):
         dict_space = {}
-        types, args = dict_list
-        for type, args_ in zip(types, args):
+        keys, types, args = dict_list
+        for k, type, args_ in zip(keys, types, args):
             prepared_args = map(np.array, args_)
             if type == "box":
-                dict_space[type] = spaces.Box(*prepared_args, dtype=np.float32)
+                dict_space[k] = spaces.Box(*prepared_args, dtype=np.float32)
             elif type == "discrete":
-                dict_space[type] = spaces.Discrete(*prepared_args)
+                dict_space[k] = spaces.Discrete(*prepared_args)
             else:
                 raise TypeError(
-                    f"Currently only Discrete and Box spaces are allowed in Dict spaces got {type}"
+                    f"Currently only Discrete and Box spaces are allowed in Dict spaces, got {type}"
                 )
-
         return dict_space
 
     def load_config(self, config: "objdict"):
@@ -383,14 +412,17 @@ class AbstractBenchmark:
                     ]
                     typestring = typestring.split(".")[1]
                     self.config["observation_space_type"] = getattr(np, typestring)
+
         if "observation_space" in self.config:
             self.config["observation_space"] = self.list_to_space(
                 self.config["observation_space"]
             )
-        elif "observation_space_class" == "Dict":
-            self.config["observation_space_args"] = self.dictify_json(
-                self.config["observation_space_args"]
-            )
+
+        elif "observation_space_class" in config.keys():
+            if config.observation_space_class == "Dict":
+                self.config["observation_space_args"] = [
+                    self.dictify_json(self.config["observation_space_args"])
+                ]
 
         if "action_space" in self.config:
             self.config["action_space"] = self.list_to_space(
