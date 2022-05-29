@@ -2,6 +2,8 @@
 
 This folder contains example scripts for running experiments on the DAC-LeadingOnes benchmark, and some DDQN results. For more information about the benchmark and the DDQN results, please see our paper ([arxiv](https://arxiv.org/abs/2202.03259), accepted at GECCO 2022).
 
+And [here](https://andrebiedenkapp.github.io/blog/2022/gecco/) is a blog post summarising the content of the paper.
+
 If you use this benchmark, please cite us:
 ```
 @article{biedenkapp2022theory,
