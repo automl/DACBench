@@ -17,11 +17,11 @@ If you use DACBench in your research or application, please cite us:
   year      = {2021},
   month     = aug,
   publisher = {ijcai.org},
+```
 
-## Getting Started
-
-### Installation
+## Installation
 We recommend installing DACBench in a virtual environment:
+
 ```
 conda create -n dacbench python=3.6
 conda activate dacbench
@@ -38,13 +38,15 @@ to install the SGDBenchmark, run:
 pip install -e .[sgd]
 ```
 
-To use FastDownward, you should first install the solver itself.
-
-### Running a benchmark
-Our 'examples' directory contains several uses of our benchmarks with RL agents. Next to our 'Getting Started' jupyter notebook, it's a good resource to
-understand the interface of DACBench. In order to run the examples, please be sure to install the example dependencies:
+To use FastDownward, you first need to build the solver itself. We recommend using
+cmake version 3.10.2. The command is:
 ```
-pip install -e .[example]
+./dacbench/envs/rl-plan/fast-downward/build.py
+```
+
+You can also install all dependencies like so:
+```
+pip install -e .[all,dev,example,docs]
 ```
 
 ## Containerized Benchmarks
@@ -63,4 +65,8 @@ cd dacbench/container/singularity_recipes
 sudo singularity build cma cma.def
 ```
 
-## More DAC
+## Using DACBench
+After installing DACBench, you can start developing immediately. 
+For an introduction to the interface and structure of DACBench, see the ["Getting Started"](https://github.com/automl/DACBench/blob/main/Getting%20started.ipynb) jupyter notebook. 
+You can also take a look at our [examples](https://github.com/automl/DACBench/tree/main/examples) in the repository or our [documentation](https://dacbench.readthedocs.io/). 
+You can find baseline data of static and random policies for a given version of DACBench on our [project site](https://www.tnt.uni-hannover.de/en/datasets/dacbench/).
