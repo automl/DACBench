@@ -399,6 +399,8 @@ class FastDownwardEnv(AbstractEnv):
         if self.max_rand_steps > 1:
             for _ in range(self.np_random.randint(1, self.max_rand_steps + 1)):
                 s, _, _, _ = self.step(self.action_space.sample())
+                if self.conn is None:
+                    return self.reset()
         else:
             s, _, _, _ = self.step(0)  # hard coded to zero as initial step
 
