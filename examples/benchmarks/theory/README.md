@@ -1,8 +1,6 @@
 ## Randomised Local Search (RLS) for the LeadingOnes problem as a Dynamic Algorithm Configuration (DAC) benchmark
 
-This folder contains example scripts for running experiments on the DAC-LeadingOnes benchmark, and some DDQN results. For more information about the benchmark and the DDQN results, please see our paper ([arxiv](https://arxiv.org/abs/2202.03259), accepted at GECCO 2022).
-
-And [here](https://andrebiedenkapp.github.io/blog/2022/gecco/) is a blog post summarising the content of the paper.
+This folder contains example scripts for running experiments on the DAC-LeadingOnes benchmark, and some DDQN results. For more information about the benchmark and the DDQN results, please see our paper ([arxiv](https://arxiv.org/abs/2202.03259), accepted at GECCO 2022) and the accompanying [blog post](https://andrebiedenkapp.github.io/blog/2022/gecco/) (written by André).
 
 If you use this benchmark, please cite us:
 ```
@@ -58,16 +56,17 @@ env = bench.get_environment(test_env=True)
 
 Note that `test_env` indicates whether we are using this environment for training an RL agent or for evaluating a (learnt or baseline) policy. The difference between `test_env=False` and `test_env=True` is that with the former one (used for training): (i) cutoff time for an episode is set to 0.8*n^2 (n: problem size); and (ii) if an action is out of range, we stop the episode immediately and return a large negative reward (see `envs/theory.py` for more details), while the latter one means that the benchmark's original cutoff time is used, and out-of-range action will be clipped to nearest valid value and the episode will continue.
 
-For a full example of how to run the benchmark with various settings, please have a look at the four examples in `examples.py`. To run those examples, set the `PYTHONPATH` environment variable to your DACBench folder:
+For a full example of how to run the benchmark with various settings, please have a look at the five examples in `examples.py`. To run those examples, set the `PYTHONPATH` environment variable to your DACBench folder:
 ```
 export PYTHONPATH=<your_DACBench_folder>/:$PYTHONPATH
 ```
 
-The four examples demonstrate how to:
+The five examples demonstrate how to:
 
 - Create a benchmark with different settings as described above. 
 - Evaluate a random policy and the optimal policies (discrete and non-discrete version) for a particular benchmark.
 - Train a DDQN agent, evaluate the learnt agent and compare it with the optimal policy of the same setting.
+- Calculate runtime (mean/std) of a policy without having to run the policy. The calculation is done using formulas derived from theoretical results.
 
 ### 3. Running multiple experiments:
 
