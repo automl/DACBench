@@ -244,6 +244,9 @@ class SGDEnv(AbstractEnv):
     def get_full_training_reward(self):
         return -self._get_full_training_loss(loader=self.train_loader).item()
 
+    def get_full_training_loss(self):
+        return -self.get_full_training_reward()
+
     @property
     def crash(self):
         self.crashed = True
