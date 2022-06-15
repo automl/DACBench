@@ -3,7 +3,7 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(__file__))
-from script.rls_policies import (
+from scripts.rls_policies import (
     RandomPolicy,
     RLSOptimalPolicy,
     RLSFixedOnePolicy,
@@ -13,6 +13,8 @@ from script.rls_policies import (
 from ddqn_local.ddqn import DQN
 import shutil
 import numpy as np
+
+from scripts.runtime_calculation import expected_run_time, variance_in_run_time
 
 
 def example_01():
@@ -205,7 +207,95 @@ def example_04():
     )
 
 
+def example_05():
+    """
+    Example 5: calculate average and variance of runtime of a policy without having to run the policy
+    """
+    print(
+        "\n###  Example 5: calculate average and variance of runtime of a policy without having to run the policy"
+    )
+
+    # We run each policy nRuns times and compare the mean/std with the theoretical calculations.
+    nRuns = 500
+
+    def run_policy():
+        # run policy and collect mean/std
+        print(f"\nRunning policy for {nRuns} times.")
+        lsTotalEvals = []
+        for i in range(nRuns):
+            s = env.reset()
+            while True:
+                r = agent.get_next_action(s)
+                s, rw, d, info = env.step(r)
+                if d:
+                    if env.x.is_optimal():
+                        lsTotalEvals.append(env.total_evals)
+                    else:
+                        lsTotalEvals.append(np.inf)
+                    print(f"Done: {i+1:4d}/{nRuns}", end="\r")
+                    break
+        print("")
+        ls = [x for x in lsTotalEvals if ~np.isinf(x)]
+        print(
+            f"#non-optimal runs: {sum([np.isinf(x) for x in lsTotalEvals]):4d}/{nRuns}"
+        )
+        print(f"Mean: {np.mean(ls):7.2f}, std: {np.std(ls):7.2f}")
+
+        # calculate mean/std with theoretical formulas
+        print(f"\nCalculate runtime based on theoretical formulas")
+        pi = agent.get_predictions()
+        m = expected_run_time(pi, env.n)
+        sd = np.sqrt(variance_in_run_time(pi, env.n))
+        print(f"Mean: {m:7.2f}, std: {sd:7.2f}")
+
+    ### Test case 1: optimal policy with continuous action space
+    print(
+        "\n--- Test case 1: optimal policy (n=50, un-restricted portfolio, random initial solution)"
+    )
+    bench_config = {
+        "instance_set_path": "lo_rls_50_random.csv",
+        "discrete_action": False,
+        "min_action": 1,
+        "max_action": 49,
+    }
+    bench = TheoryBenchmark(config=bench_config)
+    env = bench.get_environment(test_env=True)
+    agent = RLSOptimalPolicy(env)
+    run_policy()
+
+    ### Test case 2: optimal policy with evenly_spread portfolio
+    print(
+        "\n--- Test case 2: optimal policy (n=50, k=3, evenly_spread portfolio, random initial solution)"
+    )
+    bench_config = {
+        "instance_set_path": "lo_rls_50_random.csv",
+        "discrete_action": True,
+        "action_choices": [1, 17, 33],
+    }
+    bench = TheoryBenchmark(config=bench_config)
+    env = bench.get_environment(test_env=True)
+    agent = RLSOptimalDiscretePolicy(env)
+    run_policy()
+
+    ### Test case 3: an example DDQN learnt policy
+    print(
+        "\n--- Test case 3: an example DDQN learnt policy (n=50, k=3, evenly_spread portfolio, random initial solution)"
+    )
+    bench_config = {
+        "instance_set_path": "lo_rls_50_random.csv",
+        "discrete_action": True,
+        "action_choices": [1, 17, 33],
+    }
+    bench = TheoryBenchmark(config=bench_config)
+    env = bench.get_environment(test_env=True)
+    agent = DQNPolicy(
+        env=env, model="experiments/results/n50_evenly_spread/k3/trained_ddqn/best.pt"
+    )
+    run_policy()
+
+
 example_01()
 example_02()
 example_03()
 example_04()
+example_05()

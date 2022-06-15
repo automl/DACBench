@@ -27,6 +27,9 @@ class RLSOptimalPolicy:
         k = int(self.env.n / (self.env.x.fitness + 1))
         return k
 
+    def get_predictions(self):
+        return [int(self.env.n / (fx + 1)) for fx in range(0, self.env.n)]
+
 
 class RLSFixedOnePolicy:
     def __init__(self, env, name="RLSFixedOne"):
@@ -36,12 +39,17 @@ class RLSFixedOnePolicy:
     def get_next_action(self, obs):
         return 1
 
+    def get_predictions(self):
+        return [1 for fx in range(0, self.env.n)]
+
 
 class DQNPolicy:
     def __init__(self, env, model, name="RLSDQNPolicy"):
         """
         model: trained model
         """
+        self.name = name
+        self.env = env
         state_dim = env.observation_space.shape[0]
         action_dim = env.action_space.n
         self.agent = DQN(state_dim, action_dim, 1, env=env, eval_env=env, out_dir="./")
@@ -49,6 +57,13 @@ class DQNPolicy:
 
     def get_next_action(self, obs):
         return self.agent.get_action(obs, 0)
+
+    def get_predictions(self):
+        acts = [
+            self.get_next_action(np.array([self.env.n, fx]))
+            for fx in range(0, self.env.n)
+        ]
+        return [self.env.action_choices[act] for act in acts]
 
 
 class RLSOptimalDiscretePolicy:
@@ -93,10 +108,25 @@ class RLSOptimalDiscretePolicy:
             assert len(ks) == len(pos), f"ERROR with {s} ({len(ks)} {len(pos)})"
             ks = "[" + ", ".join([str(x) for x in ks]) + "]"
             pos = [int(x) for x in pos]
-            sn = str(self.env.n)
+            # sn = str(self.env.n)
+            sn = str(n)
             if sn not in positions_dict:
                 positions_dict[sn] = {}
             positions_dict[sn][ks] = pos
 
         # pprint.pprint(positions_dict)
         return positions_dict
+
+    def get_predictions(self):
+        def get_optimal_act(fx):
+            act = None
+            for i in range(len(self.positions) - 1, -1, -1):
+                if self.positions[i] >= fx:
+                    act = i
+                    break
+            assert act is not None, f"ERROR: invalid f(x) ({fx})"
+            return act
+
+        return [
+            self.env.action_choices[get_optimal_act(fx)] for fx in range(0, self.env.n)
+        ]
