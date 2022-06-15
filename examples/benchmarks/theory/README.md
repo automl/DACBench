@@ -111,3 +111,29 @@ We built our choice of DDQN hyperparameters based on prior literature using RL f
 
 The batch size and and the discount factor are set based on a small prestudy with the evenly spread portfolio setting where n=50, k=3. We tried two batch sizes: 2048 and 8192, both of which were able to reach the optimal policy several times during the training. Based on that result, we decided to choose batch size of 2048 for all experiments due to computational resource constraints. For the discount factor, we tried two values: 0.99 (default value for DDQN in many cases) and 0.9998. The former one resulted in much less stable learning compared to the latter one. This can be explained by the fact that the episode lengths of our benchmark are typically large (several thousands of steps) and most of the important progress is made during the later parts of an episode. Therefore, the discount factor of 0.9998 was finally chosen for all experiments in the paper.
 
+
+#### 5. Calculate the optimal policy for a given portfolio and problem size
+
+Given a problem size *n* and a portfolio of *r* values, the optimal policy can be calculated automatically. Note that the policy is found using a brute force approach, so it may some time to run depending on the specific scenarios.
+
+To run the calculation, you would first need to build an execution of the code (written in [D](https://dlang.org/)). The following bash script will download a D compiler ([DMD](https://dlang.org/download.html#dmd)), and compile the code for Linux.
+
+```
+cd scripts/calculate_optimal_policy/
+./compile.sh
+```
+
+Then you run the calculation using the scripts `run.py`:
+```
+python run.py <n> <portfolio_separated_by_commas>
+```
+Example:
+```
+python run.py 50 1,17,33
+```
+
+The output of the calculation is the best radius for each objective value from 0 to n-1, for example, the output of the command above would be:
+```
+33 17 17 17 17 17 17 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+```
+This means that we should flip 33 bits when f(x)=0, 17 bits when f(x)=1, etc.
