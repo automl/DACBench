@@ -12,11 +12,24 @@ from cma import bbobbenchmarks as bn
 import threading
 import warnings
 from dacbench import AbstractEnv
-import resource
-import sys
+try:
+    import resource
+except ImportError:
+    import sys
 
-resource.setrlimit(resource.RLIMIT_STACK, (2 ** 35, -1))
-sys.setrecursionlimit(10 ** 9)
+# libnames = ['numpy', 'threading', 'warnings', 'resource', 'sys']
+# for libname in libnames:
+#     try:
+#         lib = __import__(libname)
+#     except:
+#         print (sys.exc_info())
+#     else:
+#         globals()[libname] = lib
+
+try:
+    resource.setrlimit(resource.RLIMIT_STACK, (2 ** 35, -1))
+except NameError:
+    sys.setrecursionlimit(10 ** 9)
 
 warnings.filterwarnings("ignore")
 
