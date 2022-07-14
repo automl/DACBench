@@ -45,6 +45,14 @@ class ToySGDEnv(AbstractEnv):
     State: Dict with entries remaining_budget, gradient, learning_rate, momentum
     Reward: negative log regret of current and true function value
 
+    An instance can look as follows:
+    ID                                                  0
+    family                                     polynomial
+    order                                               2
+    low                                                -2
+    high                                                2
+    coefficients    [ 1.40501053 -0.59899755  1.43337392]
+
     """
     def __init__(self, config):
         super(ToySGDEnv, self).__init__(config)
@@ -186,9 +194,13 @@ class ToySGDEnv(AbstractEnv):
         Y = self.objective_function(X)
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.plot(X, Y)
-        ax.plot(history, self.objective_function(history), marker="x", color="black")
-        ax.plot(self.x_cur, self.objective_function(self.x_cur), marker="x", color="red")
+        ax.plot(X, Y, label="True")
+        ax.plot(history, self.objective_function(history), marker="x", color="black", label="Observed")
+        ax.plot(self.x_cur, self.objective_function(self.x_cur), marker="x", color="red", label="Current Optimum")
+        ax.legend()
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        ax.set_title("instance: " + str(self.instance["coefficients"]))
         plt.show()
 
     def close(self):
