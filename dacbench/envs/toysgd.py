@@ -6,11 +6,11 @@ import pandas as pd
 
 
 def create_polynomial_instance_set(
-        out_fname: str,
-        n_samples: int = 100,
-        order: int = 2,
-        low: float = -10,
-        high: float = 10
+    out_fname: str,
+    n_samples: int = 100,
+    order: int = 2,
+    low: float = -10,
+    high: float = 10,
 ):
     instances = []
     for i in range(n_samples):
@@ -21,7 +21,7 @@ def create_polynomial_instance_set(
             "order": order,
             "low": low,
             "high": high,
-            "coefficients": coeffs
+            "coefficients": coeffs,
         }
         instances.append(instance)
     df = pd.DataFrame(instances)
@@ -32,7 +32,7 @@ def sample_coefficients(order: int = 2, low: float = -10, high: float = 10):
     n_coeffs = order + 1
     coeffs = np.zeros((n_coeffs,))
     coeffs[0] = np.random.uniform(0, high, size=1)
-    coeffs[1:] = np.random.uniform(low, high, size=n_coeffs-1)
+    coeffs[1:] = np.random.uniform(low, high, size=n_coeffs - 1)
     return coeffs
 
 
@@ -54,6 +54,7 @@ class ToySGDEnv(AbstractEnv):
     coefficients    [ 1.40501053 -0.59899755  1.43337392]
 
     """
+
     def __init__(self, config):
         super(ToySGDEnv, self).__init__(config)
         self.n_steps_max = config.get("cutoff", 1000)
@@ -76,24 +77,34 @@ class ToySGDEnv(AbstractEnv):
         if self.instance["family"] == "polynomial":
             order = int(self.instance["order"])
             if order != 2:
-                raise NotImplementedError("Only order 2 is currently implemented for polynomial functions.")
+                raise NotImplementedError(
+                    "Only order 2 is currently implemented for polynomial functions."
+                )
             self.n_dim = order
             coeffs_str = self.instance["coefficients"]
             coeffs_str = coeffs_str.strip("[]")
             coeffs = [float(item) for item in coeffs_str.split()]
             self.objective_function = Polynomial(coef=coeffs)
-            self.objective_function_deriv = self.objective_function.deriv(m=1)  # lambda x0: derivative(self.objective_function, x0, dx=1.0, n=1, args=(), order=3)
-            self.x_min = - coeffs[1] / (2 * coeffs[0] + 1e-10)  # add small epsilon to avoid numerical instabilities
+            self.objective_function_deriv = self.objective_function.deriv(
+                m=1
+            )  # lambda x0: derivative(self.objective_function, x0, dx=1.0, n=1, args=(), order=3)
+            self.x_min = -coeffs[1] / (
+                2 * coeffs[0] + 1e-10
+            )  # add small epsilon to avoid numerical instabilities
             self.f_min = self.objective_function(self.x_min)
 
             self.x_cur = self.get_initial_position()
         else:
-            raise NotImplementedError("No other function families than polynomial are currently supported.")
+            raise NotImplementedError(
+                "No other function families than polynomial are currently supported."
+            )
 
     def get_initial_position(self):
         return 0  # np.random.uniform(-5, 5, size=self.n_dim-1)
 
-    def step(self, action: Union[float, Tuple[float, float]]) -> Tuple[Dict[str, float], float, bool, Dict]:
+    def step(
+        self, action: Union[float, Tuple[float, float]]
+    ) -> Tuple[Dict[str, float], float, bool, Dict]:
         """
         Take one step with SGD
 
@@ -121,13 +132,15 @@ class ToySGDEnv(AbstractEnv):
             log_learning_rate = action
         elif len(action) == 2:
             log_learning_rate, log_momentum = action
-            self.momentum = 10 ** log_momentum
+            self.momentum = 10**log_momentum
         else:
             raise ValueError
-        self.learning_rate = 10 ** log_learning_rate
+        self.learning_rate = 10**log_learning_rate
 
         # SGD + Momentum update
-        self.velocity = self.momentum * self.velocity + self.learning_rate * self.gradient
+        self.velocity = (
+            self.momentum * self.velocity + self.learning_rate * self.gradient
+        )
         self.x_cur -= self.velocity
         self.gradient = self.objective_function_deriv(self.x_cur)
 
@@ -137,7 +150,7 @@ class ToySGDEnv(AbstractEnv):
             "remaining_budget": remaining_budget,
             "gradient": self.gradient,
             "learning_rate": self.learning_rate,
-            "momentum": self.momentum
+            "momentum": self.momentum,
         }
 
         # Reward
@@ -184,19 +197,32 @@ class ToySGDEnv(AbstractEnv):
             "remaining_budget": self.n_steps_max,
             "gradient": self.gradient,
             "learning_rate": self.learning_rate,
-            "momentum": self.momentum
+            "momentum": self.momentum,
         }
 
     def render(self, **kwargs):
         import matplotlib.pyplot as plt
+
         history = np.array(self.history).flatten()
         X = np.linspace(1.05 * np.amin(history), 1.05 * np.amax(history), 100)
         Y = self.objective_function(X)
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.plot(X, Y, label="True")
-        ax.plot(history, self.objective_function(history), marker="x", color="black", label="Observed")
-        ax.plot(self.x_cur, self.objective_function(self.x_cur), marker="x", color="red", label="Current Optimum")
+        ax.plot(
+            history,
+            self.objective_function(history),
+            marker="x",
+            color="black",
+            label="Observed",
+        )
+        ax.plot(
+            self.x_cur,
+            self.objective_function(self.x_cur),
+            marker="x",
+            color="red",
+            label="Current Optimum",
+        )
         ax.legend()
         ax.set_xlabel("x")
         ax.set_ylabel("y")
@@ -205,8 +231,3 @@ class ToySGDEnv(AbstractEnv):
 
     def close(self):
         pass
-
-
-
-
-
