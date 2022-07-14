@@ -87,13 +87,12 @@ class ToySGDEnv(AbstractEnv):
 
         # parse action
         if np.isscalar(action):
-            log_momentum = 1
             log_learning_rate = action
         elif len(action) == 2:
             log_learning_rate, log_momentum = action
+            self.momentum = 10 ** log_momentum
         else:
             raise ValueError
-        self.momentum = 10 ** log_momentum
         self.learning_rate = 10 ** log_learning_rate
 
         # SGD + Momentum update
