@@ -14,8 +14,8 @@ import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
-LR = CSH.UniformFloatHyperparameter(name='0_learning_rate', lower=0, upper=10)
-MOMENTUM = CSH.UniformFloatHyperparameter(name='1_momentum', lower=0, upper=10)
+LR = CSH.UniformFloatHyperparameter(name="0_log_learning_rate", lower=-10, upper=0)
+MOMENTUM = CSH.UniformFloatHyperparameter(name="1_log_momentum", lower=-10, upper=0)
 DEFAULT_CFG_SPACE.add_hyperparameter(LR)
 DEFAULT_CFG_SPACE.add_hyperparameter(MOMENTUM)
 
@@ -30,13 +30,12 @@ INFO = {
         "Current Learning Rate",
         "Current Momentum",
     ],
+    "action_description": ["Log Learning Rate", "Log Momentum"],
 }
 
 DEFAULTS = objdict(
     {
         "config_space": DEFAULT_CFG_SPACE,
-        "action_space_class": "Box",
-        "action_space_args": [-np.inf * np.ones((2,)), np.inf * np.ones((2,))],
         "observation_space_class": "Dict",
         "observation_space_type": None,
         "observation_space_args": [
