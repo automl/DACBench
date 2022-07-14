@@ -86,7 +86,10 @@ class ToySGDBenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         # Read test set if path is specified
-        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+        if (
+            "test_set" not in self.config.keys()
+            and "test_set_path" in self.config.keys()
+        ):
             self.read_instance_set(test=True)
 
         env = dacbench.envs.toysgd.ToySGDEnv(self.config)
