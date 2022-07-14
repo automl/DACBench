@@ -1,7 +1,7 @@
 from dacbench import AbstractEnv
 import numpy as np
 from numpy.polynomial import Polynomial
-from typing import Union, Tuple, Optional
+from typing import Union, Tuple, Optional, Dict
 import pandas as pd
 
 
@@ -40,6 +40,10 @@ class ToySGDEnv(AbstractEnv):
     """
     Optimize toy functions with SGD + Momentum.
 
+
+    Action: [log_learning_rate, log_momentum] (log base 10)
+    State: Dict with entries remaining_budget, gradient, learning_rate, momentum
+    Reward: negative log regret of current and true function value
 
     """
     def __init__(self, config):
@@ -81,7 +85,26 @@ class ToySGDEnv(AbstractEnv):
     def get_initial_position(self):
         return 0  # np.random.uniform(-5, 5, size=self.n_dim-1)
 
-    def step(self, action: Union[float, Tuple[float, float]]):
+    def step(self, action: Union[float, Tuple[float, float]]) -> Tuple[Dict[str, float], float, bool, Dict]:
+        """
+        Take one step with SGD
+
+        Parameters
+        ----------
+        action: Tuple[float, Tuple[float, float]]
+            If scalar, action = (log_learning_rate)
+            If tuple, action = (log_learning_rate, log_momentum)
+
+        Returns
+        -------
+        Tuple[Dict[str, float], float, bool, Dict]
+
+            - state : Dict[str, float]
+                State with entries "remaining_budget", "gradient", "learning_rate", "momentum"
+            - reward : float
+            - done : bool
+            - info : Dict
+        """
         done = False
         info = {}
 
