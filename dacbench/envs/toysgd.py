@@ -157,7 +157,7 @@ class ToySGDEnv(AbstractEnv):
         # current function value
         self.f_cur = self.objective_function(self.x_cur)
         # log regret
-        log_regret = np.log(np.abs(self.f_min - self.f_cur))
+        log_regret = np.log10(np.abs(self.f_min - self.f_cur))
         reward = -log_regret
 
         self.history.append(self.x_cur)
