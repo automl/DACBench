@@ -6,7 +6,7 @@ from dacbench.benchmarks import ModeaBenchmark
 from dacbench.envs import ModeaEnv
 
 
-class TestCMABenchmark(unittest.TestCase):
+class TestModeaBenchmark(unittest.TestCase):
     def test_get_env(self):
         bench = ModeaBenchmark()
         env = bench.get_environment()
@@ -41,3 +41,8 @@ class TestCMABenchmark(unittest.TestCase):
         env = bench2.get_environment()
         self.assertTrue(len(env.instance_set.keys()) == 100)
         self.assertTrue(inst == env.instance_set[0])
+
+    def test_from_to_json(self):
+        bench = ModeaBenchmark()
+        restored_bench = ModeaBenchmark.from_json(bench.to_json())
+        self.assertEqual(bench, restored_bench)

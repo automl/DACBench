@@ -44,12 +44,12 @@ class TestAbstractBenchmark(unittest.TestCase):
         self.assertTrue(recovered["seed"] == 10)
         self.assertTrue(len(recovered.keys()) == 2)
         os.remove("test_conf2.json")
-    
+
     def test_from_and_to_json(self):
         bench1 = AbstractBenchmark(config_path="tests/test_config.json")
         json1 = bench1.serialize_config()
         bench2 = AbstractBenchmark(config=objdict(json1))
-        json2 = bench1.serialize_config()
+        json2 = bench2.serialize_config()
 
         print(json1)
         print(json2)
@@ -106,15 +106,11 @@ class TestAbstractBenchmark(unittest.TestCase):
     def test_space_to_list_and_list_to_space(self):
         def assert_restorable(space):
             space_restored = bench.list_to_space(bench.space_to_list(space))
-
             assert space == space_restored
 
         bench = AbstractBenchmark()
 
-        space = Box(
-            low=np.array([0, 0]),
-            high=np.array([1, 1]),
-        )
+        space = Box(low=np.array([0, 0]), high=np.array([1, 1]),)
         assert_restorable(space)
 
         space = Discrete(2)
@@ -122,15 +118,11 @@ class TestAbstractBenchmark(unittest.TestCase):
 
         space = Dict(
             {
-                "box": Box(
-                    low=np.array([0, 0]),
-                    high=np.array([1, 1]),
-                ),
-             'discrete': Discrete(
-                    n=2
-                )
+                "box": Box(low=np.array([0, 0]), high=np.array([1, 1]),),
+                "discrete": Discrete(n=2),
             }
         )
+
         assert_restorable(space)
 
         space = MultiDiscrete([2, 3])
@@ -157,3 +149,14 @@ class TestAbstractBenchmark(unittest.TestCase):
             del d["error"]
         with self.assertRaises(AttributeError):
             del d.error
+
+    def test_objdict_equal(self):
+        self.assertEqual(objdict({"dummy": 0}), objdict({"dummy": 0}))
+        self.assertEqual(
+            objdict({"dummy": np.array([1, 2])}), objdict({"dummy": np.array([1, 2])})
+        )
+
+        self.assertNotEqual(
+            objdict({"dummy": np.array([1, 2])}), objdict({"dummy": np.array([1, 0])})
+        )
+        self.assertNotEqual(objdict({"dummy": np.array([1, 2])}), objdict({"dummy": 0}))

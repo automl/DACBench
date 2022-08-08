@@ -13,12 +13,12 @@ import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
-LR = CSH.UniformIntegerHyperparameter(name='learning_rate', lower=0, upper=10)
+LR = CSH.UniformIntegerHyperparameter(name="learning_rate", lower=0, upper=10)
 DEFAULT_CFG_SPACE.add_hyperparameter(LR)
 
 
 def __default_loss_function(**kwargs):
-    return NLLLoss(reduction = 'none', **kwargs)
+    return NLLLoss(reduction="none", **kwargs)
 
 
 INFO = {
@@ -35,7 +35,7 @@ INFO = {
         "Validation Loss",
         "Step",
         "Alignment",
-        "Crashed"
+        "Crashed",
     ],
 }
 
@@ -102,13 +102,13 @@ SGD_DEFAULTS = objdict(
             "validationLoss",
             "step",
             "alignment",
-            "crashed"
+            "crashed",
         ],
     }
 )
 
 # Set reward range based on the chosen reward type
-SGD_DEFAULTS.reward_range = SGD_DEFAULTS['reward_type'].func.frange
+SGD_DEFAULTS.reward_range = SGD_DEFAULTS["reward_type"].func.frange
 
 
 class SGDBenchmark(AbstractBenchmark):
@@ -116,7 +116,7 @@ class SGDBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for SGD
     """
 
-    def __init__(self, config_path=None, **kwargs):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize SGD Benchmark
 
@@ -125,16 +125,13 @@ class SGDBenchmark(AbstractBenchmark):
         config_path : str
             Path to config file (optional)
         """
-        super(SGDBenchmark, self).__init__(config_path)
+        super(SGDBenchmark, self).__init__(config_path, config)
         if not self.config:
             self.config = objdict(SGD_DEFAULTS.copy())
 
         for key in SGD_DEFAULTS:
             if key not in self.config:
                 self.config[key] = SGD_DEFAULTS[key]
-
-        for k in kwargs:
-            self.config[k] = kwargs[k]
 
     def get_environment(self):
         """
@@ -149,7 +146,10 @@ class SGDBenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         # Read test set if path is specified
-        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+        if (
+            "test_set" not in self.config.keys()
+            and "test_set_path" in self.config.keys()
+        ):
             self.read_instance_set(test=True)
 
         env = SGDEnv(self.config)
@@ -165,9 +165,9 @@ class SGDBenchmark(AbstractBenchmark):
 
         if test:
             path = (
-                    os.path.dirname(os.path.abspath(__file__))
-                    + "/"
-                    + self.config.test_set_path
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.test_set_path
             )
             keyword = "test_set"
         else:
@@ -193,7 +193,7 @@ class SGDBenchmark(AbstractBenchmark):
                     int(row["seed"]),
                     row["architecture"],
                     int(row["steps"]),
-                    dataset_size
+                    dataset_size,
                 ]
                 self.config[keyword][int(row["ID"])] = instance
 

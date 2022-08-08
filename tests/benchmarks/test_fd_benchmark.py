@@ -62,3 +62,8 @@ class TestFDBenchmark(unittest.TestCase):
         bench = FastDownwardBenchmark()
         env = bench.get_benchmark()
         self.assertTrue(issubclass(type(env), FastDownwardEnv))
+
+    def test_from_to_json(self):
+        bench = FastDownwardBenchmark()
+        restored_bench = FastDownwardBenchmark.from_json(bench.to_json())
+        self.assertEqual(bench, restored_bench)
