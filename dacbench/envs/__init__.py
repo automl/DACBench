@@ -42,7 +42,7 @@ if found:
 
     __all__.append("ModeaEnv")
 
-    modules = ['numpy', 'functools', 'modea']
+    modules = ['numpy', 'functools']
     for libname in modules:
         try:
             lib = __import__(libname)
