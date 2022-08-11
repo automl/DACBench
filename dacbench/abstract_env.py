@@ -361,7 +361,7 @@ class AbstractEnv(gym.Env):
         self.test_inst_id = self.inst_id
         self.test_instance = self.instance
 
-        self.instance_set = self.training_instances
+        self.instance_set = self.training_set
         self.instance_id_list = self.training_id_list
         self.inst_id = self.training_inst_id
         self.instance = self.training_instance
