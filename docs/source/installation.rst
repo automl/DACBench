@@ -40,15 +40,15 @@ To also install all dependecies used in the examples, instead run:
 You should now have DACBench installed in the base version. This includes on the artificial
 benchmarks, all others have separate installation dependencies. The full list of options is:
 
-* cma - installs the PyCMA step size control benchmark
-* modea - installs the ModEA benchmark
-* modcma - installs the IOHProfiler versions of CMA step size and CMA algorithm control
-* sgd - installs the SGD benchmark
-* theory - installs the theory benchmark
-* all - installs all benchmark dependencies
-* example - installs example dependencies
-* docs - installs documentation dependencies
-* dev - installs dev dependencies
+- cma - installs the PyCMA step size control benchmark
+- modea - installs the ModEA benchmark
+- modcma - installs the IOHProfiler versions of CMA step size and CMA algorithm control
+- sgd - installs the SGD benchmark
+- theory - installs the theory benchmark
+- all - installs all benchmark dependencies
+- example - installs example dependencies
+- docs - installs documentation dependencies
+- dev - installs dev dependencies
 
 Please not that in order to use the FastDownward benchmarks, you don't have to select
 different dependencies, but you have to build the planner. We recommend using cmake 3.10.2 for
