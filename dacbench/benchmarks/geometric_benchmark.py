@@ -8,6 +8,8 @@ import csv
 FILE_PATH = os.path.dirname(__file__)
 ACTION_VALUES = (5, 10)
 
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+
 INFO = {
     "identifier": "Geometric",
     "name": "High Dimensional Geometric Curve Approximation. Curves are geometrical orthogonal.",
@@ -20,8 +22,7 @@ INFO = {
 
 GEOMETRIC_DEFAULTS = objdict(
     {
-        "action_space_class": "Discrete",
-        "action_space_args": [],
+        "config_space": DEFAULT_CFG_SPACE,
         "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [],
@@ -200,6 +201,7 @@ class GeometricBenchmark(AbstractBenchmark):
         Number of actions can differ between functions if configured in DefaultDict
         Set observation space args.
         """
+        
         map_action_number = {}
         if self.config.action_values_variable:
             map_action_number = self.config.action_value_mapping
@@ -230,7 +232,8 @@ class GeometricBenchmark(AbstractBenchmark):
                 )
 
         self.config.action_values = values
-        self.config.action_space_args = [int(np.prod(values))]
+        actions = CSH.UniformIntegerHyperparameter(name='curve_values', lower=0, upper=int(np.prod(values)))
+        self.config.config_space.add_hyperparameter(actions)
 
         num_info = 2
         self.config.observation_space_args = [
