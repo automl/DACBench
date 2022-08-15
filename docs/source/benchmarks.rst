@@ -36,8 +36,10 @@ and more costly to run and thus present a real challenge for DAC algorithms:
   Heuristic selection for the FastDownward Planner on competition tasks.
 - CMA-ES:
   Step-size adpation for CMA-ES.
-- ModCMA:
+- ModEA:
   Selection of Algorithm Components for EAs.
+- ModCMA:
+  Step-size & algorithm component control for EAs backed by IOHProfiler.
 - SGD-DL:
   Learning rate adaption for neural networks.
 
