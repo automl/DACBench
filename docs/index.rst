@@ -9,9 +9,9 @@ Welcome to DACBench's documentation!
  :maxdepth: 1
  :caption: Contents:
 
+ source/dac
  source/installation
  source/containers
- source/dac
  source/benchmarks
  source/modifications
  source/wrappers

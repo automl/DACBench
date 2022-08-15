@@ -8,11 +8,13 @@ Dynamic Algorithm Configuration (DAC) [Biedenkapp et al. 2020, Adriaensen et al.
 paradigm for hyperparameter optimization that aims to find the best possible configuration
 of algorithm hyperparameters for each step in the algorithm's execution and for each algorithm
 instance.
+
 That means DAC methods configure hyperparameters dynamically over the runtime of an algorithm
 because the optimal value could be very different at the start than in the end. An example for
 this is the learning rate in SGD where at first we want to traverse the loss landscape fairly
 quickly (= high learning rate), but then need to slow down as to not overshoot the optimum
 (= gradually decreasing learning rate).
+
 Furthermore, as we configure across a set of instances, DAC methods also need to take into
 account how these factors change between algorithm instances - a learning rate schedule on a
 very simple image classification problem like MNIST, for example, will likely look different
