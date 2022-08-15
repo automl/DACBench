@@ -54,7 +54,7 @@ class TestGeometricEnv(unittest.TestCase):
         config["action_interval_mapping"] = geo_bench.config.action_interval_mapping
         config["instance_set"] = geo_bench.config.instance_set
         config["action_values"] = geo_bench.config.action_values
-        config["action_space_args"] = geo_bench.config.action_space_args
+        config["config_space"] = geo_bench.config.config_space
         config["observation_space_args"] = geo_bench.config.observation_space_args
         config["correlation_table"] = geo_bench.config.correlation_table
         config["correlation_active"] = True
@@ -100,13 +100,7 @@ class TestGeometricEnv(unittest.TestCase):
         self.assertTrue(functions._sigmoid(1, 0, 0) == 0.5)
         self.assertTrue(functions._linear(5, 2, -3) == 7)
         self.assertTrue(functions._constant(5) == 5)
-        self.assertAlmostEqual(functions._exponential(0.2, 0.5), 0.61, places=2)
         self.assertAlmostEqual(functions._logarithmic(2, 2), 1.39, places=2)
-        self.assertAlmostEqual(functions._polynom(4, [1, 2, 3]), 57, places=2)
-        self.assertAlmostEqual(functions._polynom(3, [1, 2, 3, 2, 1]), 169, places=2)
-        self.assertAlmostEqual(
-            functions._polynom(2, [1, 2, 3, 6, 7, 1, 1]), 273, places=2
-        )
         self.assertAlmostEqual(functions._sinus(4, 0.5), 0.91, places=2)
 
     def test_calculate_norm_values(self):
@@ -186,15 +180,15 @@ class TestGeometricEnv(unittest.TestCase):
     def test_render_dimensions(self):
         env = self.make_env(DEFAULTS_STATIC)
         dimensions = [1, 2]
-        env.render_dimensions(dimensions, FILE_PATH)
+        env.render(dimensions, FILE_PATH)
         fig_title = f"GeoBench-Dimensions{len(dimensions)}.jpg"
         self.assertTrue(os.path.exists(os.path.join(FILE_PATH, fig_title)))
-        os.remove(fig_title)
+        os.remove(os.path.join(FILE_PATH, fig_title))
 
     def test_render_3d_dimensions(self):
         env = self.make_env(DEFAULTS_STATIC)
         env.render_3d_dimensions([0, 1], FILE_PATH)
         self.assertTrue(os.path.exists(os.path.join(FILE_PATH, "3D.jpg")))
         self.assertTrue(os.path.exists(os.path.join(FILE_PATH, "3D-90side.jpg")))
-        os.remove("3D.jpg")
-        os.remove("3D-90side.jpg")
+        os.remove(os.path.join(FILE_PATH, "3D.jpg"))
+        os.remove(os.path.join(FILE_PATH, "3D-90side.jpg"))
