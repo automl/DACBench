@@ -1,4 +1,6 @@
 import json
+from types import FunctionType
+
 import numpy as np
 from gym import spaces
 from functools import partial
@@ -12,7 +14,7 @@ class AbstractBenchmark:
     Abstract template for benchmark classes
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config: "objdict" = None):
         """
         Initialize benchmark class
 
@@ -20,11 +22,17 @@ class AbstractBenchmark:
         -------
         config_path : str
             Path to load configuration from (if read from file)
+        config : objdict
+            Object dict containing the config
         """
+        if config is not None and config_path is not None:
+            raise ValueError("Both path to config and config where provided")
         self.wrap_funcs = []
         if config_path:
             self.config_path = config_path
             self.read_config_file(self.config_path)
+        elif config:
+            self.load_config(config)
         else:
             self.config = None
 
@@ -39,9 +47,9 @@ class AbstractBenchmark:
         """
         return self.config
 
-    def save_config(self, path):
+    def serialize_config(self):
         """
-        Save configuration to .json
+        Save configuration to json
 
         Parameters
         ----------
@@ -61,17 +69,11 @@ class AbstractBenchmark:
         if "action_space" in self.config:
             conf["action_space"] = self.space_to_list(conf["action_space"])
 
-        if "reward_function" in self.config:
-            conf["reward_function"] = [
-                conf["reward_function"].__module__,
-                conf["reward_function"].__name__,
-            ]
+        # TODO: how can we use the built in serialization of configspace here?
+        if "config_space" in self.config:
+            conf["config_space"] = self.process_configspace(self.config.config_space)
 
-        if "state_method" in self.config:
-            conf["state_method"] = [
-                conf["state_method"].__module__,
-                conf["state_method"].__name__,
-            ]
+        conf = AbstractBenchmark.__stringify_functions(conf)
 
         for k in self.config.keys():
             if isinstance(self.config[k], np.ndarray) or isinstance(
@@ -95,6 +97,102 @@ class AbstractBenchmark:
         if "instance_set" in conf:
             del conf["instance_set"]
 
+        return conf
+
+    def process_configspace(self, configuration_space):
+        """
+        This is largely the builting cs.json.write method, but doesn't save the result directly
+        If this is ever implemented in cs, we can replace this method
+        """
+        from ConfigSpace.configuration_space import ConfigurationSpace
+        from ConfigSpace.hyperparameters import (
+            CategoricalHyperparameter,
+            UniformIntegerHyperparameter,
+            UniformFloatHyperparameter,
+            NormalIntegerHyperparameter,
+            NormalFloatHyperparameter,
+            OrdinalHyperparameter,
+            Constant,
+            UnParametrizedHyperparameter,
+        )
+        from ConfigSpace.read_and_write.json import (
+            _build_constant,
+            _build_condition,
+            _build_ordinal,
+            _build_forbidden,
+            _build_categorical,
+            _build_normal_int,
+            _build_normal_float,
+            _build_uniform_float,
+            _build_uniform_int,
+            _build_unparametrized_hyperparameter,
+        )
+
+        if not isinstance(configuration_space, ConfigurationSpace):
+            raise TypeError(
+                "pcs_parser.write expects an instance of %s, "
+                "you provided '%s'" % (ConfigurationSpace, type(configuration_space))
+            )
+
+        hyperparameters = []
+        conditions = []
+        forbiddens = []
+
+        for hyperparameter in configuration_space.get_hyperparameters():
+
+            if isinstance(hyperparameter, Constant):
+                hyperparameters.append(_build_constant(hyperparameter))
+            elif isinstance(hyperparameter, UnParametrizedHyperparameter):
+                hyperparameters.append(
+                    _build_unparametrized_hyperparameter(hyperparameter)
+                )
+            elif isinstance(hyperparameter, UniformFloatHyperparameter):
+                hyperparameters.append(_build_uniform_float(hyperparameter))
+            elif isinstance(hyperparameter, NormalFloatHyperparameter):
+                hyperparameters.append(_build_normal_float(hyperparameter))
+            elif isinstance(hyperparameter, UniformIntegerHyperparameter):
+                hyperparameters.append(_build_uniform_int(hyperparameter))
+            elif isinstance(hyperparameter, NormalIntegerHyperparameter):
+                hyperparameters.append(_build_normal_int(hyperparameter))
+            elif isinstance(hyperparameter, CategoricalHyperparameter):
+                hyperparameters.append(_build_categorical(hyperparameter))
+            elif isinstance(hyperparameter, OrdinalHyperparameter):
+                hyperparameters.append(_build_ordinal(hyperparameter))
+            else:
+                raise TypeError(
+                    "Unknown type: %s (%s)" % (type(hyperparameter), hyperparameter,)
+                )
+
+        for condition in configuration_space.get_conditions():
+            conditions.append(_build_condition(condition))
+
+        for forbidden_clause in configuration_space.get_forbiddens():
+            forbiddens.append(_build_forbidden(forbidden_clause))
+
+        rval = {}
+        if configuration_space.name is not None:
+            rval["name"] = configuration_space.name
+        rval["hyperparameters"] = hyperparameters
+        rval["conditions"] = conditions
+        rval["forbiddens"] = forbiddens
+
+        return rval
+
+    @staticmethod
+    def from_json(json_config):
+        config = objdict(json.loads(json_config))
+        if "config_space" in config.keys():
+            from ConfigSpace.read_and_write import json as cs_json
+
+            config.config_space = cs_json.read(config.config_space)
+        return AbstractBenchmark(config=config)
+
+    def to_json(self):
+        conf = self.serialize_config()
+        return json.dumps(conf)
+
+    def save_config(self, path):
+        conf = self.serialize_config()
         with open(path, "w") as fp:
             json.dump(conf, fp, default=lambda o: "not serializable")
 
@@ -141,6 +239,63 @@ class AbstractBenchmark:
 
             self.wrap_funcs.append(partial(func, *args))
 
+    @staticmethod
+    def __import_from(module: str, name: str):
+        """
+        Imports the class / function / ... with name from module
+        Parameters
+        ----------
+        module
+        name
+
+        Returns
+        -------
+        the imported object
+        """
+        module = __import__(module, fromlist=[name])
+        return getattr(module, name)
+
+    @staticmethod
+    def __decorate_config_with_functions(conf: dict):
+        """
+        Replaced the stringified functions with the callable objects
+        Parameters
+        ----------
+        config
+
+        Returns
+        -------
+
+        """
+        for key, value in {
+            k: v
+            for k, v in conf.items()
+            if isinstance(v, list) and len(v) == 3 and v[0] == "function"
+        }.items():
+            _, module_name, function_name = value
+            conf[key] = AbstractBenchmark.__import_from(module_name, function_name)
+        return conf
+
+    @staticmethod
+    def __stringify_functions(conf: dict) -> dict:
+        """
+        Replaced all callables in the config with a
+        triple ('function', module_name, function_name)
+
+        Parameters
+        ----------
+        config
+
+        Returns
+        -------
+        modified dict
+        """
+        for key, value in {
+            k: v for k, v in conf.items() if isinstance(v, FunctionType)
+        }.items():
+            conf[key] = ["function", conf[key].__module__, conf[key].__name__]
+        return conf
+
     def space_to_list(self, space):
         res = []
         if isinstance(space, spaces.Box):
@@ -180,32 +335,39 @@ class AbstractBenchmark:
         for k in dict_space.keys():
             keys.append(k)
             value = dict_space[k]
-            if not isinstance(value, spaces.Box):
-                raise ValueError("Only Dict spaces made up of Boxes are supported")
+            if not isinstance(value, (spaces.Box, spaces.Discrete)):
+                raise ValueError(
+                    f"Only Dict spaces made up of Box spaces or discrete spaces are supported but got {type(value)}"
+                )
 
-            low = value.low.tolist()
-            high = value.high.tolist()
-            arguments.append([low, high])
+            if isinstance(value, spaces.Box):
+                low = value.low.tolist()
+                high = value.high.tolist()
+                arguments.append([low, high])
+
+            if isinstance(value, spaces.Discrete):
+                n = value.n
+                arguments.append([n])
         return [keys, arguments]
 
     def dictify_json(self, dict_list):
         dict_space = {}
-        for i in range(len(dict_list[0])):
-            args = [np.array(arg) for arg in dict_list[1][i]]
-            dict_space[dict_list[0][i]] = spaces.Box(*args, dtype=np.float32)
+        types, args = dict_list
+        for type, args_ in zip(types, args):
+            prepared_args = map(np.array, args_)
+            if type == "box":
+                dict_space[type] = spaces.Box(*prepared_args, dtype=np.float32)
+            elif type == "discrete":
+                dict_space[type] = spaces.Discrete(*prepared_args)
+            else:
+                raise TypeError(
+                    f"Currently only Discrete and Box spaces are allowed in Dict spaces got {type}"
+                )
+
         return dict_space
 
-    def read_config_file(self, path):
-        """
-        Read configuration from file
-
-        Parameters
-        ----------
-        path : str
-            Path to config file
-        """
-        with open(path, "r") as fp:
-            self.config = objdict(json.load(fp))
+    def load_config(self, config: "objdict"):
+        self.config = config
         if "observation_space_type" in self.config:
             # Types have to be numpy dtype (for gym spaces)s
             if type(self.config["observation_space_type"]) == str:
@@ -235,25 +397,27 @@ class AbstractBenchmark:
             self.dejson_wrappers(self.config["wrappers"])
             del self.config["wrappers"]
 
-        import importlib
-
-        if "reward_function" in self.config:
-            self.config["reward_function"] = getattr(
-                importlib.import_module(self.config["reward_function"][0]),
-                self.config["reward_function"][1],
-            )
-
-        if "state_method" in self.config:
-            self.config["state_method"] = getattr(
-                importlib.import_module(self.config["state_method"][0]),
-                self.config["state_method"][1],
-            )
+        self.config = AbstractBenchmark.__decorate_config_with_functions(self.config)
 
         for k in self.config.keys():
             if type(self.config[k]) == list:
                 if type(self.config[k][0]) == list:
                     map(np.array, self.config[k])
                 self.config[k] = np.array(self.config[k])
+
+    def read_config_file(self, path):
+        """
+        Read configuration from file
+
+        Parameters
+        ----------
+        path : str
+            Path to config file
+        """
+        with open(path, "r") as fp:
+            config = objdict(json.load(fp))
+
+        self.load_config(config)
 
     def get_environment(self):
         """

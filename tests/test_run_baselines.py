@@ -54,8 +54,9 @@ class TestRunBaselines(unittest.TestCase):
     def test_run_random_SGDBenchmark(self):
         self.run_random_test_with_benchmark("SGDBenchmark")
 
-    def test_run_random_ModeaBenchmark(self):
-        self.run_random_test_with_benchmark("ModeaBenchmark")
+    # no get_benchmark method
+    #def test_run_random_ModeaBenchmark(self):
+    #    self.run_random_test_with_benchmark("ModeaBenchmark")
 
     def run_static_test_with_benchmark(self, benchmark):
         seeds = [42]
@@ -96,8 +97,9 @@ class TestRunBaselines(unittest.TestCase):
     def test_run_static_SGDBenchmark(self):
         self.run_static_test_with_benchmark("SGDBenchmark")
 
-    def test_run_static_ModeaBenchmark(self):
-        self.run_static_test_with_benchmark("ModeaBenchmark")
+    # no get_benchmark method
+    #def test_run_static_ModeaBenchmark(self):
+    #    self.run_static_test_with_benchmark("ModeaBenchmark")
 
     def test_run_dynamic_policy_CMAESBenchmark(self):
         benchmark = "CMAESBenchmark"

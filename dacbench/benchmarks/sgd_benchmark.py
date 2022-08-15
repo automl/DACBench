@@ -3,20 +3,23 @@ import os
 
 import numpy as np
 from gym import spaces
-import torch.optim
 from torch.nn import NLLLoss
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import SGDEnv, log_diff_training_loss
+from dacbench.envs import SGDEnv
 from dacbench.envs.sgd import Reward
+
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+LR = CSH.UniformIntegerHyperparameter(name='learning_rate', lower=0, upper=10)
+DEFAULT_CFG_SPACE.add_hyperparameter(LR)
 
 
 def __default_loss_function(**kwargs):
-    return NLLLoss(reduction="none", **kwargs)
+    return NLLLoss(reduction = 'none', **kwargs)
 
-
-HISTORY_LENGTH = 40
-INPUT_DIM = 10
 
 INFO = {
     "identifier": "LR",
@@ -32,49 +35,43 @@ INFO = {
         "Validation Loss",
         "Step",
         "Alignment",
-        "Crashed",
+        "Crashed"
     ],
 }
 
 
 SGD_DEFAULTS = objdict(
     {
-        "action_space_class": "Discrete",
-        "action_space_args": [],
+        "config_space": DEFAULT_CFG_SPACE,
+        "action_space_class": "Box",
+        "action_space_args": [np.array([0]), np.array([10])],
         "observation_space_class": "Dict",
         "observation_space_type": None,
         "observation_space_args": [
             {
                 "predictiveChangeVarDiscountedAverage": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=(1,), dtype=np.float32
+                    low=-np.inf, high=np.inf, shape=(1,)
                 ),
                 "predictiveChangeVarUncertainty": spaces.Box(
-                    low=0, high=np.inf, shape=(1,), dtype=np.float64
+                    low=0, high=np.inf, shape=(1,)
                 ),
                 "lossVarDiscountedAverage": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=(1,), dtype=np.float32
+                    low=-np.inf, high=np.inf, shape=(1,)
                 ),
-                "lossVarUncertainty": spaces.Box(
-                    low=0, high=np.inf, shape=(1,), dtype=np.float32
-                ),
-                "currentLR": spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32),
-                "trainingLoss": spaces.Box(
-                    low=0, high=np.inf, shape=(1,), dtype=np.float32
-                ),
-                "validationLoss": spaces.Box(
-                    low=0, high=np.inf, shape=(1,), dtype=np.float32
-                ),
-                "step": spaces.Box(low=0, high=np.inf, shape=(1,), dtype=np.float32),
-                "alignment": spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32),
+                "lossVarUncertainty": spaces.Box(low=0, high=np.inf, shape=(1,)),
+                "currentLR": spaces.Box(low=0, high=1, shape=(1,)),
+                "trainingLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
+                "validationLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
+                "step": spaces.Box(low=0, high=np.inf, shape=(1,)),
+                "alignment": spaces.Box(low=0, high=1, shape=(1,)),
                 "crashed": spaces.Discrete(2),
             }
         ],
-        "reward_type": log_diff_training_loss,
+        "reward_type": Reward.LogDiffTraining,
         "cutoff": 1e3,
         "lr": 1e-3,
-        "actions": {"lr": [0.0, 1.0]},
-        "optimizer": torch.optim.RMSprop,
-        "optimizer_kwargs": {},
+        "discount_factor": 0.9,
+        "optimizer": "rmsprop",
         "loss_function": __default_loss_function,
         "loss_function_kwargs": {},
         "val_loss_function": __default_loss_function,
@@ -82,11 +79,16 @@ SGD_DEFAULTS = objdict(
         "training_batch_size": 64,
         "validation_batch_size": 64,
         "train_validation_ratio": 0.8,
+        "dataloader_shuffle": True,
         "no_cuda": False,
+        "beta1": 0.9,
+        "beta2": 0.9,
+        "epsilon": 1.0e-06,
+        "clip_grad": (-1.0, 1.0),
         "seed": 0,
         "cd_paper_reconstruction": False,
         "cd_bias_correction": True,
-        "terminate_on_crash": True,
+        "terminate_on_crash": False,
         "crash_penalty": 0.0,
         "instance_set_path": "../instance_sets/sgd/sgd_train_100instances.csv",
         "benchmark_info": INFO,
@@ -100,10 +102,13 @@ SGD_DEFAULTS = objdict(
             "validationLoss",
             "step",
             "alignment",
-            "crashed",
+            "crashed"
         ],
     }
 )
+
+# Set reward range based on the chosen reward type
+SGD_DEFAULTS.reward_range = SGD_DEFAULTS['reward_type'].func.frange
 
 
 class SGDBenchmark(AbstractBenchmark):
@@ -143,20 +148,36 @@ class SGDBenchmark(AbstractBenchmark):
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
+        # Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
+
         env = SGDEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
 
         return env
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """
         Read path of instances from config into list
         """
 
-        path = self.config.instance_set_path
-
-        self.config["instance_set"] = {}
+        if test:
+            path = (
+                    os.path.dirname(os.path.abspath(__file__))
+                    + "/"
+                    + self.config.test_set_path
+            )
+            keyword = "test_set"
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
+            keyword = "instance_set"
+        self.config[keyword] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh, delimiter=";")
             for row in reader:
@@ -172,9 +193,9 @@ class SGDBenchmark(AbstractBenchmark):
                     int(row["seed"]),
                     row["architecture"],
                     int(row["steps"]),
-                    dataset_size,
+                    dataset_size
                 ]
-                self.config["instance_set"][int(row["ID"])] = instance
+                self.config[keyword][int(row["ID"])] = instance
 
     def get_benchmark(self, instance_set_path=None, seed=0):
         """

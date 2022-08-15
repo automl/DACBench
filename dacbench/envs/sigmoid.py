@@ -162,3 +162,164 @@ class SigmoidEnv(AbstractEnv):
 
             plt.draw()
             plt.pause(0.005)
+
+
+class ContinuousStateSigmoidEnv(SigmoidEnv):
+    """
+    Environment for tracing sigmoid curves with a continuous state on the x-axis
+    """
+
+    def __init__(self, config) -> None:
+        """
+        Initialize Sigmoid Env
+
+        Parameters
+        -------
+        config : objdict
+            Environment configuration
+        """
+        super().__init__(config)
+
+    def step(self, action: int):
+        """
+        Execute environment step
+
+        Parameters
+        ----------
+        action : int
+            action to execute
+
+        Returns
+        -------
+        np.array, float, bool, dict
+            state, reward, done, info
+        """
+        action = self.action_mapper[action]
+        assert self.n_actions == len(
+            action
+        ), f"action should be of length {self.n_actions}."
+
+        self.action = action
+        # The reward measures how wrong the choice was so we can take this error to determine how far we travel along
+        # the x-axis instead of always advancing + 1
+        r = self.get_reward(self)
+
+        # magic constants but such that the max step is ~1 and the min step is ~0.25
+        self.c_step += (r + np.sqrt(np.power(r, 2) + 0.25))/2
+
+        if self.c_step >= self.n_steps:
+            self.done = True
+        else:
+            self.done = False
+
+        # self.c_step is used in get_next_state to show how much distance along the x-axis is left to cover
+        # Thus we get a continuous state this way.
+        next_state = self.get_state(self)
+        self._prev_state = next_state
+        return next_state, r, self.done, {}
+
+class ContinuousSigmoidEnv(SigmoidEnv):
+    """
+    Environment for tracing sigmoid curves with a continuous state on the x-axis
+    """
+
+    def __init__(self, config) -> None:
+        """
+        Initialize Sigmoid Env
+
+        Parameters
+        -------
+        config : objdict
+            Environment configuration
+        """
+        super().__init__(config)
+
+    def step(self, action: np.ndarray):
+        """
+        Execute environment step. !!NOTE!! The action here is a list of floats and not a single number !!NOTE!!
+
+        Parameters
+        ----------
+        action : list of floats
+            action(s) to execute
+
+        Returns
+        -------
+        np.array, float, bool, dict
+            state, reward, done, info
+        """
+        assert self.n_actions == len(
+            action
+        ), f"action should be of length {self.n_actions}."
+
+        self.action = action
+        # The reward measures how wrong the choice was so we can take this error to determine how far we travel along
+        # the x-axis instead of always advancing + 1
+        r = self.get_reward(self)
+
+        # magic constants but such that the max step is ~1 and the min step is ~0.25
+        self.c_step += (r + np.sqrt(np.power(r, 2) + 0.25)) / 2
+
+        if self.c_step >= self.n_steps:
+            self.done = True
+        else:
+            self.done = False
+
+        # self.c_step is used in get_next_state to show how much distance along the x-axis is left to cover
+        # Thus we get a continuous state this way.
+        next_state = self.get_state(self)
+        self._prev_state = next_state
+        return next_state, r, self.done, {}
+
+
+if __name__ == '__main__':
+    from dacbench.abstract_benchmark import objdict
+    config = objdict(
+        {
+            "action_space_class": "Box",
+            "action_space_args": [
+                np.array([-np.inf for _ in range(1 + 2 * 3)]),
+                np.array([np.inf for _ in range(1 + 2 * 3)]),
+            ],
+            "observation_space_class": "Box",
+            "observation_space_type": np.float32,
+            "observation_space_args": [
+                np.array([-np.inf for _ in range(1 + 2 * 3)]),
+                np.array([np.inf for _ in range(1 + 2 * 3)]),
+            ],
+            "reward_range": (0, 1),
+            "cutoff": 10,
+            "action_values": (2, 2),
+            "slope_multiplier": 2.0,
+            "seed": 0,
+            "instance_set_path": "../instance_sets/sigmoid/sigmoid_2D3M_train.csv",
+            "benchmark_info": None,
+            'instance_set': {0:[5.847291747472278,6.063505157165379,5.356361033331866,8.473324526654427],
+                             1:[5.699459023308639,0.17993881762205755,3.4218338308013356,8.486280024502191],
+                             2:[5.410536230957515,5.700091608324946,-5.3540400976249165,2.76787147719077],
+                             3:[1.5799464875295817,6.374885201056433,1.0378986341827443,4.219330699379608],
+                             4:[2.61235568666599,6.478051235772757,7.622760392199338,-3.0898869570275167]},
+        }
+    )
+    env = ContinuousSigmoidEnv(config)
+    done = False
+    s = env.reset()
+    env.render(mode='human')
+    while not done:
+        a = [np.random.rand(), np.random.rand()]
+        print(env.c_step, a)
+        s, r, done, _ = env.step(a)
+        env.render('human')
+
+
+    config['action_space'] = "Discrete"
+    config["action_space_args"] =  [int(np.prod((2, 2)))],
+    env = ContinuousStateSigmoidEnv(config)
+    done = False
+    s = env.reset()
+    env.render(mode='human')
+    while not done:
+        a = np.random.randint(4)
+        print(env.c_step, a)
+        s, r, done, _ = env.step(a)
+        env.render('human')

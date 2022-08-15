@@ -21,18 +21,37 @@ class AbstractEnv(gym.Env):
             If to seed the action space as well
         """
         super(AbstractEnv, self).__init__()
+        self.config = config
+        if "instance_update_func" in self.config.keys():
+            self.instance_updates = self.config["instance_update_func"]
+        else:
+            self.instance_updates = "round_robin"
         self.instance_set = config["instance_set"]
         self.instance_id_list = sorted(list(self.instance_set.keys()))
         self.instance_index = 0
         self.inst_id = self.instance_id_list[self.instance_index]
         self.instance = self.instance_set[self.inst_id]
 
+        self.test = False
+        if "test_set" in self.config.keys():
+            self.test_set = config["test_set"]
+            self.test_instance_id_list = sorted(list(self.test_set.keys()))
+            self.test_instance_index = 0
+            self.test_inst_id = self.test_instance_id_list[self.test_instance_index]
+            self.test_instance = self.test_set[self.test_inst_id]
+
+            self.training_set = self.instance_set
+            self.training_id_list = self.instance_id_list
+            self.training_inst_id = self.inst_id
+            self.training_instance = self.instance
+        else:
+            self.test_set = None
+
         self.benchmark_info = config["benchmark_info"]
         self.initial_seed = None
         self.np_random = None
-        self.seed(config.get("seed", None), config.get("seed_action_space", False))
 
-        self.n_steps = None
+        self.n_steps = config["cutoff"]
         self.c_step = 0
 
         self.reward_range = config["reward_range"]
@@ -66,7 +85,42 @@ class AbstractEnv(gym.Env):
                     )
                     raise TypeError
 
-        if "action_space" in config.keys():
+        # TODO: use dicts by default for actions and observations
+        # The config could change this for RL purposes
+        if "config_space" in config.keys():
+            actions = config["config_space"].get_hyperparameters()
+            action_types = [type(a).__name__ for a in actions]
+
+            # Uniform action space
+            if all(t == action_types[0] for t in action_types):
+                if "Float" in action_types[0]:
+                    low = np.array([a.lower for a in actions])
+                    high = np.array([a.upper for a in actions])
+                    self.action_space = gym.spaces.Box(low=low, high=high)
+                elif "Integer" in action_types[0] or "Categorical" in action_types[0]:
+                    if len(action_types) == 1:
+                        try:
+                            n = actions[0].upper - actions[0].lower
+                        except:
+                            n = len(actions[0].choices)
+                        self.action_space = gym.spaces.Discrete(n)
+                    else:
+                        ns = []
+                        for a in actions:
+                            try:
+                                ns.append(a.upper - a.lower)
+                            except:
+                                ns.append(len(a.choices))
+                        self.action_space = gym.spaces.MultiDiscrete(np.array(ns))
+                else:
+                    raise ValueError(
+                        "Only float, integer and categorical hyperparameters are supported as of now"
+                    )
+            # Mixed action space
+            # TODO: implement this
+            else:
+                raise ValueError("Mixed type config spaces are currently not supported")
+        elif "action_space" in config.keys():
             self.action_space = config["action_space"]
         else:
             try:
@@ -82,6 +136,9 @@ class AbstractEnv(gym.Env):
             except TypeError:
                 print("Tuple and Dict action spaces are currently not supported")
                 raise TypeError
+       
+        # seeding the environment after initialising action space
+        self.seed(config.get("seed", None), config.get("seed_action_space", False))      
 
     def step_(self):
         """
@@ -98,14 +155,41 @@ class AbstractEnv(gym.Env):
             done = True
         return done
 
-    def reset_(self):
+    def reset_(self, instance=None, instance_id=None, scheme=None):
         """
-        Pre-reset function for round robin schedule through instance set
+        Pre-reset function for progressing through the instance set
+        Will either use round robin, random or no progression scheme
         """
-        self.instance_index = (self.instance_index + 1) % len(self.instance_id_list)
-        self.inst_id = self.instance_id_list[self.instance_index]
-        self.instance = self.instance_set[self.inst_id]
         self.c_step = 0
+        if scheme is None:
+            scheme = self.instance_updates
+        self.use_next_instance(instance, instance_id, scheme=scheme)
+
+    def use_next_instance(self, instance=None, instance_id=None, scheme=None):
+        """
+        Changes instance according to chosen instance progession
+
+        Parameters
+        -------
+        instance
+            Instance specification for potentional new instances
+        instance_id
+            ID of the instance to switch to
+        scheme
+            Update scheme for this progression step (either round robin, random or no progression)
+        """
+        if instance is not None:
+            self.instance = instance
+        elif instance_id is not None:
+            self.inst_id = instance_id
+            self.instance = self.instance_set[self.inst_id]
+        elif scheme == "round_robin":
+            self.instance_index = (self.instance_index + 1) % len(self.instance_id_list)
+            self.inst_id = self.instance_id_list[self.instance_index]
+            self.instance = self.instance_set[self.inst_id]
+        elif scheme == "random":
+            self.inst_id = np.random.choice(self.instance_id_list)
+            self.instance = self.instance_set[self.inst_id]
 
     def step(self, action):
         """
@@ -249,3 +333,38 @@ class AbstractEnv(gym.Env):
             self.seed_action_space()
 
         return [seed]
+
+    def use_test_set(self):
+        """
+        Change to test instance set
+        """
+        if self.test_set is None:
+            raise ValueError(
+                "No test set was provided, please check your benchmark config."
+            )
+
+        self.test = True
+        self.training_set = self.instance_set
+        self.training_id_list = self.instance_id_list
+        self.training_inst_id = self.inst_id
+        self.training_instance = self.instance
+
+        self.instance_set = self.test_set
+        self.instance_id_list = self.test_instance_id_list
+        self.inst_id = self.test_inst_id
+        self.instance = self.test_instance
+
+    def use_training_set(self):
+        """
+        Change to training instance set
+        """
+        self.test = False
+        self.test_set = self.instance_set
+        self.test_instance_id_list = self.instance_id_list
+        self.test_inst_id = self.inst_id
+        self.test_instance = self.instance
+
+        self.instance_set = self.training_instances
+        self.instance_id_list = self.training_id_list
+        self.inst_id = self.training_inst_id
+        self.instance = self.training_instance

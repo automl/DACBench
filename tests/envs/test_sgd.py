@@ -1,7 +1,5 @@
 import unittest
 import os
-import json
-import hashlib
 
 import numpy as np
 from dacbench import AbstractEnv
@@ -71,6 +69,14 @@ class TestSGDEnv(unittest.TestCase):
             self.assertTrue(reward <= env.reward_range[1])
             self.assertFalse(done)
             self.assertTrue(len(meta.keys()) == 0)
+
+    def test_crash(self):
+        env = ObservationWrapper(self.env)
+        env.reset()
+        state, reward, done, _ = env.step(np.nan)
+        self.assertTrue(env.crashed)
+        self.assertFalse(any(np.isnan(state)))
+        self.assertTrue(reward == env.crash_penalty)
 
     def test_stateless(self):
         env = ObservationWrapper(self.env)
@@ -148,40 +154,14 @@ class TestSGDEnv(unittest.TestCase):
                     "trainingLoss",
                     "validationLoss",
                     "step",
-                    "alignment"
+                    "alignment",
+                    "crashed"
                 ],
             )
         )
         self.assertTrue(state["currentLR"] == 0.5)
         self.assertTrue(state["trainingLoss"] > 0)
         self.assertTrue(state["validationLoss"] > 0)
-
-    def test_hash(self):
-        string_config = {k: str(v) for (k, v) in SGD_DEFAULTS.items()}
-        h = hashlib.sha1(json.dumps(string_config).encode()).hexdigest()
-        with open(self.data_path('sgd_config.hash'), 'r') as f:
-            self.assertEqual(h, f.read())
-
-    @staticmethod
-    def replay(env, prev_mem):
-        env = ObservationWrapper(env)
-        env.reset()
-        mem = []
-        for x in prev_mem:
-            action = x[-1]
-            state, reward, done, _ = env.step(action)
-            mem.append(np.concatenate([state, [reward, int(done), action]]))
-        return np.array(mem)
-
-    def test_functional_static(self):
-        prev_mem = np.load(self.data_path('sgd_static_test.npy'))
-        mem = self.replay(self.env, prev_mem)
-        np.testing.assert_allclose(prev_mem, mem)
-
-    def test_functional_dynamic(self):
-        prev_mem = np.load(self.data_path('sgd_dynamic_test.npy'))
-        mem = self.replay(self.env, prev_mem)
-        np.testing.assert_allclose(prev_mem, mem)
 
     def test_close(self):
         self.assertTrue(self.env.close())

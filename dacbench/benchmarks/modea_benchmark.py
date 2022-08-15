@@ -39,7 +39,7 @@ class ModeaBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for Modea
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize Modea Benchmark
 
@@ -48,7 +48,7 @@ class ModeaBenchmark(AbstractBenchmark):
         config_path : str
             Path to config file (optional)
         """
-        super(ModeaBenchmark, self).__init__(config_path)
+        super(ModeaBenchmark, self).__init__(config_path, config)
         if not self.config:
             self.config = objdict(MODEA_DEFAULTS.copy())
 
@@ -68,22 +68,36 @@ class ModeaBenchmark(AbstractBenchmark):
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
+        # Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
+
         env = ModeaEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
 
         return env
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """
         Read path of instances from config into list
         """
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
-        self.config["instance_set"] = {}
+        if test:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.test_set_path
+            )
+            keyword = "test_set"
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
+            keyword = "instance_set"
+
+        self.config[keyword] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh)
             for row in reader:
@@ -97,23 +111,4 @@ class ModeaBenchmark(AbstractBenchmark):
                     instance,
                     representation,
                 ]
-                self.config["instance_set"][int(row["ID"])] = instance
-
-    def get_benchmark(self, seed=0):
-        """
-        Get benchmark
-
-        Parameters
-        -------
-        seed : int
-            Environment seed
-
-        Returns
-        -------
-        env : ModeaEnv
-            Modea environment
-        """
-        self.config = objdict(MODEA_DEFAULTS.copy())
-        self.config.seed = seed
-        self.read_instance_set()
-        return ModeaEnv(self.config)
+                self.config[keyword][int(row["ID"])] = instance

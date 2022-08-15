@@ -3,11 +3,17 @@ from dacbench.envs import FastDownwardEnv
 
 import numpy as np
 import os
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 
 HEURISTICS = [
     "tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)])",
     "tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])",
 ]
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+HEURISTIC = CSH.CategoricalHyperparameter(name='heuristic', choices=["toy1", "toy2"])
+DEFAULT_CFG_SPACE.add_hyperparameter(HEURISTIC)
 
 INFO = {
     "identifier": "FastDownward",
@@ -30,8 +36,7 @@ INFO = {
 FD_DEFAULTS = objdict(
     {
         "heuristics": HEURISTICS,
-        "action_space_class": "Discrete",
-        "action_space_args": [len(HEURISTICS)],
+        "config_space": DEFAULT_CFG_SPACE, 
         "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [
@@ -52,6 +57,7 @@ FD_DEFAULTS = objdict(
         "seed": 0,
         "max_rand_steps": 0,
         "instance_set_path": "../instance_sets/fast_downward/train",
+        "test_set_path": "../instance_sets/fast_downward/test",
         "fd_path": os.path.dirname(os.path.abspath(__file__))
         + "/../envs/rl-plan/fast-downward/fast-downward.py",
         "parallel": True,
@@ -66,7 +72,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for Sigmoid
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize FD Benchmark
 
@@ -75,7 +81,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
         config_path : str
             Path to config file (optional)
         """
-        super(FastDownwardBenchmark, self).__init__(config_path)
+        super(FastDownwardBenchmark, self).__init__(config_path, config)
         if not self.config:
             self.config = objdict(FD_DEFAULTS.copy())
 
@@ -95,22 +101,35 @@ class FastDownwardBenchmark(AbstractBenchmark):
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
+        # Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
+
         env = FastDownwardEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
 
         return env
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """
         Read paths of instances from config into list
         """
         instances = {}
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
+        if test:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.test_set_path
+            )
+            keyword = "test_set"
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
+            keyword = "instance_set"
         import re
 
         for root, dirs, files in os.walk(path):
@@ -138,7 +157,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
                         index = p.split("/")[-2]
                     index = re.sub("[^0-9]", "", index)
                     instances[index] = p
-        self.config["instance_set"] = instances
+        self.config[keyword] = instances
 
         if instances[list(instances.keys())[0]].endswith(".pddl"):
             self.config.domain_file = os.path.join(path + "/domain.pddl")
@@ -167,6 +186,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
         """
         self.config = objdict(FD_DEFAULTS.copy())
         self.read_instance_set()
+        self.read_instance_set(test=True)
         self.config.seed = seed
         env = FastDownwardEnv(self.config)
         return env

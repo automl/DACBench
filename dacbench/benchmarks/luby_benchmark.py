@@ -5,10 +5,16 @@ from dacbench.wrappers import RewardNoiseWrapper
 import numpy as np
 import os
 import csv
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 
 MAX_STEPS = 2 ** 6
 LUBY_SEQUENCE = np.log2([next(luby_gen(i)) for i in range(1, 2 * MAX_STEPS + 2)])
 HISTORY_LENGTH = 5
+
+DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
+SEQ = CSH.UniformIntegerHyperparameter(name='sequence_element', lower=0, upper=np.log2(MAX_STEPS))
+DEFAULT_CFG_SPACE.add_hyperparameter(SEQ)
 
 INFO = {
     "identifier": "Luby",
@@ -26,8 +32,7 @@ INFO = {
 
 LUBY_DEFAULTS = objdict(
     {
-        "action_space_class": "Discrete",
-        "action_space_args": [int(np.log2(MAX_STEPS))],
+        "config_space": DEFAULT_CFG_SPACE,
         "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [
@@ -50,7 +55,7 @@ class LubyBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for Sigmoid
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize Luby Benchmark
 
@@ -59,7 +64,7 @@ class LubyBenchmark(AbstractBenchmark):
         config_path : str
             Path to config file (optional)
         """
-        super(LubyBenchmark, self).__init__(config_path)
+        super(LubyBenchmark, self).__init__(config_path, config)
         if not self.config:
             self.config = objdict(LUBY_DEFAULTS.copy())
 
@@ -78,6 +83,10 @@ class LubyBenchmark(AbstractBenchmark):
         """
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
+
+        # Read test set if path is specified
+        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+            self.read_instance_set(test=True)
 
         env = LubyEnv(self.config)
         for func in self.wrap_funcs:
@@ -122,21 +131,30 @@ class LubyBenchmark(AbstractBenchmark):
             np.array([2 ** max(LUBY_SEQUENCE + 1) for _ in range(length + 1)]),
         ]
 
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """Read instance set from file"""
-        path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/"
-            + self.config.instance_set_path
-        )
-        self.config["instance_set"] = {}
+        if test:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.test_set_path
+            )
+            keyword = "test_set"
+        else:
+            path = (
+                os.path.dirname(os.path.abspath(__file__))
+                + "/"
+                + self.config.instance_set_path
+            )
+            keyword = "instance_set"
+
+        self.config[keyword] = {}
         with open(path, "r") as fh:
             reader = csv.DictReader(fh)
             for row in reader:
-                self.config["instance_set"][int(row["ID"])] = [
+                self.config[keyword][int(row["ID"])] = [
                     float(shift) for shift in row["start"].split(",")
                 ] + [float(slope) for slope in row["sticky"].split(",")]
-        self.config["instance_set"] = self.config["instance_set"]
 
     def get_benchmark(self, L=8, fuzziness=1.5, seed=0):
         """

@@ -44,6 +44,16 @@ class TestAbstractBenchmark(unittest.TestCase):
         self.assertTrue(recovered["seed"] == 10)
         self.assertTrue(len(recovered.keys()) == 2)
         os.remove("test_conf2.json")
+    
+    def test_from_and_to_json(self):
+        bench1 = AbstractBenchmark(config_path="tests/test_config.json")
+        json1 = bench1.serialize_config()
+        bench2 = AbstractBenchmark(config=objdict(json1))
+        json2 = bench1.serialize_config()
+
+        print(json1)
+        print(json2)
+        self.assertEqual(json1, json2)
 
     def test_attributes(self):
         bench = AbstractBenchmark()
@@ -115,14 +125,13 @@ class TestAbstractBenchmark(unittest.TestCase):
                 "box": Box(
                     low=np.array([0, 0]),
                     high=np.array([1, 1]),
+                ),
+             'discrete': Discrete(
+                    n=2
                 )
             }
         )
         assert_restorable(space)
-
-        with self.assertRaises(ValueError):
-            space = Dict({"discrete": Discrete(1)})
-            bench.space_to_list(space)
 
         space = MultiDiscrete([2, 3])
         assert_restorable(space)
