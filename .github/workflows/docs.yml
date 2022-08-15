@@ -39,8 +39,8 @@ jobs:
         pip install "."
     - name: Make docs
       run: |
-        make clean
-        make docs
+        make -C docs clean
+        make -C docs docs
     - name: Pull latest gh-pages
       if: (contains(github.ref, 'development') || contains(github.ref, 'main'))
       run: |
