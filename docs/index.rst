@@ -10,6 +10,8 @@ Welcome to DACBench's documentation!
  :caption: Contents:
 
  source/installation
+ source/containers
+ source/dac
  source/benchmarks
  source/modifications
  source/wrappers
