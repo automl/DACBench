@@ -1,5 +1,9 @@
 from dacbench.envs.luby import LubyEnv, luby_gen
-from dacbench.envs.sigmoid import SigmoidEnv, ContinuousSigmoidEnv, ContinuousStateSigmoidEnv
+from dacbench.envs.sigmoid import (
+    SigmoidEnv,
+    ContinuousSigmoidEnv,
+    ContinuousStateSigmoidEnv,
+)
 from dacbench.envs.fast_downward import FastDownwardEnv
 from dacbench.envs.cma_es import CMAESEnv
 from dacbench.envs.cma_step_size import CMAStepSizeEnv
@@ -8,6 +12,7 @@ from dacbench.envs.sgd import SGDEnv
 from dacbench.envs.theory import RLSEnvDiscrete, RLSEnv
 from dacbench.envs.modcma import ModCMAEnv
 from dacbench.envs.toysgd import ToySGDEnv
+from dacbench.envs.geometric import GeometricEnv
 
 __all__ = [
     "LubyEnv",
@@ -15,9 +20,10 @@ __all__ = [
     "SigmoidEnv",
     "FastDownwardEnv",
     "CMAESEnv",
-    "CMAStepSizeEnv"
-    "ModeaEnv",
+    "CMAStepSizeEnv" "ModeaEnv",
     "SGDEnv",
-    "RLSEnvDiscrete", "RLSEnv",
+    "RLSEnvDiscrete",
+    "RLSEnv",
     "ModCMAEnv",
+    "GeometricEnv",
 ]

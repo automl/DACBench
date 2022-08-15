@@ -130,7 +130,7 @@ class GeometricBenchmark(AbstractBenchmark):
         Creates a nested List for every Intance.
         The List contains all functions with their respective values.
         """
-        path = self.config.instance_set_path
+        path = os.path.join(FILE_PATH, self.config.instance_set_path)
         self.config["instance_set"] = {}
         with open(path, "r") as fh:
 
@@ -232,10 +232,12 @@ class GeometricBenchmark(AbstractBenchmark):
                 )
 
         self.config.action_values = values
+        cs = CS.ConfigurationSpace()
         actions = CSH.UniformIntegerHyperparameter(
             name="curve_values", lower=0, upper=int(np.prod(values))
         )
-        self.config.config_space.add_hyperparameter(actions)
+        cs.add_hyperparameter(actions)
+        self.config.config_space = cs
 
         num_info = 2
         self.config.observation_space_args = [

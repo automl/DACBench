@@ -11,10 +11,7 @@ INFO = {
     "identifier": "Geometric",
     "name": "High Dimensional Geometric Curve Approximation. Curves are geometrical orthogonal.",
     "reward": "Overall Euclidean Distance between Point on Curve and Action Vector for all Dimensions",
-    "state_description": [
-        "Remaining Budget",
-        "Dimensions",
-    ],
+    "state_description": ["Remaining Budget", "Dimensions",],
 }
 
 
@@ -153,7 +150,7 @@ class TestGeometricBenchmark(unittest.TestCase):
         bench = self.load_bench(DEFAULTS_STATIC)
         bench.read_instance_set()
         self.assertTrue(len(bench.config.instance_set.keys()) == 100)
-        self.assertTrue(len(bench.config.instance_set[0]) == 9)
+        self.assertTrue(len(bench.config.instance_set[0]) == 7)
         self.assertTrue(bench.config.instance_set[0][0][1] == "sigmoid")
         first_inst = bench.config.instance_set[0][0][3]
 
@@ -174,8 +171,7 @@ class TestGeometricBenchmark(unittest.TestCase):
         bench.set_action_values()
         self.assertTrue(bench.config.action_value_default == 4)
         self.assertTrue(bench.config.action_values[0] == 4)
-        # self.assertTrue(bench.config.action_space_args[0] == 65536 * 4)
-        self.assertTrue(len(bench.config.observation_space_args[0]) == 20)
+        self.assertTrue(len(bench.config.observation_space_args[0]) == 16)
         self.assertTrue(
             len(bench.config.action_interval_mapping)
             == len(bench.config.action_value_mapping)
@@ -186,16 +182,17 @@ class TestGeometricBenchmark(unittest.TestCase):
         bench.read_instance_set()
         bench.set_action_values()
         self.assertTrue(bench.config.action_values_variable)
-        self.assertTrue(bench.config.action_values[4] == 11)
-        # self.assertTrue(bench.config.action_space_args[0] == 55440 * 9)
-        self.assertTrue(len(bench.config.observation_space_args[0]) == 20)
+        self.assertTrue(bench.config.action_values[4] == 4)
+        self.assertTrue(len(bench.config.observation_space_args[0]) == 16)
 
     def test_set_action_description(self):
         bench = self.load_bench(DEFAULTS_DYNAMIC)
         bench.read_instance_set()
         bench.set_action_values()
         bench.set_action_description()
-        self.assertTrue("Action1" in bench.config.benchmark_info["state_description"])
+        self.assertTrue(
+            "Derivative1" in bench.config.benchmark_info["state_description"]
+        )
 
     def test_create_correlation_table(self):
         bench = self.load_bench(DEFAULTS_CORRELATION)
