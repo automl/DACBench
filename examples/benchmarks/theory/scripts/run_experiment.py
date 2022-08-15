@@ -2,12 +2,10 @@ import argparse
 import os
 
 import gym
-from collections import OrderedDict
 import sys
 
 sys.path.append(os.path.dirname(__file__))
 import shutil
-from pprint import pprint
 
 from ddqn_local.ddqn import DQN
 from utils import make_env, read_config

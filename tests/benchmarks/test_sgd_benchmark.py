@@ -49,3 +49,8 @@ class TestSGDBenchmark(unittest.TestCase):
         bench = SGDBenchmark()
         env = bench.get_benchmark()
         self.assertTrue(issubclass(type(env), SGDEnv))
+
+    def test_from_to_json(self):
+        bench = SGDBenchmark()
+        restored_bench = SGDBenchmark.from_json(bench.to_json())
+        self.assertEqual(bench, restored_bench)

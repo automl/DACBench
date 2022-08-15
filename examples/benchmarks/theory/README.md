@@ -1,6 +1,6 @@
 ## Randomised Local Search (RLS) for the LeadingOnes problem as a Dynamic Algorithm Configuration (DAC) benchmark
 
-This folder contains example scripts for running experiments on the DAC-LeadingOnes benchmark, and some DDQN results. For more information about the benchmark and the DDQN results, please see our paper ([arxiv](https://arxiv.org/abs/2202.03259), accepted at GECCO 2022).
+This folder contains example scripts for running experiments on the DAC-LeadingOnes benchmark, and some DDQN results. For more information about the benchmark and the DDQN results, please see our paper ([arxiv](https://arxiv.org/abs/2202.03259), accepted at GECCO 2022) and the accompanying [blog post](https://andrebiedenkapp.github.io/blog/2022/gecco/) (written by André).
 
 And [here](https://andrebiedenkapp.github.io/blog/2022/gecco/) is a blog post summarising the content of the paper.
 
@@ -58,16 +58,17 @@ env = bench.get_environment(test_env=True)
 
 Note that `test_env` indicates whether we are using this environment for training an RL agent or for evaluating a (learnt or baseline) policy. The difference between `test_env=False` and `test_env=True` is that with the former one (used for training): (i) cutoff time for an episode is set to 0.8*n^2 (n: problem size); and (ii) if an action is out of range, we stop the episode immediately and return a large negative reward (see `envs/theory.py` for more details), while the latter one means that the benchmark's original cutoff time is used, and out-of-range action will be clipped to nearest valid value and the episode will continue.
 
-For a full example of how to run the benchmark with various settings, please have a look at the four examples in `examples.py`. To run those examples, set the `PYTHONPATH` environment variable to your DACBench folder:
+For a full example of how to run the benchmark with various settings, please have a look at the five examples in `examples.py`. To run those examples, set the `PYTHONPATH` environment variable to your DACBench folder:
 ```
 export PYTHONPATH=<your_DACBench_folder>/:$PYTHONPATH
 ```
 
-The four examples demonstrate how to:
+The five examples demonstrate how to:
 
 - Create a benchmark with different settings as described above. 
 - Evaluate a random policy and the optimal policies (discrete and non-discrete version) for a particular benchmark.
 - Train a DDQN agent, evaluate the learnt agent and compare it with the optimal policy of the same setting.
+- Calculate runtime (mean/std) of a policy without having to run the policy. The calculation is done using formulas derived from theoretical results.
 
 ### 3. Running multiple experiments:
 
@@ -110,3 +111,29 @@ We built our choice of DDQN hyperparameters based on prior literature using RL f
 
 The batch size and and the discount factor are set based on a small prestudy with the evenly spread portfolio setting where n=50, k=3. We tried two batch sizes: 2048 and 8192, both of which were able to reach the optimal policy several times during the training. Based on that result, we decided to choose batch size of 2048 for all experiments due to computational resource constraints. For the discount factor, we tried two values: 0.99 (default value for DDQN in many cases) and 0.9998. The former one resulted in much less stable learning compared to the latter one. This can be explained by the fact that the episode lengths of our benchmark are typically large (several thousands of steps) and most of the important progress is made during the later parts of an episode. Therefore, the discount factor of 0.9998 was finally chosen for all experiments in the paper.
 
+
+#### 5. Calculate the optimal policy for a given portfolio and problem size
+
+Given a problem size *n* and a portfolio of *r* values, the optimal policy can be calculated automatically. Note that the policy is found using a brute force approach, so it may some time to run depending on the specific scenarios.
+
+To run the calculation, you would first need to build an execution of the code (written in [D](https://dlang.org/)). The following bash script will download a D compiler ([DMD](https://dlang.org/download.html#dmd)), and compile the code for Linux.
+
+```
+cd scripts/calculate_optimal_policy/
+./compile.sh
+```
+
+Then you run the calculation using the scripts `run.py`:
+```
+python run.py <n> <portfolio_separated_by_commas>
+```
+Example:
+```
+python run.py 50 1,17,33
+```
+
+The output of the calculation is the best radius for each objective value from 0 to n-1, for example, the output of the command above would be:
+```
+33 17 17 17 17 17 17 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+```
+This means that we should flip 33 bits when f(x)=0, 17 bits when f(x)=1, etc.

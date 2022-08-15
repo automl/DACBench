@@ -19,6 +19,7 @@ class ModCMAEnv(AbstractEnv):
     def reset(self):
         super().reset_()
         self.dim, self.fid, self.iid, self.representation = self.instance
+        self.representation = np.array(self.representation)
         self.objective = IOH_function(
             self.fid, self.dim, self.iid, target_precision=1e-8
         )
