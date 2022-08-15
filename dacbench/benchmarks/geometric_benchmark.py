@@ -5,6 +5,9 @@ import numpy as np
 import os
 import csv
 
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
+
 FILE_PATH = os.path.dirname(__file__)
 ACTION_VALUES = (5, 10)
 
@@ -14,10 +17,7 @@ INFO = {
     "identifier": "Geometric",
     "name": "High Dimensional Geometric Curve Approximation. Curves are geometrical orthogonal.",
     "reward": "Overall Euclidean Distance between Point on Curve and Action Vector for all Dimensions",
-    "state_description": [
-        "Remaining Budget",
-        "Dimensions",
-    ],
+    "state_description": ["Remaining Budget", "Dimensions",],
 }
 
 GEOMETRIC_DEFAULTS = objdict(
@@ -201,7 +201,7 @@ class GeometricBenchmark(AbstractBenchmark):
         Number of actions can differ between functions if configured in DefaultDict
         Set observation space args.
         """
-        
+
         map_action_number = {}
         if self.config.action_values_variable:
             map_action_number = self.config.action_value_mapping
@@ -232,7 +232,9 @@ class GeometricBenchmark(AbstractBenchmark):
                 )
 
         self.config.action_values = values
-        actions = CSH.UniformIntegerHyperparameter(name='curve_values', lower=0, upper=int(np.prod(values)))
+        actions = CSH.UniformIntegerHyperparameter(
+            name="curve_values", lower=0, upper=int(np.prod(values))
+        )
         self.config.config_space.add_hyperparameter(actions)
 
         num_info = 2
@@ -289,8 +291,8 @@ if __name__ == "__main__":
     env = geo_bench.get_environment()
 
     opt_policy = env.get_optimal_policy()
-    env.render_dimensions([0, 1, 2, 3, 4, 5, 6], "/home/vonglahn/tmp/MultiDAC")
-    # env.render_3d_dimensions([1, 3], "/home/vonglahn/tmp")
+    # env.render_dimensions([0, 1, 2, 3, 4, 5, 6], "/home/vonglahn/tmp/MultiDAC")
+    env.render_3d_dimensions([1, 3], "/home/eimer/tmp")
 
     while True:
         env.reset()
