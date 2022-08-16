@@ -3,3 +3,22 @@
 ======================
 The Luby Toy Benchmark
 ======================
+
+**Task:** lning the Luby sequence with variations
+
+**Cost:** correctness of sequence element prediction
+
+**Number of hyperparameters to control:** one
+
+**State Information:** Actions and timesteps of the last three iterations
+
+**Noise Level:** None
+
+**Instance space:** the Luby sequence with possibilities to modify the starting point of the series (e.g. element 5 instead of 1) as well as the repetition fo each element
+
+This benchmark is not built on top of an algorithm, instead it's a pure sequence learning task.
+In each step until the cutoff, the DAC controller's task is to predict the next element of the Luby sequence.
+If the prediction is correct, it is given a reward of 1 and else 0.
+
+The benchmark is very cheap to run, but can be altered to be quite challenging nonetheless.
+In its basic form, it can serve to validate DAC methods and observe their prowess in learning a series of predictions correctly.
