@@ -14,15 +14,15 @@ We recommend using these as an introduction to DAC, to verify new algorithms and
 generate detailed insights.
 They are both based on artificial functions and real algorithms:
 
-- Sigmoid (Artificial Benchmark):
+- `Sigmoid <sigmoid>`_ (Artificial Benchmark):
   Sigmoid function approximation in multiple dimensions.
-- Luby (Artificial Benchmark):
+- `Luby <luby>`_ (Artificial Benchmark):
   Learning the Luby sequence.
 - ToySGD (Artificial Benchmark):
   Controlling the learning rate in gradient descent.
 - Geometric (Artificial Benchmark):
   Approximating several functions at once.
-- Toy version of the FastDownward benchmark:
+- Toy version of the `FastDownward benchmark <fastdownward>`_:
   Heuristic selection for the FastDownward Planner with ground truth.
 - Theory benchmark with ground truth:
   RLS algorithm on the LeadingOnes problem.
@@ -32,9 +32,9 @@ Beyond these smaller scale problems we know a lot about, DACBench also contains 
 interpretable algorithms with larger scopes. These are oftentimes noisier, harder to debug
 and more costly to run and thus present a real challenge for DAC algorithms:
 
-- FastDownward benchmark:
+- `FastDownward benchmark <fastdownward>`_:
   Heuristic selection for the FastDownward Planner on competition tasks.
-- CMA-ES:
+- `CMA-ES <cma>`_:
   Step-size adpation for CMA-ES.
 - ModEA:
   Selection of Algorithm Components for EAs.
@@ -56,6 +56,10 @@ To instantiate a benchmark environment, run:
     bench = SigmoidBenchmark()
     benchmark_env = bench.get_environment()
 
-.. automodule:: dacbench.benchmarks
+.. automodule:: dacbench.abstract_benchmark
+    :members:
+    :show-inheritance:
+
+.. automodule:: dacbench.abstract_env
     :members:
     :show-inheritance:

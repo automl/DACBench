@@ -8,7 +8,7 @@ The Sigmoid Toy Benchmark
 
 **Cost:** distance between prediction and function
 
-**Number of hyperparameters to control:** user specified starting at one with no fixed upper limit
+**Number of hyperparameters to control:** user specified starting at one integer with no fixed upper limit
 
 **State Information:** Remaining budget, instance descriptions for each dimension (inflection point and slope), last action for each dimension
 
@@ -26,3 +26,11 @@ task dimensions are used, the total cost is computed by multiplying the costs of
 The benchmark is very cheap to run and the instances can be sampled and shaped easily.
 Therefore it's a good starting point for any new DAC method or to gain specific insights for
 which fine control over the instance distribution is required.
+
+.. automodule:: dacbench.benchmarks.sigmoid_benchmark
+    :members:
+    :show-inheritance:
+
+.. automodule:: dacbench.envs.sigmoid
+    :members:
+    :show-inheritance:

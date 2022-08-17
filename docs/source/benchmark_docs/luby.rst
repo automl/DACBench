@@ -8,7 +8,7 @@ The Luby Toy Benchmark
 
 **Cost:** correctness of sequence element prediction
 
-**Number of hyperparameters to control:** one
+**Number of hyperparameters to control:** one integer
 
 **State Information:** Actions and timesteps of the last three iterations
 
@@ -22,3 +22,11 @@ If the prediction is correct, it is given a reward of 1 and else 0.
 
 The benchmark is very cheap to run, but can be altered to be quite challenging nonetheless.
 In its basic form, it can serve to validate DAC methods and observe their prowess in learning a series of predictions correctly.
+
+.. automodule:: dacbench.benchmarks.luby_benchmark
+    :members:
+    :show-inheritance:
+
+.. automodule:: dacbench.envs.luby
+    :members:
+    :show-inheritance:
