@@ -14,13 +14,13 @@ We recommend using these as an introduction to DAC, to verify new algorithms and
 generate detailed insights.
 They are both based on artificial functions and real algorithms:
 
-- `Sigmoid<sigmoid>`_ (Artificial Benchmark):
+- `Sigmoid <sigmoid>`_ (Artificial Benchmark):
   Sigmoid function approximation in multiple dimensions.
-- `Luby<luby>`_ (Artificial Benchmark):
+- `Luby <luby>`_ (Artificial Benchmark):
   Learning the Luby sequence.
 - ToySGD (Artificial Benchmark):
   Controlling the learning rate in gradient descent.
-- `Geometric<geometric>`_ (Artificial Benchmark):
+- `Geometric <geometric>`_ (Artificial Benchmark):
   Approximating several functions at once.
 - Toy version of the `FastDownward benchmark<fastdownward>`_:
   Heuristic selection for the FastDownward Planner with ground truth.
@@ -32,13 +32,13 @@ Beyond these smaller scale problems we know a lot about, DACBench also contains 
 interpretable algorithms with larger scopes. These are oftentimes noisier, harder to debug
 and more costly to run and thus present a real challenge for DAC algorithms:
 
-- `FastDownward benchmark<fastdownward>`_:
+- `FastDownward benchmark <fastdownward>`_:
   Heuristic selection for the FastDownward Planner on competition tasks.
-- `CMA-ES<cma>`_:
+- `CMA-ES <cma>`_:
   Step-size adpation for CMA-ES.
 - ModEA:
   Selection of Algorithm Components for EAs.
-- `ModCMA<modcma>`_:
+- `ModCMA <modcma>`_:
   Step-size & algorithm component control for EAs backed by IOHProfiler.
 - SGD-DL:
   Learning rate adaption for neural networks.
