@@ -2,13 +2,15 @@
 from dacbench.benchmarks.luby_benchmark import LubyBenchmark
 from dacbench.benchmarks.sigmoid_benchmark import SigmoidBenchmark
 from dacbench.benchmarks.toysgd_benchmark import ToySGDBenchmark
-from dacbench.benchmarks.fast_downward_benchmark import FastDownwardBenchmark
+from dacbench.benchmarks.geometric_benchmark import GeometricBenchmark
 
+from dacbench.benchmarks.fast_downward_benchmark import FastDownwardBenchmark
 
 __all__ = [
     "LubyBenchmark",
     "SigmoidBenchmark",
     "ToySGDBenchmark",
+    "GeometricBenchmark",
     "FastDownwardBenchmark",
 ]
 

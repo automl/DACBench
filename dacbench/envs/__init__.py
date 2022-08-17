@@ -7,8 +7,9 @@ from dacbench.envs.sigmoid import (
 )
 from dacbench.envs.fast_downward import FastDownwardEnv
 from dacbench.envs.toysgd import ToySGDEnv
+from dacbench.envs.geometric import GeometricEnv
 
-__all__ = ["LubyEnv", "luby_gen", "SigmoidEnv", "FastDownwardEnv", "ToySGDEnv"]
+__all__ = ["LubyEnv", "luby_gen", "SigmoidEnv", "FastDownwardEnv", "ToySGDEnv", "GeometricEnv"]
 
 
 import importlib

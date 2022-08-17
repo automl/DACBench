@@ -221,7 +221,7 @@ class AbstractBenchmark:
     def save_config(self, path):
         conf = self.serialize_config()
         with open(path, "w") as fp:
-            json.dump(conf, fp)
+            json.dump(conf, fp, default=lambda o: "not serializable")
 
     def jsonify_wrappers(self):
         wrappers = []

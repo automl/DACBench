@@ -47,3 +47,52 @@ def sum_reward(self):
 
 def random_reward(self):
     return np.random.uniform(self.reward_range[0], self.reward_range[1])
+
+
+def manhattan_distance_reward_geometric(self):
+    def manhattan(a, b):
+        return sum(abs(val1 - val2) for val1, val2 in zip(a, b))
+
+    coordinates, action_intervall, highest_coords, lowest_actions = self._pre_reward()
+    manhattan_dist = manhattan(coordinates, action_intervall)
+
+    max_dist = manhattan(lowest_actions, highest_coords)
+    reward = 1 - (manhattan_dist / max_dist)
+
+    return abs(reward)
+
+
+def quadratic_manhattan_distance_reward_geometric(self):
+    def manhattan(a, b):
+        return sum(abs(val1 - val2) for val1, val2 in zip(a, b))
+
+    coordinates, action_intervall, highest_coords, lowest_actions = self._pre_reward()
+    manhattan_dist = manhattan(coordinates, action_intervall)
+
+    max_dist = manhattan(lowest_actions, highest_coords)
+    reward = (1 - (manhattan_dist / max_dist)) ** 2
+
+    return abs(reward)
+
+
+def quadratic_euclidean_distance_reward_geometric(self):
+    coords, action_coords, highest_coords, lowest_actions = self._pre_reward()
+    euclidean_dist = np.linalg.norm(action_coords - coords)
+
+    max_dist = np.linalg.norm(highest_coords - lowest_actions)
+    reward = (1 - (euclidean_dist / max_dist)) ** 2
+
+    return abs(reward)
+
+
+def multiply_reward_geometric(self):
+    coords, action_coords, highest_coords, lowest_actions = self._pre_reward()
+
+    single_dists = [abs(val1 - val2) for val1, val2 in zip(coords, action_coords)]
+    max_dists = [abs(val1 - val2) for val1, val2 in zip(lowest_actions, highest_coords)]
+
+    rewards = []
+    for dist, max_dist in zip(single_dists, max_dists):
+        rewards.append(1 - (dist / max_dist))
+
+    return np.prod(rewards)
