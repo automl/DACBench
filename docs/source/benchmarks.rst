@@ -1,7 +1,7 @@
 .. _benchmarks:
 
 ===================
-Benchmarks Overview
+Benchmark Overview
 ===================
 
 .. role:: python(code)
