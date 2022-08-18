@@ -5,15 +5,10 @@ The Geometric Toy Benchmark
 ===========================
 
 **Task:** aroximate values of different functions
-
 **Cost:** normalized distance to actual values
-
 **Number of hyperparameters to control:** user specified starting at one float
-
 **State Information:** remaining budget, derivate of each function in the last step, actual value of each function in the last step
-
 **Noise Level:** None
-
 **Instance space:** a number of different function types and their instantiations (e.g. sigmoid or linear), correlation between the functions
 
 This is an artifical benchmark using function approximation only.

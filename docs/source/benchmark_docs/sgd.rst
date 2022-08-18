@@ -5,15 +5,10 @@ The SGD Deep Learning Benchmark
 ===============================
 
 **Task:** control the learning rate in deep learning
-
 **Cost:** log differential validation loss
-
 **Number of hyperparameters to control:** one float
-
 **State Information:** predictive change variance, predictive change variance, loss variance, loss variance uncertainty, current learning rate, training loss, validation loss, step, alignment, crashed
-
 **Noise Level:** fairly large
-
 **Instance space:** dataset, network architecture, optimizer
 
 Built on top of PyTorch, this benchmark allows for dynamic learning rate control in deep learning.

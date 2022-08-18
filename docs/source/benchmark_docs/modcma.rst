@@ -5,15 +5,10 @@ The IOHProfiler ModCMA Benchmark
 ================================
 
 **Task:** control the step size or algorithm components of CMA-ES on BBOB functions
-
 **Cost:** negative objective value
-
 **Number of hyperparameters to control:** either one float or up to 11 categoricals
-
 **State Information:** generation size, step size, remaining budget, function ID, instance ID
-
 **Noise Level:** fairly large, depends on target function
-
 **Instance space:** the BBOB functions with ids, starting point and starting sigma as well as population size
 
 This benchmark is based on the IOHProfiler implementation of CMA-ES and enables both step size cool and algorithm component selection on the BBOB function set.

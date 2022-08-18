@@ -5,15 +5,10 @@ The Theory Benchmark
 ====================
 
 **Task:** controlling number of flips in RLS on LeadingOnes
-
 **Cost:** number of iterations until solution
-
 **Number of hyperparameters to control:** one float
-
 **State Information:** user specified, highly flexible
-
 **Noise Level:** fairly large
-
 **Instance space:** different instantiations of LeadingOnes
 
 This benchmark is considered one of our highly controllable ones as there is ground truth available.
