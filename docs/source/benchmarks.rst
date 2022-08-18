@@ -1,8 +1,8 @@
 .. _benchmarks:
 
-===============
-The Benchmarks
-===============
+==================================
+The DACBench Benchmarks - Overview
+==================================
 
 .. role:: python(code)
     :language: python
