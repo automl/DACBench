@@ -16,6 +16,7 @@ Welcome to DACBench's documentation!
 .. toctree::
  :maxdepth: 1
  :caption: The Benchmarks:
+
  source/benchmarks
  source/benchmark_docs/sigmoid
  source/benchmark_docs/luby
@@ -31,6 +32,7 @@ Welcome to DACBench's documentation!
 .. toctree::
  :maxdepth: 1
  :caption: Using DACBench:
+
  source/modifications
  source/wrappers
  source/logging
@@ -39,6 +41,7 @@ Welcome to DACBench's documentation!
 .. toctree::
  :maxdepth: 1
  :caption: Common:
+
  source/contrib
  source/cite
 
