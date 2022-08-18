@@ -4,12 +4,12 @@
 The FastDownward Benchmark
 ==========================
 
-**Task:** select heuristics for the FastDownward planner
-**Cost:** number of optimization steps
-**Number of hyperparameters to control:** one categorical
-**State Information:** average value, max value, min value, number of open list entries and variance for each heuristic
-**Noise Level:** fairly large
-**Instance space:** either specifically desigd easy toy instances with ground truth or common planning competition instance sets
+|**Task:** select heuristics for the FastDownward planner
+|**Cost:** number of optimization steps
+|**Number of hyperparameters to control:** one categorical
+|**State Information:** average value, max value, min value, number of open list entries and variance for each heuristic
+|**Noise Level:** fairly large
+|**Instance space:** either specifically desigd easy toy instances with ground truth or common planning competition instance sets
 
 This benchmark is an interface to the Fast Downward AI planner, controlling its heuristic hyperparameter.
 In each step until the algorithm finishes or is terminated via the cutoff, the DAC controller selects one of either two

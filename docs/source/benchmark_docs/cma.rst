@@ -4,12 +4,12 @@
 The PyCMA CMA-ES Benchmark
 ==========================
 
-**Task:** control the step size of CMA-ES on BBOB functions
-**Cost:** negative objective value
-**Number of hyperparameters to control:** one float
-**State Information:** current point, the last 40 objective values, population size, current step size, the deltas between the last 80 objective values, the deltas between the last 40 step sizes
-**Noise Level:** fairly large, depends on target function
-**Instance space:** the BBOB functions with ids, starting point and starting sigma as well as population size
+|**Task:** control the step size of CMA-ES on BBOB functions
+|**Cost:** negative objective value
+|**Number of hyperparameters to control:** one float
+|**State Information:** current point, the last 40 objective values, population size, current step size, the deltas between the last 80 objective values, the deltas between the last 40 step sizes
+|**Noise Level:** fairly large, depends on target function
+|**Instance space:** the BBOB functions with ids, starting point and starting sigma as well as population size
 
 This benchmark uses the PyCMA implementation to control the step size of the CMA-ES algorithm on the BBOB function set.
 The goal in the optimization is to find the global function minimum before the cutoff, so the cost is defined as the current negativ objective value.
