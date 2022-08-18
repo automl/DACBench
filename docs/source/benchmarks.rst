@@ -15,16 +15,22 @@ generate detailed insights.
 They are both based on artificial functions and real algorithms:
 
 - :doc:`Sigmoid <benchmark_docs/sigmoid>` (Artificial Benchmark):
+-----------------------------------------------------------------
   Sigmoid function approximation in multiple dimensions.
 - :doc:`Luby <benchmark_docs/luby>` (Artificial Benchmark):
+-----------------------------------------------------------
   Learning the Luby sequence.
 - :doc:`ToySGD <benchmark_docs/toysgd>` (Artificial Benchmark):
+---------------------------------------------------------------
   Controlling the learning rate in gradient descent.
 - :doc:`Geometric <benchmark_docs/geometric>` (Artificial Benchmark):
+---------------------------------------------------------------------
   Approximating several functions at once.
 - Toy version of the :doc:`FastDownward benchmark <benchmark_docs/fastdownward>`:
+---------------------------------------------------------------------------------
   Heuristic selection for the FastDownward Planner with ground truth.
 - :doc:`Theory benchmark <benchmark_docs/theory>` with ground truth:
+--------------------------------------------------------------------
   RLS algorithm on the LeadingOnes problem.
 
 
