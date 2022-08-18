@@ -5,10 +5,7 @@ import pandas as pd
 from gym import spaces
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-import importlib
-import dacbench.envs.toysgd
-
-importlib.reload(dacbench.envs.toysgd)
+from dacbench.envs import ToySGDEnv
 
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
@@ -92,7 +89,7 @@ class ToySGDBenchmark(AbstractBenchmark):
         ):
             self.read_instance_set(test=True)
 
-        env = dacbench.envs.toysgd.ToySGDEnv(self.config)
+        env = ToySGDEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
 
