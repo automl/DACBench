@@ -4,12 +4,12 @@
 The ModEA Benchmark
 ===================
 
-**Task:** control the algorithm components of CMA-ES on BBOB functions
-**Cost:** negative objective value
-**Number of hyperparameters to control:** 11 categorical
-**State Information:** generation size, step size, remaining budget, function ID, instance ID
-**Noise Level:** fairly large, depends on target function
-**Instance space:** the BBOB functions with ids, starting point and starting sigma as well as population size
+| **Task:** control the algorithm components of CMA-ES on BBOB functions
+| **Cost:** negative objective value
+| **Number of hyperparameters to control:** 11 categorical
+| **State Information:** generation size, step size, remaining budget, function ID, instance ID
+| **Noise Level:** fairly large, depends on target function
+| **Instance space:** the BBOB functions with ids, starting point and starting sigma as well as population size
 
 This benchmark uses the ModEA package to enable dynamic control of several algorithm components of CMA-ES.
 The components of the algorithm that can be selected or changed are: sequential execution, active update, elitism, orthogonal sampling, convergence threshold enabled,

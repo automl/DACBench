@@ -4,12 +4,12 @@
 The Sigmoid Toy Benchmark
 =========================
 
-**Task:** approximate a sigmoid curve at timestep t in each of one or multiple dimensions
-**Cost:** distance between prediction and function
-**Number of hyperparameters to control:** user specified starting at one integer with no fixed upper limit
-**State Information:** Remaining budget, instance descriptions for each dimension (inflection point and slope), last action for each dimension
-**Noise Level:** None
-**Instance space:** one sigmoid curve consisting of inflection point and slope per dimension. Sampling notebook and example datasets in repository.
+| **Task:** approximate a sigmoid curve at timestep t in each of one or multiple dimensions
+| **Cost:** distance between prediction and function
+| **Number of hyperparameters to control:** user specified starting at one integer with no fixed upper limit
+| **State Information:** Remaining budget, instance descriptions for each dimension (inflection point and slope), last action for each dimension
+| **Noise Level:** None
+| **Instance space:** one sigmoid curve consisting of inflection point and slope per dimension. Sampling notebook and example datasets in repository.
 
 This benchmark is not built on top of an algorithm, but is simply a function approximation task.
 In each step until the cutoff, the DAC controller predicts one y-value for a given sigmoid
