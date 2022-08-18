@@ -14,10 +14,8 @@ We recommend using these as an introduction to DAC, to verify new algorithms and
 generate detailed insights.
 They are both based on artificial functions and real algorithms:
 
-.. rubric:: Sigmoid
 - :doc:`Sigmoid <benchmark_docs/sigmoid>` (Artificial Benchmark):
   Sigmoid function approximation in multiple dimensions.
-.. rubric:: :doc:`Luby <benchmark_docs/luby>`
 - :doc:`Luby <benchmark_docs/luby>` (Artificial Benchmark):
   Learning the Luby sequence.
 - :doc:`ToySGD <benchmark_docs/toysgd>` (Artificial Benchmark):
