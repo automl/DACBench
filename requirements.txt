@@ -4,7 +4,7 @@ scipy==1.4.1
 cma==2.7
 pandas==1.0.3
 matplotlib>=3.5
- seaborn>=0.11
+seaborn>=0.11
 modea==0.4.0
 sobol_seq==0.2.0
 torchvision==0.10.0
