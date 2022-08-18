@@ -19,6 +19,9 @@ The goal is to reduce the runtime of the planner, so every step that is taken in
 Out of our real-world benchmarks, FastDownward is likely the fastest running and it has been shown to be suitable to dynamic configuration.
 Though the noise level is fairly high, most DAC controllers should be able to learn functional policies in a comparatively short time frame.
 
+*The FastDownward benchmark was constructed by Speck et al. for the paper `"Learning Heuristic Selection with Dynamic Algorithm Configuration" <https://arxiv.org/pdf/2006.08246.pdf>`_ at ICAPS 2021*
+
+
 .. automodule:: dacbench.benchmarks.fast_downward_benchmark
     :members:
     :show-inheritance:

@@ -17,6 +17,8 @@ The goal in the optimization is to find the global function minimum before the c
 The BBOB functions provide a varied instance space that is well suited for testing generalization capabilites of DAC methods.
 Due to this large instance space and very different scales of objective values (and thus cost), the CMA-ES benchmark is one of the more difficult to solve ones in DACBench.
 
+*The CMA-ES benchmark was constructed by Shala et al. for the paper `"Learning Step-size Adaptation in CMA-ES" <https://ml.informatik.uni-freiburg.de/wp-content/uploads/papers/20-PPSN-LTO-CMA.pdf>`_ at PPSN 2020*
+
 .. automodule:: dacbench.benchmarks.cma_benchmark
     :members:
     :show-inheritance:

@@ -4,7 +4,7 @@
 Dynamic Algorithm Configuration - A Short Overview
 ==================================================
 
-**Dynamic Algorithm Configuration (DAC)** [`Biedenkapp et al. 2020 <https://ml.informatik.uni-freiburg.de/wp-content/uploads/papers/20-ECAI-DAC.pdf>`_, `Adriaensen et al. 2022 <https://arxiv.org/pdf/2205.13881.pdf>`_] is a
+**Dynamic Algorithm Configuration (DAC)** [`Biedenkapp et al., ECAI 2020 <https://ml.informatik.uni-freiburg.de/wp-content/uploads/papers/20-ECAI-DAC.pdf>`_, `Adriaensen et al., CoRR 2022 <https://arxiv.org/pdf/2205.13881.pdf>`_] is a
 paradigm for hyperparameter optimization that aims to find the best possible configuration
 of algorithm hyperparameters for *each step* in the algorithm's execution and for *each algorithm
 instance*.

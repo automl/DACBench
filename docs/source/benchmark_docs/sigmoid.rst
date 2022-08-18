@@ -22,6 +22,9 @@ The benchmark is very cheap to run and the instances can be sampled and shaped e
 Therefore it's a good starting point for any new DAC method or to gain specific insights for
 which fine control over the instance distribution is required.
 
+*The Sigmoid benchmark was constructed by Biedenkapp et al. for the paper `"Dynamic Algorithm Configuration: Foundation of a New Meta-Algorithmic Framework" <https://www.tnt.uni-hannover.de/papers/data/1432/20-ECAI-DAC.pdf>`_ at ECAI 2020*
+
+
 .. automodule:: dacbench.benchmarks.sigmoid_benchmark
     :members:
     :show-inheritance:

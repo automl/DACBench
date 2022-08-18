@@ -18,6 +18,8 @@ If the prediction is correct, it is given a reward of 1 and else 0.
 The benchmark is very cheap to run, but can be altered to be quite challenging nonetheless.
 In its basic form, it can serve to validate DAC methods and observe their prowess in learning a series of predictions correctly.
 
+*The Luby benchmark was constructed by Biedenkapp et al. for the paper `"Dynamic Algorithm Configuration: Foundation of a New Meta-Algorithmic Framework" <https://www.tnt.uni-hannover.de/papers/data/1432/20-ECAI-DAC.pdf>`_ at ECAI 2020*
+
 .. automodule:: dacbench.benchmarks.luby_benchmark
     :members:
     :show-inheritance:
