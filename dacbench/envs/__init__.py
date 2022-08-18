@@ -9,7 +9,14 @@ from dacbench.envs.fast_downward import FastDownwardEnv
 from dacbench.envs.toysgd import ToySGDEnv
 from dacbench.envs.geometric import GeometricEnv
 
-__all__ = ["LubyEnv", "luby_gen", "SigmoidEnv", "FastDownwardEnv", "ToySGDEnv", "GeometricEnv"]
+__all__ = [
+    "LubyEnv",
+    "luby_gen",
+    "SigmoidEnv",
+    "FastDownwardEnv",
+    "ToySGDEnv",
+    "GeometricEnv",
+]
 
 
 import importlib
@@ -50,7 +57,7 @@ else:
         "ModCMA Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )
 
-sgd_spec = importlib.util.find_spec("torchvision")
+sgd_spec = importlib.util.find_spec("backpack")
 found = sgd_spec is not None
 if found:
     from dacbench.envs.sgd import SGDEnv
