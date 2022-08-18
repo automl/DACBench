@@ -14,17 +14,17 @@ We recommend using these as an introduction to DAC, to verify new algorithms and
 generate detailed insights.
 They are both based on artificial functions and real algorithms:
 
-- :doc:`Sigmoid </benchmark_docs/sigmoid>` (Artificial Benchmark):
+- :doc:`Sigmoid <benchmark_docs/sigmoid>` (Artificial Benchmark):
   Sigmoid function approximation in multiple dimensions.
-- :doc:`Luby </benchmark_docs/luby>` (Artificial Benchmark):
+- :doc:`Luby <benchmark_docs/luby>` (Artificial Benchmark):
   Learning the Luby sequence.
-- ToySGD (Artificial Benchmark):
+- :doc:`ToySGD <benchmark_docs/toysgd>` (Artificial Benchmark):
   Controlling the learning rate in gradient descent.
-- :doc:`Geometric </benchmark_docs/geometric>` (Artificial Benchmark):
+- :doc:`Geometric <benchmark_docs/geometric>` (Artificial Benchmark):
   Approximating several functions at once.
-- Toy version of the :doc:`FastDownward benchmark </benchmark_docs/fastdownward>`:
+- Toy version of the :doc:`FastDownward benchmark <benchmark_docs/fastdownward>`:
   Heuristic selection for the FastDownward Planner with ground truth.
-- Theory benchmark with ground truth:
+- :doc:`Theory benchmark <benchmark_docs/theory>` with ground truth:
   RLS algorithm on the LeadingOnes problem.
 
 
@@ -32,16 +32,11 @@ Beyond these smaller scale problems we know a lot about, DACBench also contains 
 interpretable algorithms with larger scopes. These are oftentimes noisier, harder to debug
 and more costly to run and thus present a real challenge for DAC algorithms:
 
-- :doc:`FastDownward benchmark </benchmark_docs/fastdownward>`:
-  Heuristic selection for the FastDownward Planner on competition tasks.
-- :doc:`CMA-ES </benchmark_docs/cma>`:
-  Step-size adpation for CMA-ES.
-- ModEA:
-  Selection of Algorithm Components for EAs.
-- :doc:`ModCMA </benchmark_docs/modcma>`:
-  Step-size & algorithm component control for EAs backed by IOHProfiler.
-- SGD-DL:
-  Learning rate adaption for neural networks.
+* :doc:`FastDownward benchmark <benchmark_docs/fastdownward>`: Heuristic selection for the FastDownward Planner on competition tasks.
+* :doc:`CMA-ES <benchmark_docs/cma>`: Step-size adpation for CMA-ES.
+* :doc:`ModEA <benchmark_docs/modea>`: Selection of Algorithm Components for EAs.
+* :doc:`ModCMA <benchmark_docs/modcma>`: Step-size & algorithm component control for EAs backed by IOHProfiler.
+* :doc:`SGD-DL <benchmark_docs/sgd>`: Learning rate adaption for neural networks.
 
 Our benchmarks are based on OpenAI's gym interface for Reinforcement Learning.
 That means to run a benchmark, you need to create an environment of that benchmark
@@ -56,7 +51,7 @@ To instantiate a benchmark environment, run:
     bench = SigmoidBenchmark()
     benchmark_env = bench.get_environment()
 
-.. autoclass:: dacbench.abstract_benchmark
+.. automodule:: dacbench.abstract_benchmark
     :members:
     :show-inheritance:
 

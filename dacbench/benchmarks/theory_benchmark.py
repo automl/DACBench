@@ -28,7 +28,7 @@ THEORY_DEFAULTS = {
     "instance_set_path": "lo_rls_50.csv",  # if the instance list file cannot be found in the running directory, it will be looked up in <DACBench>/dacbench/instance_sets/theory/
     "discrete_action": True,  # action space is discrete
     "action_choices": [1, 2, 4, 8, 16],  # portfolio of k values
-    "benchmark_info": "DAC benchmark with RLS algorithm and LeadingOne problem",
+    "benchmark_info": INFO,
     "name": "LeadingOnesDAC",
 }
 

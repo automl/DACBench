@@ -25,3 +25,10 @@ There are different ways to accumulate this cost built into the benchmark, by de
 Controlling multiple hyperparameters is a hard problem and thus this fully controllable and cheap to run benchmark aims to provide an easy starting point.
 Through its flexible instance space and cost functions the difficulty can be scaled up slowly before transitioning to real-world benchmarks with multiple hyperparameters.
 
+.. automodule:: dacbench.benchmarks.geometric_benchmark
+    :members:
+    :show-inheritance:
+
+.. automodule:: dacbench.envs.geometric
+    :members:
+    :show-inheritance:
