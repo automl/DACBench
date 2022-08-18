@@ -34,6 +34,7 @@ Welcome to DACBench's documentation!
  :caption: Using DACBench:
 
  source/modifications
+ source/state_and_reward
  source/wrappers
  source/logging
  source/plotting
