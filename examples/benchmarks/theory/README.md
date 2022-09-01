@@ -1,17 +1,24 @@
 ## Randomised Local Search (RLS) for the LeadingOnes problem as a Dynamic Algorithm Configuration (DAC) benchmark
 
-This folder contains example scripts for running experiments on the DAC-LeadingOnes benchmark, and some DDQN results. For more information about the benchmark and the DDQN results, please see our paper ([arxiv](https://arxiv.org/abs/2202.03259), accepted at GECCO 2022) and the accompanying [blog post](https://andrebiedenkapp.github.io/blog/2022/gecco/) (written by André).
+This folder contains example scripts for running experiments on the DAC-LeadingOnes benchmark, and some DDQN results. For more information about the benchmark and the DDQN results, please see:
 
-And [here](https://andrebiedenkapp.github.io/blog/2022/gecco/) is a blog post summarising the content of the paper.
+- Our paper ([arxiv version](https://arxiv.org/abs/2202.03259), published at GECCO 2022.
+- [blog post](https://andrebiedenkapp.github.io/blog/2022/gecco/) summarising the paper (written by André).
+- [video](https://www.youtube.com/watch?v=xgljDu5qE-w)
 
 If you use this benchmark, please cite us:
 ```
-@article{biedenkapp2022theory,
-  title={Theory-inspired Parameter Control Benchmarks for Dynamic Algorithm Configuration},
-  author={Biedenkapp, Andr{\'e} and Dang, Nguyen and Krejca, Martin S and Hutter, Frank and Doerr, Carola},
-  journal={arXiv preprint arXiv:2202.03259},
-  year={2022},
-  doi={https://doi.org/10.48550/arXiv.2202.03259}
+@inproceedings{10.1145/3512290.3528846,
+    author = {Biedenkapp, Andr\'{e} and Dang, Nguyen and Krejca, Martin S. and Hutter, Frank and Doerr, Carola},
+    title = {Theory-Inspired Parameter Control Benchmarks for Dynamic Algorithm Configuration},
+    year = {2022},
+    publisher = {Association for Computing Machinery},
+    doi = {10.1145/3512290.3528846},
+    booktitle = {Proceedings of the Genetic and Evolutionary Computation Conference},
+    pages = {766–775},
+    numpages = {10},
+    location = {Boston, Massachusetts},
+    series = {GECCO '22}
 }
 ```
 
