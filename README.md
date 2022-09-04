@@ -1,5 +1,12 @@
+<h1 align="center">
+  <a href="https://www.automl.org/dacbench-benchmarking-dynamic-algorithm-configuration/">
+    <img src="https://www.automl.org/wp-content/themes/automl/images/logo.png" alt="DACBench" width="" >
+  </a>
+<br>
+DACBench
+<br>
+</h1>
 
-# DACBench
 [![Run Python Tests](https://github.com/automl/DACBench/actions/workflows/run-python-tests.yml/badge.svg)](https://github.com/automl/DACBench/actions/workflows/run-python-tests.yml)
 [![Documentation Status](https://readthedocs.org/projects/dacbench/badge/?version=latest)](https://dacbench.readthedocs.io/en/latest/?badge=latest)
 
