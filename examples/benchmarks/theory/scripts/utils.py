@@ -7,6 +7,7 @@ sys.path.append(os.path.dirname(__file__))
 # import shutil
 # from pprint import pprint
 
+from dacbench.benchmarks import TheoryBenchmark
 
 def read_config(config_yml_fn: str = "output/config.yml"):
     with open(config_yml_fn, "r") as f:
