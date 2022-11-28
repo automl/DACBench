@@ -2,10 +2,6 @@ import sys
 import os
 import subprocess
 
-scriptDir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(scriptDir)
-
-
 def run_cmd(cmd):
     p = subprocess.run(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
@@ -14,7 +10,7 @@ def run_cmd(cmd):
     return output, p.returncode
 
 
-def calculate_optimal_policy(n: int, portfolio: [int]):
+def calculate_optimal_policy(n: int, portfolio: [int], scriptDir: str):
     # call Martin's D code to get the optimal policy
     portfolio = sorted(portfolio, reverse=True)
     cmd = f"{scriptDir}/calculatePolicy {n} {' '.join([str(x) for x in portfolio])}"
@@ -58,7 +54,8 @@ def main():
     ), "Usage: python calculate_optimal_policy.py <n> <portfolio>. \nExample: python calculate_optimal_policy.py 50 1,17,33"
     n = int(sys.argv[1])
     portfolio = [int(s.strip()) for s in sys.argv[2].split(",")]
-    p = calculate_optimal_policy(n, portfolio)
+    scriptDir = os.path.dirname(os.path.realpath(__file__))
+    p = calculate_optimal_policy(n, portfolio, scriptDir)
     print(" ".join([str(x) for x in p]))
 
 
