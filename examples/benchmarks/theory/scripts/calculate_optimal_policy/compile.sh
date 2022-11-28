@@ -11,7 +11,7 @@ else
 fi
 
 dComplier="dmd.2.101.0.${OS_NAME}"
-wget https://downloads.dlang.org/releases/2022/${dComplier}.tar.xz
+wget https://downloads.dlang.org/releases/2022/${dComplier}.tar.xz --no-check-certificate
 tar -xf $dComplier.tar.xz
 dmd2/${OS_NAME}/${BIN_DIR}/dmd -O -release ./calculatePolicy.d ./data_management.d ./eas.d
 
