@@ -41,17 +41,14 @@ def main():
 
     # create output folder
     out_dir = args.out_dir
-    log_dir = f"{out_dir}/logs"
+    log_dir = f"{out_dir}"
     tb_log_dir = f"{out_dir}/tb_logs"
     if os.path.isdir(out_dir) is False:
         os.mkdir(out_dir)
         shutil.copyfile(args.setting_file, out_dir + "/config.yml")
 
-    if "use_formula" in exp_params:
-        if exp_params["use_formula"]:
-            print("Using formula for evaluation (instead of running the algorithm itself)")
-    else:
-        exp["use_formula"] = False
+    if exp_params["use_formula"]:
+        print("Using formula for evaluation (instead of running the algorithm itself)")
 
     train_env = make_env(bench_params, train_env_params, test_env=False)
     eval_env = make_env(bench_params, eval_env_params, test_env=True)
@@ -59,6 +56,7 @@ def main():
                                 use_formula=exp_params["use_formula"],
                                 best_model_save_path=out_dir, 
                                 log_path=log_dir, 
+                                save_agent_at_every_eval = exp_params["save_agent_at_every_eval"],
                                 eval_freq=exp_params["eval_interval"],
                                 deterministic=True,
                                 render=False)
@@ -74,9 +72,9 @@ def main():
     params = agent_params.copy()
     del params["name"]
     
-    agent = globals()[agent_name]("MlpPolicy", train_env, learning_rate=0.001, policy_kwargs=policy_kwargs, verbose=True, tensorboard_log=tb_log_dir, **params)
+    agent = globals()[agent_name]("MlpPolicy", train_env, policy_kwargs=policy_kwargs, verbose=True, tensorboard_log=tb_log_dir, **params)
     print(f"Training with {agent_params['name']}...")
-    #print(agent.__dict__)
+    print(agent.__dict__)
     agent.learn(total_timesteps=exp_params["n_steps"],
                 callback=eval_callback,
                 progress_bar=True)

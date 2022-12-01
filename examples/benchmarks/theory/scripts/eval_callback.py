@@ -47,6 +47,7 @@ class LeadingOnesEvalCallback(EventCallback):
         render: bool = False,
         verbose: int = 1,
         warn: bool = True,
+        save_agent_at_every_eval: bool = True
     ):
         # from sb3's EvalCallback
         super().__init__(callback_after_eval, verbose=verbose)
@@ -76,6 +77,7 @@ class LeadingOnesEvalCallback(EventCallback):
         
         self.use_formula = use_formula
         self.n_eval_episodes_per_instance = n_eval_episodes_per_instance
+        self.save_agent_at_every_eval = save_agent_at_every_eval
         
         # we will calculate optimal policy and its runtime for each instance
         self.instance_set = eval_env.instance_set
@@ -212,7 +214,8 @@ class LeadingOnesEvalCallback(EventCallback):
                         eval_runtime_stds=self.eval_runtime_stds,
                         instance_set=self.instance_set)
                 # save current model
-                self.model.save(f"{os.path.dirname(self.log_path)}/model_{self.n_calls}")
+                if self.save_agent_at_every_eval:
+                    self.model.save(f"{os.path.dirname(self.log_path)}/model_{self.n_calls}")
 
             # update mean_reward
             self.last_mean_reward = runtime_mean
