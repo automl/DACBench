@@ -14,7 +14,7 @@ default_exp_params = {
     "n_episodes": 1e6,
     "n_steps": 1e6,
     "eval_interval": 2000,
-    "eval_n_episodes": 50,
+    "n_eval_episodes_per_instance": 50,
     "save_agent_at_every_eval": False,
     "seed": 123,
     "use_formula": True

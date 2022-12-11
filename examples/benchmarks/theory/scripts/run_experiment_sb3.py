@@ -16,8 +16,10 @@ from stable_baselines3.common.callbacks import EvalCallback
 from eval_callback import LeadingOnesEvalCallback
 
 import torch as th
+import time
 
 def main():
+    start_time = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--out-dir", "-o", type=str, default="output", help="output folder"
@@ -58,6 +60,7 @@ def main():
                                 log_path=log_dir, 
                                 save_agent_at_every_eval = exp_params["save_agent_at_every_eval"],
                                 eval_freq=exp_params["eval_interval"],
+                                n_eval_episodes_per_instance=exp_params["n_eval_episodes_per_instance"],
                                 deterministic=True,
                                 render=False)
    
@@ -78,6 +81,8 @@ def main():
     agent.learn(total_timesteps=exp_params["n_steps"],
                 callback=eval_callback,
                 progress_bar=True)
-
+    
+    total_time = time.time() - start_time
+    print(f"Total runtime: {total_time}")
 
 main()
