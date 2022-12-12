@@ -56,8 +56,8 @@ class LeadingOnesEvalCallback(EventCallback):
             # Give access to the parent
             self.callback_on_new_best.parent = self 
         self.eval_freq = eval_freq
-        self.best_mean_reward = -np.inf
-        self.last_mean_reward = -np.inf
+        self.best_mean_runtime = np.inf
+        self.last_mean_runtime = np.inf
         self.deterministic = deterministic
         self.render = render
         self.warn = warn
@@ -186,8 +186,8 @@ class LeadingOnesEvalCallback(EventCallback):
                     self.eval_env.set_attr("instance_id_list", self.inst_ids)
                     self.eval_env.set_attr("instance_set", self.instance_set)
                     # calculate runtime mean/std
-                    runtime_mean = np.mean(episode_rewards)
-                    runtime_std = np.std(episode_rewards)
+                    runtime_mean = np.abs(np.mean(episode_rewards))
+                    runtime_std = np.abs(std(episode_rewards))
                 
                 runtime_means.append(runtime_mean)
                 runtime_stds.append(runtime_std)
@@ -217,16 +217,16 @@ class LeadingOnesEvalCallback(EventCallback):
                 if self.save_agent_at_every_eval:
                     self.model.save(f"{os.path.dirname(self.log_path)}/model_{self.n_calls}")
 
-            # update mean_reward
-            self.last_mean_reward = runtime_mean
-            if runtime_mean < self.best_mean_reward:
+            # update best_mean_runtime
+            self.last_mean_runtime = runtime_mean
+            if runtime_mean < self.best_mean_runtime:
                 if self.verbose >= 1:
-                    print("New best mean reward!")
+                    print("New best mean runtime!")
                 if self.best_model_save_path is not None:
                     self.model.save(os.path.join(self.best_model_save_path, "best_model"))
-                    print(self.model.__dict__)
-                    print(DQN.load(os.path.join(self.best_model_save_path, "best_model"))) #DEBUG
-                self.best_mean_reward = runtime_mean
+                    #print(self.model.__dict__)
+                    #print(DQN.load(os.path.join(self.best_model_save_path, "best_model"))) #DEBUG
+                self.best_mean_runtime = runtime_mean
                 # Trigger callback on new best model, if needed
                 if self.callback_on_new_best is not None:
                     continue_training = self.callback_on_new_best.on_step()
