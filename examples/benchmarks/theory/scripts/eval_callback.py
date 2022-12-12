@@ -219,11 +219,13 @@ class LeadingOnesEvalCallback(EventCallback):
 
             # update mean_reward
             self.last_mean_reward = runtime_mean
-            if runtime_mean > self.best_mean_reward:
+            if runtime_mean < self.best_mean_reward:
                 if self.verbose >= 1:
                     print("New best mean reward!")
                 if self.best_model_save_path is not None:
                     self.model.save(os.path.join(self.best_model_save_path, "best_model"))
+                    print(self.model.__dict__)
+                    print(DQN.load(os.path.join(self.best_model_save_path, "best_model"))) #DEBUG
                 self.best_mean_reward = runtime_mean
                 # Trigger callback on new best model, if needed
                 if self.callback_on_new_best is not None:
