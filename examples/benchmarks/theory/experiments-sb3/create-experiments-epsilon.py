@@ -62,8 +62,12 @@ for n in [50, 100, 150, 200][:2]:
                                         "target_update_interval": 1
                         }
                         
+                        # experiment params
+                        exp_params = default_exp_params
+                        exp_params["n_steps"] = 500_000
+
                         # write config to yaml file
-                        config = {"experiment": default_exp_params,
+                        config = {"experiment": exp_params,
                                   "bench": bench_params,
                                   "eval_env": default_eval_env_params,
                                   "agent": agent_params}
