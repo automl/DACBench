@@ -57,7 +57,7 @@ def read_config(config_yml_fn: str = "output/config.yml"):
         eval_env_params = params["eval_env"]
         for key in default_eval_env_params:
             if key not in eval_env_params:
-                eval_env_params[key] = default_eval_env__params[key]
+                eval_env_params[key] = default_eval_env_params[key]
     return (
         params["experiment"],
         params["bench"],

@@ -6,12 +6,15 @@ import sys
 
 sys.path.append(os.path.dirname(__file__))
 import shutil
+import time
 
 from ddqn_local.ddqn import DQN
 from utils import make_env, read_config
 
+from torch.nn import functional as F
 
 def main():
+    start_time = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--out-dir", "-o", type=str, default="output", help="output folder"
@@ -35,10 +38,15 @@ def main():
 
     # create output folder
     out_dir = args.out_dir
+    log_dir = f"{out_dir}"
+    tb_log_dir = f"{out_dir}/tb_logs"
     if os.path.isdir(out_dir) is False:
         os.mkdir(out_dir)
         shutil.copyfile(args.setting_file, out_dir + "/config.yml")
 
+    if exp_params["use_formula"]:
+        print("Using formula for evaluation (instead of running the algorithm itself)")
+    
     # get state_dim and action_dim
     temp_env = make_env(bench_params, train_env_params)
     s = temp_env.reset()
@@ -56,37 +64,39 @@ def main():
         train_env = make_env(bench_params, train_env_params)
         eval_env = make_env(bench_params, eval_env_params)
 
-        assert agent_params["name"] in ["ddqn_local", "ppo"], (
-            "ERROR: agent " + agent_params["name"] + " is not supported"
-        )
+        # get loss function
+        assert agent_params["loss_function"] in ["mse_loss", "smooth_l1_loss"]
+        loss_function = getattr(F, agent_params["loss_function"])
 
         # start ddqn training
-        if agent_params["name"] == "ddqn_local":
-            agent = DQN(
-                state_dim,
-                action_dim,
-                agent_params["gamma"],
-                env=train_env,
-                eval_env=eval_env,
-                out_dir=out_dir,
-            )
-            agent.train(
-                episodes=exp_params["n_episodes"],
-                max_env_time_steps=int(1e9),
-                epsilon=agent_params["epsilon"],
-                eval_eps=exp_params["eval_n_episodes"],
-                eval_every_n_steps=exp_params["eval_interval"],
-                max_train_time_steps=exp_params["n_steps"],
-                begin_learning_after=agent_params["begin_learning_after"],
-                batch_size=agent_params["batch_size"],
-                log_level=exp_params["log_level"],
-                save_best=True,
-                save_model_interval=exp_params["save_interval"],
-            )
-            agent.save_model("final")
+        agent = DQN(
+            state_dim=state_dim,
+            action_dim=action_dim,
+            env=train_env,
+            eval_env=eval_env,
+            out_dir=out_dir,
+            gamma=agent_params["gamma"],
+            loss_function=loss_function,
+        )
+        print(agent.__dict__)
+        agent.train(
+            episodes=exp_params["n_episodes"],
+            max_env_time_steps=int(1e9),
+            epsilon=agent_params["epsilon"],
+            eval_every_n_steps=exp_params["eval_interval"],
+            save_agent_at_every_eval=exp_params["save_agent_at_every_eval"],
+            n_eval_episodes_per_instance=exp_params["n_eval_episodes_per_instance"],
+            max_train_time_steps=exp_params["n_steps"],
+            begin_learning_after=agent_params["begin_learning_after"],
+            batch_size=agent_params["batch_size"],
+            log_level=exp_params["log_level"],
+            use_formula=exp_params["use_formula"]
+        )
 
     else:
         print(f"Sorry, agent {agent_params['name']} is not yet supported")
-
+    
+    total_time = time.time() - start_time
+    print(f"Total runtime: {total_time}")
 
 main()
