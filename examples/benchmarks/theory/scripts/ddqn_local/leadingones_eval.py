@@ -61,11 +61,15 @@ class LeadingOnesEval():
         # evaluation timesteps
         self.eval_timesteps = []
 
-        # element i^th: policy at self.eval_timesteps[i] and its runtime per instance (sorted by self.inst_ids)
+        # element i^th: 
+        #   - policy at self.eval_timesteps[i]
+        #   - its runtime per instance (sorted by self.inst_ids)
+        #   - a list of number of decisions made per episode for each instance (for TempoRL)
         self.eval_policies = []
         self.eval_policies_unclipped = []
         self.eval_runtime_means = []
         self.eval_runtime_stds = []
+        self.eval_n_decisions = []
         
         if hasattr(eval_env, "action_choices"):
             self.action_choices = eval_env.action_choices
@@ -101,7 +105,7 @@ class LeadingOnesEval():
                 print("\t" + " ".join([str(v) for v in policy]))   
 
 
-    def eval(self, n_steps) -> bool:
+    def eval(self, n_steps, with_skip=False) -> bool:
         if self.verbose>=1:
             print(f"steps: {n_steps}")
         
@@ -111,13 +115,14 @@ class LeadingOnesEval():
         policies_unclipped = []
         runtime_means = []
         runtime_stds = []
+        n_decisions = []
 
         for inst_id in self.inst_ids:
             inst = self.instance_set[inst_id]
             n = inst["size"]
 
             # get current policy on this instance
-            policy_unclipped = [self.agent.predict(x=np.asarray([n,fx])) #TODO: only works for observation space [n,fx]
+            policy_unclipped = [self.agent.get_action(x=np.asarray([n,fx]), epsilon=0) #TODO: only works for observation space [n,fx]
                                     for fx in range(n)]
             if self.discrete_portfolio:
                 policy_unclipped = [self.action_choices[v] for v in policy_unclipped]
@@ -130,30 +135,43 @@ class LeadingOnesEval():
                 runtime_mean = expected_run_time(policy, n)
                 runtime_std = np.sqrt(variance_in_run_time(policy, n))
             else:
-                print("Error: not yet implemented")
-                sys.exit(1)
-                # # set self.eval_env's instance_set to a single instance (inst_id)
-                # self.eval_env.set_attr("instance_id_list",[inst_id])
-                # self.eval_env.set_attr("instance_index", 0)
-                # self.eval_env.set_attr("instance_set", {inst_id: inst})
-                # # evaluate on the current instance (inst_id)
-                # episode_rewards, episode_lengths = evaluate_policy(
-                #     self.model,
-                #     self.eval_env,
-                #     n_eval_episodes=self.n_eval_episodes_per_instance,
-                #     render=self.render,
-                #     deterministic=self.deterministic,
-                #     return_episode_rewards=True,
-                #     warn=self.warn,
-                #     callback=self._log_success_callback,
-                # )
-                # # set self.eval_env's instance_set back to its original values
-                # self.eval_env.set_attr("instance_id_list", self.inst_ids)
-                # self.eval_env.set_attr("instance_set", self.instance_set)
-                # # calculate runtime mean/std
-                # runtime_mean = np.abs(np.mean(episode_rewards))
-                # runtime_std = np.abs(std(episode_rewards))
-            
+                # set self.eval_env's instance_set to a single instance (inst_id)
+                self.eval_env.instance_id_list = [inst_id]
+                self.eval_env.instance_index = 0
+                self.eval_env.instance_set = {inst_id: inst}
+                # evaluate on the current instance (inst_id)
+                episode_rewards = []
+                episode_n_decisions = []
+                for ep_id in range(self.n_eval_episodes_per_instance):
+                    s = self.eval_env.reset()
+                    ep_r = 0 # episode's total reward
+                    ep_d = 0 # number of decisions made by this episode
+                    d = False
+                    while True:
+                        a = self.agent.get_action(x=s, epsilon=0)
+                        skip = 1
+                        if with_skip:
+                            skip_state = np.hstack([s, [a]])  # concatenate action to the state
+                            skip = self.agent.get_skip(skip_state, 0) + 1
+                        for _ in range(skip):
+                            ns, r, d, _ = self.eval_env.step(a)
+                            ep_r += r
+                            if d:
+                                break
+                        ep_d += 1
+                        if d:
+                            break
+                    episode_rewards.append(ep_r)
+                    episode_n_decisions.append(ep_d)
+                # set self.eval_env's instance_set back to its original values
+                self.eval_env.instance_id_list = self.inst_ids
+                self.eval_env.instance_set = self.instance_set
+                # calculate runtime mean/std
+                runtime_mean = np.abs(np.mean(episode_rewards))
+                runtime_std = np.abs(np.std(episode_rewards))
+                # save n_decisions info
+                n_decisions.append(episode_n_decisions)
+                
             runtime_means.append(runtime_mean)
             runtime_stds.append(runtime_std)
             
@@ -167,6 +185,7 @@ class LeadingOnesEval():
             self.eval_policies.append(policies)
             self.eval_runtime_means.append(runtime_means)
             self.eval_runtime_stds.append(runtime_stds)
+            self.eval_n_decisions.append(n_decisions)
             np.savez(self.log_path,
                     inst_ids=self.inst_ids,
                     optimal_policies=self.optimal_policies,
@@ -177,6 +196,7 @@ class LeadingOnesEval():
                     eval_policies_unclipped=self.eval_policies_unclipped,
                     eval_runtime_means=self.eval_runtime_means,
                     eval_runtime_stds=self.eval_runtime_stds,
+                    n_decisions=self.eval_n_decisions,
                     instance_set=self.instance_set)
             # save current model
             if self.save_agent_at_every_eval:

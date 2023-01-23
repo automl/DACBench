@@ -200,11 +200,6 @@ class DQN:
             return np.random.randint(self._action_dim)
         return u
 
-
-    def predict(self, x: np.ndarray, deterministic=True) -> int:
-        assert deterministic==True, "Error: ddqn_local doesn't support undeterministic prediction"
-        return self.get_action(x, epsilon=0)
-
     def train(
         self,
         episodes: int,
@@ -255,7 +250,7 @@ class DQN:
 
                 if (total_steps % eval_every_n_steps) == 0:
                     self.evaluator.eval(total_steps)
-
+    
                 # Update replay buffer
                 self._replay_buffer.add_transition(s, a, ns, r, d)
                 if begin_learning_after < total_steps:
