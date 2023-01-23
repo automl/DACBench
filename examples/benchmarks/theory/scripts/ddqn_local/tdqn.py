@@ -224,13 +224,13 @@ class TDQN(DQN):
 
                     s = ns
 
-                    if done or (ep_n_steps>=max_env_time_steps) or (total_steps>=max_env_time_steps):
+                    if done or (ep_n_steps>=max_env_time_steps) or (total_steps>=max_train_time_steps):
                         break
 
-                if done or (ep_n_steps>=max_env_time_steps) or (total_steps>=max_env_time_steps):
+                if done or (ep_n_steps>=max_env_time_steps) or (total_steps>=max_train_time_steps):
                         break
 
-            if done or (ep_n_steps>=max_env_time_steps) or (total_steps>=max_env_time_steps):
+            if total_steps>=max_train_time_steps:
                 break
         
         
