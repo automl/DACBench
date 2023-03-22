@@ -20,22 +20,23 @@ class MyTestCase(unittest.TestCase):
     def test_deterministic(self):
         switching_interval = 2
         agent, env = self.get_agent(switching_interval)
+        env.seed_action_space(0)
 
-        state = env.reset()
+        state, _ = env.reset()
         reward = 0
         actions = []
-        for i in range(6):
+        for _ in range(6):
             action = agent.act(state, reward)
             state, reward, *_ = env.step(action)
             actions.append(action)
 
-        assert actions == [48, 48, 14, 14, 6, 6]
+        assert actions == [42, 42, 42, 42, 31, 31]
 
     def test_switing_interval(self):
         switching_interval = 3
         agent, env = self.get_agent(switching_interval)
 
-        state = env.reset()
+        state, _  = env.reset()
         reward = 0
         actions = []
         for i in range(21):

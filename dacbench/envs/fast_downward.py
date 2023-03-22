@@ -294,8 +294,8 @@ class FastDownwardEnv(AbstractEnv):
 
         Returns
         ----------
-        np.array, float, bool, dict
-            state, reward, done, info
+        np.array, float, bool, bool, dict
+            state, reward, terminated, truncated, info
         """
         self.done = super(FastDownwardEnv, self).step_()
         if not np.issubdtype(
@@ -311,19 +311,19 @@ class FastDownwardEnv(AbstractEnv):
         else:
             msg = str(action)
         self.send_msg(str.encode(msg))
-        s, r, d = self._process_data()
+        s, r, terminated = self._process_data()
         r = max(self.reward_range[0], min(self.reward_range[1], r))
         info = {}
-        if d:
+        if terminated:
             self.done = True
             self.kill_connection()
         if self.c_step > self.n_steps:
             info["needs_reset"] = True
             self.send_msg(str.encode("END"))
             self.kill_connection()
-        return s, r, d or self.done, info
+        return s, r, terminated, self.done, info
 
-    def reset(self):
+    def reset(self, seed=None, options={}):
         """
         Reset environment
 
@@ -331,8 +331,10 @@ class FastDownwardEnv(AbstractEnv):
         ----------
         np.array
             State after reset
+        dict
+            Meta-info
         """
-        super(FastDownwardEnv, self).reset_()
+        super(FastDownwardEnv, self).reset_(seed)
         self._prev_state = None
         self.__start_time = time.time()
         if not self.done:  # This means we interrupt FD before a plan was found
@@ -398,16 +400,16 @@ class FastDownwardEnv(AbstractEnv):
         s, _, _ = self._process_data()
         if self.max_rand_steps > 1:
             for _ in range(self.np_random.randint(1, self.max_rand_steps + 1)):
-                s, _, _, _ = self.step(self.action_space.sample())
+                s, _, _, _, _ = self.step(self.action_space.sample())
                 if self.conn is None:
                     return self.reset()
         else:
-            s, _, _, _ = self.step(0)  # hard coded to zero as initial step
+            s, _, _, _, _ = self.step(0)  # hard coded to zero as initial step
 
         remove(
             fp
         )  # remove the port file such that there is no chance of loading the old port
-        return s
+        return s, {}
 
     def kill_connection(self):
         """Kill the connection"""

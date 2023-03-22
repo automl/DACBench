@@ -2,7 +2,7 @@ import unittest
 import json
 import os
 import numpy as np
-from gym.spaces import Box, Discrete, Dict, MultiDiscrete, MultiBinary
+from gymnasium.spaces import Box, Discrete, Dict, MultiDiscrete, MultiBinary
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 import tempfile

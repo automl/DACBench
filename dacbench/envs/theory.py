@@ -4,7 +4,7 @@ import logging
 from collections import deque
 
 import uuid
-import gym
+import gymnasium as gym
 
 from dacbench import AbstractEnv
 
@@ -364,7 +364,7 @@ class RLSEnv(AbstractEnv):
         """
         return 0, np.inf
 
-    def reset(self):
+    def reset(self, seed=None, options={}):
         """
         Resets env
 
@@ -373,7 +373,7 @@ class RLSEnv(AbstractEnv):
         numpy.array
             Environment state
         """
-        super(RLSEnv, self).reset_()
+        super(RLSEnv, self).reset_(seed)
 
         # current problem size (n) & evaluation limit (max_evals)
         self.n = self.instance.size
@@ -410,7 +410,7 @@ class RLSEnv(AbstractEnv):
         self.log_fx = []
         self.init_obj = self.x.fitness
 
-        return self.get_state()
+        return self.get_state(), {}
 
     def get_state(self):
         return np.asarray([f() for f in self.state_functions])
@@ -426,10 +426,10 @@ class RLSEnv(AbstractEnv):
 
         Returns
         -------
-            state, reward, done, info
-            np.array, float, bool, dict
+            state, reward, terminated, truncated, info
+            np.array, float, bool, bool, dict
         """
-        super(RLSEnv, self).step_()
+        truncated = super(RLSEnv, self).step_()
 
         fitness_before_update = self.x.fitness
 
@@ -447,7 +447,7 @@ class RLSEnv(AbstractEnv):
 
             # if we're in the training phase, we return a large negative reward and stop the episode
             if self.test_env is False:
-                done = True
+                terminated = True
                 n_evals = 0
                 reward = -MAX_INT
                 stop = True
@@ -468,7 +468,7 @@ class RLSEnv(AbstractEnv):
             self.total_evals += n_evals
 
             # check stopping criteria
-            done = (self.total_evals >= self.max_evals) or (self.x.is_optimal())
+            terminated = (self.total_evals >= self.max_evals) or (self.x.is_optimal())
 
             # calculate reward
             if self.reward_choice == "imp_div_evals":
@@ -497,7 +497,7 @@ class RLSEnv(AbstractEnv):
         self.log_reward.append(reward)
 
         returned_info = {"msg": "", "values": {}}
-        if done:
+        if terminated or truncated:
             if hasattr(self, "env_type"):
                 msg = "Env " + self.env_type + ". "
             else:
@@ -532,7 +532,7 @@ class RLSEnv(AbstractEnv):
                 "log_reward": [float(x) for x in self.log_reward],
             }
 
-        return self.get_state(), reward, done, returned_info
+        return self.get_state(), reward, truncated, terminated, returned_info
 
     def close(self) -> bool:
         """

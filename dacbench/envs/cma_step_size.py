@@ -16,8 +16,8 @@ class CMAStepSizeEnv(AbstractEnv):
         self.get_reward = config.get("reward_function", self.get_default_reward)
         self.get_state = config.get("state_method", self.get_default_state)
 
-    def reset(self):
-        super().reset_()
+    def reset(self, seed=None, options={}):
+        super().reset_(seed)
         self.dim, self.fid, self.iid, self.representation = self.instance
         self.objective = IOH_function(
             self.fid, self.dim, self.iid, target_precision=1e-8
@@ -26,13 +26,13 @@ class CMAStepSizeEnv(AbstractEnv):
             self.objective,
             parameters=Parameters.from_config_array(self.dim, self.representation),
         )
-        return self.get_state(self)
+        return self.get_state(self), {}
 
     def step(self, action):
-        done = super().step_()
+        truncated = super().step_()
         self.es.parameters.sigma = action
-        done = not self.es.step() or done
-        return self.get_state(self), self.get_reward(self), done, {}
+        terminated = not self.es.step()
+        return self.get_state(self), self.get_reward(self), terminated, truncated, {}
 
     def close(self):
         return True

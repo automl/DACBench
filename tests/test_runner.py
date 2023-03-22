@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 import unittest
-from gym import spaces
+from gymnasium import spaces
 import os
 import numpy as np
 

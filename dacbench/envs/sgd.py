@@ -250,11 +250,13 @@ class SGDEnv(AbstractEnv):
     @property
     def crash(self):
         self.crashed = True
+        truncated = False
+        terminated = False
         if self.c_step >= self.n_steps:
-            done = True
+            truncated = True
         else:
-            done = self.terminate_on_crash
-        return self.get_state(self), self.crash_penalty, done, {}
+            terminated = self.terminate_on_crash
+        return self.get_state(self), self.crash_penalty, terminated, truncated, {}
 
     def seed(self, seed=None, seed_action_space=False):
         """
@@ -287,10 +289,10 @@ class SGDEnv(AbstractEnv):
 
         Returns
         -------
-        np.array, float, bool, dict
-            state, reward, done, info
+        np.array, float, bool, bool, dict
+            state, reward, terminated, truncated, info
         """
-        done = super(SGDEnv, self).step_()
+        truncated = super(SGDEnv, self).step_()
 
         self.step_count += 1
         index = 0
@@ -337,7 +339,7 @@ class SGDEnv(AbstractEnv):
         for value in state.values():
             if np.isnan(value):
                 return self.crash
-        return state, reward, done, {}
+        return state, reward, False, truncated, {}
 
     def _architecture_constructor(self, arch_str):
         layer_specs = []
@@ -359,7 +361,7 @@ class SGDEnv(AbstractEnv):
 
         return model_constructor
 
-    def reset(self):
+    def reset(self, seed=None, options={}):
         """
         Reset environment
 
@@ -368,7 +370,7 @@ class SGDEnv(AbstractEnv):
         np.array
             Environment state
         """
-        super(SGDEnv, self).reset_()
+        super(SGDEnv, self).reset_(seed)
 
         dataset = self.instance[0]
         instance_seed = self.instance[1]
@@ -514,7 +516,7 @@ class SGDEnv(AbstractEnv):
         )
         self.train_network()
 
-        return self.get_state(self)
+        return self.get_state(self), {}
 
     def set_writer(self, writer):
         self.writer = writer
@@ -601,7 +603,7 @@ class SGDEnv(AbstractEnv):
         return state
 
     def _train_batch_(self):
-        (data, target) = self.train_loader_it.next()
+        (data, target) = next(self.train_loader_it)
         data, target = data.to(self.device), target.to(self.device)
         self.current_batch_size = data.size()[0]
         output = self.model(data)
@@ -648,7 +650,7 @@ class SGDEnv(AbstractEnv):
 
     def _get_validation_loss_(self):
         with torch.no_grad():
-            (data, target) = self.validation_loader_it.next()
+            (data, target) = next(self.validation_loader_it)
             data, target = data.to(self.device), target.to(self.device)
             output = self.val_model(data)
             validation_loss = self.val_loss_function(output, target).mean()

@@ -1,7 +1,7 @@
 import random
 
-import gym
-from gym.utils import seeding
+import gymnasium as gym
+from gymnasium.utils import seeding
 import numpy as np
 
 
@@ -79,7 +79,7 @@ class AbstractEnv(gym.Env):
                     self.observation_space = getattr(
                         gym.spaces, config["observation_space_class"]
                     )(*config["observation_space_args"])
-                except TypeError:
+                except AssertionError:
                     print(
                         "To use a Dict observation space, the 'observation_space_args' in the configuration should be a list containing a Dict of gym.Spaces"
                     )
@@ -149,17 +149,19 @@ class AbstractEnv(gym.Env):
         bool
             End of episode
         """
-        done = False
+        truncated = False
         self.c_step += 1
         if self.c_step >= self.n_steps:
-            done = True
-        return done
+            truncated = True
+        return truncated
 
-    def reset_(self, instance=None, instance_id=None, scheme=None):
+    def reset_(self, seed=0, options={}, instance=None, instance_id=None, scheme=None):
         """
         Pre-reset function for progressing through the instance set
         Will either use round robin, random or no progression scheme
         """
+        if seed is not None:
+            self.seed(seed, self.config.get("seed_action_space", False))    
         self.c_step = 0
         if scheme is None:
             scheme = self.instance_updates
@@ -206,21 +208,30 @@ class AbstractEnv(gym.Env):
             Environment state
         reward
             Environment reward
-        done : bool
+        terminated: bool
             Run finished flag
+        truncated: bool
+            Run timed out flag
         info : dict
             Additional metainfo
         """
         raise NotImplementedError
 
-    def reset(self):
+    def reset(self, seed: int = None):
         """
         Reset environment
+
+        Parameters
+        -------
+        seed
+            Seed for the environment
 
         Returns
         -------
         state
             Environment state
+        info: dict
+            Additional metainfo
         """
         raise NotImplementedError
 

@@ -1,6 +1,6 @@
 from dacbench.benchmarks import TheoryBenchmark
 import unittest
-import gym
+import gymnasium as gym
 
 
 class TestTheoryEnv(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestTheoryEnv(unittest.TestCase):
         env = bench.get_environment()
 
         # check observation space
-        s = env.reset()  # default observation space: n, f(x)
+        s, _ = env.reset()  # default observation space: n, f(x)
         assert len(s) == 2
         assert s[0] == env.n
         assert s[1] == env.x.fitness
@@ -45,7 +45,7 @@ class TestTheoryEnv(unittest.TestCase):
         env = bench.get_environment()
 
         # check observation space
-        s = env.reset()  # default observation space: n, f(x)
+        s, _ = env.reset()  # default observation space: n, f(x)
         assert len(s) == 2
         assert s[0] == env.n
         assert s[1] == env.x.fitness
@@ -63,11 +63,11 @@ class TestTheoryEnv(unittest.TestCase):
             env.reset()
 
         # check behaviour with out-of-range action
-        s, r, d, info = env.step(
+        s, r, terminated, truncated, info = env.step(
             100
         )  # a large negative reward will be returned and the epsidoe will end
         assert r < -1e4
-        assert d
+        assert terminated or truncated
 
 
 if __name__ == "__main__":

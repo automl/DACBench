@@ -82,10 +82,10 @@ class CMAESEnv(AbstractEnv):
         np.array, float, bool, dict
             state, reward, done, info
         """
-        done = super(CMAESEnv, self).step_()
+        truncated = super(CMAESEnv, self).step_()
         self.history.append([self.f_difference, self.velocity])
-        done = done or self.es.stop() != {}
-        if not done:
+        terminated = self.es.stop() != {}
+        if not (terminated or truncated):
             """Moves forward in time one step"""
             sigma = action
             self.es.tell(self.solutions, self.func_values)
@@ -112,9 +112,9 @@ class CMAESEnv(AbstractEnv):
             self.cur_sigma = [self.es.sigma]
         self.cur_obj_val = self.es.best.f
 
-        return self.get_state(self), self.get_reward(self), done, {}
+        return self.get_state(self), self.get_reward(self), terminated, truncated, {}
 
-    def reset(self):
+    def reset(self, seed=None, options={}):
         """
         Reset environment
 
@@ -123,7 +123,7 @@ class CMAESEnv(AbstractEnv):
         np.array
             Environment state
         """
-        super(CMAESEnv, self).reset_()
+        super(CMAESEnv, self).reset_(seed)
         self.history.clear()
         self.past_obj_vals.clear()
         self.past_sigma.clear()
@@ -131,7 +131,7 @@ class CMAESEnv(AbstractEnv):
         self.dim = self.instance[1]
         self.init_sigma = self.instance[2]
         self.cur_sigma = [self.init_sigma]
-        self.fcn = bn.instantiate(self.instance[0])[0]
+        self.fcn = bn.instantiate(self.instance[0], seed=self.seed)[0]
 
         self.func_values = []
         self.f_vals = deque(maxlen=self.popsize)
@@ -150,7 +150,7 @@ class CMAESEnv(AbstractEnv):
         )
         self.es.mean_old = self.es.mean
         self.history.append([self.f_difference, self.velocity])
-        return self.get_state(self)
+        return self.get_state(self), {}
 
     def close(self):
         """

@@ -27,12 +27,12 @@ def run_benchmark(env, agent, num_episodes, logger=None):
         logger.set_env(env)
 
     for _ in range(num_episodes):
-        state = env.reset()
-        done = False
+        state, _ = env.reset()
+        terminated, truncated = False, False
         reward = 0
-        while not done:
+        while not (terminated or truncated):
             action = agent.act(state, reward)
-            next_state, reward, done, _ = env.step(action)
+            next_state, reward, terminated, truncated, _ = env.step(action)
             agent.train(next_state, reward)
             state = next_state
             if logger is not None:

@@ -2,7 +2,7 @@
 import unittest
 
 import numpy as np
-from gym import spaces
+from gymnasium import spaces
 from dacbench.abstract_env import AbstractEnv
 
 
@@ -18,7 +18,7 @@ class TestAbstractEnv(unittest.TestCase):
     def test_exceptions(self):
         config = {
             "action_space_class": "Discrete",
-            "action_space_args": np.array([4]).astype(np.float32),
+            "action_space_args": [4],
             "observation_space_class": "Dict",
             "observation_space_type": np.float32,
             "observation_space_args": [
@@ -35,7 +35,7 @@ class TestAbstractEnv(unittest.TestCase):
 
         config = {
             "action_space_class": "Discrete",
-            "action_space_args": np.array([4]).astype(np.float32),
+            "action_space_args": [4],
             "observation_space_class": "Box",
             "observation_space_type": np.float32,
             "reward_range": (-1, 0),
@@ -48,7 +48,7 @@ class TestAbstractEnv(unittest.TestCase):
 
         config = {
             "action_space_class": "Discrete",
-            "action_space_args": np.array([4]).astype(np.float32),
+            "action_space_args": [4],
             "observation_space_type": np.float32,
             "observation_space_args": [
                 np.array([-1, -1, -1], dtype=np.float32),
@@ -98,7 +98,7 @@ class TestAbstractEnv(unittest.TestCase):
     def make_env(self):
         config = {
             "action_space_class": "Discrete",
-            "action_space_args": np.array([4]).astype(np.float32),
+            "action_space_args": [4],
             "observation_space_class": "Box",
             "observation_space_type": np.float32,
             "observation_space_args": [

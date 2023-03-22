@@ -34,7 +34,8 @@ class TestSigmoidEnv(unittest.TestCase):
 
     def test_reset(self):
         env = self.make_env()
-        state = env.reset()
+        state, info = env.reset()
+        self.assertTrue(issubclass(type(info), dict))
         self.assertTrue(np.array_equal(env.shifts, [0, 1]))
         self.assertTrue(np.array_equal(env.slopes, [2, 3]))
         self.assertTrue(state[0] == SIGMOID_DEFAULTS["cutoff"])
@@ -45,14 +46,15 @@ class TestSigmoidEnv(unittest.TestCase):
     def test_step(self):
         env = self.make_env()
         env.reset()
-        state, reward, done, meta = env.step(1)
+        state, reward, terminated, truncated, meta = env.step(1)
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertTrue(state[0] == 9)
         self.assertTrue(np.array_equal([state[1], state[3]], env.shifts))
         self.assertTrue(np.array_equal([state[2], state[4]], env.slopes))
         self.assertTrue(len(state) == 7)
-        self.assertFalse(done)
+        self.assertFalse(terminated)
+        self.assertFalse(truncated)
         self.assertTrue(len(meta.keys()) == 0)
 
     def test_close(self):

@@ -2,7 +2,7 @@ import json
 from types import FunctionType
 
 import numpy as np
-from gym import spaces
+from gymnasium import spaces
 from functools import partial
 from dacbench import wrappers
 
@@ -80,6 +80,7 @@ class AbstractBenchmark:
                 self.config[k], list
             ):
                 if type(self.config[k][0]) == np.ndarray:
+                    print(k)
                     conf[k] = list(map(list, conf[k]))
                     for i in range(len(conf[k])):
                         if (
@@ -216,6 +217,12 @@ class AbstractBenchmark:
 
     def to_json(self):
         conf = self.serialize_config()
+        for k in conf:
+            print(k)
+            print(conf[k])
+            from copy import deepcopy
+            del_conf = deepcopy(conf)[k]
+            json.dumps(del_conf)
         return json.dumps(conf)
 
     def save_config(self, path):
@@ -374,13 +381,13 @@ class AbstractBenchmark:
 
             if isinstance(value, spaces.Box):
                 types.append("box")
-                low = value.low.tolist()
-                high = value.high.tolist()
+                low = value.low.astype(float).tolist()
+                high = value.high.astype(float).tolist()
                 arguments.append([low, high])
 
             if isinstance(value, spaces.Discrete):
                 types.append("discrete")
-                n = value.n
+                n = int(value.n)
                 arguments.append([n])
         return [keys, types, arguments]
 
@@ -388,11 +395,11 @@ class AbstractBenchmark:
         dict_space = {}
         keys, types, args = dict_list
         for k, type, args_ in zip(keys, types, args):
-            prepared_args = map(np.array, args_)
             if type == "box":
+                prepared_args = map(np.array, args_)
                 dict_space[k] = spaces.Box(*prepared_args, dtype=np.float32)
             elif type == "discrete":
-                dict_space[k] = spaces.Discrete(*prepared_args)
+                dict_space[k] = spaces.Discrete(*args_)
             else:
                 raise TypeError(
                     f"Currently only Discrete and Box spaces are allowed in Dict spaces, got {type}"

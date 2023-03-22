@@ -1,3 +1,7 @@
 {
-  "modea": ["modea==0.4.0", "pandas==1.0.3", "openml==0.10.2"]
+  "modea": [
+    "modea",
+    "pandas",
+    "openml"
+  ]
 }

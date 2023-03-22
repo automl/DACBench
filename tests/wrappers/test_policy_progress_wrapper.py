@@ -34,10 +34,10 @@ class TestPolicyProgressWrapper(unittest.TestCase):
         wrapped = PolicyProgressWrapper(env, compute_optimal_sigmoid)
 
         wrapped.reset()
-        _, _, done, _ = wrapped.step(1)
+        _, _, terminated, truncated, _ = wrapped.step(1)
         self.assertTrue(len(wrapped.episode) == 1)
-        while not done:
-            _, _, done, _ = wrapped.step(1)
+        while not (terminated or truncated):
+            _, _, terminated, truncated, _ = wrapped.step(1)
         self.assertTrue(len(wrapped.episode) == 0)
         self.assertTrue(len(wrapped.policy_progress) == 1)
 
@@ -48,9 +48,9 @@ class TestPolicyProgressWrapper(unittest.TestCase):
         env = bench.get_environment()
         env = PolicyProgressWrapper(env, compute_optimal_sigmoid)
         for _ in range(2):
-            done = False
+            terminated, truncated = False, False
             env.reset()
-            while not done:
-                _, _, done, _ = env.step(1)
+            while not (terminated or truncated):
+                _, _, terminated, truncated, _ = env.step(1)
         env.render_policy_progress()
         self.assertTrue(mock_plt.show.called)

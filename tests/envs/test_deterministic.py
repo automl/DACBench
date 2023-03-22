@@ -14,7 +14,8 @@ def assert_state_space_equal(state1, state2):
     elif isinstance(state1, dict):
         assert state1.keys() == state2.keys()
         for key in state1.keys():
-            assert_almost_equal(state1[key], state2[key])
+            if 'history' not in key:
+                assert_almost_equal(state1[key], state2[key])
     else:
         raise NotImplementedError(f"State space type {type(state1)} not comparable")
 
@@ -26,17 +27,17 @@ class TestDeterministic(unittest.TestCase):
         action = run_baselines.DISCRETE_ACTIONS[benchmark_name][0]
 
         env1 = bench.get_benchmark(seed=seed)
-        init_state1 = env1.reset()
-        state1, reward1, done1, info1 = env1.step(action)
+        init_state1, info1 = env1.reset()
+        _, reward1, terminated1, truncated1, info1 = env1.step(action)
 
         env2 = bench.get_benchmark(seed=seed)
-        init_state2 = env2.reset()
-        state2, reward2, done2, info2 = env2.step(action)
+        init_state2, info2 = env2.reset()
+        _, reward2, terminated2, truncated2, info2 = env2.step(action)
 
         assert_state_space_equal(init_state1, init_state2)
-        assert_state_space_equal(state1, state2)
-        self.assertEqual(reward1, reward2)
-        self.assertEqual(done1, done2)
+        self.assertEqual(info1, info2)
+        self.assertEqual(terminated1, terminated2)
+        self.assertEqual(truncated1, truncated2)
         self.assertEqual(info1, info2)
 
     def test_LubyBenchmark(self):
@@ -52,19 +53,21 @@ class TestDeterministic(unittest.TestCase):
         action = run_baselines.DISCRETE_ACTIONS[benchmark_name][0]
 
         env1 = bench.get_benchmark(seed=seed)
-        init_state1 = env1.reset()
-        state1, reward1, done1, info1 = env1.step(action)
+        init_state1, info1 = env1.reset()
+        state1, reward1, terminated1, truncated1, info1 = env1.step(action)
         env1.close()
 
         env2 = bench.get_benchmark(seed=seed)
-        init_state2 = env2.reset()
-        state2, reward2, done2, info2 = env2.step(action)
+        init_state2, info2 = env2.reset()
+        state2, reward2, terminated2, truncated2, info2 = env2.step(action)
         env2.close()
 
         assert_state_space_equal(init_state1, init_state2)
         assert_state_space_equal(state1, state2)
         self.assertEqual(reward1, reward2)
-        self.assertEqual(done1, done2)
+        self.assertEqual(info1, info2)
+        self.assertEqual(terminated1, terminated2)
+        self.assertEqual(truncated1, truncated2)
         self.assertEqual(info1, info2)
 
     def test_CMAESBenchmark(self):

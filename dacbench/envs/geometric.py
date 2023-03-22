@@ -143,8 +143,8 @@ class GeometricEnv(AbstractEnv):
 
         Returns
         -------
-        np.array, float, bool, dict
-            state, reward, done, info
+        np.array, float, bool, bool, dict
+            state, reward, terminated, truncated, info
         """
         self.done = super(GeometricEnv, self).step_()
 
@@ -183,9 +183,9 @@ class GeometricEnv(AbstractEnv):
         if math.isnan(reward):
             raise ValueError(f"Reward NAN Coords: {coords}, step: {self.c_step}")
 
-        return next_state, reward, self.done, {}
+        return next_state, reward, False, self.done, {}
 
-    def reset(self) -> List[int]:
+    def reset(self, seed=None, options={}) -> List[int]:
         """
         Resets env
 
@@ -193,8 +193,10 @@ class GeometricEnv(AbstractEnv):
         -------
         numpy.array
             Environment state
+        dict
+            Meta-info
         """
-        super(GeometricEnv, self).reset_()
+        super(GeometricEnv, self).reset_(seed)
         self.functions.set_instance(self.instance, self.instance_index)
 
         if self.c_step:
@@ -209,7 +211,7 @@ class GeometricEnv(AbstractEnv):
         )
         self._prev_state = None
 
-        return self.get_state(self)
+        return self.get_state(self), {}
 
     def get_default_reward(self, _) -> float:
         """
@@ -493,8 +495,8 @@ class Functions:
             derrivative = np.zeros(self.n_actions)
             for step in range(lower_bound, upper_bound):
                 der = np.subtract(
-                    np.array(trajectory[step], dtype=np.float),
-                    np.array(trajectory[step - 1], dtype=np.float),
+                    np.array(trajectory[step], dtype=np.float32),
+                    np.array(trajectory[step - 1], dtype=np.float32),
                 )
                 derrivative = np.add(derrivative, der)
 
@@ -502,8 +504,8 @@ class Functions:
 
         elif c_step == 1:
             derrivative = np.subtract(
-                np.array(trajectory[c_step], dtype=np.float),
-                np.array(trajectory[c_step - 1], dtype=np.float),
+                np.array(trajectory[c_step], dtype=np.float32),
+                np.array(trajectory[c_step - 1], dtype=np.float32),
             )
 
         else:

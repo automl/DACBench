@@ -30,9 +30,10 @@ class TestFDBenchmark(unittest.TestCase):
             bench = FastDownwardBenchmark(path)
             self.assertTrue(bench.config is not None)
             env = bench.get_environment()
-            state = env.reset()
+            state, info = env.reset()
             self.assertTrue(state is not None)
-            state, _, _, _ = env.step(0)
+            self.assertTrue(info is not None)
+            state, _, _, _, _ = env.step(0)
             self.assertTrue(state is not None)
 
     def test_save_conf(self):

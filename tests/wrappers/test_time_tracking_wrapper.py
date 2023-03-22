@@ -69,13 +69,15 @@ class TestTimeTrackingWrapper(unittest.TestCase):
         env = bench.get_environment()
         wrapped = EpisodeTimeWrapper(env, 10)
 
-        state = wrapped.reset()
+        state, info = wrapped.reset()
+        self.assertTrue(issubclass(type(info), dict))
         self.assertTrue(len(state) > 1)
 
-        state, reward, done, _ = wrapped.step(1)
+        state, reward, terminated, truncated, _ = wrapped.step(1)
         self.assertTrue(len(state) > 1)
         self.assertTrue(reward <= 0)
-        self.assertFalse(done)
+        self.assertFalse(terminated)
+        self.assertFalse(truncated)
 
         self.assertTrue(len(wrapped.all_steps) == 1)
         self.assertTrue(len(wrapped.current_step_interval) == 1)

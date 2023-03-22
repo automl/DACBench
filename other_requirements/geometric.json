@@ -1,3 +1,7 @@
 {
-  "geometric": ["matplotlib>=3.1", "numpy==1.19.2", "seaborn>=0.11"]
+  "geometric": [
+    "matplotlib",
+    "numpy",
+    "seaborn"
+  ]
 }

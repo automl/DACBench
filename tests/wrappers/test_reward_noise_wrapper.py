@@ -31,18 +31,18 @@ class TestRewardNoiseWrapper(unittest.TestCase):
         bench.config.reward_range = (-10, 10)
         env = bench.get_environment()
         env.reset()
-        _, raw_reward, _, _ = env.step(1)
+        _, raw_reward, _, _, _ = env.step(1)
 
         wrapped = RewardNoiseWrapper(env)
         wrapped.reset()
-        _, reward, _, _ = wrapped.step(1)
+        _, reward, _, _, _ = wrapped.step(1)
         self.assertTrue(reward != raw_reward)
 
         wrapped = RewardNoiseWrapper(env, noise_dist="normal", dist_args=[0, 0.3])
         wrapped.reset()
         env.reset()
-        _, raw_reward, _, _ = env.step(1)
-        _, reward, _, _ = wrapped.step(1)
+        _, raw_reward, _, _, _ = env.step(1)
+        _, reward, _, _, _ = wrapped.step(1)
         self.assertTrue(reward != raw_reward)
 
         def dummy():
@@ -50,7 +50,7 @@ class TestRewardNoiseWrapper(unittest.TestCase):
 
         wrapped = RewardNoiseWrapper(env, noise_function=dummy)
         wrapped.reset()
-        _, reward, _, _ = wrapped.step(1)
+        _, reward, _, _, _ = wrapped.step(1)
         self.assertTrue(reward == 0 or reward == -1)
 
     def test_getters_and_setters(self):

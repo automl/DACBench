@@ -64,16 +64,17 @@ class TestSGDEnv(unittest.TestCase):
             self.assertTrue(env.reward_range == reward_type.func.frange)
 
             env.reset()
-            state, reward, done, meta = env.step(1.0)
+            _, reward, terminated, truncated, meta = env.step(1.0)
             self.assertTrue(reward >= env.reward_range[0])
             self.assertTrue(reward <= env.reward_range[1])
-            self.assertFalse(done)
+            self.assertFalse(terminated)
+            self.assertFalse(truncated)
             self.assertTrue(len(meta.keys()) == 0)
 
     def test_crash(self):
         env = ObservationWrapper(self.env)
         env.reset()
-        state, reward, done, _ = env.step(np.nan)
+        state, reward, terminated, truncated, _ = env.step(np.nan)
         self.assertTrue(env.crashed)
         self.assertFalse(any(np.isnan(state)))
         self.assertTrue(reward == env.crash_penalty)
@@ -87,13 +88,13 @@ class TestSGDEnv(unittest.TestCase):
             env.reset()
             instance_idxs.append(env.instance_index)
 
-            done = False
+            terminated, truncated = False, False
             mem = []
             step = 0
-            while not done and step < 5:
+            while not (terminated or truncated) and step < 5:
                 action = np.exp(rng.integers(low=-10, high=1))
-                state, reward, done, _ = env.step(action)
-                mem.append(np.concatenate([state, [reward, int(done), action]]))
+                state, reward, terminated, truncated, _ = env.step(action)
+                mem.append(np.concatenate([state, [reward, int(truncated), action]]))
                 step += 1
             mems.append(np.array(mem))
 
@@ -103,13 +104,13 @@ class TestSGDEnv(unittest.TestCase):
             env.reset()
             self.assertTrue(env.instance_index == idx)
 
-            done = False
+            terminated, truncated = False, False
             mem = []
             step = 0
-            while not done and step < 5:
+            while not (terminated or truncated) and step < 5:
                 action = mems[-(i + 1)][step][-1]
-                state, reward, done, _ = env.step(action)
-                mem.append(np.concatenate([state, [reward, int(done), action]]))
+                state, reward, terminated, truncated, _ = env.step(action)
+                mem.append(np.concatenate([state, [reward, int(truncated), action]]))
                 step += 1
             np.testing.assert_allclose(mems[-(i + 1)], np.array(mem))
 
@@ -125,13 +126,13 @@ class TestSGDEnv(unittest.TestCase):
 
             env.reset()
 
-            done = False
+            terminated, truncated = False, False
             mem = []
             step = 0
-            while not done and step < 5:
+            while not (terminated or truncated) and step < 5:
                 action = np.exp(rng.integers(low=-10, high=1))
-                state, reward, done, _ = env.step(action)
-                mem.append(np.concatenate([state, [reward, int(done), action]]))
+                state, reward, terminated, truncated, _ = env.step(action)
+                mem.append(np.concatenate([state, [reward, int(truncated), action]]))
                 step += 1
             mems.append(np.array(mem))
         self.assertEqual(mems[0].size, mems[1].size)
@@ -140,7 +141,7 @@ class TestSGDEnv(unittest.TestCase):
 
     def test_get_default_state(self):
         self.env.reset()
-        state, _, _, _ = self.env.step(0.5)
+        state, _, _, _, _ = self.env.step(0.5)
         self.assertTrue(issubclass(type(state), dict))
         self.assertTrue(
             np.array_equal(

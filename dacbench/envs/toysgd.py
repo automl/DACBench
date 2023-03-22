@@ -121,10 +121,11 @@ class ToySGDEnv(AbstractEnv):
             - state : Dict[str, float]
                 State with entries "remaining_budget", "gradient", "learning_rate", "momentum"
             - reward : float
-            - done : bool
+            - terminated : bool
+            - truncated : bool
             - info : Dict
         """
-        done = False
+        truncated = super(ToySGDEnv, self).step_()
         info = {}
 
         # parse action
@@ -164,12 +165,10 @@ class ToySGDEnv(AbstractEnv):
 
         # Stop criterion
         self.n_steps += 1
-        if self.n_steps > self.n_steps_max:
-            done = True
 
-        return state, reward, done, info
+        return state, reward, False, truncated, info
 
-    def reset(self):
+    def reset(self, seed=None, options={}):
         """
         Reset environment
 
@@ -177,8 +176,10 @@ class ToySGDEnv(AbstractEnv):
         -------
         np.array
             Environment state
+        dict
+            Meta-info
         """
-        super(ToySGDEnv, self).reset_()
+        super(ToySGDEnv, self).reset_(seed)
 
         self.velocity = 0
         self.gradient = 0
@@ -198,7 +199,7 @@ class ToySGDEnv(AbstractEnv):
             "gradient": self.gradient,
             "learning_rate": self.learning_rate,
             "momentum": self.momentum,
-        }
+        }, {}
 
     def render(self, **kwargs):
         import matplotlib.pyplot as plt

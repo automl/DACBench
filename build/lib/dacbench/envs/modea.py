@@ -62,10 +62,11 @@ class ModeaEnv(AbstractEnv):
         self.budgets = {"small": None, "large": None}
         self.regime = "first"
         self.update_parameters()
-        return self.get_state(self)
+        return self.get_state(self), {}
 
     def step(self, action):
-        done = super(ModeaEnv, self).step_()
+        truncated = super(ModeaEnv, self).step_()
+        terminated = False
         self.representation = self.ensureFullLengthRepresentation(action)
         opts = getOpts(self.representation[: len(options)])
         self.switchConfiguration(opts)
@@ -77,13 +78,13 @@ class ModeaEnv(AbstractEnv):
             self.es.budget <= self.es.used_budget
             or self.es.parameters.checkLocalRestartConditions(self.es.used_budget)
         ):
-            done = done or self.restart()
+            terminated = self.restart()
             if self.es.total_used_budget < self.es.total_budget:
                 self.update_parameters()
             else:
-                done = True
+                terminated = True
 
-        return self.get_state(self), self.get_reward(self), done, {}
+        return self.get_state(self), self.get_reward(self), terminated, truncated, {}
 
     def update_parameters(self):
         # Every local restart needs its own parameters, so parameter update/mutation must also be linked every time

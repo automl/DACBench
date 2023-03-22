@@ -70,8 +70,8 @@ class SigmoidEnv(AbstractEnv):
 
         Returns
         -------
-        np.array, float, bool, dict
-            state, reward, done, info
+        np.array, float, bool, bool, dict
+            state, reward, terminated, truncated, info
         """
         self.done = super(SigmoidEnv, self).step_()
         action = self.action_mapper[action]
@@ -82,9 +82,9 @@ class SigmoidEnv(AbstractEnv):
         self.action = action
         next_state = self.get_state(self)
         self._prev_state = next_state
-        return next_state, self.get_reward(self), self.done, {}
+        return next_state, self.get_reward(self), False, self.done, {}
 
-    def reset(self) -> List[int]:
+    def reset(self, seed=None, options={}) -> List[int]:
         """
         Resets env
 
@@ -93,11 +93,11 @@ class SigmoidEnv(AbstractEnv):
         numpy.array
             Environment state
         """
-        super(SigmoidEnv, self).reset_()
+        super(SigmoidEnv, self).reset_(seed)
         self.shifts = self.instance[: self.n_actions]
         self.slopes = self.instance[self.n_actions :]
         self._prev_state = None
-        return self.get_state(self)
+        return self.get_state(self), {}
 
     def get_default_reward(self, _):
         r = [

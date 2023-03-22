@@ -2,17 +2,17 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import gym
+import gymnasium as gym
 import numpy as np
 import pandas as pd
 
 
-from dacbench.agents import RandomAgent
+from dacbench.agents import StaticAgent
 from dacbench.benchmarks import (
     LubyBenchmark,
     FastDownwardBenchmark,
     CMAESBenchmark,
-    ModeaBenchmark,
+    ModCMABenchmark
 )
 from dacbench.logger import Logger, load_logs, log2dataframe
 from dacbench.runner import run_benchmark
@@ -31,13 +31,14 @@ class TestActionTrackingWrapper(unittest.TestCase):
             episode_write_frequency=1,
         )
 
-        bench = ModeaBenchmark()
+        bench = ModCMABenchmark()
         bench.set_seed(seed)
         env = bench.get_environment()
         env.seed_action_space(seed)
         action_logger = logger.add_module(ActionFrequencyWrapper)
         wrapped = ActionFrequencyWrapper(env, logger=action_logger)
-        agent = RandomAgent(env)
+        action = env.action_space.sample()
+        agent = StaticAgent(env, action)
         logger.set_env(env)
 
         run_benchmark(wrapped, agent, 1, logger)
@@ -48,149 +49,17 @@ class TestActionTrackingWrapper(unittest.TestCase):
 
         expected_actions = pd.DataFrame(
             {
-                "action_0": {
-                    0: 0,
-                    1: 1,
-                    2: 0,
-                    3: 1,
-                    4: 1,
-                    5: 0,
-                    6: 1,
-                    7: 1,
-                    8: 0,
-                    9: 0,
-                    10: 0,
-                },
-                "action_1": {
-                    0: 1,
-                    1: 0,
-                    2: 1,
-                    3: 0,
-                    4: 0,
-                    5: 1,
-                    6: 0,
-                    7: 1,
-                    8: 0,
-                    9: 0,
-                    10: 1,
-                },
-                "action_10": {
-                    0: 0,
-                    1: 0,
-                    2: 1,
-                    3: 0,
-                    4: 0,
-                    5: 0,
-                    6: 0,
-                    7: 2,
-                    8: 1,
-                    9: 2,
-                    10: 1,
-                },
-                "action_2": {
-                    0: 1,
-                    1: 1,
-                    2: 1,
-                    3: 0,
-                    4: 1,
-                    5: 1,
-                    6: 1,
-                    7: 1,
-                    8: 0,
-                    9: 0,
-                    10: 1,
-                },
-                "action_3": {
-                    0: 0,
-                    1: 1,
-                    2: 1,
-                    3: 1,
-                    4: 1,
-                    5: 1,
-                    6: 1,
-                    7: 0,
-                    8: 0,
-                    9: 1,
-                    10: 1,
-                },
-                "action_4": {
-                    0: 0,
-                    1: 1,
-                    2: 1,
-                    3: 0,
-                    4: 1,
-                    5: 0,
-                    6: 0,
-                    7: 1,
-                    8: 0,
-                    9: 1,
-                    10: 0,
-                },
-                "action_5": {
-                    0: 1,
-                    1: 0,
-                    2: 0,
-                    3: 0,
-                    4: 1,
-                    5: 1,
-                    6: 1,
-                    7: 0,
-                    8: 0,
-                    9: 0,
-                    10: 1,
-                },
-                "action_6": {
-                    0: 0,
-                    1: 1,
-                    2: 1,
-                    3: 0,
-                    4: 0,
-                    5: 0,
-                    6: 0,
-                    7: 0,
-                    8: 1,
-                    9: 0,
-                    10: 0,
-                },
-                "action_7": {
-                    0: 1,
-                    1: 0,
-                    2: 0,
-                    3: 0,
-                    4: 0,
-                    5: 0,
-                    6: 0,
-                    7: 1,
-                    8: 1,
-                    9: 1,
-                    10: 0,
-                },
-                "action_8": {
-                    0: 0,
-                    1: 1,
-                    2: 0,
-                    3: 1,
-                    4: 1,
-                    5: 1,
-                    6: 0,
-                    7: 1,
-                    8: 0,
-                    9: 0,
-                    10: 1,
-                },
-                "action_9": {
-                    0: 1,
-                    1: 2,
-                    2: 1,
-                    3: 0,
-                    4: 0,
-                    5: 1,
-                    6: 1,
-                    7: 1,
-                    8: 2,
-                    9: 0,
-                    10: 2,
-                },
+                "action_0": [action[0]]*10,
+                "action_1": [action[1]]*10,
+                "action_10": [action[10]]*10,
+                "action_2": [action[2]]*10,
+                "action_3": [action[3]]*10,
+                "action_4": [action[4]]*10,
+                "action_5": [action[5]]*10,
+                "action_6": [action[6]]*10,
+                "action_7": [action[7]]*10,
+                "action_8": [action[8]]*10,
+                "action_9": [action[9]]*10,
             }
         )
 
@@ -224,7 +93,8 @@ class TestActionTrackingWrapper(unittest.TestCase):
 
         action_logger = logger.add_module(ActionFrequencyWrapper)
         wrapped = ActionFrequencyWrapper(env, logger=action_logger)
-        agent = RandomAgent(env)
+        action = env.action_space.sample()
+        agent = StaticAgent(env, action)
         logger.set_env(env)
 
         run_benchmark(wrapped, agent, 10, logger)
@@ -233,89 +103,8 @@ class TestActionTrackingWrapper(unittest.TestCase):
         logs = load_logs(action_logger.get_logfile())
         dataframe = log2dataframe(logs, wide=True)
 
-        expected_actions = [
-            0,
-            3,
-            5,
-            4,
-            3,
-            5,
-            5,
-            5,
-            3,
-            3,
-            2,
-            1,
-            0,
-            1,
-            2,
-            0,
-            1,
-            1,
-            0,
-            1,
-            2,
-            4,
-            3,
-            0,
-            1,
-            3,
-            0,
-            3,
-            3,
-            3,
-            4,
-            4,
-            4,
-            5,
-            4,
-            0,
-            4,
-            2,
-            1,
-            3,
-            4,
-            2,
-            1,
-            3,
-            3,
-            2,
-            0,
-            5,
-            2,
-            5,
-            2,
-            1,
-            5,
-            3,
-            2,
-            5,
-            1,
-            0,
-            2,
-            3,
-            1,
-            3,
-            2,
-            3,
-            2,
-            4,
-            3,
-            4,
-            0,
-            5,
-            5,
-            1,
-            5,
-            0,
-            1,
-            5,
-            5,
-            3,
-            3,
-            2,
-        ]
-
+        expected_actions = [action]*80
+        
         self.assertListEqual(dataframe.action.to_list(), expected_actions)
 
         temp_dir.cleanup()
@@ -340,13 +129,15 @@ class TestActionTrackingWrapper(unittest.TestCase):
         env = bench.get_environment()
         wrapped = ActionFrequencyWrapper(env, 10)
 
-        state = wrapped.reset()
+        state, info = wrapped.reset()
+        self.assertTrue(issubclass(type(info), dict))
         self.assertTrue(len(state) > 1)
 
-        state, reward, done, _ = wrapped.step(1)
+        state, reward, terminated, truncated, _ = wrapped.step(1)
         self.assertTrue(len(state) > 1)
         self.assertTrue(reward <= 0)
-        self.assertFalse(done)
+        self.assertFalse(terminated)
+        self.assertFalse(truncated)
 
         self.assertTrue(len(wrapped.overall_actions) == 1)
         self.assertTrue(wrapped.overall_actions[0] == 1)
@@ -412,10 +203,10 @@ class TestActionTrackingWrapper(unittest.TestCase):
                 self.metadata = {}
 
             def reset(self):
-                return 1
+                return 1, {}
 
             def step(self, action):
-                return 1, 1, 1, 1
+                return 1, 1, 1, 1, {}
 
         env = dict_action_env()
         wrapped = ActionFrequencyWrapper(env)
@@ -436,10 +227,10 @@ class TestActionTrackingWrapper(unittest.TestCase):
                 self.metadata = {}
 
             def reset(self):
-                return 1
+                return 1, {}
 
             def step(self, action):
-                return 1, 1, 1, 1
+                return 1, 1, 1, 1, {}
 
         env = tuple_action_env()
         wrapped = ActionFrequencyWrapper(env)
@@ -455,10 +246,10 @@ class TestActionTrackingWrapper(unittest.TestCase):
                 self.metadata = {}
 
             def reset(self):
-                return 1
+                return 1, {}
 
             def step(self, action):
-                return 1, 1, 1, 1
+                return 1, 1, 1, 1, {}
 
         env = multi_discrete_action_env()
         wrapped = ActionFrequencyWrapper(env, 5)
@@ -476,10 +267,10 @@ class TestActionTrackingWrapper(unittest.TestCase):
                 self.metadata = {}
 
             def reset(self):
-                return 1
+                return 1, {}
 
             def step(self, action):
-                return 1, 1, 1, 1
+                return 1, 1, 1, 1, {}
 
         env = multi_binary_action_env()
         wrapped = ActionFrequencyWrapper(env)
@@ -496,10 +287,10 @@ class TestActionTrackingWrapper(unittest.TestCase):
                 self.metadata = {}
 
             def reset(self):
-                return 1
+                return 1, {}
 
             def step(self, action):
-                return 1, 1, 1, 1
+                return 1, 1, 1, 1, {}
 
         env = large_action_env()
         wrapped = ActionFrequencyWrapper(env)

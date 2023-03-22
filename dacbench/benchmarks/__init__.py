@@ -28,17 +28,6 @@ else:
         "CMA-ES Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )
 
-modea_spec = importlib.util.find_spec("modea")
-found = modea_spec is not None
-if found:
-    from dacbench.benchmarks.modea_benchmark import ModeaBenchmark
-
-    __all__.append("ModeaBenchmark")
-else:
-    warnings.warn(
-        "Modea Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
-    )
-
 modcma_spec = importlib.util.find_spec("modcma")
 found = modcma_spec is not None
 if found:

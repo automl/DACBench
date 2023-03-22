@@ -1,5 +1,5 @@
-from gym import spaces
-from gym import Wrapper
+from gymnasium import spaces
+from gymnasium import Wrapper
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -112,10 +112,10 @@ class StateTrackingWrapper(Wrapper):
 
         Returns
         -------
-        np.array
-            state
+        np.array, {}
+            state, info
         """
-        state = self.env.reset()
+        state, info = self.env.reset()
         self.overall_states.append(state)
         if self.state_interval:
             if len(self.current_states) < self.state_interval:
@@ -123,7 +123,7 @@ class StateTrackingWrapper(Wrapper):
             else:
                 self.state_intervals.append(self.current_states)
                 self.current_states = [state]
-        return state
+        return state, info
 
     def step(self, action):
         """
@@ -139,7 +139,7 @@ class StateTrackingWrapper(Wrapper):
         np.array, float, bool, dict
             state, reward, done, metainfo
         """
-        state, reward, done, info = self.env.step(action)
+        state, reward, terminated, truncated, info = self.env.step(action)
         self.overall_states.append(state)
         if self.logger is not None:
             self.logger.log_space("state", state, self.state_description)
@@ -149,7 +149,7 @@ class StateTrackingWrapper(Wrapper):
             else:
                 self.state_intervals.append(self.current_states)
                 self.current_states = [state]
-        return state, reward, done, info
+        return state, reward, terminated, truncated, info
 
     def get_states(self):
         """
@@ -235,6 +235,9 @@ class StateTrackingWrapper(Wrapper):
                     ax.legend(loc="upper left")
             return p, p2
 
+        print(self.state_type)
+        print(spaces.Tuple)
+        print(self.state_type==spaces.Tuple)
         if self.state_type == spaces.Discrete:
             figure = plt.figure(figsize=(20, 20))
             canvas = FigureCanvas(figure)
@@ -282,6 +285,8 @@ class StateTrackingWrapper(Wrapper):
                     y = i % state_length // dim == 0
                     p, p2 = plot_single(axarr[i % dim, i // dim], i, x=x, y=y)
             canvas.draw()
+        else:
+            raise ValueError('Unknown state type')
         width, height = figure.get_size_inches() * figure.get_dpi()
         img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
             int(height), int(width), 3
