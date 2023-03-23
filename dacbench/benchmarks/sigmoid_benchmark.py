@@ -10,8 +10,9 @@ import ConfigSpace.hyperparameters as CSH
 ACTION_VALUES = (5, 10)
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
-X = CSH.UniformIntegerHyperparameter(name='value_index', lower=0, upper=int(np.prod(ACTION_VALUES)))
-DEFAULT_CFG_SPACE.add_hyperparameter(X)
+for i, d in enumerate(ACTION_VALUES):
+    X = CSH.UniformIntegerHyperparameter(name=f'value_dim_{i}', lower=0, upper=d-1)
+    DEFAULT_CFG_SPACE.add_hyperparameter(X)
 
 INFO = {
     "identifier": "Sigmoid",
@@ -31,8 +32,8 @@ INFO = {
 SIGMOID_DEFAULTS = objdict(
     {
         "config_space": DEFAULT_CFG_SPACE,
-        "action_space_class": "Discrete",
-        "action_space_args": [int(np.prod(ACTION_VALUES))],
+        "action_space_class": "MultiDiscrete",
+        "action_space_args": list(int(ACTION_VALUES)),
         "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [
@@ -44,6 +45,7 @@ SIGMOID_DEFAULTS = objdict(
         "action_values": ACTION_VALUES,
         "slope_multiplier": 2.0,
         "seed": 0,
+        "multi_agent": False,
         "instance_set_path": "../instance_sets/sigmoid/sigmoid_2D3M_train.csv",
         "test_set_path": "../instance_sets/sigmoid/sigmoid_2D3M_test.csv",
         "benchmark_info": INFO,
@@ -102,7 +104,7 @@ class SigmoidBenchmark(AbstractBenchmark):
                 ):  # ... in both actions and x-axis state, only ...
                     env = ContinuousSigmoidEnv(self.config)
                 elif (
-                    self.config["action_space"] == "Discrete"
+                    self.config["action_space"] == "MultiDiscrete"
                 ):  # ... continuous in the x-axis state or ...
                     env = ContinuousStateSigmoidEnv(self.config)
                 else:
@@ -130,7 +132,7 @@ class SigmoidBenchmark(AbstractBenchmark):
             A list of possible actions per dimension
         """
         self.config.action_values = values
-        self.config.action_space_args = [int(np.prod(values))]
+        self.config.action_space_args = list(int(values))
         self.config.observation_space_args = [
             np.array([-np.inf for _ in range(1 + len(values) * 3)]),
             np.array([np.inf for _ in range(1 + len(values) * 3)]),

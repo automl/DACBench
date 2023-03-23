@@ -46,6 +46,7 @@ DEFAULTS = objdict(
         "reward_range": (-np.inf, np.inf),
         "cutoff": 10,
         "seed": 0,
+        "multi_agent": False,
         "instance_set_path": "../instance_sets/toysgd/toysgd_default.csv",
         "benchmark_info": INFO,
     }

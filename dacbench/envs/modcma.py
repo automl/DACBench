@@ -2,10 +2,10 @@ import numpy as np
 from modcma import ModularCMAES, Parameters
 from IOHexperimenter import IOH_function
 
-from dacbench import AbstractEnv
+from dacbench import AbstractMADACEnv
 
 
-class ModCMAEnv(AbstractEnv):
+class ModCMAEnv(AbstractMADACEnv):
     def __init__(self, config):
         super().__init__(config)
 

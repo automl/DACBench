@@ -379,3 +379,141 @@ class AbstractEnv(gym.Env):
         self.instance_id_list = self.training_id_list
         self.inst_id = self.training_inst_id
         self.instance = self.training_instance
+
+
+class AbstractMADACEnv(AbstractEnv):
+    def __init__(self, config):
+        """
+        Initialize environment
+
+        Parameters
+        -------
+        config : dict
+            Environment configuration
+            If to seed the action space as well
+        """
+        super(AbstractMADACEnv, self).__init__(config)
+        self.multi_agent = False
+        if 'multi_agent' in config.keys():
+            self.multi_agent = config.multi_agent
+   
+        if self.multi_agent:
+            space_class = type(self.env.action_space)
+            if space_class == gym.spaces.Box:
+                num_hps = len(self.env.action_space.low)
+            elif space_class == gym.spaces.MultiDiscrete:
+                num_hps = len(self.env.action_space.nvec)
+            else:
+                print(
+                    "The MultiAgent environment currently only supports action spaces of types Box and MultiDiscrete"
+                )
+                raise TypeError
+            self.possible_agents = np.arange(num_hps)
+            self.hp_names = []
+            if 'config_space' self.config.keys():
+                self.hp_names = self.config['config_space'].get_hyperparameter_names()
+            self.max_num_agent = len(self.possible_agents)
+            self.env_step = self.step
+            self.env_reset = self.reset
+            self.step = self.multi_agent_step
+            self.reset = self.multi_agent_reset
+            self.agents = []
+            self.current_agent = None
+            self.observation = None
+            self.reward = None
+            self.termination = False
+            self.truncation = False
+            self.info = None
+            # TODO: this should be set to a reasonable default, ideally
+            # Else playing with less than the full number of agents will be really hard
+            self.action = self.env.action_space.sample()
+
+    def multi_agent_reset(self, seed: int = None):
+        self.observation, self.info = self.env_reset(seed)
+
+    def last(self):
+        return self.observation, self.reward, self.termination, self.truncation, self.info
+
+    def multi_agent_step(self, action):
+        self.action[self.current_agent] = action
+        self.current_agent = self.agents.index(self.current_agent) + 1
+        if self.current_agent >= len(self.agents):
+            self.observation, self.reward, self.termination, self.truncation, self.info = self.env_step(self.action)
+            self.current_agent = self.agents[0]
+
+    def register_agent(self, agent_id):
+        if type(agent_id) == str:
+            if len(agent_id) > 1:
+                if agent_id in self.hp_names:
+                    agent_id = self.hp_names.index(agent_id)
+            else:
+                agent_id = int(agent_id)
+        assert agent_id not in self.agents
+        assert agent_id in self.possible_agents
+        self.agents.append(agent_id)
+        if self.current_agent is None:
+            self.current_agent = agent_id
+
+    def remove_agent(self, agent_id):
+        if agent_id in self.agents:
+            self.agents.remove(agent_id)
+
+    @property
+    def num_agents(self):
+        return len(self.agents)
+
+    @property
+    def agent_selection(self):
+        return self.current_agent
+
+    @property
+    def action_spaces(self):
+        space_class = type(self.env.action_space)
+        if space_class == gym.spaces.Box:
+            lowers = self.env.action_space.low
+            uppers = self.env.action_space.high
+        else:
+            num_options = [len(n) for n in self.env.action_space.nvec]
+        action_spaces = {}
+        for a in self.agents:
+            if space_class == gym.spaces.Box:
+                subspace = gym.spaces.Box(low=[lowers[a]], high=[uppers[a]])
+            else:
+                subspace = gym.spaces.Discrete(num_options[a])
+            action_spaces[a] = subspace
+        return action_spaces
+
+    @property
+    def observation_spaces(self):
+        obs_spaces = {}
+        for a in self.agents:
+            obs_spaces[a] = self.env.observation_space
+        return obs_spaces
+
+    @property
+    def infos(self):
+        infos = {}
+        for a in self.agents:
+            infos[a] = self.info
+        return infos
+
+    @property
+    def rewards(self):
+        rewards = {}
+        for a in self.agents:
+            rewards[a] = self.rewards
+        return rewards
+
+    @property
+    def terminations(self):
+        terminations = {}
+        for a in self.agents:
+            terminations[a] = self.termination
+        return terminations
+
+    @property
+    def truncations(self):
+        truncations = {}
+        for a in self.agents:
+            truncations[a] = self.truncation
+        return truncations

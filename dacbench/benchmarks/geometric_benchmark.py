@@ -28,6 +28,7 @@ GEOMETRIC_DEFAULTS = objdict(
         "observation_space_args": [],
         "reward_range": (0, 1),
         "seed": 0,
+        "multi_agent": False,
         "cutoff": 10,
         "action_values": [],
         "action_value_default": 4,
@@ -233,10 +234,11 @@ class GeometricBenchmark(AbstractBenchmark):
 
         self.config.action_values = values
         cs = CS.ConfigurationSpace()
-        actions = CSH.UniformIntegerHyperparameter(
-            name="curve_values", lower=0, upper=int(np.prod(values))
-        )
-        cs.add_hyperparameter(actions)
+        for i, v in enumerate(values):
+            actions = CSH.UniformIntegerHyperparameter(
+                name=f"curve_values_dim_{i}", lower=0, upper=v
+            )
+            cs.add_hyperparameter(actions)
         self.config.config_space = cs
 
         num_info = 2

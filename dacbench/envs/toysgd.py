@@ -1,4 +1,4 @@
-from dacbench import AbstractEnv
+from dacbench import AbstractMADACEnv
 import numpy as np
 from numpy.polynomial import Polynomial
 from typing import Union, Tuple, Optional, Dict
@@ -36,7 +36,7 @@ def sample_coefficients(order: int = 2, low: float = -10, high: float = 10):
     return coeffs
 
 
-class ToySGDEnv(AbstractEnv):
+class ToySGDEnv(AbstractMADACEnv):
     """
     Optimize toy functions with SGD + Momentum.
 

@@ -50,7 +50,6 @@ class GeometricEnv(AbstractEnv):
         self._prev_state = None
         self.action = None
         self.n_actions = len(self.action_vals)
-        self.action_mapper = {}
 
         # Functions
         self.functions = Functions(
@@ -72,13 +71,6 @@ class GeometricEnv(AbstractEnv):
 
         self.derivative = []
         self.derivative_set = {}
-
-        # Map actions from int to vector representation
-        for idx, prod_idx in zip(
-            range(np.prod(config["action_values"])),
-            itertools.product(*[np.arange(val) for val in config["action_values"]]),
-        ):
-            self.action_mapper[idx] = prod_idx
 
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
@@ -124,12 +116,6 @@ class GeometricEnv(AbstractEnv):
                 )
 
         optimal_policy = optimal_policy.astype(int)
-        if not vector_action:
-            reverse_action_mapper = {v: k for k, v in self.action_mapper.items()}
-            optimal_policy = [
-                reverse_action_mapper[tuple(vec)] for vec in optimal_policy
-            ]
-
         return optimal_policy
 
     def step(self, action: int):
@@ -147,17 +133,11 @@ class GeometricEnv(AbstractEnv):
             state, reward, terminated, truncated, info
         """
         self.done = super(GeometricEnv, self).step_()
-
-        # map integer action to vector
-        action_vec = self.action_mapper[action]
-        assert self.n_actions == len(
-            action_vec
-        ), f"action should be of length {self.n_actions}."
-        self.action = action_vec
+        self.action = action
 
         coords = self.functions.get_coordinates_at_time_step(self.c_step)
         self.coord_trajectory.append(coords)
-        self.action_trajectory.append(np.array(action_vec))
+        self.action_trajectory.append(action)
 
         self.coord_trajectory_set[self.inst_id] = self.coord_trajectory
         self.action_trajectory_set[self.inst_id] = self.action_trajectory

@@ -70,6 +70,7 @@ MODCMA_DEFAULTS = objdict(
         "budget": 100,
         "cutoff": 1e6,
         "seed": 0,
+        "multi_agent": False,
         "instance_set_path": os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             "../instance_sets/modea/modea_train.csv",
