@@ -1,24 +1,59 @@
 name: tests
-on: [ push ]
+on:
+  push:
+    branches:
+      - main
+      - gymnasium_migration
+  pull_request:
+    branches:
+      - main
+
 jobs:
-  pytest:
-    name: PyTest
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Add conda to system path
-        run: |
-          # $CONDA is an environment variable pointing to the root of the miniconda directory
-          echo $CONDA/bin >> $GITHUB_PATH
-
-      - name: Setup Python 3.10
-        uses: actions/setup-python@v2
         with:
-          python-version: 3.10
-
+          submodules: recursive
+      - name: Cache MNIST
+        id: cache-mnist
+        uses: actions/cache@v2
+        with:
+          path: ./data/MNIST
+          key: mnist
+      - name: Cache Fast-downward build
+        id: cache-fast-downward-build
+        uses: actions/cache@v2
+        with:
+          path: ./dacbench/envs/rl-plan/fast-downward
+          key: fast-downward-build
+      - name: Install Python 3
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.1
       - name: Install dependencies
         run: |
-          make install-dev
-          
-      - name: Run pytest 
-        run: pytest tests
+          python -m pip install --upgrade pip
+          pip install -e.[dev,example,all]
+      - name: Build fast-downward
+        run: ./dacbench/envs/rl-plan/fast-downward/build.py
+      - name: Run tests with pytest
+        run: coverage run -m pytest --html=test-report.html
+      - name: Run coverage
+        run: |
+          coverage report
+          coverage html
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: code-coverage-report
+          path: coverage_report
+      - name: Archive test report
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: test-report
+          path: |
+            test-report.html
+            assets
