@@ -6,6 +6,8 @@
 
 .PHONY: help install-dev check format pre-commit clean build clean-doc clean-build test doc publish
 
+DOCDIR := docs
+
 help:
 	@echo "Makefile DACBench"
 	@echo "* install-dev      to install all dev requirements and install pre-commit"
@@ -87,8 +89,8 @@ clean: clean-doc clean-build
 build:
 	$(PYTHON) setup.py sdist
 
-doc:
-	$(MAKE) -C ${DOCDIR} all
+docs:
+	$(MAKE) -C ${DOCDIR} docs
 	@echo
 	@echo "View docs at:"
 	@echo ${INDEX_HTML}
