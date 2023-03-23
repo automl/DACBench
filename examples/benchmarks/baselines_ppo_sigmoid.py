@@ -1,6 +1,6 @@
 import tensorflow as tf
 import warnings
-from stable_baselines import PPO2
+from stable_baselines3 import PPO2
 from dacbench.benchmarks import SigmoidBenchmark
 from dacbench.wrappers import PerformanceTrackingWrapper
 

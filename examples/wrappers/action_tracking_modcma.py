@@ -3,12 +3,12 @@ from pathlib import Path
 from dacbench.agents import RandomAgent
 from dacbench.logger import Logger
 from dacbench.runner import run_benchmark
-from dacbench.benchmarks import ModeaBenchmark
+from dacbench.benchmarks import ModCMABenchmark
 from dacbench.wrappers import ActionFrequencyWrapper
 
 
 # Make ModeaBenchmark environment
-bench = ModeaBenchmark()
+bench = ModCMABenchmark()
 env = bench.get_environment()
 
 # Make logger object

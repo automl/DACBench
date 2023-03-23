@@ -29,23 +29,23 @@ agent = make_chainer_a3c(obs_size, action_size)
 num_episodes = 3
 for i in range(num_episodes):
     # Reset environment to begin episode
-    state = env.reset()
+    state, _ = env.reset()
 
     # Initialize episode
-    done = False
+    terminated, truncated = False, False
     r = 0
     reward = 0
-    while not done:
+    while not (terminated or truncated):
         # Select action
         action = agent.act_and_train(state, reward)
         # Execute action
-        next_state, reward, done, _ = env.step(action)
+        next_state, reward, terminated, truncated, _ = env.step(action)
         r += reward
         logger.next_step()
         state = next_state
     logger.next_episode()
     # Train agent after episode has ended
-    agent.stop_episode_and_train(state, reward, done=done)
+    agent.stop_episode_and_train(state, reward, done=terminated or truncated)
     # Log episode
     print(
         f"Episode {i+1}/{num_episodes}...........................................Reward: {r}"

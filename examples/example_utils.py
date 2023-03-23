@@ -22,11 +22,11 @@ class DummyEnv(gym.Env):
 
     def step(self, action):
         self.c_step += 1
-        return np.array([0]), 0, self.c_step > 9, {}
+        return np.array([0]), 0, False, self.c_step > 9, {}
 
     def reset(self):
         self.c_step = 0
-        return np.array([1])
+        return np.array([1]), {}
 
 
 class QTable(dict):
@@ -142,7 +142,7 @@ def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
     """
     cumuls = []
     for _ in range(nevaluations):
-        evaluation_state = this_environment.reset()
+        evaluation_state, _ = this_environment.reset()
         episode_length, cummulative_reward = 0, 0
         expected_reward = np.max(Q[evaluation_state])
         greedy = make_tabular_policy(Q, 0, this_environment.action_space.n)
@@ -150,12 +150,12 @@ def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
             evaluation_action = np.random.choice(
                 list(range(this_environment.action_space.n)), p=greedy(evaluation_state)
             )
-            s_, evaluation_reward, evaluation_done, _ = this_environment.step(
+            s_, evaluation_reward, eval_done, evaluation_done, _ = this_environment.step(
                 evaluation_action
             )
             cummulative_reward += evaluation_reward
             episode_length += 1
-            if evaluation_done:
+            if evaluation_done or eval_done:
                 break
 
             evaluation_state = s_
@@ -175,15 +175,15 @@ def update(
     :param discount_factor: discounting factor
     """
     # Need to parse to string to easily handle list as state with defdict
-    policy_state = environment.reset()
+    policy_state, _ = environment.reset()
     episode_length, cummulative_reward = 0, 0
     expected_reward = np.max(Q[policy_state])
-    done = False
-    while not done:  # roll out episode
+    terminated, truncated = False, False
+    while not (terminated or truncated):  # roll out episode
         policy_action = np.random.choice(
             list(range(environment.action_space.n)), p=policy(policy_state)
         )
-        s_, policy_reward, done, _ = environment.step(policy_action)
+        s_, policy_reward, terminated, truncated, _ = environment.step(policy_action)
         cummulative_reward += policy_reward
         episode_length += 1
         Q[[policy_state, policy_action]] = Q[[policy_state, policy_action]] + alpha * (
@@ -287,16 +287,16 @@ def train_chainer(
     agent, env, num_episodes=10, flatten_state=False, logger: Logger = None
 ):
     for i in range(num_episodes):
-        state = env.reset()
+        state, _ = env.reset()
         if flatten_state:
             state = np.array(flatten([state[k] for k in state.keys()]))
             state = state.astype(np.float32)
-        done = False
+        terminated, truncated = False, False
         r = 0
         reward = 0
-        while not done:
+        while not (terminated or truncated):
             action = agent.act_and_train(state, reward)
-            next_state, reward, done, _ = env.step(action)
+            next_state, reward, terminated, truncated, _ = env.step(action)
             r += reward
             if flatten_state:
                 state = np.array(flatten([next_state[k] for k in next_state.keys()]))
@@ -305,7 +305,7 @@ def train_chainer(
                 state = next_state
             if logger is not None:
                 logger.next_step()
-        agent.stop_episode_and_train(state, reward, done=done)
+        agent.stop_episode_and_train(state, reward, done=terminated or truncated)
         if logger is not None:
             logger.next_episode()
         print(
