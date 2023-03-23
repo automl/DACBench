@@ -428,6 +428,24 @@ class AbstractMADACEnv(AbstractEnv):
             # Else playing with less than the full number of agents will be really hard
             self.action = self.env.action_space.sample()
 
+            self.observation_spaces = {}
+            for a in self.possible_agents:
+                self.observation_spaces[a] = self.env.observation_space
+
+            space_class = type(self.env.action_space)
+            if space_class == gym.spaces.Box:
+                lowers = self.env.action_space.low
+                uppers = self.env.action_space.high
+            else:
+                num_options = [len(n) for n in self.env.action_space.nvec]
+            self.action_spaces = {}
+            for a in self.possible_agents:
+                if space_class == gym.spaces.Box:
+                    subspace = gym.spaces.Box(low=[lowers[a]], high=[uppers[a]])
+                else:
+                    subspace = gym.spaces.Discrete(num_options[a])
+                self.action_spaces[a] = subspace
+
     def multi_agent_reset(self, seed: int = None):
         self.observation, self.info = self.env_reset(seed)
 
@@ -465,30 +483,6 @@ class AbstractMADACEnv(AbstractEnv):
     @property
     def agent_selection(self):
         return self.current_agent
-
-    @property
-    def action_spaces(self):
-        space_class = type(self.env.action_space)
-        if space_class == gym.spaces.Box:
-            lowers = self.env.action_space.low
-            uppers = self.env.action_space.high
-        else:
-            num_options = [len(n) for n in self.env.action_space.nvec]
-        action_spaces = {}
-        for a in self.agents:
-            if space_class == gym.spaces.Box:
-                subspace = gym.spaces.Box(low=[lowers[a]], high=[uppers[a]])
-            else:
-                subspace = gym.spaces.Discrete(num_options[a])
-            action_spaces[a] = subspace
-        return action_spaces
-
-    @property
-    def observation_spaces(self):
-        obs_spaces = {}
-        for a in self.agents:
-            obs_spaces[a] = self.env.observation_space
-        return obs_spaces
 
     @property
     def infos(self):

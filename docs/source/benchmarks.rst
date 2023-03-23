@@ -34,11 +34,10 @@ and more costly to run and thus present a real challenge for DAC algorithms:
 
 * :doc:`FastDownward benchmark <benchmark_docs/fastdownward>`: Heuristic selection for the FastDownward Planner on competition tasks.
 * :doc:`CMA-ES <benchmark_docs/cma>`: Step-size adpation for CMA-ES.
-* :doc:`ModEA <benchmark_docs/modea>`: Selection of Algorithm Components for EAs.
 * :doc:`ModCMA <benchmark_docs/modcma>`: Step-size & algorithm component control for EAs backed by IOHProfiler.
 * :doc:`SGD-DL <benchmark_docs/sgd>`: Learning rate adaption for neural networks.
 
-Our benchmarks are based on OpenAI's gym interface for Reinforcement Learning.
+Our benchmarks are based on the `gymnasium interface <https://gymnasium.farama.org/>`_ for Reinforcement Learning.
 That means to run a benchmark, you need to create an environment of that benchmark
 to then interact with it.
 We include examples of this interaction between environment and DAC methods in our
