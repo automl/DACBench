@@ -1,0 +1,727 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Plotting results &#8212; DACBench Documentation 0.2.0 documentation</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.9ea38e314b9e6d9dab77.js">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing to DACBench" href="contrib.html" />
+    <link rel="prev" title="Logging Experiments" href="logging.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+  <a class="navbar-brand" href="../index.html">
+  <!-- <p class="title">DACBench Documentation</p> -->
+  </a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/automl/DACBench" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://twitter.com/automl_org?lang=de" rel="noopener" target="_blank" title="Twitter">
+            <span><i class="fab fa-twitter-square"></i></span>
+            <label class="sr-only">Twitter</label>
+          </a>
+        </li>
+      </ul>
+      </div>
+      
+      <div class="navbar-end-item">
+        <div class="dropdown mt-1">
+    <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
+        data-toggle="dropdown">
+        v0.2.0
+        <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
+        <a class="list-group-item list-group-item-action" href="#">v0.2.0</a>
+    </div>
+</div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <form class="bd-search align-items-center" action="../search.html" method="get" style="width: 100%;">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control btn btn-md" name="q" id="search-input"
+    placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off">
+</form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../index.html">DACBench Documentation</a></h4>
+<div class="mb-3">v0.2.0</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="dac.html">
+   Dynamic Algorithm Configuration - A Short Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="installation.html">
+   How to Install DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="containers.html">
+   Using DACBench Containers
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  The Benchmarks:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmarks.html">
+   Benchmark Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/sigmoid.html">
+   The Sigmoid Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/luby.html">
+   The Luby Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/toy_sgd.html">
+   The ToySGD Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/geometric.html">
+   The Geometric Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/fastdownward.html">
+   The FastDownward Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/theory.html">
+   The Theory Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/cma.html">
+   The PyCMA CMA-ES Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/modcma.html">
+   The IOHProfiler ModCMA Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/sgd.html">
+   The SGD Deep Learning Benchmark
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Using DACBench:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="modifications.html">
+   Saving &amp; Loading Benchmark Configurations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="multi_agent_dac.html">
+   Multi-Agent DAC
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="state_and_reward.html">
+   Modifying Observations &amp; Cost
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="wrappers.html">
+   Functionality through Wrappers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="logging.html">
+   Logging Experiments
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Plotting results
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Misc:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="contrib.html">
+   Contributing to DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cite.html">
+   Citing DACBench
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.plotting.add_multi_level_ticks">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     add_multi_level_ticks()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.plotting.generate_global_step">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     generate_global_step()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.plotting.plot">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     plot()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.plotting.plot_action">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     plot_action()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.plotting.plot_episode_time">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     plot_episode_time()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.plotting.plot_performance">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     plot_performance()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.plotting.plot_performance_per_instance">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     plot_performance_per_instance()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.plotting.plot_space">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     plot_space()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.plotting.plot_state">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     plot_state()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.plotting.plot_step_time">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     plot_step_time()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.plotting.space_sep_upper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     space_sep_upper()
+    </span>
+   </code>
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="plotting-results">
+<h1>Plotting results<a class="headerlink" href="#plotting-results" title="Permalink to this heading">¶</a></h1>
+<p>To immediately plot data stored with DACBench wrappers, you can use the built-in plotting functions.
+They use seaborn and format loaded dataframes automatically (see examples on GitHub).</p>
+<span class="target" id="module-dacbench.plotting"></span><dl class="py function">
+<dt class="sig sig-object py" id="dacbench.plotting.add_multi_level_ticks">
+<span class="sig-prename descclassname"><span class="pre">dacbench.plotting.</span></span><span class="sig-name descname"><span class="pre">add_multi_level_ticks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label_columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/plotting.html#add_multi_level_ticks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.plotting.add_multi_level_ticks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expects a FacedGrid with global_step (x_column) as x-axis and replaces the tick labels to match format episode:step.</p>
+<p>E.g. Run with 3 episodes, each of 10 steps. This results in 30 global steps.
+The resulting tick labels could be [‘0’, ‘4’, ‘9’, ‘14’, ‘19’, ‘24’, ‘29’].
+After applying this method they will look like [‘0:0’, ‘0:4’, ‘1:0’, ‘1:4’, ‘2:0’, ‘2:4’, ‘3:0’, ‘3:4’]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>sns.FacesGrid</em>) – The grid to plot onto</p></li>
+<li><p><strong>plot_index</strong> (<em>pd.DataFrame</em>) – The mapping between current tick labels (global step values) and new tick labels joined by ‘:’.
+usually the result from generate_global_step</p></li>
+<li><p><strong>x_column</strong> (<em>str</em>) – column label to use for looking up tick values</p></li>
+<li><p><strong>x_label_columns</strong> (<em>[</em><em>str</em><em>, </em><em>...</em><em>]</em>) – columns labels of columns to use for new labels (joined by ‘:’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.plotting.generate_global_step">
+<span class="sig-prename descclassname"><span class="pre">dacbench.plotting.</span></span><span class="sig-name descname"><span class="pre">generate_global_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'global_step'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['episode',</span> <span class="pre">'step']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/plotting.html#generate_global_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.plotting.generate_global_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a global_step column which enumerate all step over all episodes.</p>
+<p>Returns the altered data, a data frame containing mapping between global_step, x_column and x_label_columns.</p>
+<p>Often used in combination with add_multi_level_ticks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – data source</p></li>
+<li><p><strong>x_column</strong> (<em>str</em>) – the name of the global_step (default ‘global_step’)</p></li>
+<li><p><strong>x_label_columns</strong> (<em>[</em><em>str</em><em>, </em><em>...</em><em>]</em>) – the name and hierarchical order of the columns (default [‘episode’, ‘step’]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(data, plot_index, x_column, x_label_columns)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.plotting.plot">
+<span class="sig-prename descclassname"><span class="pre">dacbench.plotting.</span></span><span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/plotting.html#plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.plotting.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function that creates a FacetGrid.</p>
+<ol class="arabic simple">
+<li><p>Updates settings with kwargs (overwrites values)</p></li>
+<li><p>Plots using plot_function(<a href="#id1"><span class="problematic" id="id2">**</span></a>settings)</p></li>
+<li><p>Set x and y labels of not provided the columns names will converted to pretty strings using space_sep_upper</p></li>
+<li><p>Sets title (some times has to be readjusted afterwards especially in case of large plots e.g. multiple rows/cols)</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_function</strong> – function to generate the FacedGrid. E.g. sns.catplot or sns.catplot</p></li>
+<li><p><strong>settings</strong> (<em>dict</em>) – a dicts containing all needed default settings.</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.plotting.plot_action">
+<span class="sig-prename descclassname"><span class="pre">dacbench.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_global_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/plotting.html#plot_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.plotting.plot_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot showing actions over time.</p>
+<p>Please be aware that action spaces can be quite large and the plots can become quite messy (and take some time)
+if you try plot all dimensions at once. It is therefore recommended to select a subset of columns before running the
+plot method.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<p>For examples refer to examples/plotting/action_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>show_global_step</strong> (<em>bool</em>) – If to show the global_step (step enumerated over all episodes) or Episode:Step. (False default)</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – Interval in number of steps to average over. (default = 1)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.plotting.plot_episode_time">
+<span class="sig-prename descclassname"><span class="pre">dacbench.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_episode_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/plotting.html#plot_episode_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.plotting.plot_episode_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot showing the measured time per episode.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<p>For examples refer to examples/plotting/time_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.plotting.plot_performance">
+<span class="sig-prename descclassname"><span class="pre">dacbench.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_performance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/plotting.html#plot_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.plotting.plot_performance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot of the performance over episodes.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<p>For examples refer to examples/plotting/performance_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.plotting.plot_performance_per_instance">
+<span class="sig-prename descclassname"><span class="pre">dacbench.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_performance_per_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/plotting.html#plot_performance_per_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.plotting.plot_performance_per_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a bar plot of the mean performance per instance ordered by the performance.</p>
+<p>Per default the mean performance seeds is shown if you want to change
+this specify a property to map seed to e.g. col=’seed’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.catplot.html">https://seaborn.pydata.org/generated/seaborn.catplot.html</a></p>
+<p>For examples refer to examples/plotting/performance_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.plotting.plot_space">
+<span class="sig-prename descclassname"><span class="pre">dacbench.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space_column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_global_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/plotting.html#plot_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.plotting.plot_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot showing space over time.</p>
+<p>Please be aware that spaces can be quite large and the plots can become quite messy (and take some time)
+if you try plot all dimensions at once. It is therefore recommended to select a subset of columns before running the
+plot method. Especially for dict spaces.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<dl class="simple">
+<dt>For examples refer to</dt><dd><p>examples/plotting/state_plotting.py or
+examples/plotting/action_plotting.py</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>space_column_name</strong> (<em>str</em>) – Name of the column in the space which to plot</p></li>
+<li><p><strong>show_global_step</strong> (<em>bool</em>) – If to show the global_step (step enumerated over all episodes) or Episode:Step. (False default)</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – Interval in number of steps to average over. (default = 1)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.plotting.plot_state">
+<span class="sig-prename descclassname"><span class="pre">dacbench.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_global_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/plotting.html#plot_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.plotting.plot_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot showing state over time.</p>
+<p>Please be aware that state can be quite large and the plots can become quite messy (and take some time)
+if you try plot all dimensions at once. It is therefore recommended to select a subset of columns before running the
+plot method. Especially for dict state spaces.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<p>For examples refer to examples/plotting/state_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>show_global_step</strong> (<em>bool</em>) – If to show the global_step (step enumerated over all episodes) or Episode:Step. (False default)</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – Interval in number of steps to average over. (default = 1)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.plotting.plot_step_time">
+<span class="sig-prename descclassname"><span class="pre">dacbench.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_step_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_global_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/plotting.html#plot_step_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.plotting.plot_step_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a line plot showing the measured time per step.</p>
+<p>Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
+this specify a property to map those attributes to e.g hue=’seed’ or/and col=’instance’.
+For more details see: <a class="reference external" href="https://seaborn.pydata.org/generated/seaborn.relplot.html">https://seaborn.pydata.org/generated/seaborn.relplot.html</a></p>
+<p>For examples refer to examples/plotting/time_plotting.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)</p></li>
+<li><p><strong>show_global_step</strong> (<em>bool</em>) – If to show the global_step (step enumerated over all episodes) or Episode:Step. (False default)</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – Interval in number of steps to average over. (default = 1)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot (optional)</p></li>
+<li><p><strong>x_label</strong> (<em>str</em>) – Label of the x-axis (optional)</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – Label of the y-axis (optional)</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to overwrite default settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sns.FacedGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.plotting.space_sep_upper">
+<span class="sig-prename descclassname"><span class="pre">dacbench.plotting.</span></span><span class="sig-name descname"><span class="pre">space_sep_upper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/plotting.html#space_sep_upper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.plotting.space_sep_upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separates strings at underscores into headings. Used to generate labels from logging names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>column_name</strong> (<em>str</em>) – Name to generate label for</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="logging.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Logging Experiments</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="contrib.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Contributing to DACBench</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../_static/js/index.9ea38e314b9e6d9dab77.js"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Theresa Eimer, Maximilian Reimer.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+6.1.3. Template is modified version of <a
+href="https://pydata-sphinx-theme.readthedocs.io">PyData Sphinx Theme</a>. <br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

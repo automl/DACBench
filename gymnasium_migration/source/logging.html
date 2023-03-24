@@ -1,0 +1,1332 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Logging Experiments &#8212; DACBench Documentation 0.2.0 documentation</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.9ea38e314b9e6d9dab77.js">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plotting results" href="plotting.html" />
+    <link rel="prev" title="Functionality through Wrappers" href="wrappers.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+  <a class="navbar-brand" href="../index.html">
+  <!-- <p class="title">DACBench Documentation</p> -->
+  </a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/automl/DACBench" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://twitter.com/automl_org?lang=de" rel="noopener" target="_blank" title="Twitter">
+            <span><i class="fab fa-twitter-square"></i></span>
+            <label class="sr-only">Twitter</label>
+          </a>
+        </li>
+      </ul>
+      </div>
+      
+      <div class="navbar-end-item">
+        <div class="dropdown mt-1">
+    <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
+        data-toggle="dropdown">
+        v0.2.0
+        <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
+        <a class="list-group-item list-group-item-action" href="#">v0.2.0</a>
+    </div>
+</div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <form class="bd-search align-items-center" action="../search.html" method="get" style="width: 100%;">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control btn btn-md" name="q" id="search-input"
+    placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off">
+</form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../index.html">DACBench Documentation</a></h4>
+<div class="mb-3">v0.2.0</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="dac.html">
+   Dynamic Algorithm Configuration - A Short Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="installation.html">
+   How to Install DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="containers.html">
+   Using DACBench Containers
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  The Benchmarks:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmarks.html">
+   Benchmark Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/sigmoid.html">
+   The Sigmoid Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/luby.html">
+   The Luby Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/toy_sgd.html">
+   The ToySGD Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/geometric.html">
+   The Geometric Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/fastdownward.html">
+   The FastDownward Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/theory.html">
+   The Theory Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/cma.html">
+   The PyCMA CMA-ES Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/modcma.html">
+   The IOHProfiler ModCMA Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/sgd.html">
+   The SGD Deep Learning Benchmark
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Using DACBench:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="modifications.html">
+   Saving &amp; Loading Benchmark Configurations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="multi_agent_dac.html">
+   Multi-Agent DAC
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="state_and_reward.html">
+   Modifying Observations &amp; Cost
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="wrappers.html">
+   Functionality through Wrappers
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Logging Experiments
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="plotting.html">
+   Plotting results
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Misc:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="contrib.html">
+   Contributing to DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cite.html">
+   Citing DACBench
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.logger.AbstractLogger">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     AbstractLogger
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.AbstractLogger.additional_info">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractLogger.additional_info
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.AbstractLogger.close">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractLogger.close()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.AbstractLogger.is_of_valid_type">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractLogger.is_of_valid_type()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.AbstractLogger.log">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractLogger.log()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.AbstractLogger.log_dict">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractLogger.log_dict()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.AbstractLogger.log_space">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractLogger.log_space()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.AbstractLogger.next_episode">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractLogger.next_episode()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.AbstractLogger.next_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractLogger.next_step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.AbstractLogger.set_env">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractLogger.set_env()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.AbstractLogger.write">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractLogger.write()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.logger.Logger">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Logger
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.__del__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.__del__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.add_agent">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.add_agent()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.add_benchmark">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.add_benchmark()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.add_module">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.add_module()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.close">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.close()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.log">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.log()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.log_dict">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.log_dict()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.log_space">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.log_space()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.next_episode">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.next_episode()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.next_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.next_step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.reset_episode">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.reset_episode()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.set_additional_info">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.set_additional_info()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.set_env">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.set_env()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.Logger.write">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Logger.write()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ModuleLogger
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger.__del__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ModuleLogger.__del__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger.close">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ModuleLogger.close()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger.get_logfile">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ModuleLogger.get_logfile()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger.log">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ModuleLogger.log()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger.log_dict">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ModuleLogger.log_dict()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger.log_space">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ModuleLogger.log_space()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger.next_episode">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ModuleLogger.next_episode()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger.next_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ModuleLogger.next_step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger.reset_episode">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ModuleLogger.reset_episode()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger.set_additional_info">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ModuleLogger.set_additional_info()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.logger.ModuleLogger.write">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ModuleLogger.write()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.logger.flatten_log_entry">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     flatten_log_entry()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.logger.instance_mapper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     instance_mapper()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.logger.list_to_tuple">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     list_to_tuple()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.logger.load_logs">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     load_logs()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.logger.log2dataframe">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     log2dataframe()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.logger.seed_mapper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     seed_mapper()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.logger.split">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     split()
+    </span>
+   </code>
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="logging-experiments">
+<h1>Logging Experiments<a class="headerlink" href="#logging-experiments" title="Permalink to this heading">¶</a></h1>
+<p>As there are many potentially interesting metrics involved in the analysis of DAC methods,
+DACBench includes the possibility to track and store them.</p>
+<p>To log information on an environment, you need a logger object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">experiment_name</span><span class="o">=</span><span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;your/path&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>If you want to use any of our tracking wrappers, you can then create a logging module for them:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.wrappers</span> <span class="kn">import</span> <span class="n">PerformanceTrackingWrapper</span>
+
+<span class="n">performance_logger</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">add_module</span><span class="p">(</span><span class="n">PerformanceTrackingWrapper</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">PerformanceTrackingWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">performance_logger</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">add_env</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now the logger will store information in the specified directory in .jsonl files.
+By adding more wrappers, you will also be provided with more information.
+The stored data can then be loaded into pandas dataframes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.logger</span> <span class="kn">import</span> <span class="n">load_logs</span><span class="p">,</span> <span class="n">log2dataframe</span>
+
+<span class="n">logs</span> <span class="o">=</span> <span class="n">load_logs</span><span class="p">(</span><span class="s2">&quot;your/path/PerformancyTrackingWrapper.jsonl&quot;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">log2dataframe</span><span class="p">(</span><span class="n">logs</span><span class="p">)</span>
+</pre></div>
+</div>
+<span class="target" id="module-dacbench.logger"></span><dl class="py class">
+<dt class="sig sig-object py" id="dacbench.logger.AbstractLogger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.logger.</span></span><span class="sig-name descname"><span class="pre">AbstractLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_write_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_write_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#AbstractLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.AbstractLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Logger interface.</p>
+<p>The logger classes provide a way of writing structured logs as jsonl files and also help to track information like
+current episode, step, time …</p>
+<p>In the jsonl log file each row corresponds to a step.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="dacbench.logger.AbstractLogger.additional_info">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">additional_info</span></span><a class="headerlink" href="#dacbench.logger.AbstractLogger.additional_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log additional info.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.AbstractLogger.close">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#AbstractLogger.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.AbstractLogger.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure, that all remaining entries in the are written to file and the file is closed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.AbstractLogger.is_of_valid_type">
+<span class="sig-name descname"><span class="pre">is_of_valid_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#AbstractLogger.is_of_valid_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.AbstractLogger.is_of_valid_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the value of any type in the logger’s valid types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – value to check</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.AbstractLogger.log">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#AbstractLogger.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.AbstractLogger.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes value to list of values and save the current time for key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – key to log</p></li>
+<li><p><strong>value</strong> – the value must of of a type that is json serializable.
+Currently only {str, int, float, bool, np.number} and recursive types of those are supported.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.AbstractLogger.log_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#AbstractLogger.log_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.AbstractLogger.log_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative to log if more the one value should be logged at once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – a dict with key-value so that each value is a valid value for log</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.AbstractLogger.log_space">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#AbstractLogger.log_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.AbstractLogger.log_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Special for logging gym.spaces.</p>
+<p>Currently three types are supported:
+* Numbers: e.g. samples from Discrete
+* Fixed length arrays like MultiDiscrete or Box
+* Dict: assuming each key has fixed length array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – see log</p></li>
+<li><p><strong>value</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]) – see log</p></li>
+<li><p><strong>space_info</strong> – a list of column names. The length of this list must equal the resulting number of columns.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.AbstractLogger.next_episode">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">next_episode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#AbstractLogger.next_episode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.AbstractLogger.next_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call at the end of episode. See next_step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.AbstractLogger.next_step">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">next_step</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#AbstractLogger.next_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.AbstractLogger.next_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call at the end of the step. Updates the internal state and dumps the information of the last step into a json.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.AbstractLogger.set_env">
+<span class="sig-name descname"><span class="pre">set_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#AbstractLogger.set_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.AbstractLogger.set_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Needed to infer automatically logged information like the instance id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="multi_agent_dac.html#dacbench.abstract_env.AbstractEnv" title="dacbench.abstract_env.AbstractEnv"><em>AbstractEnv</em></a>) – env to log</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.AbstractLogger.write">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#AbstractLogger.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.AbstractLogger.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes buffered logs to file. Invoke manually if you want to load logs during a run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.logger.Logger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.logger.</span></span><span class="sig-name descname"><span class="pre">Logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_write_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_write_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dacbench.logger.AbstractLogger" title="dacbench.logger.AbstractLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractLogger</span></code></a></p>
+<p>A logger that manages the creation of the module loggers.</p>
+<p>To get a ModuleLogger for you module (e.g. wrapper) call module_logger = Logger(…).add_module(“my_wrapper”).
+From now on  module_logger.log(…) or logger.log(…, module=”my_wrapper”) can be used to log.</p>
+<p>The logger module takes care of updating information like episode and step in the subloggers. To indicate to the loggers
+the end of the episode or the next_step simple call logger.next_episode() or logger.next_step().</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.__del__">
+<span class="sig-name descname"><span class="pre">__del__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.__del__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.__del__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes Logger.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.add_agent">
+<span class="sig-name descname"><span class="pre">add_agent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.add_agent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.add_agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes information about the agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>agent</strong> (<em>AbstractDACBenchAgent</em>) – the agent object to add</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.add_benchmark">
+<span class="sig-name descname"><span class="pre">add_benchmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">benchmark</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.add_benchmark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.add_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add benchmark to logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>benchmark</strong> (<a class="reference internal" href="benchmarks.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><em>AbstractBenchmark</em></a>) – the benchmark object to add</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.add_module">
+<span class="sig-name descname"><span class="pre">add_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.add_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.add_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a sub-logger. For more details see class level documentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>module</strong> (<em>str</em><em> or </em><em>type</em>) – The module name or Wrapper-Type to create a sub-logger for</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dacbench.logger.ModuleLogger" title="dacbench.logger.ModuleLogger">ModuleLogger</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure, that all remaining entries (from all sublogger) are written to files and the files are closed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log a key-value pair to module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em><em> | </em><em>int</em>) – key to log</p></li>
+<li><p><strong>value</strong> – value to log</p></li>
+<li><p><strong>module</strong> – module to log to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.log_dict">
+<span class="sig-name descname"><span class="pre">log_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.log_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.log_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log a data dict to module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>dict</em>) – data to log</p></li>
+<li><p><strong>module</strong> – module to log to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.log_space">
+<span class="sig-name descname"><span class="pre">log_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.log_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.log_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log a key-value pair to module with optional info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em><em> | </em><em>int</em>) – key to log</p></li>
+<li><p><strong>value</strong> – value to log</p></li>
+<li><p><strong>module</strong> – module to log to</p></li>
+<li><p><strong>space_info</strong> – additional log info</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.next_episode">
+<span class="sig-name descname"><span class="pre">next_episode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.next_episode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.next_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call at the end of episode. See next_step.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.next_step">
+<span class="sig-name descname"><span class="pre">next_step</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.next_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.next_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call at the end of the step. Updates the internal state of all subloggers and dumps the information of the last step into a json.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.reset_episode">
+<span class="sig-name descname"><span class="pre">reset_episode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.reset_episode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.reset_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets in all modules.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.set_additional_info">
+<span class="sig-name descname"><span class="pre">set_additional_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.set_additional_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.set_additional_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add additional info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em>) – info dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.set_env">
+<span class="sig-name descname"><span class="pre">set_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.set_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.set_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes information about the environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="multi_agent_dac.html#dacbench.abstract_env.AbstractEnv" title="dacbench.abstract_env.AbstractEnv"><em>AbstractEnv</em></a>) – the env object to track</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.Logger.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#Logger.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.Logger.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes buffered logs to file. Invoke manually if you want to load logs during a run.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.logger.</span></span><span class="sig-name descname"><span class="pre">ModuleLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_write_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_write_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dacbench.logger.AbstractLogger" title="dacbench.logger.AbstractLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractLogger</span></code></a></p>
+<p>A logger for handling logging of one module. e.g. a wrapper or toplevel general logging.</p>
+<p>Don’t create manually use Logger to manage ModuleLoggers</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger.__del__">
+<span class="sig-name descname"><span class="pre">__del__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger.__del__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger.__del__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure, that all remaining entries in the are written to file and the file is closed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure, that all remaining entries in the are written to file and the file is closed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger.get_logfile">
+<span class="sig-name descname"><span class="pre">get_logfile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger.get_logfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger.get_logfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get logfile name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the path to the log file of this logger</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pathlib.Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes value to list of values and save the current time for key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – key to log</p></li>
+<li><p><strong>value</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]) – the value must of of a type that is json serializable.
+Currently only {str, int, float, bool, np.number} and recursive types of those are supported.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger.log_dict">
+<span class="sig-name descname"><span class="pre">log_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger.log_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger.log_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative to log if more the one value should be logged at once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – a dict with key-value so that each value is a valid value for log</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger.log_space">
+<span class="sig-name descname"><span class="pre">log_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger.log_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger.log_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Special for logging gym.spaces.</p>
+<p>Currently three types are supported:
+* Numbers: e.g. samples from Discrete
+* Fixed length arrays like MultiDiscrete or Box
+* Dict: assuming each key has fixed length array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – see log</p></li>
+<li><p><strong>value</strong> – see log</p></li>
+<li><p><strong>space_info</strong> – a list of column names. The length of this list must equal the resulting number of columns.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger.next_episode">
+<span class="sig-name descname"><span class="pre">next_episode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger.next_episode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger.next_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes buffered logs to file. Invoke manually if you want to load logs during a run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger.next_step">
+<span class="sig-name descname"><span class="pre">next_step</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger.next_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger.next_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call at the end of the step. Updates the internal state and dumps the information of the last step into a json.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger.reset_episode">
+<span class="sig-name descname"><span class="pre">reset_episode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger.reset_episode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger.reset_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the episode and step. Be aware that this can lead to ambitious keys if no instance or seed or other identifying additional info is set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger.set_additional_info">
+<span class="sig-name descname"><span class="pre">set_additional_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger.set_additional_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger.set_additional_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Can be used to log additional information for each step e.g. for seed and instance id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em>) – info dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.logger.ModuleLogger.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#ModuleLogger.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.ModuleLogger.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes buffered logs to file. Invoke manually if you want to load logs during a run.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.logger.flatten_log_entry">
+<span class="sig-prename descclassname"><span class="pre">dacbench.logger.</span></span><span class="sig-name descname"><span class="pre">flatten_log_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#flatten_log_entry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.flatten_log_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a log entry.</p>
+<p>From:
+{</p>
+<blockquote>
+<div><p>‘step’: 0,
+‘episode’: 2,
+‘some_value’: {</p>
+<blockquote>
+<div><p>‘values’ : [34, 45],
+‘times’:[‘28-12-20 16:20:53’, ‘28-12-20 16:21:30’],</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>}
+To:
+[</p>
+<blockquote>
+<div><p>{ ‘step’: 0,’episode’: 2, ‘value’: 34, ‘time’: ‘28-12-20 16:20:53’},
+{ ‘step’: 0,’episode’: 2, ‘value’: 45, ‘time’: ‘28-12-20 16:21:30’}</p>
+</div></blockquote>
+<p>]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>log_entry</strong> (<em>Dict</em>) – A log entry</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.logger.instance_mapper">
+<span class="sig-prename descclassname"><span class="pre">dacbench.logger.</span></span><span class="sig-name descname"><span class="pre">instance_mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#instance_mapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.instance_mapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to get instance id.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.logger.list_to_tuple">
+<span class="sig-prename descclassname"><span class="pre">dacbench.logger.</span></span><span class="sig-name descname"><span class="pre">list_to_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#list_to_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.list_to_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively transforms a list of lists into tuples of tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>list</strong> – (nested) list</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(nested) tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.logger.load_logs">
+<span class="sig-prename descclassname"><span class="pre">dacbench.logger.</span></span><span class="sig-name descname"><span class="pre">load_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#load_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.load_logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the logs from a jsonl written by any logger.</p>
+<p>The result is the list of dicts in the format:
+{</p>
+<blockquote>
+<div><p>‘instance’: 0,
+‘episode’: 0,
+‘step’: 1,
+‘example_log_val’:  {</p>
+<blockquote>
+<div><p>‘values’: [val1, val2, … valn],
+‘times: [time1, time2, …, timen],</p>
+</div></blockquote>
+</div></blockquote>
+<p>}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>log_file</strong> (<em>pathlib.Path</em>) – The path to the log file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>[Dict, …]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.logger.log2dataframe">
+<span class="sig-prename descclassname"><span class="pre">dacbench.logger.</span></span><span class="sig-name descname"><span class="pre">log2dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wide</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['time']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#log2dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.log2dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of log entries to a pandas dataframe.</p>
+<p>Usually used in combination with load_dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logs</strong> (<em>List</em>) – List of log entries</p></li>
+<li><p><strong>wide</strong> (<em>bool</em>) – wide=False (default) produces a dataframe with columns (episode, step, time, name, value)
+wide=True returns a dataframe (episode, step, time, name_1, name_2, …) if the variable name_n has not been logged
+at (episode, step, time) name_n is NaN.</p></li>
+<li><p><strong>drop_columns</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of column names to be dropped (before reshaping the long dataframe) mostly used in combination
+with wide=True to reduce NaN values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.logger.seed_mapper">
+<span class="sig-prename descclassname"><span class="pre">dacbench.logger.</span></span><span class="sig-name descname"><span class="pre">seed_mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#seed_mapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.seed_mapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for seeding.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dacbench.logger.split">
+<span class="sig-prename descclassname"><span class="pre">dacbench.logger.</span></span><span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/logger.html#split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.logger.split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits the iterable into two list depending on the result of predicate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predicate</strong> (<em>Callable</em>) – A function taking an element of the iterable and return Ture or False</p></li>
+<li><p><strong>iterable</strong> (<em>Iterable</em>) – the iterable to split</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(positives, negatives)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="wrappers.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Functionality through Wrappers</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="plotting.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Plotting results</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../_static/js/index.9ea38e314b9e6d9dab77.js"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Theresa Eimer, Maximilian Reimer.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+6.1.3. Template is modified version of <a
+href="https://pydata-sphinx-theme.readthedocs.io">PyData Sphinx Theme</a>. <br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
