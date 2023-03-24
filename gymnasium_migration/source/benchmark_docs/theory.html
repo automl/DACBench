@@ -341,6 +341,15 @@
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.theory.BinaryProblem.eval">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       BinaryProblem.eval()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#dacbench.envs.theory.BinaryProblem.flip">
      <code class="docutils literal notranslate">
       <span class="pre">
@@ -363,6 +372,33 @@
      <code class="docutils literal notranslate">
       <span class="pre">
        BinaryProblem.get_fitness_after_flipping()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.theory.BinaryProblem.get_optimal">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       BinaryProblem.get_optimal()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.theory.BinaryProblem.initialise_with_fixed_number_of_bits">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       BinaryProblem.initialise_with_fixed_number_of_bits()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.theory.BinaryProblem.is_optimal">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       BinaryProblem.is_optimal()
       </span>
      </code>
     </a>
@@ -397,6 +433,15 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.theory.LeadingOne.eval">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       LeadingOne.eval()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#dacbench.envs.theory.LeadingOne.get_fitness_after_crossover">
      <code class="docutils literal notranslate">
       <span class="pre">
@@ -410,6 +455,24 @@
      <code class="docutils literal notranslate">
       <span class="pre">
        LeadingOne.get_fitness_after_flipping()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.theory.LeadingOne.get_optimal">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       LeadingOne.get_optimal()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.theory.LeadingOne.is_optimal">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       LeadingOne.is_optimal()
       </span>
      </code>
     </a>
@@ -439,6 +502,15 @@
      <code class="docutils literal notranslate">
       <span class="pre">
        RLSEnv.get_obs_domain_from_name()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.theory.RLSEnv.get_state">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       RLSEnv.get_state()
       </span>
      </code>
     </a>
@@ -564,13 +636,13 @@ if an action is out of range, stop the episode immediately and return a large ne
 
 <span class="target" id="module-dacbench.envs.theory"></span><dl class="py class">
 <dt class="sig sig-object py" id="dacbench.envs.theory.BinaryProblem">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.theory.</span></span><span class="sig-name descname"><span class="pre">BinaryProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng=Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7FD506AC1C40</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.theory.</span></span><span class="sig-name descname"><span class="pre">BinaryProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng=Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7FACD3BD5C40</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>An abstract class for an individual in binary representation</p>
+<p>An abstract class for an individual in binary representation.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.BinaryProblem.combine">
 <span class="sig-name descname"><span class="pre">combine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xprime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locs_xprime</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.combine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.combine" title="Permalink to this definition">¶</a></dt>
-<dd><p>combine (crossover) self and xprime by taking xprime’s bits at locs_xprime and self’s bits at other positions</p>
+<dd><p>Combine (crossover) self and xprime by taking xprime’s bits at locs_xprime and self’s bits at other positions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -579,43 +651,55 @@ if an action is out of range, stop the episode immediately and return a large ne
 <li><p><strong>locs_xprime</strong> (<em>: 1d boolean/integer array</em>) – positions where we change to xprime’s bits</p></li>
 </ul>
 </dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>the new individual after the crossover</p>
+</dd>
 </dl>
-<p>Returns: the new individual after the crossover</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.BinaryProblem.crossover">
-<span class="sig-name descname"><span class="pre">crossover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xprime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_childs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_xprime=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_different_inds_only=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng=Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7FD504F12340</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.crossover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.crossover" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Crossover operator:</dt><dd><p>for each bit, taking value from x with probability p and from self with probability 1-p</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">crossover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xprime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_childs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_xprime=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_different_inds_only=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng=Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7FACD1F26340</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.crossover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.crossover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crossover operation in population.</p>
+<p>Crossover operator: for each bit, taking value from x with probability p and from self with probability 1-p</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – the individual to crossover with</p></li>
-<li><p><strong>p</strong> (<em>float</em>) – in [0,1]</p></li>
+<li><p><strong>xprime</strong> – the individual to crossover with</p></li>
+<li><p><strong>p</strong> (<em>float</em>) – probability in [0,1]</p></li>
+<li><p><strong>n_childs</strong> (<em>int</em>) – number of child individuals</p></li>
+<li><p><strong>include_xprime</strong> (<em>bool</em>) – whether to inculde x</p></li>
+<li><p><strong>count_different_inds_only</strong> (<em>bool</em>) – whether to only count different individuals</p></li>
+<li><p><strong>rng</strong> – random number generator</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.theory.BinaryProblem.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate fitness.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.BinaryProblem.flip">
 <span class="sig-name descname"><span class="pre">flip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.flip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.flip" title="Permalink to this definition">¶</a></dt>
-<dd><p>flip the bits at position indicated by locs</p>
+<dd><p>Flip the bits at position indicated by locs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>locs</strong> (<em>1d-array</em>) – positions where bits are flipped</p>
 </dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>the new individual after the flip</p>
+</dd>
 </dl>
-<p>Returns: the new individual after the flip</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.BinaryProblem.get_fitness_after_crossover">
 <span class="sig-name descname"><span class="pre">get_fitness_after_crossover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xprime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locs_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locs_xprime</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.get_fitness_after_crossover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.get_fitness_after_crossover" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate fitness of the child aftering being crossovered with xprime</p>
+<dd><p>Calculate fitness of the child aftering being crossovered with xprime.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -624,10 +708,10 @@ if an action is out of range, stop the episode immediately and return a large ne
 <li><p><strong>locs_xprime</strong> (<em>: 1d boolean/integer array</em>) – positions where we change to xprime’s bits</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fitness of the new individual after crossover</p>
+</dd>
 </dl>
-<section id="returns-fitness-of-the-new-individual-after-crossover">
-<h2>Returns: fitness of the new individual after crossover<a class="headerlink" href="#returns-fitness-of-the-new-individual-after-crossover" title="Permalink to this heading">¶</a></h2>
-</section>
 </dd></dl>
 
 <dl class="py method">
@@ -638,71 +722,89 @@ if an action is out of range, stop the episode immediately and return a large ne
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>locs</strong> (<em>1d-array</em>) – positions where bits are flipped</p>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>objective after flipping</p>
+</dd>
 </dl>
-<section id="returns-int">
-<h2>Returns: int<a class="headerlink" href="#returns-int" title="Permalink to this heading">¶</a></h2>
-<blockquote>
-<div><p>objective after flipping</p>
-</div></blockquote>
-</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.theory.BinaryProblem.get_optimal">
+<span class="sig-name descname"><span class="pre">get_optimal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.get_optimal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.get_optimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get optimum.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.theory.BinaryProblem.initialise_with_fixed_number_of_bits">
+<span class="sig-name descname"><span class="pre">initialise_with_fixed_number_of_bits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng=Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7FACD1F258C0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.initialise_with_fixed_number_of_bits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.initialise_with_fixed_number_of_bits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init with given number of bits.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.theory.BinaryProblem.is_optimal">
+<span class="sig-name descname"><span class="pre">is_optimal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.is_optimal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.is_optimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get is_optimal flag.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.BinaryProblem.mutate">
-<span class="sig-name descname"><span class="pre">mutate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_childs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng=Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7FD504F12260</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.mutate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.mutate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw l ~ binomial(n, p), l&gt;0
-Generate n_childs children by flipping exactly l bits
-Return: the best child (maximum fitness), its fitness and number of evaluations used</p>
+<span class="sig-name descname"><span class="pre">mutate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_childs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng=Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7FACD1F26260</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.mutate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.mutate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw l ~ binomial(n, p), l&gt;0.</p>
+<p>Generate n_childs children by flipping exactly l bits</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the best child (maximum fitness), its fitness and number of evaluations used</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.BinaryProblem.mutate_rls">
-<span class="sig-name descname"><span class="pre">mutate_rls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng=Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7FD504F11FC0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.mutate_rls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.mutate_rls" title="Permalink to this definition">¶</a></dt>
-<dd><p>generate a child by flipping exactly l bits
-Return: child, its fitness</p>
+<span class="sig-name descname"><span class="pre">mutate_rls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng=Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7FACD1F25FC0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#BinaryProblem.mutate_rls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.BinaryProblem.mutate_rls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a child by flipping exactly l bits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>child, its fitness</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="dacbench.envs.theory.LeadingOne">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.theory.</span></span><span class="sig-name descname"><span class="pre">LeadingOne</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng=Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7FD504F12420</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initObj=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#LeadingOne"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.LeadingOne" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.theory.</span></span><span class="sig-name descname"><span class="pre">LeadingOne</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng=Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7FACD1F26420</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initObj=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#LeadingOne"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.LeadingOne" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#dacbench.envs.theory.BinaryProblem" title="dacbench.envs.theory.BinaryProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryProblem</span></code></a></p>
-<p>An individual for LeadingOne problem
-The aim is to maximise the number of leading (and consecutive) 1 bits in the string</p>
+<p>An individual for LeadingOne problem.</p>
+<p>The aim is to maximise the number of leading (and consecutive) 1 bits in the string</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.theory.LeadingOne.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#LeadingOne.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.LeadingOne.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate fitness.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.LeadingOne.get_fitness_after_crossover">
 <span class="sig-name descname"><span class="pre">get_fitness_after_crossover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xprime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locs_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locs_xprime</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#LeadingOne.get_fitness_after_crossover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.LeadingOne.get_fitness_after_crossover" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate fitness of the child aftering being crossovered with xprime</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>xprime</strong> (<em>1d boolean array</em>) – the individual to crossover with</p></li>
-<li><p><strong>locs_x</strong> (<em>1d boolean/integer array</em>) – positions where we keep current bits of self</p></li>
-<li><p><strong>locs_xprime</strong> (<em>: 1d boolean/integer array</em>) – positions where we change to xprime’s bits</p></li>
-</ul>
-</dd>
-</dl>
-<section id="id1">
-<h2>Returns: fitness of the new individual after crossover<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
-</section>
+<dd><p>Return fitness after crossover.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.LeadingOne.get_fitness_after_flipping">
 <span class="sig-name descname"><span class="pre">get_fitness_after_flipping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#LeadingOne.get_fitness_after_flipping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.LeadingOne.get_fitness_after_flipping" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the change in fitness after flipping the bits at positions locs</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>locs</strong> (<em>1d-array</em>) – positions where bits are flipped</p>
-</dd>
-</dl>
-<section id="id2">
-<h2>Returns: int<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
-<blockquote>
-<div><p>objective after flipping</p>
-</div></blockquote>
-</section>
+<dd><p>Return fitness after flipping.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.theory.LeadingOne.get_optimal">
+<span class="sig-name descname"><span class="pre">get_optimal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#LeadingOne.get_optimal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.LeadingOne.get_optimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return optimum.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.theory.LeadingOne.is_optimal">
+<span class="sig-name descname"><span class="pre">is_optimal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#LeadingOne.is_optimal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.LeadingOne.is_optimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return is_optimal flag.</p>
 </dd></dl>
 
 </dd></dl>
@@ -711,12 +813,12 @@ The aim is to maximise the number of leading (and consecutive) 1 bits in the str
 <dt class="sig sig-object py" id="dacbench.envs.theory.RLSEnv">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.theory.</span></span><span class="sig-name descname"><span class="pre">RLSEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#RLSEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.RLSEnv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../multi_agent_dac.html#dacbench.abstract_env.AbstractEnv" title="dacbench.abstract_env.AbstractEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractEnv</span></code></a></p>
-<p>Environment for RLS with step size
-Current assumption: we only consider (1+1)-RLS, so there’s only one parameter to tune (r)</p>
+<p>Environment for RLS with step size.</p>
+<p>Current assumption: we only consider (1+1)-RLS, so there’s only one parameter to tune (r)</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.RLSEnv.close">
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#RLSEnv.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.RLSEnv.close" title="Permalink to this definition">¶</a></dt>
-<dd><p>Close Env</p>
+<dd><p>Close Env.</p>
 <p>No additional cleanup necessary</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -731,15 +833,25 @@ Current assumption: we only consider (1+1)-RLS, so there’s only one parameter 
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.RLSEnv.get_obs_domain_from_name">
 <span class="sig-name descname"><span class="pre">get_obs_domain_from_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#RLSEnv.get_obs_domain_from_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.RLSEnv.get_obs_domain_from_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get default lower and upperbound of a observation variable based on its name.
-The observation space will then be created
-:returns: Two int values, e.g., 1, np.inf</p>
+<dd><p>Get default lower and upperbound of a observation variable based on its name.</p>
+<p>The observation space will then be created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Two int values, e.g., 1, np.inf</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.theory.RLSEnv.get_state">
+<span class="sig-name descname"><span class="pre">get_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#RLSEnv.get_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.RLSEnv.get_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return state.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.RLSEnv.reset">
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#RLSEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.RLSEnv.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resets env</p>
+<dd><p>Resets env.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Environment state</p>
@@ -753,7 +865,7 @@ The observation space will then be created
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.RLSEnv.step">
 <span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#RLSEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.RLSEnv.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute environment step</p>
+<dd><p>Execute environment step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>action</strong> (<em>Box</em>) – action to execute</p>
@@ -771,20 +883,11 @@ np.array, float, bool, bool, dict</p>
 <dt class="sig sig-object py" id="dacbench.envs.theory.RLSEnvDiscrete">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.theory.</span></span><span class="sig-name descname"><span class="pre">RLSEnvDiscrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#RLSEnvDiscrete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.RLSEnvDiscrete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#dacbench.envs.theory.RLSEnv" title="dacbench.envs.theory.RLSEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLSEnv</span></code></a></p>
-<p>RLS environment where the choices of r is discretised</p>
+<p>RLS environment where the choices of r is discretised.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.theory.RLSEnvDiscrete.step">
 <span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/theory.html#RLSEnvDiscrete.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.theory.RLSEnvDiscrete.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute environment step</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>action</strong> (<em>Box</em>) – action to execute</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>state, reward, terminated, truncated, info
-np.array, float, bool, bool, dict</p>
-</dd>
-</dl>
+<dd><p>Take step.</p>
 </dd></dl>
 
 </dd></dl>

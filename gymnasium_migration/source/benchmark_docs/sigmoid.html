@@ -381,6 +381,24 @@
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.SigmoidEnv.get_default_reward">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidEnv.get_default_reward()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.SigmoidEnv.get_default_state">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidEnv.get_default_state()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.SigmoidEnv.render">
      <code class="docutils literal notranslate">
       <span class="pre">
@@ -508,15 +526,15 @@ which fine control over the instance distribution is required.</p>
 
 </dd></dl>
 
-<span class="target" id="module-dacbench.envs.sigmoid"></span><p>Sigmoid environment from
-“Dynamic Algorithm Configuration:Foundation of a New Meta-Algorithmic Framework”
+<span class="target" id="module-dacbench.envs.sigmoid"></span><p>Sigmoid environment from:</p>
+<p>“Dynamic Algorithm Configuration:Foundation of a New Meta-Algorithmic Framework”
 by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
 Original environment authors: André Biedenkapp, H. Furkan Bozkurt</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="dacbench.envs.sigmoid.ContinuousSigmoidEnv">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.sigmoid.</span></span><span class="sig-name descname"><span class="pre">ContinuousSigmoidEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#ContinuousSigmoidEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.ContinuousSigmoidEnv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#dacbench.envs.sigmoid.SigmoidEnv" title="dacbench.envs.sigmoid.SigmoidEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">SigmoidEnv</span></code></a></p>
-<p>Environment for tracing sigmoid curves with a continuous state on the x-axis</p>
+<p>Environment for tracing sigmoid curves with a continuous state on the x-axis.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.sigmoid.ContinuousSigmoidEnv.step">
 <span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#ContinuousSigmoidEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.ContinuousSigmoidEnv.step" title="Permalink to this definition">¶</a></dt>
@@ -540,11 +558,11 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt</p>
 <dt class="sig sig-object py" id="dacbench.envs.sigmoid.ContinuousStateSigmoidEnv">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.sigmoid.</span></span><span class="sig-name descname"><span class="pre">ContinuousStateSigmoidEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#ContinuousStateSigmoidEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.ContinuousStateSigmoidEnv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#dacbench.envs.sigmoid.SigmoidEnv" title="dacbench.envs.sigmoid.SigmoidEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">SigmoidEnv</span></code></a></p>
-<p>Environment for tracing sigmoid curves with a continuous state on the x-axis</p>
+<p>Environment for tracing sigmoid curves with a continuous state on the x-axis.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.sigmoid.ContinuousStateSigmoidEnv.step">
 <span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#ContinuousStateSigmoidEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.ContinuousStateSigmoidEnv.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute environment step</p>
+<dd><p>Execute environment step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>action</strong> (<em>int</em>) – action to execute</p>
@@ -564,11 +582,11 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt</p>
 <dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.sigmoid.</span></span><span class="sig-name descname"><span class="pre">SigmoidEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../multi_agent_dac.html#dacbench.abstract_env.AbstractMADACEnv" title="dacbench.abstract_env.AbstractMADACEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractMADACEnv</span></code></a></p>
-<p>Environment for tracing sigmoid curves</p>
+<p>Environment for tracing sigmoid curves.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.close">
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.close" title="Permalink to this definition">¶</a></dt>
-<dd><p>Close Env</p>
+<dd><p>Close Env.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Closing confirmation</p>
@@ -580,9 +598,21 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.get_default_reward">
+<span class="sig-name descname"><span class="pre">get_default_reward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.get_default_reward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.get_default_reward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get default reward.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.get_default_state">
+<span class="sig-name descname"><span class="pre">get_default_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.get_default_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.get_default_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get default state representation.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.render">
 <span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.render" title="Permalink to this definition">¶</a></dt>
-<dd><p>Render env in human mode</p>
+<dd><p>Render env in human mode.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>mode</strong> (<em>str</em>) – Execution mode</p>
@@ -596,7 +626,7 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.reset">
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resets env</p>
+<dd><p>Resets env.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Environment state</p>
@@ -610,7 +640,7 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.step">
 <span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute environment step</p>
+<dd><p>Execute environment step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>action</strong> (<em>int</em>) – action to execute</p>

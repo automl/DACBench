@@ -276,11 +276,13 @@
                 
   <h1>Source code for dacbench.envs.sigmoid</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Sigmoid environment from</span>
+<span class="sd">Sigmoid environment from:</span>
+
 <span class="sd">&quot;Dynamic Algorithm Configuration:Foundation of a New Meta-Algorithmic Framework&quot;</span>
 <span class="sd">by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.</span>
 <span class="sd">Original environment authors: André Biedenkapp, H. Furkan Bozkurt</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
@@ -291,9 +293,7 @@
 
 
 <div class="viewcode-block" id="SigmoidEnv"><a class="viewcode-back" href="../../../source/benchmark_docs/sigmoid.html#dacbench.envs.sigmoid.SigmoidEnv">[docs]</a><span class="k">class</span> <span class="nc">SigmoidEnv</span><span class="p">(</span><span class="n">AbstractMADACEnv</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Environment for tracing sigmoid curves</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Environment for tracing sigmoid curves.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">inflection</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Simple sigmoid function&quot;&quot;&quot;</span>
@@ -301,12 +301,13 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize Sigmoid Env</span>
+<span class="sd">        Initialize Sigmoid Env.</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        -------</span>
+<span class="sd">        ----------</span>
 <span class="sd">        config : objdict</span>
 <span class="sd">            Environment configuration</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SigmoidEnv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
@@ -329,7 +330,7 @@
 
 <div class="viewcode-block" id="SigmoidEnv.step"><a class="viewcode-back" href="../../../source/benchmark_docs/sigmoid.html#dacbench.envs.sigmoid.SigmoidEnv.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Execute environment step</span>
+<span class="sd">        Execute environment step.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -340,6 +341,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        np.array, float, bool, bool, dict</span>
 <span class="sd">            state, reward, terminated, truncated, info</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">SigmoidEnv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">step_</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_action</span> <span class="o">=</span> <span class="n">action</span>
@@ -349,12 +351,13 @@
 
 <div class="viewcode-block" id="SigmoidEnv.reset"><a class="viewcode-back" href="../../../source/benchmark_docs/sigmoid.html#dacbench.envs.sigmoid.SigmoidEnv.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Resets env</span>
+<span class="sd">        Resets env.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        numpy.array</span>
 <span class="sd">            Environment state</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SigmoidEnv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">reset_</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shifts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_actions</span><span class="p">]</span>
@@ -362,7 +365,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_prev_state</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="p">{}</span></div>
 
-    <span class="k">def</span> <span class="nf">get_default_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+<div class="viewcode-block" id="SigmoidEnv.get_default_reward"><a class="viewcode-back" href="../../../source/benchmark_docs/sigmoid.html#dacbench.envs.sigmoid.SigmoidEnv.get_default_reward">[docs]</a>    <span class="k">def</span> <span class="nf">get_default_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get default reward.&quot;&quot;&quot;</span>
         <span class="n">r</span> <span class="o">=</span> <span class="p">[</span>
             <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c_step</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">act</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_act</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)))</span>
             <span class="k">for</span> <span class="n">slope</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">act</span><span class="p">,</span> <span class="n">max_act</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
@@ -371,9 +375,10 @@
         <span class="p">]</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="n">r</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">r</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">r</span>
+        <span class="k">return</span> <span class="n">r</span></div>
 
-    <span class="k">def</span> <span class="nf">get_default_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+<div class="viewcode-block" id="SigmoidEnv.get_default_state"><a class="viewcode-back" href="../../../source/benchmark_docs/sigmoid.html#dacbench.envs.sigmoid.SigmoidEnv.get_default_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_default_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get default state representation.&quot;&quot;&quot;</span>
         <span class="n">remaining_budget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_step</span>
         <span class="n">next_state</span> <span class="o">=</span> <span class="p">[</span><span class="n">remaining_budget</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">shift</span><span class="p">,</span> <span class="n">slope</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shifts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slopes</span><span class="p">):</span>
@@ -383,27 +388,29 @@
             <span class="n">next_state</span> <span class="o">+=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_actions</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">next_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_action</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SigmoidEnv.close"><a class="viewcode-back" href="../../../source/benchmark_docs/sigmoid.html#dacbench.envs.sigmoid.SigmoidEnv.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Close Env</span>
+<span class="sd">        Close Env.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            Closing confirmation</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="SigmoidEnv.render"><a class="viewcode-back" href="../../../source/benchmark_docs/sigmoid.html#dacbench.envs.sigmoid.SigmoidEnv.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Render env in human mode</span>
+<span class="sd">        Render env in human mode.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        mode : str</span>
 <span class="sd">            Execution mode</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_actions</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
@@ -428,24 +435,23 @@
 
 
 <div class="viewcode-block" id="ContinuousStateSigmoidEnv"><a class="viewcode-back" href="../../../source/benchmark_docs/sigmoid.html#dacbench.envs.sigmoid.ContinuousStateSigmoidEnv">[docs]</a><span class="k">class</span> <span class="nc">ContinuousStateSigmoidEnv</span><span class="p">(</span><span class="n">SigmoidEnv</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Environment for tracing sigmoid curves with a continuous state on the x-axis</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Environment for tracing sigmoid curves with a continuous state on the x-axis.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize Sigmoid Env</span>
+<span class="sd">        Initialize Sigmoid Env.</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        -------</span>
+<span class="sd">        ----------</span>
 <span class="sd">        config : objdict</span>
 <span class="sd">            Environment configuration</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ContinuousStateSigmoidEnv.step"><a class="viewcode-back" href="../../../source/benchmark_docs/sigmoid.html#dacbench.envs.sigmoid.ContinuousStateSigmoidEnv.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Execute environment step</span>
+<span class="sd">        Execute environment step.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -456,6 +462,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        np.array, float, bool, dict</span>
 <span class="sd">            state, reward, done, info</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_action</span> <span class="o">=</span> <span class="n">action</span>
         <span class="c1"># The reward measures how wrong the choice was so we can take this error to determine how far we travel along</span>
@@ -478,18 +485,17 @@
 
 
 <div class="viewcode-block" id="ContinuousSigmoidEnv"><a class="viewcode-back" href="../../../source/benchmark_docs/sigmoid.html#dacbench.envs.sigmoid.ContinuousSigmoidEnv">[docs]</a><span class="k">class</span> <span class="nc">ContinuousSigmoidEnv</span><span class="p">(</span><span class="n">SigmoidEnv</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Environment for tracing sigmoid curves with a continuous state on the x-axis</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Environment for tracing sigmoid curves with a continuous state on the x-axis.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize Sigmoid Env</span>
+<span class="sd">        Initialize Sigmoid Env.</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        -------</span>
+<span class="sd">        ----------</span>
 <span class="sd">        config : objdict</span>
 <span class="sd">            Environment configuration</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
@@ -506,6 +512,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        np.array, float, bool, dict</span>
 <span class="sd">            state, reward, done, info</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_action</span> <span class="o">=</span> <span class="n">action</span>
         <span class="c1"># The reward measures how wrong the choice was so we can take this error to determine how far we travel along</span>
