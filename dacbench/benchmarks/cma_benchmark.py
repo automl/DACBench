@@ -4,10 +4,10 @@ import os
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
 import numpy as np
+from gymnasium import spaces
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import CMAESEnv
-from gymnasium import spaces
 
 HISTORY_LENGTH = 40
 INPUT_DIM = 10

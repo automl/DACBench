@@ -18,8 +18,10 @@ from dacbench.abstract_agent import AbstractDACBenchAgent
 from dacbench.abstract_benchmark import AbstractBenchmark
 from dacbench.argument_parsing import PathType
 from dacbench.container.container_utils import wait_for_unixsocket
-from dacbench.container.remote_env import (RemoteEnvironmentClient,
-                                           RemoteEnvironmentServer)
+from dacbench.container.remote_env import (
+    RemoteEnvironmentClient,
+    RemoteEnvironmentServer,
+)
 
 # Needed in order to combine event loops of name_server and daemon
 Pyro4.config.SERVERTYPE = "multiplex"

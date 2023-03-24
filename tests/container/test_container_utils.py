@@ -1,11 +1,9 @@
 import json
 import unittest
 
-import numpy as np
+from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
 
 from dacbench.container.container_utils import Decoder, Encoder
-from gymnasium.spaces import (Box, Dict, Discrete, MultiBinary, MultiDiscrete,
-                              Tuple)
 
 
 class TestEncoder(unittest.TestCase):

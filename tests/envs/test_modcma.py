@@ -1,11 +1,11 @@
 import unittest
 
 import numpy as np
+from gymnasium import spaces
 
 from dacbench import AbstractEnv
 from dacbench.abstract_benchmark import objdict
 from dacbench.envs import ModCMAEnv
-from gymnasium import spaces
 
 
 class TestModCMAEnv(unittest.TestCase):

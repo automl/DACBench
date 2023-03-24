@@ -3,9 +3,9 @@ from functools import partial
 from types import FunctionType
 
 import numpy as np
+from gymnasium import spaces
 
 from dacbench import wrappers
-from gymnasium import spaces
 
 
 class AbstractBenchmark:
@@ -107,22 +107,22 @@ class AbstractBenchmark:
         from ConfigSpace.configuration_space import ConfigurationSpace
         from ConfigSpace.hyperparameters import (
             CategoricalHyperparameter,
-            UniformIntegerHyperparameter,
-            UniformFloatHyperparameter,
-            NormalIntegerHyperparameter,
-            NormalFloatHyperparameter,
-            OrdinalHyperparameter,
             Constant,
+            NormalFloatHyperparameter,
+            NormalIntegerHyperparameter,
+            OrdinalHyperparameter,
+            UniformFloatHyperparameter,
+            UniformIntegerHyperparameter,
             UnParametrizedHyperparameter,
         )
         from ConfigSpace.read_and_write.json import (
-            _build_constant,
-            _build_condition,
-            _build_ordinal,
-            _build_forbidden,
             _build_categorical,
-            _build_normal_int,
+            _build_condition,
+            _build_constant,
+            _build_forbidden,
             _build_normal_float,
+            _build_normal_int,
+            _build_ordinal,
             _build_uniform_float,
             _build_uniform_int,
             _build_unparametrized_hyperparameter,
@@ -187,9 +187,9 @@ class AbstractBenchmark:
         if "config_space" in config.keys():
             from ConfigSpace import ConfigurationSpace
             from ConfigSpace.read_and_write.json import (
-                _construct_hyperparameter,
-                _construct_forbidden,
                 _construct_condition,
+                _construct_forbidden,
+                _construct_hyperparameter,
             )
 
             if "name" in config.config_space:

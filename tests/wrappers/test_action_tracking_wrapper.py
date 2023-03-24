@@ -2,13 +2,17 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import gymnasium as gym
 import numpy as np
 import pandas as pd
 
-import gymnasium as gym
 from dacbench.agents import StaticAgent
-from dacbench.benchmarks import (CMAESBenchmark, FastDownwardBenchmark,
-                                 LubyBenchmark, ModCMABenchmark)
+from dacbench.benchmarks import (
+    CMAESBenchmark,
+    FastDownwardBenchmark,
+    LubyBenchmark,
+    ModCMABenchmark,
+)
 from dacbench.logger import Logger, load_logs, log2dataframe
 from dacbench.runner import run_benchmark
 from dacbench.wrappers import ActionFrequencyWrapper

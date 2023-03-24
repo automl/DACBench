@@ -5,8 +5,11 @@ import warnings
 from dacbench.envs.fast_downward import FastDownwardEnv
 from dacbench.envs.geometric import GeometricEnv
 from dacbench.envs.luby import LubyEnv, luby_gen
-from dacbench.envs.sigmoid import (ContinuousSigmoidEnv,
-                                   ContinuousStateSigmoidEnv, SigmoidEnv)
+from dacbench.envs.sigmoid import (
+    ContinuousSigmoidEnv,
+    ContinuousStateSigmoidEnv,
+    SigmoidEnv,
+)
 from dacbench.envs.toysgd import ToySGDEnv
 
 __all__ = [
@@ -17,7 +20,6 @@ __all__ = [
     "ToySGDEnv",
     "GeometricEnv",
 ]
-
 
 
 cma_spec = importlib.util.find_spec("cma")
@@ -58,7 +60,7 @@ else:
 theory_spec = importlib.util.find_spec("uuid")
 found = theory_spec is not None
 if found:
-    from dacbench.envs.theory import RLSEnvDiscrete, RLSEnv
+    from dacbench.envs.theory import RLSEnv, RLSEnvDiscrete
 
     __all__.append("RLSEnv")
     __all__.append("RLSEnvDiscrete")

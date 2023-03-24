@@ -2,8 +2,7 @@ import unittest
 
 import numpy as np
 
-from dacbench.benchmarks import (ModCMABenchmark, SigmoidBenchmark,
-                                 ToySGDBenchmark)
+from dacbench.benchmarks import ModCMABenchmark, SigmoidBenchmark, ToySGDBenchmark
 from dacbench.envs import SigmoidEnv, ToySGDEnv
 
 

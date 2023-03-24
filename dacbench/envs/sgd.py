@@ -10,7 +10,6 @@ import numpy as np
 import torch
 from backpack import backpack, extend
 from backpack.extensions import BatchGrad
-from numpy import float32
 from torchvision import datasets, transforms
 
 from dacbench import AbstractEnv
@@ -839,7 +838,7 @@ class SGDEnv(AbstractEnv):
                 [32, 32, 64, 64],
             ),
         ]
-        if mode is "test":
+        if mode == "test":
             seed_list = [random.randrange(start=0, stop=1e9) for _ in range(n)]
 
             for i in range(len(architectures)):

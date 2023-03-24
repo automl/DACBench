@@ -25,11 +25,10 @@ CTAGS ?= ctags
 PIP ?= python -m pip
 MAKE ?= make
 BLACK ?= python -m black
-ISORT ?= isort
+ISORT ?= python -m isort --profile black
 PYDOCSTYLE ?= pydocstyle
-MYPY ?= mypy
 PRECOMMIT ?= pre-commit
-FLAKE8 ?= flake8
+FLAKE8 ?= python -m flake8
 
 DIR := ${CURDIR}
 DIST := ${CURDIR}/dist
@@ -44,20 +43,17 @@ check-black:
 	$(BLACK)  dacbench tests --check || :
 
 check-isort:
-	$(ISORT) -rc dacbench tests --check || :
+	$(ISORT) dacbench tests --check || :
 
 check-pydocstyle:
 	$(PYDOCSTYLE) dacbench || :
-
-check-mypy:
-	$(MYPY) dacbench || :
 
 check-flake8:
 	$(FLAKE8) dacbench || :
 	$(FLAKE8) tests || :
 
 # pydocstyle does not have easy ignore rules, instead, we include as they are covered
-check: check-black check-isort check-mypy check-flake8 # check-pydocstyle
+check: check-black check-isort check-flake8 # check-pydocstyle
 
 pre-commit:
 	$(PRECOMMIT) run --all-files
@@ -66,7 +62,7 @@ format-black:
 	$(BLACK) dacbench tests
 
 format-isort:
-	$(ISORT) -rc dacbench tests
+	$(ISORT) dacbench tests
 
 format: format-black format-isort
 

@@ -1,8 +1,7 @@
 import random
 
-import numpy as np
-
 import gymnasium as gym
+import numpy as np
 from gymnasium.utils import seeding
 
 

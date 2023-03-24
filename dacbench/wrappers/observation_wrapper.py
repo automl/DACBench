@@ -1,5 +1,3 @@
-from collections.abc import Iterable
-
 import numpy as np
 from gym import Wrapper, spaces
 

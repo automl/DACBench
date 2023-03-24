@@ -6,11 +6,12 @@ from pathlib import Path
 import matplotlib
 import numpy as np
 import pytest
+from gymnasium import spaces
 
 from dacbench.abstract_agent import AbstractDACBenchAgent
+
 # import shutil
 from dacbench.runner import run_dacbench  # , plot_results
-from gymnasium import spaces
 
 matplotlib.use("Agg")
 

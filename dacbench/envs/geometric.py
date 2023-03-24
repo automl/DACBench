@@ -3,7 +3,6 @@ Geometric environment.
 Original environment authors: Rasmus von Glahn
 """
 import bisect
-import itertools
 import math
 import os
 from typing import Dict, List, Tuple
@@ -16,7 +15,6 @@ from mpl_toolkits import mplot3d
 from dacbench import AbstractEnv
 
 sns.set_theme(style="darkgrid")
-
 
 
 class GeometricEnv(AbstractEnv):

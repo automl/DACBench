@@ -2,10 +2,10 @@ import os
 
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
+import gymnasium as gym
 import numpy as np
 import pandas as pd
 
-import gymnasium as gym
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs.theory import RLSEnv, RLSEnvDiscrete
 

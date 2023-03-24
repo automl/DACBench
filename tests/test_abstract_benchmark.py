@@ -4,13 +4,15 @@ import tempfile
 import unittest
 
 import numpy as np
+from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.challenge_benchmarks.reward_quality_challenge.reward_functions import \
-    random_reward
-from dacbench.challenge_benchmarks.state_space_challenge.random_states import \
-    small_random_sigmoid_state
-from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete
+from dacbench.challenge_benchmarks.reward_quality_challenge.reward_functions import (
+    random_reward,
+)
+from dacbench.challenge_benchmarks.state_space_challenge.random_states import (
+    small_random_sigmoid_state,
+)
 
 
 class TestAbstractBenchmark(unittest.TestCase):

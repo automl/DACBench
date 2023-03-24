@@ -6,8 +6,7 @@ import ConfigSpace.hyperparameters as CSH
 import numpy as np
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import (ContinuousSigmoidEnv, ContinuousStateSigmoidEnv,
-                           SigmoidEnv)
+from dacbench.envs import ContinuousSigmoidEnv, ContinuousStateSigmoidEnv, SigmoidEnv
 
 ACTION_VALUES = (5, 10)
 

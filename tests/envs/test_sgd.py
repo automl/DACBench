@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 
 from dacbench import AbstractEnv
-from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.abstract_benchmark import objdict
 from dacbench.benchmarks.sgd_benchmark import SGD_DEFAULTS, SGDBenchmark
 from dacbench.envs.sgd import Reward, SGDEnv
 from dacbench.wrappers import ObservationWrapper

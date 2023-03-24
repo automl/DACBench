@@ -3,9 +3,9 @@ import uuid
 from collections import deque
 from copy import deepcopy
 
+import gymnasium as gym
 import numpy as np
 
-import gymnasium as gym
 from dacbench import AbstractEnv
 
 
@@ -23,7 +23,7 @@ class BinaryProblem:
         nbits = self.data.sum()
         if nbits < k:
             ids = rng.choice(
-                np.where(self.data == False)[0], size=k - nbits, replace=False
+                np.where(self.data is False)[0], size=k - nbits, replace=False
             )
             self.data[ids] = True
             self.eval()

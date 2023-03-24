@@ -3,11 +3,10 @@ import json
 import os
 import socket
 import time
-from typing import Any, Dict, List, Tuple, Union
-
-import numpy as np
+from typing import Any, Dict, Union
 
 import gymnasium as gym
+import numpy as np
 
 
 class Encoder(json.JSONEncoder):
@@ -96,7 +95,7 @@ class Encoder(json.JSONEncoder):
                 )
             )
         else:
-            raise NotImplemented(
+            raise NotImplementedError(
                 f"Serialisation for type {properties['__type__']} not implemented"
             )
 

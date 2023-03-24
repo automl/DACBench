@@ -3,8 +3,14 @@ import unittest
 from pathlib import Path
 
 from dacbench.logger import load_logs, log2dataframe
-from dacbench.run_baselines import (DISCRETE_ACTIONS, main, run_dynamic_policy,
-                                    run_optimal, run_random, run_static)
+from dacbench.run_baselines import (
+    DISCRETE_ACTIONS,
+    main,
+    run_dynamic_policy,
+    run_optimal,
+    run_random,
+    run_static,
+)
 
 
 class TestRunBaselines(unittest.TestCase):
