@@ -38,6 +38,7 @@ def save_geometric_instances(
 ):
     """
     First delete old isntance_set.
+
     Create new instances based on config.
 
     Parameters
@@ -46,6 +47,9 @@ def save_geometric_instances(
         name of instance set
     config : Dict, optional
         config that has info about which functions will get selected, by default FUNCTION_CONFIG
+    path : std
+        path to save to
+
     """
     if path:
         csv_path = os.path.join(path, filename)
@@ -72,8 +76,7 @@ def save_geometric_instances(
 
 def _create_csv_string(index, func_name: str) -> str:
     """
-    Create comma separated string with function name and parameter values.
-    Set 0 for irrelevant params.
+    Create comma separated string with function name and parameter values. Set 0 for irrelevant params.
 
     Parameters
     ----------
@@ -86,6 +89,7 @@ def _create_csv_string(index, func_name: str) -> str:
     -------
     str
         comma separated string
+
     """
     count = FUNCTION_PARAMETER_NUMBERS[func_name]
     max_count = max(list(FUNCTION_PARAMETER_NUMBERS.values()))
@@ -119,10 +123,12 @@ def _create_csv_string(index, func_name: str) -> str:
 
 
 def sample_sinus_value():
+    """Get values for sinus."""
     return np.round(np.random.uniform(low=0.5, high=2.0), 1)
 
 
 def sample_sigmoid_value():
+    """Get values for sigmoid."""
     scale = np.round(np.random.uniform(low=0.1, high=4.0), 1)
     yield scale
     infliction = np.round(np.random.uniform(low=0, high=10), 1)
@@ -130,6 +136,7 @@ def sample_sigmoid_value():
 
 
 def sample_parabel_cubic_value():
+    """Get values for cubic."""
     sig = [-1, 1]
     yield random.choice(sig)
 

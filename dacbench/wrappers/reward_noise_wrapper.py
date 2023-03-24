@@ -5,18 +5,20 @@ from gym import Wrapper
 class RewardNoiseWrapper(Wrapper):
     """
     Wrapper to add noise to the reward signal.
-    Noise can be sampled from a custom distribution or any distribution in numpy's random module
+
+    Noise can be sampled from a custom distribution or any distribution in numpy's random module.
     """
 
     def __init__(
         self, env, noise_function=None, noise_dist="standard_normal", dist_args=None
     ):
         """
-        Initialize wrapper
+        Initialize wrapper.
+
         Either noise_function or noise_dist and dist_args need to be given
 
         Parameters
-        -------
+        ----------
         env : gym.Env
             Environment to wrap
         noise_function : function
@@ -25,6 +27,7 @@ class RewardNoiseWrapper(Wrapper):
             Name of distribution to sample noise from
         dist_args : list
             Arguments for noise distribution
+
         """
         super(RewardNoiseWrapper, self).__init__(env)
 
@@ -37,7 +40,7 @@ class RewardNoiseWrapper(Wrapper):
 
     def __setattr__(self, name, value):
         """
-        Set attribute in wrapper if available and in env if not
+        Set attribute in wrapper if available and in env if not.
 
         Parameters
         ----------
@@ -45,6 +48,7 @@ class RewardNoiseWrapper(Wrapper):
             Attribute to set
         value
             Value to set attribute to
+
         """
         if name in ["noise_function", "env", "add_noise", "step"]:
             object.__setattr__(self, name, value)
@@ -53,7 +57,7 @@ class RewardNoiseWrapper(Wrapper):
 
     def __getattribute__(self, name):
         """
-        Get attribute value of wrapper if available and of env if not
+        Get attribute value of wrapper if available and of env if not.
 
         Parameters
         ----------
@@ -64,6 +68,7 @@ class RewardNoiseWrapper(Wrapper):
         -------
         value
             Value of given name
+
         """
         if name in ["noise_function", "env", "add_noise", "step"]:
             return object.__getattribute__(self, name)
@@ -73,7 +78,7 @@ class RewardNoiseWrapper(Wrapper):
 
     def step(self, action):
         """
-        Execute environment step and add noise
+        Execute environment step and add noise.
 
         Parameters
         ----------
@@ -84,6 +89,7 @@ class RewardNoiseWrapper(Wrapper):
         -------
         np.array, float, bool, bool, dict
             state, reward, terminated, truncated, metainfo
+
         """
         state, reward, terminated, truncated, info = self.env.step(action)
         reward += self.noise_function()
@@ -92,7 +98,7 @@ class RewardNoiseWrapper(Wrapper):
 
     def add_noise(self, dist, args):
         """
-        Make noise function from distribution name and arguments
+        Make noise function from distribution name and arguments.
 
         Parameters
         ----------
@@ -105,6 +111,7 @@ class RewardNoiseWrapper(Wrapper):
         -------
         function
             Noise sampling function
+            
         """
         rng = np.random.default_rng()
         function = getattr(rng, dist)

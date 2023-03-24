@@ -1,7 +1,5 @@
-"""
-This is strongly guided and partially copy from
-https://github.com/automl/HPOBench/blob/master/hpobench/container/client_abstract_benchmark.py
-"""
+"""This is strongly guided and partially copy from:https://github.com/automl/HPOBench/blob/master/hpobench/container/client_abstract_benchmark.py"""
+
 import argparse
 import logging
 import os
@@ -51,16 +49,21 @@ SOCKET_PATH = Path("/tmp/dacbench/sockets")
 
 @Pyro4.expose
 class RemoteRunnerServer:
+    """Server for container running."""
+
     def __init__(self, pyro_demon):
+        """Init server."""
         self.benchmark = None
         self.pyro_demon = pyro_demon
 
     def start(self, config: str, benchmark: Tuple[str, str]):
+        """Start server."""
         benchmark = AbstractBenchmark.import_from(*benchmark)
 
         self.benchmark = benchmark.from_json(config)
 
     def get_environment(self) -> str:
+        """Get environment."""
         env = self.benchmark.get_environment()
 
         # set up logger and stuff
@@ -71,6 +74,8 @@ class RemoteRunnerServer:
 
 
 class RemoteRunner:
+    """Runner for remote benchmarks."""
+
     FACTORY_NAME: str = "RemoteRunnerServerFactory"
 
     def __init__(
@@ -85,42 +90,42 @@ class RemoteRunner:
         socket_id=None,
     ):
         """
+        Runner for containers.
 
-          Parameters:
-          ----------------
-
-          benchmark: AbstractBenchmark
-              The benchmark to run
-          container_source : Optional[str]
-              Path to the container. Either local path or url to a hosting
-              platform, e.g. singularity hub.
-          container_tag : str
-              Singularity containers are specified by an address as well as a container tag. We use the tag as a version
-              number. By default the tag is set to `latest`, which then pulls the latest container from the container
-              source. The tag-versioning allows the users to rerun an experiment, which was performed with an older
-              container version. Take a look in the container_source to find the right tag to use.
-          bind_str : Optional[str]
-              Defaults to ''. You can bind further directories into the container.
-              This string have the form src[:dest[:opts]].
-              For more information, see https://sylabs.io/guides/3.5/user-guide/bind_paths_and_mounts.html
-          env_str : Optional[str]
-              Defaults to ''. Sometimes you want to pass a parameter to your container. You can do this by setting some
-              environmental variables. The list should follow the form VAR1=VALUE1,VAR2=VALUE2,..
-              For more information, see
-              https://sylabs.io/guides/3.5/user-guide/environment_and_metadata.html#environment-overview
-          gpu : bool
-              If True, the container has access to the local cuda-drivers.
-              (Not tested)
+        Parameters
+        ----------
+        benchmark: AbstractBenchmark
+            The benchmark to run
+        container_name : str
+            name for container
+        container_source : Optional[str]
+            Path to the container. Either local path or url to a hosting platform, e.g. singularity hub.
+        container_tag : str
+            Singularity containers are specified by an address as well as a container tag. We use the tag as a version
+            number. By default the tag is set to `latest`, which then pulls the latest container from the container
+            source. The tag-versioning allows the users to rerun an experiment, which was performed with an older
+            container version. Take a look in the container_source to find the right tag to use.
+        bind_str : Optional[str]
+            Defaults to ''. You can bind further directories into the container.
+            This string have the form src[:dest[:opts]].
+            For more information, see https://sylabs.io/guides/3.5/user-guide/bind_paths_and_mounts.html
+        env_str : Optional[str]
+            Defaults to ''. Sometimes you want to pass a parameter to your container. You can do this by setting some
+            environmental variables. The list should follow the form VAR1=VALUE1,VAR2=VALUE2,..
+            For more information, see
+            https://sylabs.io/guides/3.5/user-guide/environment_and_metadata.html#environment-overview
+        gpu : bool
+            If True, the container has access to the local cuda-drivers. (Not tested)
         socket_id : Optional[str]
-              Setting up the container is done in two steps:
-              1) Start the benchmark on a random generated socket id.
-              2) Create a proxy connection to the container via this socket id.
+            Setting up the container is done in two steps:
+            1) Start the benchmark on a random generated socket id.
+            2) Create a proxy connection to the container via this socket id.
 
-              When no `socket_id` is given, a new container is started. The `socket_id` (address) of this containers is
-              stored in the class attribute Benchmark.socket_id
+            When no `socket_id` is given, a new container is started. The `socket_id` (address) of this containers is
+            stored in the class attribute Benchmark.socket_id
 
-              When a `socket_id` is given, instead of creating a new container, connect only to the container that is
-              reachable at `socket_id`. Make sure that a container is already running with the address `socket_id`.
+            When a `socket_id` is given, instead of creating a new container, connect only to the container that is
+            reachable at `socket_id`. Make sure that a container is already running with the address `socket_id`.
 
         """
         logger.info(f"Logging level: {logger.level}")
@@ -146,20 +151,22 @@ class RemoteRunner:
 
     @property
     def socket(self) -> Path:
+        """Get socket."""
         return self.socket_from_id(self.__socket_id)
 
     @staticmethod
     def id_generator() -> str:
-        """Helper function: Creates unique socket ids for the benchmark server"""
+        """Helper function: Creates unique socket ids for the benchmark server."""
         return str(uuid1())
 
     @staticmethod
     def socket_from_id(socket_id: str) -> Path:
+        """Get socket from id."""
         return Path(SOCKET_PATH) / f"{socket_id}.unixsock"
 
     def __start_server(self, env_str, bind_str, gpu):
         """
-        Starts container and the pyro server
+        Starts container and the pyro server.
 
         Parameters
         ----------
@@ -169,6 +176,7 @@ class RemoteRunner:
             Bind string for the container
         gpu : bool
             True if the container should use gpu, False otherwise
+
         """
         # start container
         logger.debug(f"Starting server on {self.socket}")
@@ -189,9 +197,7 @@ class RemoteRunner:
         wait_for_unixsocket(self.socket, 10)
 
     def __connect_to_server(self, benchmark: AbstractBenchmark):
-        """
-        Connects to the server and initializes the benchmark
-        """
+        """Connects to the server and initializes the benchmark."""
         # Pyro4.config.REQUIRE_EXPOSE = False
         # Generate Pyro 4 URI for connecting to client
         ns = Pyro4.Proxy(f"PYRO:Pyro.NameServer@./u:{self.socket}")
@@ -207,6 +213,7 @@ class RemoteRunner:
         self.env = None
 
     def get_environment(self):
+        """Get remote environment."""
         if self.env is None:
             env_uri = self.remote_runner.get_environment()
             remote_env_server = Pyro4.Proxy(env_uri)
@@ -214,6 +221,7 @@ class RemoteRunner:
         return self.env
 
     def run(self, agent: AbstractDACBenchAgent, number_of_episodes: int):
+        """Run agent on remote."""
         # todo: seeding
         env = self.get_environment()
 
@@ -232,11 +240,13 @@ class RemoteRunner:
         self.env = None
 
     def close(self):
+        """Termiante all processes."""
         # todo add context manager
         self.daemon_process.terminate()
         self.daemon_process.wait()
 
     def __del__(self):
+        """Close."""
         self.close()
 
     def load_benchmark(
@@ -246,6 +256,7 @@ class RemoteRunner:
         container_source: Union[str, Path],
         container_tag: str,
     ):
+        """Load benchmark from recipe."""
         # see for implementation guideline hpobench  hpobench/container/client_abstract_benchmark.py
         # in the end self.container_source should contain the path to the file to run
 
@@ -261,15 +272,20 @@ class RemoteRunner:
 
 @Pyro4.expose
 class RemoteRunnerServerFactory:
+    """Creates remoter runner servers."""
+
     def __init__(self, pyro_demon):
+        """Make server factory."""
         self.pyro_demon = pyro_demon
 
     def create(self):
+        """Get server."""
         remote_runner_server = RemoteRunnerServer(pyro_demon=self.pyro_demon)
         remote_runner_server_uri = daemon.register(remote_runner_server)
         return remote_runner_server_uri
 
     def __call__(self):
+        """Make."""
         return self.create()
 
 

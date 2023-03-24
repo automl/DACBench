@@ -26,7 +26,7 @@ PIP ?= python -m pip
 MAKE ?= make
 BLACK ?= python -m black
 ISORT ?= python -m isort --profile black
-PYDOCSTYLE ?= pydocstyle
+PYDOCSTYLE ?= python -m pydocstyle
 PRECOMMIT ?= pre-commit
 FLAKE8 ?= python -m flake8
 
@@ -53,7 +53,7 @@ check-flake8:
 	$(FLAKE8) tests || :
 
 # pydocstyle does not have easy ignore rules, instead, we include as they are covered
-check: check-black check-isort check-flake8 # check-pydocstyle
+check: check-black check-isort check-flake8 check-pydocstyle
 
 pre-commit:
 	$(PRECOMMIT) run --all-files

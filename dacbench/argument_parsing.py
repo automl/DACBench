@@ -11,21 +11,21 @@ class PathType(object):
 
     def __init__(self, exists=True, type="file", dash_ok=True):
         """
+        Initialize Path.
 
         Parameters
         ----------
-
         exists : bool
-                True: a path that does exist
-                False: a path that does not exist, in a valid parent directory
-                None: don't care
-           type :  str
-                file, dir, symlink, socket, None, or a function returning True for valid paths
-                None: don't care
-           dash_ok: whether to allow "-" as stdin/stdout
+            True: a path that does exist
+            False: a path that does not exist, in a valid parent directory
+            None: don't care
+        type :  str
+            file, dir, symlink, socket, None, or a function returning True for valid paths
+            None: don't care
+        dash_ok: bool
+            whether to allow "-" as stdin/stdout
 
         """
-
         assert exists in (True, False, None)
         assert type in ("file", "dir", "symlink", "socket", None) or hasattr(
             type, "__call__"
@@ -36,6 +36,15 @@ class PathType(object):
         self._dash_ok = dash_ok
 
     def __call__(self, string: str):
+        """
+        Call Path.
+
+        Parameters
+        ----------
+        string : str
+            string to check
+
+        """
         if string == "-":
             # the special argument "-" means sys.std{in,out}
             if self._type == "dir":

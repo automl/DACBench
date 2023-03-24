@@ -10,13 +10,16 @@ import numpy as np
 
 
 class Encoder(json.JSONEncoder):
-    """Json Encoder to save tuple and or numpy arrays | numpy floats / integer.
+    """
+    Json Encoder to save tuple and or numpy arrays | numpy floats / integer.
+
     Adapted from: https://github.com/automl/HPOBench/blob/master/hpobench/util/container_utils.py
     Serializing tuple/numpy array may not work. We need to annotate those types, to reconstruct them correctly.
     """
 
     @staticmethod
     def hint(item):
+        """Encode different object types."""
         # Annotate the different item types
         if isinstance(item, tuple):
             return {"__type__": "tuple", "__items__": [Encoder.hint(e) for e in item]}
@@ -42,10 +45,12 @@ class Encoder(json.JSONEncoder):
 
     # pylint: disable=arguments-differ
     def encode(self, obj):
+        """Generic encode."""
         return super(Encoder, self).encode(Encoder.hint(obj))
 
     @staticmethod
     def encode_space(space_obj: gym.Space):
+        """Encode gym space."""
         properties = [
             (
                 "__type__",
@@ -103,17 +108,16 @@ class Encoder(json.JSONEncoder):
 
 
 class Decoder(json.JSONDecoder):
-    """
-    Adapted from: https://github.com/automl/HPOBench/blob/master/hpobench/util/container_utils.py
-
-    """
+    """Adapted from: https://github.com/automl/HPOBench/blob/master/hpobench/util/container_utils.py"""
 
     def __init__(self, *args, **kwargs):
+        """Init decoder."""
         json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
 
     def object_hook(
         self, obj: Any
     ) -> Union[Union[tuple, np.ndarray, float, float, int], Any]:
+        """Encode different types of objects."""
         if "__type__" in obj:
             __type = obj["__type__"]
             if __type == "tuple":
@@ -131,6 +135,7 @@ class Decoder(json.JSONDecoder):
         return obj
 
     def decode_space(self, space_dict: Dict) -> gym.Space:
+        """Dict to gym space."""
         __type = space_dict["__type__"]
         __class = getattr(gym.spaces, __type.split(".")[-1])
 
@@ -165,6 +170,7 @@ def wait_for_unixsocket(path: str, timeout: float = 10.0) -> None:
     :param path: path to the socket
     :param timeout: timeout in seconds
     :return:
+
     """
     start = time.time()
     while not os.path.exists(path):
@@ -177,8 +183,7 @@ def wait_for_unixsocket(path: str, timeout: float = 10.0) -> None:
 
 def wait_for_port(port, host="localhost", timeout=5.0):
     """
-    Taken from https://gist.github.com/butla/2d9a4c0f35ea47b7452156c96a4e7b12
-    Wait until a port starts accepting TCP connections.
+    Taken from https://gist.github.com/butla/2d9a4c0f35ea47b7452156c96a4e7b12 - Wait until a port starts accepting TCP connections.
 
     Parameters
     ----------
@@ -189,9 +194,10 @@ def wait_for_port(port, host="localhost", timeout=5.0):
     timeout : float
         Timeout in seconds.
 
-    Raises:
+    Raises
     ------
     TimeoutError: The port isn't accepting connection after time specified in `timeout`.
+
     """
     start_time = time.perf_counter()
     while True:

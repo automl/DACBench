@@ -9,4 +9,8 @@ repos:
     rev: 3.8.4
     hooks:
     - id: flake8
-
+- repo: https://github.com/PyCQA/pydocstyle
+    rev: master
+    hooks:
+      - id: pydocstyle
+        exclude: 'dacbench/envs/rl-plan/*'

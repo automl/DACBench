@@ -13,20 +13,23 @@ current_palette = list(sb.color_palette())
 class EpisodeTimeWrapper(Wrapper):
     """
     Wrapper to track time spent per episode.
+
     Includes interval mode that returns times in lists of len(interval) instead of one long list.
     """
 
     def __init__(self, env, time_interval=None, logger=None):
         """
-        Initialize wrapper
+        Initialize wrapper.
 
         Parameters
-        -------
+        ----------
         env : gym.Env
             Environment to wrap
         time_interval : int
             If not none, mean in given intervals is tracked, too
         logger : dacbench.logger.ModuleLogger
+            logger to write to
+
         """
         super(EpisodeTimeWrapper, self).__init__(env)
         self.time_interval = time_interval
@@ -44,7 +47,7 @@ class EpisodeTimeWrapper(Wrapper):
 
     def __setattr__(self, name, value):
         """
-        Set attribute in wrapper if available and in env if not
+        Set attribute in wrapper if available and in env if not.
 
         Parameters
         ----------
@@ -52,6 +55,7 @@ class EpisodeTimeWrapper(Wrapper):
             Attribute to set
         value
             Value to set attribute to
+
         """
         if name in [
             "time_interval",
@@ -76,7 +80,7 @@ class EpisodeTimeWrapper(Wrapper):
 
     def __getattribute__(self, name):
         """
-        Get attribute value of wrapper if available and of env if not
+        Get attribute value of wrapper if available and of env if not.
 
         Parameters
         ----------
@@ -87,6 +91,7 @@ class EpisodeTimeWrapper(Wrapper):
         -------
         value
             Value of given name
+
         """
         if name in [
             "time_interval",
@@ -112,7 +117,7 @@ class EpisodeTimeWrapper(Wrapper):
 
     def step(self, action):
         """
-        Execute environment step and record time
+        Execute environment step and record time.
 
         Parameters
         ----------
@@ -123,6 +128,7 @@ class EpisodeTimeWrapper(Wrapper):
         -------
         np.array, float, bool, bool, dict
             state, reward, terminated, truncated, metainfo
+
         """
         start = time.time()
         state, reward, terminated, truncated, info = self.env.step(action)
@@ -156,7 +162,7 @@ class EpisodeTimeWrapper(Wrapper):
 
     def get_times(self):
         """
-        Get times
+        Get times.
 
         Returns
         -------
@@ -178,7 +184,7 @@ class EpisodeTimeWrapper(Wrapper):
             return np.array(self.overall_times), np.array(self.all_steps)
 
     def render_step_time(self):
-        """Render step times"""
+        """Render step times."""
         figure = plt.figure(figsize=(12, 6))
         canvas = FigureCanvas(figure)
         plt.title("Time per Step")
@@ -208,7 +214,7 @@ class EpisodeTimeWrapper(Wrapper):
         return img
 
     def render_episode_time(self):
-        """Render episode times"""
+        """Render episode times."""
         figure = plt.figure(figsize=(12, 6))
         canvas = FigureCanvas(figure)
         plt.title("Time per Episode")

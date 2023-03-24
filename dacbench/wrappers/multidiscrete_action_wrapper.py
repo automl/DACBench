@@ -5,19 +5,17 @@ from gymnasium import Wrapper, spaces
 
 
 class MultiDiscreteActionWrapper(Wrapper):
-    """
-    Wrapper to cast MultiDiscrete action spaces to Discrete.
-    This should improve usability with standard RL libraries.
-    """
+    """Wrapper to cast MultiDiscrete action spaces to Discrete. This should improve usability with standard RL libraries."""
 
     def __init__(self, env):
         """
-        Initialize wrapper
+        Initialize wrapper.
 
         Parameters
-        -------
+        ----------
         env : gym.Env
             Environment to wrap
+
         """
         super().__init__(env)
         self.n_actions = len(self.env.action_space.nvec)
@@ -30,5 +28,6 @@ class MultiDiscreteActionWrapper(Wrapper):
             self.action_mapper[idx] = prod_idx
 
     def step(self, action):
+        """Maps discrete action value to array."""
         action = self.action_mapper[action]
         return self.env.step(action)

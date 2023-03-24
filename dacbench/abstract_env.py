@@ -6,19 +6,18 @@ from gymnasium.utils import seeding
 
 
 class AbstractEnv(gym.Env):
-    """
-    Abstract template for environments
-    """
+    """Abstract template for environments."""
 
     def __init__(self, config):
         """
-        Initialize environment
+        Initialize environment.
 
         Parameters
-        -------
+        ----------
         config : dict
             Environment configuration
             If to seed the action space as well
+
         """
         super(AbstractEnv, self).__init__()
         self.config = config
@@ -142,12 +141,13 @@ class AbstractEnv(gym.Env):
 
     def step_(self):
         """
-        Pre-step function for step count and cutoff
+        Pre-step function for step count and cutoff.
 
         Returns
         -------
         bool
             End of episode
+
         """
         truncated = False
         self.c_step += 1
@@ -156,10 +156,7 @@ class AbstractEnv(gym.Env):
         return truncated
 
     def reset_(self, seed=0, options={}, instance=None, instance_id=None, scheme=None):
-        """
-        Pre-reset function for progressing through the instance set
-        Will either use round robin, random or no progression scheme
-        """
+        """Pre-reset function for progressing through the instance set.Will either use round robin, random or no progression scheme."""
         if seed is not None:
             self.seed(seed, self.config.get("seed_action_space", False))
         self.c_step = 0
@@ -169,16 +166,17 @@ class AbstractEnv(gym.Env):
 
     def use_next_instance(self, instance=None, instance_id=None, scheme=None):
         """
-        Changes instance according to chosen instance progession
+        Changes instance according to chosen instance progession.
 
         Parameters
-        -------
+        ----------
         instance
             Instance specification for potentional new instances
         instance_id
             ID of the instance to switch to
         scheme
             Update scheme for this progression step (either round robin, random or no progression)
+
         """
         if instance is not None:
             self.instance = instance
@@ -195,10 +193,10 @@ class AbstractEnv(gym.Env):
 
     def step(self, action):
         """
-        Execute environment step
+        Execute environment step.
 
         Parameters
-        -------
+        ----------
         action
             Action to take
 
@@ -214,15 +212,16 @@ class AbstractEnv(gym.Env):
             Run timed out flag
         info : dict
             Additional metainfo
+
         """
         raise NotImplementedError
 
     def reset(self, seed: int = None):
         """
-        Reset environment
+        Reset environment.
 
         Parameters
-        -------
+        ----------
         seed
             Seed for the environment
 
@@ -232,23 +231,25 @@ class AbstractEnv(gym.Env):
             Environment state
         info: dict
             Additional metainfo
+
         """
         raise NotImplementedError
 
     def get_inst_id(self):
         """
-        Return instance ID
+        Return instance ID.
 
         Returns
         -------
         int
             ID of current instance
+
         """
         return self.inst_id
 
     def get_instance_set(self):
         """
-        Return instance set
+        Return instance set.
 
         Returns
         -------
@@ -260,53 +261,57 @@ class AbstractEnv(gym.Env):
 
     def get_instance(self):
         """
-        Return current instance
+        Return current instance.
 
         Returns
         -------
         type flexible
             Currently used instance
+
         """
         return self.instance
 
     def set_inst_id(self, inst_id):
         """
-        Change current instance ID
+        Change current instance ID.
 
         Parameters
         ----------
         inst_id : int
             New instance index
+
         """
         self.inst_id = inst_id
         self.instance_index = self.instance_id_list.index(self.inst_id)
 
     def set_instance_set(self, inst_set):
         """
-        Change instance set
+        Change instance set.
 
         Parameters
         ----------
         inst_set: list
             New instance set
+
         """
         self.instance_set = inst_set
         self.instance_id_list = sorted(list(self.instance_set.keys()))
 
     def set_instance(self, instance):
         """
-        Change currently used instance
+        Change currently used instance.
 
         Parameters
         ----------
         instance:
             New instance
+
         """
         self.instance = instance
 
     def seed(self, seed=None, seed_action_space=False):
         """
-        Set rng seed
+        Set rng seed.
 
         Parameters
         ----------
@@ -314,8 +319,8 @@ class AbstractEnv(gym.Env):
             seed for rng
         seed_action_space: bool, default False
             if to seed the action space as well
-        """
 
+        """
         self.initial_seed = seed
         # maybe one should use the seed generated by seeding.np_random(seed) but it can be to large see issue https://github.com/openai/gym/issues/2210
         random.seed(seed)
@@ -329,9 +334,7 @@ class AbstractEnv(gym.Env):
         return [seed]
 
     def use_test_set(self):
-        """
-        Change to test instance set
-        """
+        """Change to test instance set."""
         if self.test_set is None:
             raise ValueError(
                 "No test set was provided, please check your benchmark config."
@@ -349,9 +352,7 @@ class AbstractEnv(gym.Env):
         self.instance = self.test_instance
 
     def use_training_set(self):
-        """
-        Change to training instance set
-        """
+        """Change to training instance set."""
         self.test = False
         self.test_set = self.instance_set
         self.test_instance_id_list = self.instance_id_list
@@ -365,15 +366,18 @@ class AbstractEnv(gym.Env):
 
 
 class AbstractMADACEnv(AbstractEnv):
+    """Multi-Agent version of DAC environment."""
+
     def __init__(self, config):
         """
-        Initialize environment
+        Initialize environment.
 
         Parameters
-        -------
+        ----------
         config : dict
             Environment configuration
             If to seed the action space as well
+
         """
         super(AbstractMADACEnv, self).__init__(config)
         self.multi_agent = False
@@ -435,9 +439,26 @@ class AbstractMADACEnv(AbstractEnv):
                 self.action_spaces[a] = subspace
 
     def multi_agent_reset(self, seed: int = None):
+        """
+        Reset env, but don't return observations.
+
+        Parameters
+        ----------
+        seed : int
+            seed to use
+
+        """
         self.observation, self.info = self.env_reset(seed)
 
     def last(self):
+        """
+        Get current step data.
+
+        Returns
+        -------
+        np.array, float, bool, bool, dict
+
+        """
         return (
             self.observation,
             self.reward,
@@ -447,6 +468,15 @@ class AbstractMADACEnv(AbstractEnv):
         )
 
     def multi_agent_step(self, action):
+        """
+        Step for a single hyperparameter.
+
+        Parameters
+        ----------
+        action
+            the action in the current agent's dimension
+
+        """
         self.action[self.current_agent] = action
         self.current_agent = self.agents.index(self.current_agent) + 1
         if self.current_agent >= len(self.agents):
@@ -460,6 +490,15 @@ class AbstractMADACEnv(AbstractEnv):
             self.current_agent = self.agents[0]
 
     def register_agent(self, agent_id):
+        """
+        Add agent.
+
+        Parameters
+        ----------
+        agent_id : int
+            id of the agent to add
+
+        """
         if type(agent_id) == str:
             if len(agent_id) > 1:
                 if agent_id in self.hp_names:
@@ -473,19 +512,31 @@ class AbstractMADACEnv(AbstractEnv):
             self.current_agent = agent_id
 
     def remove_agent(self, agent_id):
+        """
+        Remove agent.
+
+        Parameters
+        ----------
+        agent_id : int
+            id of the agent to remove
+
+        """
         if agent_id in self.agents:
             self.agents.remove(agent_id)
 
     @property
     def num_agents(self):
+        """Current number of agents."""
         return len(self.agents)
 
     @property
     def agent_selection(self):
+        """Current agent."""
         return self.current_agent
 
     @property
     def infos(self):
+        """Current infos per agent."""
         infos = {}
         for a in self.agents:
             infos[a] = self.info
@@ -493,6 +544,7 @@ class AbstractMADACEnv(AbstractEnv):
 
     @property
     def rewards(self):
+        """Current rewards values per agent."""
         rewards = {}
         for a in self.agents:
             rewards[a] = self.rewards
@@ -500,6 +552,7 @@ class AbstractMADACEnv(AbstractEnv):
 
     @property
     def terminations(self):
+        """Current termination values per agent."""
         terminations = {}
         for a in self.agents:
             terminations[a] = self.termination
@@ -507,6 +560,7 @@ class AbstractMADACEnv(AbstractEnv):
 
     @property
     def truncations(self):
+        """Current truncation values per agent."""
         truncations = {}
         for a in self.agents:
             truncations[a] = self.truncation

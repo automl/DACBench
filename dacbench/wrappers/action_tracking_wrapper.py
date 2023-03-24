@@ -11,20 +11,23 @@ current_palette = list(sb.color_palette())
 class ActionFrequencyWrapper(Wrapper):
     """
     Wrapper to action frequency.
+
     Includes interval mode that returns frequencies in lists of len(interval) instead of one long list.
     """
 
     def __init__(self, env, action_interval=None, logger=None):
         """
-        Initialize wrapper
+        Initialize wrapper.
 
         Parameters
-        -------
+        ----------
         env : gym.Env
             Environment to wrap
         action_interval : int
             If not none, mean in given intervals is tracked, too
         logger: logger.ModuleLogger
+            logger to write to
+
         """
         super(ActionFrequencyWrapper, self).__init__(env)
         self.action_interval = action_interval
@@ -37,7 +40,7 @@ class ActionFrequencyWrapper(Wrapper):
 
     def __setattr__(self, name, value):
         """
-        Set attribute in wrapper if available and in env if not
+        Set attribute in wrapper if available and in env if not.
 
         Parameters
         ----------
@@ -45,6 +48,7 @@ class ActionFrequencyWrapper(Wrapper):
             Attribute to set
         value
             Value to set attribute to
+
         """
         if name in [
             "action_interval",
@@ -63,7 +67,7 @@ class ActionFrequencyWrapper(Wrapper):
 
     def __getattribute__(self, name):
         """
-        Get attribute value of wrapper if available and of env if not
+        Get attribute value of wrapper if available and of env if not.
 
         Parameters
         ----------
@@ -74,6 +78,7 @@ class ActionFrequencyWrapper(Wrapper):
         -------
         value
             Value of given name
+
         """
         if name in [
             "action_interval",
@@ -93,7 +98,7 @@ class ActionFrequencyWrapper(Wrapper):
 
     def step(self, action):
         """
-        Execute environment step and record state
+        Execute environment step and record state.
 
         Parameters
         ----------
@@ -104,6 +109,7 @@ class ActionFrequencyWrapper(Wrapper):
         -------
         np.array, float, bool, dict
             state, reward, done, metainfo
+
         """
         state, reward, terminated, truncated, info = self.env.step(action)
         self.overall_actions.append(action)
@@ -120,7 +126,7 @@ class ActionFrequencyWrapper(Wrapper):
 
     def get_actions(self):
         """
-        Get state progression
+        Get state progression.
 
         Returns
         -------
@@ -137,7 +143,7 @@ class ActionFrequencyWrapper(Wrapper):
 
     def render_action_tracking(self):
         """
-        Render action progression
+        Render action progression.
 
         Returns
         -------

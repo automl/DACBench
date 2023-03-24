@@ -9,16 +9,17 @@ sns.set_style("darkgrid")
 
 def space_sep_upper(column_name: str) -> str:
     """
-    Separates strings at underscores into headings.
-    Used to generate labels from logging names.
+    Separates strings at underscores into headings. Used to generate labels from logging names.
 
     Parameters
     ----------
     column_name : str
+        Name to generate label for
 
     Returns
     -------
     str
+
     """
     if column_name is None:
         return None
@@ -39,7 +40,8 @@ def generate_global_step(
 
     Parameters
     ----------
-    data:
+    data: pd.DataFrame
+        data source
     x_column: str
         the name of the global_step (default 'global_step')
     x_label_columns: [str, ...]
@@ -48,6 +50,7 @@ def generate_global_step(
     Returns
     -------
     (data, plot_index, x_column, x_label_columns)
+
     """
     plot_index = (
         data.groupby(x_label_columns)
@@ -65,7 +68,7 @@ def add_multi_level_ticks(
     grid: sns.FacetGrid, plot_index: pd.DataFrame, x_column: str, x_label_columns: str
 ) -> None:
     """
-    Expects a FacedGrid with global_step (x_column) as x-axis and replaces the tick labels to match format episode:step
+    Expects a FacedGrid with global_step (x_column) as x-axis and replaces the tick labels to match format episode:step.
 
     E.g. Run with 3 episodes, each of 10 steps. This results in 30 global steps.
     The resulting tick labels could be ['0', '4', '9', '14', '19', '24', '29'].
@@ -74,7 +77,7 @@ def add_multi_level_ticks(
     Parameters
     ----------
     grid: sns.FacesGrid
-
+        The grid to plot onto
     plot_index: pd.DataFrame
         The mapping between current tick labels (global step values) and new tick labels joined by ':'.
         usually the result from generate_global_step
@@ -82,9 +85,6 @@ def add_multi_level_ticks(
         column label to use for looking up tick values
     x_label_columns: [str, ...]
         columns labels of columns to use for new labels (joined by ':'
-
-    Returns
-    -------
 
     """
     for ax in grid.axes.flat:
@@ -111,7 +111,8 @@ def plot(
     **kwargs,
 ) -> sns.FacetGrid:
     """
-    Helper function that: create a FacetGrid
+    Helper function that creates a FacetGrid.
+
     1. Updates settings with kwargs (overwrites values)
     2. Plots using plot_function(**settings)
     3. Set x and y labels of not provided the columns names will converted to pretty strings using space_sep_upper
@@ -183,6 +184,7 @@ def plot_performance(
     Returns
     -------
     sns.FacedGrid
+
     """
     settings = {
         "data": data,
@@ -223,6 +225,7 @@ def plot_performance_per_instance(
     Returns
     -------
     sns.FacedGrid
+
     """
     # order the columns by mean instance
     order = data.groupby("instance").mean().sort_values("overall_performance").index
@@ -277,6 +280,7 @@ def plot_step_time(
     Returns
     -------
     sns.FacedGrid
+
     """
     multi_level_x_label = "Epoch:Step"
     data, plot_index, x_column, x_label_columns = generate_global_step(data)
@@ -331,6 +335,7 @@ def plot_episode_time(
     Returns
     -------
     sns.FacedGrid
+
     """
     settings = {
         "data": data,
@@ -386,8 +391,8 @@ def plot_action(
     Returns
     -------
     sns.FacedGrid
-    """
 
+    """
     return plot_space(
         data, "action", show_global_step, interval, title, x_label, y_label, **kargs
     )
@@ -435,6 +440,7 @@ def plot_state(
     Returns
     -------
     sns.FacedGrid
+
     """
     return plot_space(
         data, "state", show_global_step, interval, title, x_label, y_label, **kargs
@@ -452,7 +458,7 @@ def plot_space(
     **args,
 ) -> sns.FacetGrid:
     """
-    Create a line plot showing sapce over time.
+    Create a line plot showing space over time.
 
     Please be aware that spaces can be quite large and the plots can become quite messy (and take some time)
     if you try plot all dimensions at once. It is therefore recommended to select a subset of columns before running the
@@ -471,6 +477,8 @@ def plot_space(
     ----------
     data: pd.DataFrame
         Dataframe resulting from logging and loading using log2dataframe(logs, wide=True)
+    space_column_name : str
+        Name of the column in the space which to plot
     show_global_step: bool
         If to show the global_step (step enumerated over all episodes) or Episode:Step. (False default)
     interval: int
@@ -487,6 +495,7 @@ def plot_space(
     Returns
     -------
     sns.FacedGrid
+
     """
     # first find columns with prefix space_column_name
     space_entries = list(
