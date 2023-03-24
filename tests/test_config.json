@@ -1,6 +1,0 @@
-{
-  "state_method": ["function", "dacbench.challenge_benchmarks.state_space_challenge.random_states", "small_random_sigmoid_state"],
-  "reward_function": ["function","dacbench.challenge_benchmarks.reward_quality_challenge.reward_functions", "random_reward"],
-  "_observation_space_type": "None",
-  "wrappers": [["RewardNoiseWrapper", []]]
-}
