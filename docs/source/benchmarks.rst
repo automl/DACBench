@@ -18,7 +18,7 @@ They are both based on artificial functions and real algorithms:
   Sigmoid function approximation in multiple dimensions.
 - :doc:`Luby <benchmark_docs/luby>` (Artificial Benchmark):
   Learning the Luby sequence.
-- :doc:`ToySGD <benchmark_docs/toysgd>` (Artificial Benchmark):
+- :doc:`ToySGD <benchmark_docs/toy_sgd>` (Artificial Benchmark):
   Controlling the learning rate in gradient descent.
 - :doc:`Geometric <benchmark_docs/geometric>` (Artificial Benchmark):
   Approximating several functions at once.

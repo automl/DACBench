@@ -5,7 +5,7 @@ How to Install DACBench
 =======================
 
 This is a guide on how to install DACBench and its benchmarks. Alternatively, you can also
-use `pre-built containers containers <containers>`_.
+use `pre-built containers <containers>`.
 
 .. role:: bash(code)
     :language: bash

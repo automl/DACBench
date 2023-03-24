@@ -15,7 +15,7 @@ In order to create a Multi-Agent DACBench environment, select either of the foll
 
 - :doc:`Sigmoid <benchmark_docs/sigmoid>` (Artificial Benchmark):
   Sigmoid function approximation in multiple dimensions.
-- :doc:`ToySGD <benchmark_docs/toysgd>` (Artificial Benchmark):
+- :doc:`ToySGD <benchmark_docs/toy_sgd>` (Artificial Benchmark):
   Controlling the learning rate in gradient descent.
 - :doc:`Geometric <benchmark_docs/geometric>` (Artificial Benchmark):
   Approximating several functions at once.

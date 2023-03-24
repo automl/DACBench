@@ -14,6 +14,7 @@ def create_polynomial_instance_set(
     low: float = -10,
     high: float = 10,
 ):
+    """Make instance set."""
     instances = []
     for i in range(n_samples):
         coeffs = sample_coefficients(order=order, low=low, high=high)
@@ -31,6 +32,7 @@ def create_polynomial_instance_set(
 
 
 def sample_coefficients(order: int = 2, low: float = -10, high: float = 10):
+    """Sample function coefficients."""
     n_coeffs = order + 1
     coeffs = np.zeros((n_coeffs,))
     coeffs[0] = np.random.uniform(0, high, size=1)
@@ -41,7 +43,6 @@ def sample_coefficients(order: int = 2, low: float = -10, high: float = 10):
 class ToySGDEnv(AbstractMADACEnv):
     """
     Optimize toy functions with SGD + Momentum.
-
 
     Action: [log_learning_rate, log_momentum] (log base 10)
     State: Dict with entries remaining_budget, gradient, learning_rate, momentum
@@ -58,6 +59,7 @@ class ToySGDEnv(AbstractMADACEnv):
     """
 
     def __init__(self, config):
+        """Init env."""
         super(ToySGDEnv, self).__init__(config)
         self.n_steps_max = config.get("cutoff", 1000)
 
@@ -76,6 +78,7 @@ class ToySGDEnv(AbstractMADACEnv):
         self.n_steps = 0  # type: Optional[int]
 
     def build_objective_function(self):
+        """Make base function."""
         if self.instance["family"] == "polynomial":
             order = int(self.instance["order"])
             if order != 2:
@@ -102,13 +105,14 @@ class ToySGDEnv(AbstractMADACEnv):
             )
 
     def get_initial_position(self):
+        """Get initial position."""
         return 0  # np.random.uniform(-5, 5, size=self.n_dim-1)
 
     def step(
         self, action: Union[float, Tuple[float, float]]
     ) -> Tuple[Dict[str, float], float, bool, Dict]:
         """
-        Take one step with SGD
+        Take one step with SGD.
 
         Parameters
         ----------
@@ -126,6 +130,7 @@ class ToySGDEnv(AbstractMADACEnv):
             - terminated : bool
             - truncated : bool
             - info : Dict
+
         """
         truncated = super(ToySGDEnv, self).step_()
         info = {}
@@ -172,7 +177,14 @@ class ToySGDEnv(AbstractMADACEnv):
 
     def reset(self, seed=None, options={}):
         """
-        Reset environment
+        Reset environment.
+
+        Parameters
+        ----------
+        seed : int
+            seed
+        options : dict
+            options dict (not used)
 
         Returns
         -------
@@ -180,6 +192,7 @@ class ToySGDEnv(AbstractMADACEnv):
             Environment state
         dict
             Meta-info
+
         """
         super(ToySGDEnv, self).reset_(seed)
 
@@ -204,6 +217,7 @@ class ToySGDEnv(AbstractMADACEnv):
         }, {}
 
     def render(self, **kwargs):
+        """Render progress."""
         import matplotlib.pyplot as plt
 
         history = np.array(self.history).flatten()
