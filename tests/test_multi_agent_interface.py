@@ -1,4 +1,5 @@
 import unittest
+import numpy as np
 from dacbench.benchmarks import SigmoidBenchmark, ToySGDBenchmark, ModCMABenchmark
 from dacbench.envs import SigmoidEnv, ToySGDEnv
 
@@ -32,7 +33,7 @@ class TestMultiAgentInterface(unittest.TestCase):
         state, reward, terminated, truncated, info = env.last()
         self.assertFalse(state is None)
         self.assertTrue(reward is None)
-        self.assertTrue(info is None)
+        self.assertFalse(info is None)
         self.assertFalse(terminated)
         self.assertFalse(truncated)
         env.register_agent(max(env.possible_agents))
@@ -45,6 +46,7 @@ class TestMultiAgentInterface(unittest.TestCase):
         bench = SigmoidBenchmark()
         bench.config["multi_agent"] = True
         env = bench.get_environment()
+        env.reset()
         state, _, _, _, _ = env.last()
         env.register_agent(0)
         env.register_agent(max(env.possible_agents))
@@ -54,13 +56,14 @@ class TestMultiAgentInterface(unittest.TestCase):
         self.assertTrue(env.current_agent==0)
         env.step(0)
         state2, _, _, _, _ = env.last()
-        self.assertEqual(state, state2)
+        self.assertTrue(np.array_equal(state, state2))
         self.assertTrue(env.current_agent==max(env.possible_agents))
+        env.step(1)
         state3, _, _, _, _ = env.last()
-        self.assertNotEqual(state, state3)
+        self.assertFalse(np.array_equal(state, state3))
         env.remove_agent(0)
         self.assertTrue(len(env.agents)==1)
         self.assertFalse(0 in env.agents)
-        env.register_agent('value_dim_2')
+        env.register_agent('value_dim_0')
         self.assertTrue(len(env.agents)==2)
-        self.assertTrue(1 in env.agents)
+        self.assertTrue(0 in env.agents)

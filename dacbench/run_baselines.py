@@ -26,7 +26,7 @@ modea_actions = [
     np.arange(3),
 ]
 DISCRETE_ACTIONS = {
-    "SigmoidBenchmark": np.arange(int(np.prod((5, 10)))),
+    "SigmoidBenchmark": list(itertools.product(*[np.arange(val) for val in (5, 10)])),
     "LubyBenchmark": np.arange(6),
     "FastDownwardBenchmark": [0, 1],
     "CMAESBenchmark": [np.around(a, decimals=1) for a in np.linspace(0.2, 10, num=50)],

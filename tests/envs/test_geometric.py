@@ -82,7 +82,7 @@ class TestGeometricEnv(unittest.TestCase):
     def test_step(self):
         env = self.make_env(DEFAULTS_STATIC)
         env.reset()
-        state, reward, terminated, truncated, meta = env.step(1)
+        state, reward, terminated, truncated, meta = env.step(env.action_space.sample())
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertTrue(state[0] == 9)

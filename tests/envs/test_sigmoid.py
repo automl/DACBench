@@ -30,7 +30,7 @@ class TestSigmoidEnv(unittest.TestCase):
         )
         self.assertTrue(env.n_actions == len(SIGMOID_DEFAULTS["action_values"]))
         self.assertTrue(env.slope_multiplier == SIGMOID_DEFAULTS["slope_multiplier"])
-        self.assertTrue(env.action_vals == SIGMOID_DEFAULTS["action_values"])
+        self.assertTrue((env.action_space.nvec+1 == SIGMOID_DEFAULTS["action_values"]).all())
 
     def test_reset(self):
         env = self.make_env()
@@ -46,7 +46,7 @@ class TestSigmoidEnv(unittest.TestCase):
     def test_step(self):
         env = self.make_env()
         env.reset()
-        state, reward, terminated, truncated, meta = env.step(1)
+        state, reward, terminated, truncated, meta = env.step([1, 1])
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertTrue(state[0] == 9)

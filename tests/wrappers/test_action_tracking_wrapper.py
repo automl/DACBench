@@ -34,7 +34,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
         bench = ModCMABenchmark()
         bench.set_seed(seed)
         env = bench.get_environment()
-        env.seed_action_space(seed)
+        env.action_space.seed(seed)
         action_logger = logger.add_module(ActionFrequencyWrapper)
         wrapped = ActionFrequencyWrapper(env, logger=action_logger)
         action = env.action_space.sample()
@@ -89,7 +89,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
         bench = LubyBenchmark()
         bench.set_seed(seed)
         env = bench.get_environment()
-        env.seed_action_space(seed)
+        env.action_space.seed(seed)
 
         action_logger = logger.add_module(ActionFrequencyWrapper)
         wrapped = ActionFrequencyWrapper(env, logger=action_logger)

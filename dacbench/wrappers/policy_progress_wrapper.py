@@ -95,7 +95,7 @@ class PolicyProgressWrapper(Wrapper):
                 np.linalg.norm(np.array(optimal) - np.array(self.episode))
             )
             self.episode = []
-        return state, reward,terminated, truncated, info
+        return state, reward, terminated, truncated, info
 
     def render_policy_progress(self):
         """ Plot progress """

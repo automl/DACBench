@@ -33,7 +33,7 @@ SIGMOID_DEFAULTS = objdict(
     {
         "config_space": DEFAULT_CFG_SPACE,
         "action_space_class": "MultiDiscrete",
-        "action_space_args": list(int(ACTION_VALUES)),
+        "action_space_args": [ACTION_VALUES],
         "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [
@@ -46,6 +46,7 @@ SIGMOID_DEFAULTS = objdict(
         "slope_multiplier": 2.0,
         "seed": 0,
         "multi_agent": False,
+        "default_action": [0, 0],
         "instance_set_path": "../instance_sets/sigmoid/sigmoid_2D3M_train.csv",
         "test_set_path": "../instance_sets/sigmoid/sigmoid_2D3M_test.csv",
         "benchmark_info": INFO,
@@ -131,8 +132,8 @@ class SigmoidBenchmark(AbstractBenchmark):
         values: list
             A list of possible actions per dimension
         """
-        self.config.action_values = values
-        self.config.action_space_args = list(int(values))
+        del self.config['config_space']
+        self.config.action_space_args = [values]
         self.config.observation_space_args = [
             np.array([-np.inf for _ in range(1 + len(values) * 3)]),
             np.array([np.inf for _ in range(1 + len(values) * 3)]),

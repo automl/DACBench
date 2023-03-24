@@ -304,23 +304,6 @@ class AbstractEnv(gym.Env):
         """
         self.instance = instance
 
-    def seed_action_space(self, seed=None):
-        """
-        Seeds the action space.
-        Parameters
-        ----------
-        seed : int, default None
-            if None self.initial_seed is be used
-
-        Returns
-        -------
-
-        """
-        if seed is None:
-            seed = self.initial_seed
-
-        self.action_space.seed(seed)
-
     def seed(self, seed=None, seed_action_space=False):
         """
         Set rng seed
@@ -341,7 +324,7 @@ class AbstractEnv(gym.Env):
         # uses the uncorrelated seed from seeding but makes sure that no randomness is introduces.
 
         if seed_action_space:
-            self.seed_action_space()
+            self.action_space.seed(seed)
 
         return [seed]
 
@@ -398,11 +381,11 @@ class AbstractMADACEnv(AbstractEnv):
             self.multi_agent = config.multi_agent
    
         if self.multi_agent:
-            space_class = type(self.env.action_space)
+            space_class = type(self.action_space)
             if space_class == gym.spaces.Box:
-                num_hps = len(self.env.action_space.low)
+                num_hps = len(self.action_space.low)
             elif space_class == gym.spaces.MultiDiscrete:
-                num_hps = len(self.env.action_space.nvec)
+                num_hps = len(self.action_space.nvec)
             else:
                 print(
                     "The MultiAgent environment currently only supports action spaces of types Box and MultiDiscrete"
@@ -410,7 +393,7 @@ class AbstractMADACEnv(AbstractEnv):
                 raise TypeError
             self.possible_agents = np.arange(num_hps)
             self.hp_names = []
-            if 'config_space' self.config.keys():
+            if 'config_space' in self.config.keys():
                 self.hp_names = self.config['config_space'].get_hyperparameter_names()
             self.max_num_agent = len(self.possible_agents)
             self.env_step = self.step
@@ -426,22 +409,25 @@ class AbstractMADACEnv(AbstractEnv):
             self.info = None
             # TODO: this should be set to a reasonable default, ideally
             # Else playing with less than the full number of agents will be really hard
-            self.action = self.env.action_space.sample()
+            if 'default_action' in self.config.keys():
+                self.action = self.config.default_action
+            else:
+                self.action = self.action_space.sample()
 
             self.observation_spaces = {}
             for a in self.possible_agents:
-                self.observation_spaces[a] = self.env.observation_space
+                self.observation_spaces[a] = self.observation_space
 
-            space_class = type(self.env.action_space)
+            space_class = type(self.action_space)
             if space_class == gym.spaces.Box:
-                lowers = self.env.action_space.low
-                uppers = self.env.action_space.high
+                lowers = self.action_space.low
+                uppers = self.action_space.high
             else:
-                num_options = [len(n) for n in self.env.action_space.nvec]
+                num_options = [n for n in self.action_space.nvec]
             self.action_spaces = {}
             for a in self.possible_agents:
                 if space_class == gym.spaces.Box:
-                    subspace = gym.spaces.Box(low=[lowers[a]], high=[uppers[a]])
+                    subspace = gym.spaces.Box(low=np.array([lowers[a]]), high=np.array([uppers[a]]))
                 else:
                     subspace = gym.spaces.Discrete(num_options[a])
                 self.action_spaces[a] = subspace

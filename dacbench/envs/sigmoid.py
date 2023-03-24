@@ -38,7 +38,7 @@ class SigmoidEnv(AbstractMADACEnv):
         self.slope_multiplier = config["slope_multiplier"]
         self.n_actions = len(self.action_space.nvec)
         self._prev_state = None
-        self.action = None
+        self.last_action = None
 
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
@@ -65,7 +65,7 @@ class SigmoidEnv(AbstractMADACEnv):
             state, reward, terminated, truncated, info
         """
         self.done = super(SigmoidEnv, self).step_()
-        self.action = action
+        self.last_action = action
         next_state = self.get_state(self)
         self._prev_state = next_state
         return next_state, self.get_reward(self), False, self.done, {}
@@ -89,7 +89,7 @@ class SigmoidEnv(AbstractMADACEnv):
         r = [
             1 - np.abs(self._sig(self.c_step, slope, shift) - (act / (max_act - 1)))
             for slope, shift, act, max_act in zip(
-                self.slopes, self.shifts, self.action, self.action_vals
+                self.slopes, self.shifts, self.last_action, self.action_space.nvec
             )
         ]
         r = np.prod(r)
@@ -105,7 +105,7 @@ class SigmoidEnv(AbstractMADACEnv):
         if self.c_step == 0:
             next_state += [-1 for _ in range(self.n_actions)]
         else:
-            next_state += self.action
+            next_state = np.array(list(next_state) + list(self.last_action))
         return np.array(next_state)
 
     def close(self) -> bool:
@@ -180,7 +180,7 @@ class ContinuousStateSigmoidEnv(SigmoidEnv):
         np.array, float, bool, dict
             state, reward, done, info
         """
-        self.action = action
+        self.last_action = action
         # The reward measures how wrong the choice was so we can take this error to determine how far we travel along
         # the x-axis instead of always advancing + 1
         r = self.get_reward(self)
@@ -230,7 +230,7 @@ class ContinuousSigmoidEnv(SigmoidEnv):
         np.array, float, bool, dict
             state, reward, done, info
         """
-        self.action = action
+        self.last_action = action
         # The reward measures how wrong the choice was so we can take this error to determine how far we travel along
         # the x-axis instead of always advancing + 1
         r = self.get_reward(self)
