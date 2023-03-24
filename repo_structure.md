@@ -11,8 +11,6 @@ This file gives on overview the poruses of the different files and folders:
 ├── LICENSE:                the licence for this software
 ├── pyproject.toml:         configuration file for setuptools, tests (pytest, coverage), black (code formatter)
 ├── README.md:              project readme
-├── run_ppo.sh:             shell script to run ppo baselines on SLURM
-├── run.py:                 runs random agent on ModCMA
 ├── runscripts:             shell scripts to run baselines on  SLURM
 ├── setup.cfg:              pip-package config. Contains: dependencies, extras and thier dependencies, tags, project meta
 ├── setup.py:               dummy setup.py require for downward compatibility          
