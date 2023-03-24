@@ -10,16 +10,16 @@ from dacbench import AbstractEnv
 
 
 class BinaryProblem:
-    """
-    An abstract class for an individual in binary representation
-    """
+    """An abstract class for an individual in binary representation."""
 
     def __init__(self, n, rng=np.random.default_rng()):
+        """Init problem."""
         self.data = rng.choice([True, False], size=n)
         self.n = n
         self.fitness = self.eval()
 
     def initialise_with_fixed_number_of_bits(self, k, rng=np.random.default_rng()):
+        """Init with given number of bits."""
         nbits = self.data.sum()
         if nbits < k:
             ids = rng.choice(
@@ -29,12 +29,15 @@ class BinaryProblem:
             self.eval()
 
     def is_optimal(self):
+        """Get is_optimal flag."""
         pass
 
     def get_optimal(self):
+        """Get optimum."""
         pass
 
     def eval(self):
+        """Evaluate fitness."""
         pass
 
     def get_fitness_after_flipping(self, locs):
@@ -42,44 +45,50 @@ class BinaryProblem:
         Calculate the change in fitness after flipping the bits at positions locs
 
         Parameters
-        -----------
-            locs: 1d-array
-                positions where bits are flipped
+        ----------
+        locs: 1d-array
+            positions where bits are flipped
 
-        Returns: int
-        -----------
+        Returns
+        -------
             objective after flipping
+
         """
         raise NotImplementedError
 
     def get_fitness_after_crossover(self, xprime, locs_x, locs_xprime):
         """
-        Calculate fitness of the child aftering being crossovered with xprime
+        Calculate fitness of the child aftering being crossovered with xprime.
 
         Parameters
-        -----------
-            xprime: 1d boolean array
-                the individual to crossover with
-            locs_x: 1d boolean/integer array
-                positions where we keep current bits of self
-            locs_xprime: : 1d boolean/integer array
-                positions where we change to xprime's bits
+        ----------
+        xprime: 1d boolean array
+            the individual to crossover with
+        locs_x: 1d boolean/integer array
+            positions where we keep current bits of self
+        locs_xprime: : 1d boolean/integer array
+            positions where we change to xprime's bits
 
-        Returns: fitness of the new individual after crossover
-        -----------
+        Returns
+        -------
+            fitness of the new individual after crossover
+
         """
         raise NotImplementedError
 
     def flip(self, locs):
         """
-        flip the bits at position indicated by locs
+        Flip the bits at position indicated by locs.
 
         Parameters
-        -----------
-            locs: 1d-array
-                positions where bits are flipped
+        ----------
+        locs: 1d-array
+            positions where bits are flipped
 
-        Returns: the new individual after the flip
+        Returns 
+        -------
+            the new individual after the flip
+
         """
         child = deepcopy(self)
         child.data[locs] = ~child.data[locs]
@@ -88,18 +97,20 @@ class BinaryProblem:
 
     def combine(self, xprime, locs_xprime):
         """
-        combine (crossover) self and xprime by taking xprime's bits at locs_xprime and self's bits at other positions
+        Combine (crossover) self and xprime by taking xprime's bits at locs_xprime and self's bits at other positions.
 
         Parameters
-        -----------
-            xprime: 1d boolean array
-                the individual to crossover with
-            locs_x: 1d boolean/integer array
-                positions where we keep current bits of self
-            locs_xprime: : 1d boolean/integer array
-                positions where we change to xprime's bits
+        ----------
+        xprime: 1d boolean array
+            the individual to crossover with
+        locs_x: 1d boolean/integer array
+            positions where we keep current bits of self
+        locs_xprime: : 1d boolean/integer array
+            positions where we change to xprime's bits
 
-        Returns: the new individual after the crossover
+        Returns 
+        -------
+            the new individual after the crossover
 
         """
         child = deepcopy(self)
@@ -109,9 +120,14 @@ class BinaryProblem:
 
     def mutate(self, p, n_childs, rng=np.random.default_rng()):
         """
-        Draw l ~ binomial(n, p), l>0
+        Draw l ~ binomial(n, p), l>0.
+
         Generate n_childs children by flipping exactly l bits
-        Return: the best child (maximum fitness), its fitness and number of evaluations used
+
+        Returns
+        ------- 
+            the best child (maximum fitness), its fitness and number of evaluations used
+
         """
         assert p >= 0
 
@@ -137,8 +153,12 @@ class BinaryProblem:
 
     def mutate_rls(self, l, rng=np.random.default_rng()):
         """
-        generate a child by flipping exactly l bits
-        Return: child, its fitness
+        Generate a child by flipping exactly l bits.
+
+        Returns
+        -------
+            child, its fitness
+
         """
         assert l >= 0
 
@@ -160,11 +180,25 @@ class BinaryProblem:
         rng=np.random.default_rng(),
     ):
         """
-        Crossover operator:
-            for each bit, taking value from x with probability p and from self with probability 1-p
-        Arguments:
-            x: the individual to crossover with
-            p (float): in [0,1]
+        Crossover operation in population.
+
+        Crossover operator: for each bit, taking value from x with probability p and from self with probability 1-p
+
+        Parameters
+        ----------
+        xprime
+            the individual to crossover with
+        p : float
+            probability in [0,1]
+        n_childs : int
+            number of child individuals
+        include_xprime : bool
+            whether to inculde x
+        count_different_inds_only : bool
+            whether to only count different individuals
+        rng:
+            random number generator    
+
         """
         assert p <= 1
 
@@ -212,11 +246,13 @@ class BinaryProblem:
 
 class LeadingOne(BinaryProblem):
     """
-    An individual for LeadingOne problem
+    An individual for LeadingOne problem.
+
     The aim is to maximise the number of leading (and consecutive) 1 bits in the string
     """
 
     def __init__(self, n, rng=np.random.default_rng(), initObj=None):
+        """Make individual"""
         if initObj is None:
             super(LeadingOne, self).__init__(n=n, rng=rng)
         else:
@@ -227,6 +263,7 @@ class LeadingOne(BinaryProblem):
             self.fitness = self.eval()
 
     def eval(self):
+        """Evaluate fitness."""
         k = self.data.argmin()
         if self.data[k]:
             self.fitness = self.n
@@ -235,12 +272,15 @@ class LeadingOne(BinaryProblem):
         return self.fitness
 
     def is_optimal(self):
+        """Return is_optimal flag."""
         return self.data.all()
 
     def get_optimal(self):
+        """Return optimum."""
         return self.n
 
     def get_fitness_after_flipping(self, locs):
+        """Return fitness after flipping."""
         min_loc = locs.min()
         if min_loc < self.fitness:
             return min_loc
@@ -255,6 +295,7 @@ class LeadingOne(BinaryProblem):
             return new_fitness
 
     def get_fitness_after_crossover(self, xprime, locs_x, locs_xprime):
+        """Return fitness after crossover."""
         child = self.combine(xprime, locs_xprime)
         child.eval()
         return child.fitness
@@ -266,18 +307,22 @@ HISTORY_LENGTH = 5
 
 class RLSEnv(AbstractEnv):
     """
-    Environment for RLS with step size
+    Environment for RLS with step size.
+
     Current assumption: we only consider (1+1)-RLS, so there's only one parameter to tune (r)
     """
 
     def __init__(self, config, test_env=False) -> None:
         """
-        Initialize RLSEnv
+        Initialize RLSEnv.
 
         Parameters
-        -------
+        ----------
         config : objdict
             Environment configuration
+        test_env : bool
+            whether to use test mode
+
         """
         super(RLSEnv, self).__init__(config)
         self.logger = logging.getLogger(self.__str__())
@@ -358,20 +403,25 @@ class RLSEnv(AbstractEnv):
     def get_obs_domain_from_name(var_name):
         """
         Get default lower and upperbound of a observation variable based on its name.
+
         The observation space will then be created
-        Return:
+
+        Returns
+        -------
             Two int values, e.g., 1, np.inf
+
         """
         return 0, np.inf
 
     def reset(self, seed=None, options={}):
         """
-        Resets env
+        Resets env.
 
         Returns
         -------
         numpy.array
             Environment state
+
         """
         super(RLSEnv, self).reset_(seed)
 
@@ -413,11 +463,12 @@ class RLSEnv(AbstractEnv):
         return self.get_state(), {}
 
     def get_state(self):
+        """Return state."""
         return np.asarray([f() for f in self.state_functions])
 
     def step(self, action):
         """
-        Execute environment step
+        Execute environment step.
 
         Parameters
         ----------
@@ -428,6 +479,7 @@ class RLSEnv(AbstractEnv):
         -------
             state, reward, terminated, truncated, info
             np.array, float, bool, bool, dict
+
         """
         truncated = super(RLSEnv, self).step_()
 
@@ -539,7 +591,7 @@ class RLSEnv(AbstractEnv):
 
     def close(self) -> bool:
         """
-        Close Env
+        Close Env.
 
         No additional cleanup necessary
 
@@ -547,16 +599,16 @@ class RLSEnv(AbstractEnv):
         -------
         bool
             Closing confirmation
+
         """
         return True
 
 
 class RLSEnvDiscrete(RLSEnv):
-    """
-    RLS environment where the choices of r is discretised
-    """
+    """RLS environment where the choices of r is discretised."""
 
     def __init__(self, config, test_env=False):
+        """Init env."""
         super(RLSEnvDiscrete, self).__init__(config, test_env)
         assert (
             "action_choices" in config
@@ -571,6 +623,7 @@ class RLSEnvDiscrete(RLSEnv):
         self.action_choices = config["action_choices"]
 
     def step(self, action):
+        """Take step."""
         if isinstance(action, np.ndarray) or isinstance(action, list):
             assert len(action) == 1
             action = action[0]

@@ -1,9 +1,11 @@
 """
-Sigmoid environment from
+Sigmoid environment from:
+
 "Dynamic Algorithm Configuration:Foundation of a New Meta-Algorithmic Framework"
 by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
 Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 """
+
 from typing import List
 
 import matplotlib.cm as cm
@@ -14,9 +16,7 @@ from dacbench import AbstractMADACEnv
 
 
 class SigmoidEnv(AbstractMADACEnv):
-    """
-    Environment for tracing sigmoid curves
-    """
+    """Environment for tracing sigmoid curves."""
 
     def _sig(self, x, scaling, inflection):
         """Simple sigmoid function"""
@@ -24,12 +24,13 @@ class SigmoidEnv(AbstractMADACEnv):
 
     def __init__(self, config) -> None:
         """
-        Initialize Sigmoid Env
+        Initialize Sigmoid Env.
 
         Parameters
-        -------
+        ----------
         config : objdict
             Environment configuration
+
         """
         super(SigmoidEnv, self).__init__(config)
 
@@ -52,7 +53,7 @@ class SigmoidEnv(AbstractMADACEnv):
 
     def step(self, action: int):
         """
-        Execute environment step
+        Execute environment step.
 
         Parameters
         ----------
@@ -63,6 +64,7 @@ class SigmoidEnv(AbstractMADACEnv):
         -------
         np.array, float, bool, bool, dict
             state, reward, terminated, truncated, info
+
         """
         self.done = super(SigmoidEnv, self).step_()
         self.last_action = action
@@ -72,12 +74,13 @@ class SigmoidEnv(AbstractMADACEnv):
 
     def reset(self, seed=None, options={}) -> List[int]:
         """
-        Resets env
+        Resets env.
 
         Returns
         -------
         numpy.array
             Environment state
+
         """
         super(SigmoidEnv, self).reset_(seed)
         self.shifts = self.instance[: self.n_actions]
@@ -86,6 +89,7 @@ class SigmoidEnv(AbstractMADACEnv):
         return self.get_state(self), {}
 
     def get_default_reward(self, _):
+        """Get default reward."""
         r = [
             1 - np.abs(self._sig(self.c_step, slope, shift) - (act / (max_act - 1)))
             for slope, shift, act, max_act in zip(
@@ -97,6 +101,7 @@ class SigmoidEnv(AbstractMADACEnv):
         return r
 
     def get_default_state(self, _):
+        """Get default state representation."""
         remaining_budget = self.n_steps - self.c_step
         next_state = [remaining_budget]
         for shift, slope in zip(self.shifts, self.slopes):
@@ -110,23 +115,25 @@ class SigmoidEnv(AbstractMADACEnv):
 
     def close(self) -> bool:
         """
-        Close Env
+        Close Env.
 
         Returns
         -------
         bool
             Closing confirmation
+
         """
         return True
 
     def render(self, mode: str) -> None:
         """
-        Render env in human mode
+        Render env in human mode.
 
         Parameters
         ----------
         mode : str
             Execution mode
+
         """
         if mode == "human" and self.n_actions == 2:
             plt.ion()
@@ -151,24 +158,23 @@ class SigmoidEnv(AbstractMADACEnv):
 
 
 class ContinuousStateSigmoidEnv(SigmoidEnv):
-    """
-    Environment for tracing sigmoid curves with a continuous state on the x-axis
-    """
+    """Environment for tracing sigmoid curves with a continuous state on the x-axis."""
 
     def __init__(self, config) -> None:
         """
-        Initialize Sigmoid Env
+        Initialize Sigmoid Env.
 
         Parameters
-        -------
+        ----------
         config : objdict
             Environment configuration
+
         """
         super().__init__(config)
 
     def step(self, action: int):
         """
-        Execute environment step
+        Execute environment step.
 
         Parameters
         ----------
@@ -179,6 +185,7 @@ class ContinuousStateSigmoidEnv(SigmoidEnv):
         -------
         np.array, float, bool, dict
             state, reward, done, info
+
         """
         self.last_action = action
         # The reward measures how wrong the choice was so we can take this error to determine how far we travel along
@@ -201,18 +208,17 @@ class ContinuousStateSigmoidEnv(SigmoidEnv):
 
 
 class ContinuousSigmoidEnv(SigmoidEnv):
-    """
-    Environment for tracing sigmoid curves with a continuous state on the x-axis
-    """
+    """Environment for tracing sigmoid curves with a continuous state on the x-axis."""
 
     def __init__(self, config) -> None:
         """
-        Initialize Sigmoid Env
+        Initialize Sigmoid Env.
 
         Parameters
-        -------
+        ----------
         config : objdict
             Environment configuration
+
         """
         super().__init__(config)
 
@@ -229,6 +235,7 @@ class ContinuousSigmoidEnv(SigmoidEnv):
         -------
         np.array, float, bool, dict
             state, reward, done, info
+
         """
         self.last_action = action
         # The reward measures how wrong the choice was so we can take this error to determine how far we travel along
