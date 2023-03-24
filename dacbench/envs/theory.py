@@ -1,11 +1,11 @@
-import numpy as np
-from copy import deepcopy
 import logging
-from collections import deque
-
 import uuid
-import gymnasium as gym
+from collections import deque
+from copy import deepcopy
 
+import numpy as np
+
+import gymnasium as gym
 from dacbench import AbstractEnv
 
 
@@ -502,17 +502,20 @@ class RLSEnv(AbstractEnv):
                 msg = "Env " + self.env_type + ". "
             else:
                 msg = ""
-            msg += "Episode done: n=%d; obj=%d; init_obj=%d; evals=%d; max_evals=%d; steps=%d; r_min=%.1f; r_max=%.1f; r_mean=%.1f; R=%.4f" % (
-                self.n,
-                self.x.fitness,
-                self.init_obj,
-                self.total_evals,
-                self.max_evals,
-                self.c_step,
-                min(self.log_r),
-                max(self.log_r),
-                sum(self.log_r) / len(self.log_r),
-                sum(self.log_reward),
+            msg += (
+                "Episode done: n=%d; obj=%d; init_obj=%d; evals=%d; max_evals=%d; steps=%d; r_min=%.1f; r_max=%.1f; r_mean=%.1f; R=%.4f"
+                % (
+                    self.n,
+                    self.x.fitness,
+                    self.init_obj,
+                    self.total_evals,
+                    self.max_evals,
+                    self.c_step,
+                    min(self.log_r),
+                    max(self.log_r),
+                    sum(self.log_r) / len(self.log_r),
+                    sum(self.log_reward),
+                )
             )
             # self.logger.info(msg)
             returned_info["msg"] = msg

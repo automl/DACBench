@@ -1,13 +1,13 @@
 # flake8: noqa: F401
-from dacbench.envs.luby import LubyEnv, luby_gen
-from dacbench.envs.sigmoid import (
-    SigmoidEnv,
-    ContinuousSigmoidEnv,
-    ContinuousStateSigmoidEnv,
-)
+import importlib
+import warnings
+
 from dacbench.envs.fast_downward import FastDownwardEnv
-from dacbench.envs.toysgd import ToySGDEnv
 from dacbench.envs.geometric import GeometricEnv
+from dacbench.envs.luby import LubyEnv, luby_gen
+from dacbench.envs.sigmoid import (ContinuousSigmoidEnv,
+                                   ContinuousStateSigmoidEnv, SigmoidEnv)
+from dacbench.envs.toysgd import ToySGDEnv
 
 __all__ = [
     "LubyEnv",
@@ -19,8 +19,6 @@ __all__ = [
 ]
 
 
-import importlib
-import warnings
 
 cma_spec = importlib.util.find_spec("cma")
 found = cma_spec is not None

@@ -1,7 +1,8 @@
 import itertools
+
 import numpy as np
-from gymnasium import Wrapper
-from gymnasium import spaces
+
+from gymnasium import Wrapper, spaces
 
 
 class MultiDiscreteActionWrapper(Wrapper):

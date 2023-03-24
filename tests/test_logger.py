@@ -2,13 +2,14 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+
 import numpy as np
 from gym import spaces
-from gym.spaces import Discrete, MultiDiscrete, Dict, Box
+from gym.spaces import Box, Dict, Discrete, MultiDiscrete
 
 from dacbench.agents.simple_agents import RandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
-from dacbench.logger import ModuleLogger, Logger, log2dataframe
+from dacbench.logger import Logger, ModuleLogger, log2dataframe
 
 
 class TestLogger(unittest.TestCase):

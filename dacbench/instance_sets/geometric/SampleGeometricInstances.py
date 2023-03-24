@@ -1,8 +1,10 @@
 from __future__ import generators
-from typing import Dict
-import random
-import numpy as np
+
 import os
+import random
+from typing import Dict
+
+import numpy as np
 
 FILE_PATH = os.path.dirname(__file__)
 
@@ -96,7 +98,6 @@ def _create_csv_string(index, func_name: str) -> str:
         value_generator = sample_parabel_cubic_value()
 
     for i in range(max_count):
-
         if i < count:
             if func_name == "sinus":
                 value = np.round(sample_sinus_value(), 1)

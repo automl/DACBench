@@ -1,19 +1,31 @@
 import json
 from numbers import Number
+from typing import Dict, List, Tuple, Union
 
-from typing import Dict, Union, List, Tuple
-
-import Pyro4
 import numpy as np
-
+import Pyro4
 
 from dacbench.abstract_env import AbstractEnv
-from dacbench.container.container_utils import Encoder, Decoder
+from dacbench.container.container_utils import Decoder, Encoder
 
 NumpyTypes = Union[np.ndarray, np.int, np.float, np.random.RandomState]
 DefaultJsonable = Union[
-    bool, None, Dict[str, 'DefaultJsonable'], List['DefaultJsonable'], Tuple['DefaultJsonable'], str, float, int]
-Jsonable = Union[List['Jsonable'], Dict[str, 'Jsonable'], Tuple['Jsonable'], DefaultJsonable, NumpyTypes]
+    bool,
+    None,
+    Dict[str, "DefaultJsonable"],
+    List["DefaultJsonable"],
+    Tuple["DefaultJsonable"],
+    str,
+    float,
+    int,
+]
+Jsonable = Union[
+    List["Jsonable"],
+    Dict[str, "Jsonable"],
+    Tuple["Jsonable"],
+    DefaultJsonable,
+    NumpyTypes,
+]
 
 
 def json_encode(obj: Jsonable) -> str:
@@ -26,7 +38,6 @@ def json_decode(json_str: str) -> Jsonable:
 
 @Pyro4.expose
 class RemoteEnvironmentServer:
-
     def __init__(self, env):
         self.__env: AbstractEnv = env
 
@@ -52,14 +63,13 @@ class RemoteEnvironmentServer:
         return json_encode(self.__env.action_space)
 
 
-
 class RemoteEnvironmentClient:
-
     def __init__(self, env: RemoteEnvironmentServer):
         self.__env = env
 
-    def step(self, action: Union[Dict[str, np.ndarray], np.ndarray]) \
-            -> Tuple[Union[Dict[str, np.ndarray], np.ndarray], Number, bool, dict]:
+    def step(
+        self, action: Union[Dict[str, np.ndarray], np.ndarray]
+    ) -> Tuple[Union[Dict[str, np.ndarray], np.ndarray], Number, bool, dict]:
         action = json_encode(action)
 
         json_str = self.__env.step(action)

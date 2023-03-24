@@ -1,9 +1,10 @@
 import unittest
 
 import numpy as np
+
 from dacbench import AbstractEnv
-from dacbench.envs import LubyEnv
 from dacbench.benchmarks.luby_benchmark import LUBY_DEFAULTS
+from dacbench.envs import LubyEnv
 
 
 class TestLubyEnv(unittest.TestCase):

@@ -1,8 +1,8 @@
-
 import unittest
 
-from sklearn.metrics import mutual_info_score
 import numpy as np
+from sklearn.metrics import mutual_info_score
+
 from dacbench.benchmarks import LubyBenchmark
 from dacbench.wrappers import InstanceSamplingWrapper
 

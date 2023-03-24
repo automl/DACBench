@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 
-from gym import Wrapper, spaces
 import numpy as np
+from gym import Wrapper, spaces
 
 
 class ObservationWrapper(Wrapper):

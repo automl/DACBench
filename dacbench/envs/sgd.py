@@ -1,9 +1,10 @@
+import json
 import math
 import numbers
+import random
 import warnings
-import json
-from functools import reduce
 from enum import IntEnum, auto
+from functools import reduce
 
 import numpy as np
 import torch
@@ -11,8 +12,8 @@ from backpack import backpack, extend
 from backpack.extensions import BatchGrad
 from numpy import float32
 from torchvision import datasets, transforms
+
 from dacbench import AbstractEnv
-import random
 
 warnings.filterwarnings("ignore")
 
@@ -21,6 +22,7 @@ def reward_range(frange):
     def wrapper(f):
         f.frange = frange
         return f
+
     return wrapper
 
 
@@ -36,8 +38,8 @@ class Reward(IntEnum):
     FullTraining = auto()
 
     def __call__(self, f):
-        if hasattr(self, 'func'):
-            raise ValueError('Can not assign the same reward to a different function!')
+        if hasattr(self, "func"):
+            raise ValueError("Can not assign the same reward to a different function!")
         self.func = f
         return f
 
@@ -75,9 +77,9 @@ class SGDEnv(AbstractEnv):
             try:
                 self.reward_type = getattr(Reward, config.reward_type)
             except AttributeError:
-                raise ValueError(f'{config.reward_type} is not a valid reward type!')
+                raise ValueError(f"{config.reward_type} is not a valid reward type!")
         else:
-            raise ValueError(f'Type {type(config.reward_type)} is not valid!')
+            raise ValueError(f"Type {type(config.reward_type)} is not valid!")
 
         self.use_cuda = not self.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
@@ -175,11 +177,11 @@ class SGDEnv(AbstractEnv):
             1, device=self.device, requires_grad=False
         )
 
-        if self.optimizer_name=="adam":
+        if self.optimizer_name == "adam":
             self.get_optimizer_direction = self.get_adam_direction
-        elif self.optimizer_name=="rmsprop":
+        elif self.optimizer_name == "rmsprop":
             self.get_optimizer_direction = self.get_rmsprop_direction
-        elif self.optimizer_name=="momentum":
+        elif self.optimizer_name == "momentum":
             self.get_optimizer_direction = self.get_momentum_direction
         else:
             raise NotImplementedError
@@ -222,12 +224,17 @@ class SGDEnv(AbstractEnv):
     @reward_range([-(10**9), (10**9)])
     @Reward.LogDiffTraining
     def get_log_diff_training_reward(self):
-        return -(torch.log(self.current_training_loss) - torch.log(self.prev_training_loss)).item()
+        return -(
+            torch.log(self.current_training_loss) - torch.log(self.prev_training_loss)
+        ).item()
 
     @reward_range([-(10**9), (10**9)])
     @Reward.LogDiffValidation
     def get_log_diff_validation_reward(self):
-        return -(torch.log(self.current_validation_loss) - torch.log(self.prev_validation_loss)).item()
+        return -(
+            torch.log(self.current_validation_loss)
+            - torch.log(self.prev_validation_loss)
+        ).item()
 
     @reward_range([-(10**9), (10**9)])
     @Reward.DiffTraining
@@ -393,30 +400,39 @@ class SGDEnv(AbstractEnv):
         if self.cd_paper_reconstruction:
             self.model.apply(init_weights)
 
-        train_dataloader_args = {"batch_size": self.batch_size, "drop_last": True,
-                'shuffle': self.dataloader_shuffle}
-        validation_dataloader_args = {"batch_size": self.validation_batch_size,
-                "drop_last": True, 'shuffle': False}  # SA: shuffling empty data loader causes exception
+        train_dataloader_args = {
+            "batch_size": self.batch_size,
+            "drop_last": True,
+            "shuffle": self.dataloader_shuffle,
+        }
+        validation_dataloader_args = {
+            "batch_size": self.validation_batch_size,
+            "drop_last": True,
+            "shuffle": False,
+        }  # SA: shuffling empty data loader causes exception
         if self.use_cuda:
             param = {"num_workers": 1, "pin_memory": True}
             train_dataloader_args.update(param)
             validation_dataloader_args.update(param)
 
         if dataset == "MNIST":
-            transform = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize((0.1307,), (0.3081,))
-            ])
+            transform = transforms.Compose(
+                [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
+            )
 
             train_dataset = datasets.MNIST(
                 "../data", train=True, download=True, transform=transform
             )
             # self.test_dataset = datasets.MNIST('../data', train=False, transform=transform)
         elif dataset == "CIFAR":
-            transform = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-            ])
+            transform = transforms.Compose(
+                [
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        (0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)
+                    ),
+                ]
+            )
 
             train_dataset = datasets.CIFAR10(
                 "../data", train=True, download=True, transform=transform
@@ -559,45 +575,61 @@ class SGDEnv(AbstractEnv):
         self.gradients = self._get_gradients()
         self.gradients = self.gradients.clip(*self.clip_grad)
 
-        self.firstOrderMomentum, self.secondOrderMomentum, self.sgdMomentum = self._get_momentum(self.gradients)
+        (
+            self.firstOrderMomentum,
+            self.secondOrderMomentum,
+            self.sgdMomentum,
+        ) = self._get_momentum(self.gradients)
 
-        if 'predictiveChangeVarDiscountedAverage' in self.on_features or 'predictiveChangeVarUncertainty' in self.on_features:
-            predictiveChangeVarDiscountedAverage, predictiveChangeVarUncertainty = \
-                self._get_predictive_change_features(self.current_lr)
+        if (
+            "predictiveChangeVarDiscountedAverage" in self.on_features
+            or "predictiveChangeVarUncertainty" in self.on_features
+        ):
+            (
+                predictiveChangeVarDiscountedAverage,
+                predictiveChangeVarUncertainty,
+            ) = self._get_predictive_change_features(self.current_lr)
 
-        if 'lossVarDiscountedAverage' in self.on_features or 'lossVarUncertainty' in self.on_features:
+        if (
+            "lossVarDiscountedAverage" in self.on_features
+            or "lossVarUncertainty" in self.on_features
+        ):
             lossVarDiscountedAverage, lossVarUncertainty = self._get_loss_features()
 
-        if 'alignment' in self.on_features:
+        if "alignment" in self.on_features:
             alignment = self._get_alignment()
 
         state = {}
 
-        if 'predictiveChangeVarDiscountedAverage' in self.on_features:
-            state["predictiveChangeVarDiscountedAverage"] = predictiveChangeVarDiscountedAverage.item()
-        if 'predictiveChangeVarUncertainty' in self.on_features:
-            state["predictiveChangeVarUncertainty"] = predictiveChangeVarUncertainty.item()
-        if 'lossVarDiscountedAverage' in self.on_features:
+        if "predictiveChangeVarDiscountedAverage" in self.on_features:
+            state[
+                "predictiveChangeVarDiscountedAverage"
+            ] = predictiveChangeVarDiscountedAverage.item()
+        if "predictiveChangeVarUncertainty" in self.on_features:
+            state[
+                "predictiveChangeVarUncertainty"
+            ] = predictiveChangeVarUncertainty.item()
+        if "lossVarDiscountedAverage" in self.on_features:
             state["lossVarDiscountedAverage"] = lossVarDiscountedAverage.item()
-        if 'lossVarUncertainty' in self.on_features:
+        if "lossVarUncertainty" in self.on_features:
             state["lossVarUncertainty"] = lossVarUncertainty.item()
-        if 'currentLR' in self.on_features:
+        if "currentLR" in self.on_features:
             state["currentLR"] = self.current_lr.item()
-        if 'trainingLoss' in self.on_features:
+        if "trainingLoss" in self.on_features:
             if self.crashed:
                 state["trainingLoss"] = 0.0
             else:
                 state["trainingLoss"] = self.current_training_loss.item()
-        if 'validationLoss' in self.on_features:
+        if "validationLoss" in self.on_features:
             if self.crashed:
                 state["validationLoss"] = 0.0
             else:
                 state["validationLoss"] = self.current_validation_loss.item()
-        if 'step' in self.on_features:
+        if "step" in self.on_features:
             state["step"] = self.step_count.item()
-        if 'alignment' in self.on_features:
+        if "alignment" in self.on_features:
             state["alignment"] = alignment.item()
-        if 'crashed' in self.on_features:
+        if "crashed" in self.on_features:
             state["crashed"] = self.crashed
 
         return state
@@ -629,7 +661,9 @@ class SGDEnv(AbstractEnv):
             self._train_batch_()
 
     def _get_full_training_loss(self, loader):
-        for target_param, param in zip(self.val_model.parameters(), self.model.parameters()):
+        for target_param, param in zip(
+            self.val_model.parameters(), self.model.parameters()
+        ):
             target_param.data.copy_(param.data)
         loss = torch.zeros(1, device=self.device, requires_grad=False)
         with torch.no_grad():
@@ -659,7 +693,9 @@ class SGDEnv(AbstractEnv):
         return validation_loss
 
     def _get_validation_loss(self):
-        for target_param, param in zip(self.val_model.parameters(), self.model.parameters()):
+        for target_param, param in zip(
+            self.val_model.parameters(), self.model.parameters()
+        ):
             target_param.data.copy_(param.data)
         try:
             validation_loss = self._get_validation_loss_()
@@ -684,15 +720,17 @@ class SGDEnv(AbstractEnv):
         self.t += 1
         self.m = self.beta1 * self.m + (1 - self.beta1) * gradients
         self.v = self.beta2 * self.v + (1 - self.beta2) * torch.square(gradients)
-        bias_corrected_m = self.m / (1 - self.beta1 ** self.t)
-        bias_corrected_v = self.v / (1 - self.beta2 ** self.t)
+        bias_corrected_m = self.m / (1 - self.beta1**self.t)
+        bias_corrected_v = self.v / (1 - self.beta2**self.t)
 
         self.sgd_momentum_v = self.sgd_rho * self.sgd_momentum_v + gradients
 
         return bias_corrected_m, bias_corrected_v, self.sgd_momentum_v
 
     def get_adam_direction(self):
-        return self.firstOrderMomentum / (torch.sqrt(self.secondOrderMomentum) + self.epsilon)
+        return self.firstOrderMomentum / (
+            torch.sqrt(self.secondOrderMomentum) + self.epsilon
+        )
 
     def get_rmsprop_direction(self):
         return self.gradients / (torch.sqrt(self.secondOrderMomentum) + self.epsilon)
@@ -703,7 +741,11 @@ class SGDEnv(AbstractEnv):
     def _get_loss_features(self):
         if self.crashed:
             return torch.tensor(0.0), torch.tensor(0.0)
-        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
+        bias_correction = (
+            (1 - self.discount_factor ** (self.c_step + 1))
+            if self.cd_bias_correction
+            else 1
+        )
         with torch.no_grad():
             loss_var = torch.log(torch.var(self.loss_batch))
             self.lossVarDiscountedAverage = (
@@ -713,15 +755,22 @@ class SGDEnv(AbstractEnv):
             self.lossVarUncertainty = (
                 self.discount_factor * self.lossVarUncertainty
                 + (1 - self.discount_factor)
-                * (loss_var - self.lossVarDiscountedAverage/bias_correction) ** 2
+                * (loss_var - self.lossVarDiscountedAverage / bias_correction) ** 2
             )
 
-        return self.lossVarDiscountedAverage/bias_correction, self.lossVarUncertainty/bias_correction
+        return (
+            self.lossVarDiscountedAverage / bias_correction,
+            self.lossVarUncertainty / bias_correction,
+        )
 
     def _get_predictive_change_features(self, lr):
         if self.crashed:
             return torch.tensor(0.0), torch.tensor(0.0)
-        bias_correction = (1 - self.discount_factor ** (self.c_step+1)) if self.cd_bias_correction else 1
+        bias_correction = (
+            (1 - self.discount_factor ** (self.c_step + 1))
+            if self.cd_bias_correction
+            else 1
+        )
         batch_gradients = []
         for i, (name, param) in enumerate(self.model.named_parameters()):
             grad_batch = param.grad_batch.reshape(
@@ -744,50 +793,56 @@ class SGDEnv(AbstractEnv):
         self.predictiveChangeVarUncertainty = (
             self.discount_factor * self.predictiveChangeVarUncertainty
             + (1 - self.discount_factor)
-            * (predictive_change - self.predictiveChangeVarDiscountedAverage/bias_correction) ** 2
+            * (
+                predictive_change
+                - self.predictiveChangeVarDiscountedAverage / bias_correction
+            )
+            ** 2
         )
 
         return (
-            self.predictiveChangeVarDiscountedAverage/bias_correction,
-            self.predictiveChangeVarUncertainty/bias_correction,
+            self.predictiveChangeVarDiscountedAverage / bias_correction,
+            self.predictiveChangeVarUncertainty / bias_correction,
         )
 
     def _get_alignment(self):
         if self.crashed:
             return torch.tensor(0.0)
-        alignment = torch.mean(torch.sign(torch.mul(self.prev_direction, self.current_direction)))
+        alignment = torch.mean(
+            torch.sign(torch.mul(self.prev_direction, self.current_direction))
+        )
         alignment = torch.unsqueeze(alignment, dim=0)
         self.prev_direction = self.current_direction
         return alignment
 
-    def generate_instance_file(self, file_name, mode='test', n=100):
-        header = ['ID', 'dataset', 'architecture', 'seed', 'steps']
+    def generate_instance_file(self, file_name, mode="test", n=100):
+        header = ["ID", "dataset", "architecture", "seed", "steps"]
 
         # dataset name, architecture, dataset size, sample dimension, number of max pool layers, hidden layers, test architecture convolutional layers
         architectures = [
-            ('MNIST',
-             'Conv2d(1, {0}, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d({0}, {1}, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d({1}, {2}, 3, 1, 1)-ReLU-Flatten-Linear({3}, 10)-LogSoftmax(1)',
-             60000,
-             28,
-             2,
-             3,
-             [20, 50, 500]
+            (
+                "MNIST",
+                "Conv2d(1, {0}, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d({0}, {1}, 3, 1, 1)-MaxPool2d(2, 2)-Conv2d({1}, {2}, 3, 1, 1)-ReLU-Flatten-Linear({3}, 10)-LogSoftmax(1)",
+                60000,
+                28,
+                2,
+                3,
+                [20, 50, 500],
             ),
-            ('CIFAR',
-             'Conv2d(3, {0}, 3, 1, 1)-MaxPool2d(2, 2)-ReLU-Conv2d({0}, {1}, 3, 1, 1)-ReLU-MaxPool2d(2, 2)-Conv2d({1}, {2}, 3, 1, 1)-ReLU-MaxPool2d(2, 2)-Conv2d({2}, {3}, 3, 1, 1)-ReLU-Flatten-Linear({4}, 10)-LogSoftmax(1)',
-             60000,
-             32,
-             3,
-             4,
-             [32, 32, 64, 64]
-            )
+            (
+                "CIFAR",
+                "Conv2d(3, {0}, 3, 1, 1)-MaxPool2d(2, 2)-ReLU-Conv2d({0}, {1}, 3, 1, 1)-ReLU-MaxPool2d(2, 2)-Conv2d({1}, {2}, 3, 1, 1)-ReLU-MaxPool2d(2, 2)-Conv2d({2}, {3}, 3, 1, 1)-ReLU-Flatten-Linear({4}, 10)-LogSoftmax(1)",
+                60000,
+                32,
+                3,
+                4,
+                [32, 32, 64, 64],
+            ),
         ]
-        if mode is 'test':
-
+        if mode is "test":
             seed_list = [random.randrange(start=0, stop=1e9) for _ in range(n)]
 
             for i in range(len(architectures)):
-
                 fname = file_name + "_" + architectures[i][0].lower() + ".csv"
 
                 steps = int(1e8)
@@ -797,15 +852,21 @@ class SGDEnv(AbstractEnv):
 
                 sample_size = architectures[i][3]
                 pool_layer_count = architectures[i][4]
-                linear_layer_size = conv[-1] * pow(sample_size / pow(2, pool_layer_count), 2)
+                linear_layer_size = conv[-1] * pow(
+                    sample_size / pow(2, pool_layer_count), 2
+                )
                 linear_layer_size = int(round(linear_layer_size))
 
                 dataset = architectures[i][0]
 
                 if hidden_layers == 3:
-                    architecture = architectures[i][1].format(conv[0], conv[1], conv[2], linear_layer_size)
+                    architecture = architectures[i][1].format(
+                        conv[0], conv[1], conv[2], linear_layer_size
+                    )
                 else:
-                    architecture = architectures[i][1].format(conv[0], conv[1], conv[2], conv[3], linear_layer_size)
+                    architecture = architectures[i][1].format(
+                        conv[0], conv[1], conv[2], conv[3], linear_layer_size
+                    )
 
                 # args = conv
                 # args.append(linear_layer_size)
@@ -813,7 +874,7 @@ class SGDEnv(AbstractEnv):
                 # args = {0: conv[0], 1: conv[1], 2: conv[2], 3: linear_layer_size}
                 # architecture = architectures[i][1].format(**args)
 
-                with open(fname, 'w', encoding='UTF8') as f:
+                with open(fname, "w", encoding="UTF8") as f:
                     for h in header:
                         f.write(h + ";")
 
@@ -851,18 +912,28 @@ class SGDEnv(AbstractEnv):
 
             dataset_list = [dataset_index for _ in range(n)]
 
-            dataset_size_list = [random.uniform(dataset_size_start, dataset_size_stop) for _ in range(n)]
+            dataset_size_list = [
+                random.uniform(dataset_size_start, dataset_size_stop) for _ in range(n)
+            ]
 
             seed_list = [random.randrange(start=0, stop=1e9) for _ in range(n)]
 
-            steps_list = [random.randrange(start=steps_start, stop=steps_stop) for _ in range(n)]
+            steps_list = [
+                random.randrange(start=steps_start, stop=steps_stop) for _ in range(n)
+            ]
 
-            conv1_list = [random.randrange(start=conv1_start, stop=conv1_stop) for _ in range(n)]
-            conv2_list = [random.randrange(start=conv2_start, stop=conv2_stop) for _ in range(n)]
-            conv3_list = [random.randrange(start=conv3_start, stop=conv3_stop) for _ in range(n)]
+            conv1_list = [
+                random.randrange(start=conv1_start, stop=conv1_stop) for _ in range(n)
+            ]
+            conv2_list = [
+                random.randrange(start=conv2_start, stop=conv2_stop) for _ in range(n)
+            ]
+            conv3_list = [
+                random.randrange(start=conv3_start, stop=conv3_stop) for _ in range(n)
+            ]
 
             fname = file_name + ".csv"
-            with open(fname, 'w', encoding='UTF8') as f:
+            with open(fname, "w", encoding="UTF8") as f:
                 for h in header:
                     f.write(h + ";")
 
@@ -873,12 +944,23 @@ class SGDEnv(AbstractEnv):
 
                     sample_size = architectures[dataset_list[id]][3]
                     pool_layer_count = architectures[dataset_list[id]][4]
-                    linear_layer_size = conv3_list[id] * pow(sample_size / pow(2, pool_layer_count), 2)
+                    linear_layer_size = conv3_list[id] * pow(
+                        sample_size / pow(2, pool_layer_count), 2
+                    )
                     linear_layer_size = int(round(linear_layer_size))
 
-                    dataset_size = int(dataset_size_list[id] * architectures[dataset_list[id]][2])
-                    dataset = architectures[dataset_list[id]][0] + "_" + str(dataset_size)
-                    architecture = architectures[dataset_list[id]][1].format(conv1_list[id], conv2_list[id], conv3_list[id], linear_layer_size)
+                    dataset_size = int(
+                        dataset_size_list[id] * architectures[dataset_list[id]][2]
+                    )
+                    dataset = (
+                        architectures[dataset_list[id]][0] + "_" + str(dataset_size)
+                    )
+                    architecture = architectures[dataset_list[id]][1].format(
+                        conv1_list[id],
+                        conv2_list[id],
+                        conv3_list[id],
+                        linear_layer_size,
+                    )
 
                     f.write(dataset + ";")
                     f.write(architecture + ";")

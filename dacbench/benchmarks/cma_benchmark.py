@@ -1,17 +1,19 @@
+import csv
+import os
+
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
+import numpy as np
+
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import CMAESEnv
 from gymnasium import spaces
-import numpy as np
-import os
-import csv
-import ConfigSpace as CS
-import ConfigSpace.hyperparameters as CSH
 
 HISTORY_LENGTH = 40
 INPUT_DIM = 10
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
-STEP_SIZE = CSH.UniformFloatHyperparameter(name='Step_size', lower=0, upper=10)
+STEP_SIZE = CSH.UniformFloatHyperparameter(name="Step_size", lower=0, upper=10)
 DEFAULT_CFG_SPACE.add_hyperparameter(STEP_SIZE)
 
 INFO = {
@@ -53,7 +55,7 @@ CMAES_DEFAULTS = objdict(
                 ),
             }
         ],
-        "reward_range": (-(10 ** 9), 0),
+        "reward_range": (-(10**9), 0),
         "cutoff": 1e6,
         "hist_length": HISTORY_LENGTH,
         "popsize": 10,
@@ -99,8 +101,11 @@ class CMAESBenchmark(AbstractBenchmark):
         if "instance_set" not in self.config.keys():
             self.read_instance_set()
 
-        #Read test set if path is specified
-        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+        # Read test set if path is specified
+        if (
+            "test_set" not in self.config.keys()
+            and "test_set_path" in self.config.keys()
+        ):
             self.read_instance_set(test=True)
 
         env = CMAESEnv(self.config)

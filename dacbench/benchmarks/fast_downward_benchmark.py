@@ -1,10 +1,11 @@
-from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import FastDownwardEnv
-
-import numpy as np
 import os
+
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
+import numpy as np
+
+from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.envs import FastDownwardEnv
 
 HEURISTICS = [
     "tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)])",
@@ -12,7 +13,7 @@ HEURISTICS = [
 ]
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
-HEURISTIC = CSH.CategoricalHyperparameter(name='heuristic', choices=["toy1", "toy2"])
+HEURISTIC = CSH.CategoricalHyperparameter(name="heuristic", choices=["toy1", "toy2"])
 DEFAULT_CFG_SPACE.add_hyperparameter(HEURISTIC)
 
 INFO = {
@@ -36,7 +37,7 @@ INFO = {
 FD_DEFAULTS = objdict(
     {
         "heuristics": HEURISTICS,
-        "config_space": DEFAULT_CFG_SPACE, 
+        "config_space": DEFAULT_CFG_SPACE,
         "observation_space_class": "Box",
         "observation_space_type": np.float32,
         "observation_space_args": [
@@ -102,7 +103,10 @@ class FastDownwardBenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         # Read test set if path is specified
-        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+        if (
+            "test_set" not in self.config.keys()
+            and "test_set_path" in self.config.keys()
+        ):
             self.read_instance_set(test=True)
 
         env = FastDownwardEnv(self.config)

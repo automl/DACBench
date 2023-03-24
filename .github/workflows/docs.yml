@@ -40,7 +40,7 @@ jobs:
     - name: Make docs
       run: |
         make clean
-        make docs
+        make doc
 
     - name: Pull latest gh-pages
       if: (contains(github.ref, 'gymnasium_migration') || contains(github.ref, 'main')) && github.event_name == 'push'

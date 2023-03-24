@@ -3,12 +3,11 @@ import unittest
 from itertools import groupby
 from pathlib import Path
 
-import gymnasium as gym
 import numpy as np
 
-
+import gymnasium as gym
 from dacbench.agents import StaticAgent
-from dacbench.benchmarks import LubyBenchmark, CMAESBenchmark
+from dacbench.benchmarks import CMAESBenchmark, LubyBenchmark
 from dacbench.logger import Logger, load_logs, log2dataframe
 from dacbench.runner import run_benchmark
 from dacbench.wrappers import StateTrackingWrapper

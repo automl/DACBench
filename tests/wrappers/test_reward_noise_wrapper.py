@@ -1,4 +1,3 @@
-
 import unittest
 
 from dacbench.benchmarks import LubyBenchmark

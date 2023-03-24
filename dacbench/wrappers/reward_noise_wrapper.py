@@ -1,5 +1,5 @@
-from gym import Wrapper
 import numpy as np
+from gym import Wrapper
 
 
 class RewardNoiseWrapper(Wrapper):

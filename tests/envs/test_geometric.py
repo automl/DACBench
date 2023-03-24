@@ -3,6 +3,7 @@ import unittest
 from typing import Dict
 
 import numpy as np
+
 from dacbench import AbstractEnv
 from dacbench.abstract_benchmark import objdict
 from dacbench.benchmarks import GeometricBenchmark

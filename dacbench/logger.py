@@ -1,18 +1,17 @@
 import json
 from abc import ABCMeta, abstractmethod
-from collections import defaultdict, ChainMap
+from collections import ChainMap, defaultdict
 from datetime import datetime
 from functools import reduce
 from itertools import chain
 from numbers import Number
 from pathlib import Path
-from typing import Union, Dict, Any, Tuple, List
+from typing import Any, Callable, Dict, Iterable, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
 
-from typing import Callable, Iterable
-from dacbench import AbstractEnv, AbstractBenchmark
+from dacbench import AbstractBenchmark, AbstractEnv
 from dacbench.abstract_agent import AbstractDACBenchAgent
 
 

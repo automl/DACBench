@@ -1,8 +1,10 @@
-from dacbench import benchmarks
-from dacbench.wrappers import PerformanceTrackingWrapper
-from dacbench.logger import Logger
-import seaborn as sb
 from pathlib import Path
+
+import seaborn as sb
+
+from dacbench import benchmarks
+from dacbench.logger import Logger
+from dacbench.wrappers import PerformanceTrackingWrapper
 
 sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())

@@ -19,7 +19,7 @@ class SigmoidEnv(AbstractMADACEnv):
     """
 
     def _sig(self, x, scaling, inflection):
-        """ Simple sigmoid function """
+        """Simple sigmoid function"""
         return 1 / (1 + np.exp(-scaling * (x - inflection)))
 
     def __init__(self, config) -> None:
@@ -186,7 +186,7 @@ class ContinuousStateSigmoidEnv(SigmoidEnv):
         r = self.get_reward(self)
 
         # magic constants but such that the max step is ~1 and the min step is ~0.25
-        self.c_step += (r + np.sqrt(np.power(r, 2) + 0.25))/2
+        self.c_step += (r + np.sqrt(np.power(r, 2) + 0.25)) / 2
 
         if self.c_step >= self.n_steps:
             self.done = True

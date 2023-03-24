@@ -1,9 +1,9 @@
 from collections import defaultdict
 
-from gym import Wrapper
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb
+from gym import Wrapper
 
 sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())
@@ -178,7 +178,7 @@ class PerformanceTrackingWrapper(Wrapper):
             return self.overall_performance
 
     def render_performance(self):
-        """ Plot performance """
+        """Plot performance"""
         plt.figure(figsize=(12, 6))
         plt.plot(
             np.arange(len(self.overall_performance) // 2),
@@ -190,7 +190,7 @@ class PerformanceTrackingWrapper(Wrapper):
         plt.show()
 
     def render_instance_performance(self):
-        """ Plot mean performance for each instance """
+        """Plot mean performance for each instance"""
         plt.figure(figsize=(12, 6))
         plt.title("Mean Performance per Instance")
         plt.ylabel("Mean reward")

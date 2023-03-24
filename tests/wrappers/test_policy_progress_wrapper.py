@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 
 import numpy as np
+
 from dacbench.benchmarks import SigmoidBenchmark
 from dacbench.wrappers import PolicyProgressWrapper
 

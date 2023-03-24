@@ -1,8 +1,10 @@
 import unittest
+
 import numpy as np
+
 from dacbench import AbstractEnv
-from dacbench.envs import ModCMAEnv
 from dacbench.abstract_benchmark import objdict
+from dacbench.envs import ModCMAEnv
 from gymnasium import spaces
 
 
@@ -19,7 +21,7 @@ class TestModCMAEnv(unittest.TestCase):
         config.observation_space = spaces.Box(
             low=-np.inf * np.ones(5), high=np.inf * np.ones(5)
         )
-        config.reward_range = (-(10 ** 12), 0)
+        config.reward_range = (-(10**12), 0)
         env = ModCMAEnv(config)
         return env
 

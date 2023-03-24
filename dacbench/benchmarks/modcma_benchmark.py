@@ -1,27 +1,42 @@
-import os
 import itertools
+import os
 
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 import numpy as np
 from modcma import Parameters
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import ModCMAEnv, CMAStepSizeEnv
-
-import ConfigSpace as CS
-import ConfigSpace.hyperparameters as CSH
+from dacbench.envs import CMAStepSizeEnv, ModCMAEnv
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
-ACTIVE = CSH.CategoricalHyperparameter(name='0_active', choices=[True, False])
-ELITIST = CSH.CategoricalHyperparameter(name='1_elitist', choices=[True, False])
-ORTHOGONAL = CSH.CategoricalHyperparameter(name='2_orthogonal', choices=[True, False])
-SEQUENTIAL = CSH.CategoricalHyperparameter(name='3_sequential', choices=[True, False])
-THRESHOLD_CONVERGENCE = CSH.CategoricalHyperparameter(name='4_threshold_convergence', choices=[True, False])
-STEP_SIZE_ADAPTION = CSH.CategoricalHyperparameter(name='5_step_size_adaption', choices=["csa", "tpa", "msr", "xnes", "m-xnes", "lp-xnes", "psr"])
-MIRRORED = CSH.CategoricalHyperparameter(name='6_mirrored', choices=["None", "mirrored", "mirrored pairwise"])
-BASE_SAMPLER = CSH.CategoricalHyperparameter(name='7_base_sampler', choices=["gaussian", "sobol", "halton"])
-WEIGHTS_OPTION = CSH.CategoricalHyperparameter(name='8_weights_option', choices=["default", "equal", "1/2^lambda"])
-LOCAL_RESTART = CSH.CategoricalHyperparameter(name='90_local_restart', choices=["None", "IPOP", "BIPOP"])
-BOUND_CORRECTION = CSH.CategoricalHyperparameter(name='91_bound_correction', choices=["None", "saturate", "unif_resample", "COTN", "toroidal", "mirror"])
+ACTIVE = CSH.CategoricalHyperparameter(name="0_active", choices=[True, False])
+ELITIST = CSH.CategoricalHyperparameter(name="1_elitist", choices=[True, False])
+ORTHOGONAL = CSH.CategoricalHyperparameter(name="2_orthogonal", choices=[True, False])
+SEQUENTIAL = CSH.CategoricalHyperparameter(name="3_sequential", choices=[True, False])
+THRESHOLD_CONVERGENCE = CSH.CategoricalHyperparameter(
+    name="4_threshold_convergence", choices=[True, False]
+)
+STEP_SIZE_ADAPTION = CSH.CategoricalHyperparameter(
+    name="5_step_size_adaption",
+    choices=["csa", "tpa", "msr", "xnes", "m-xnes", "lp-xnes", "psr"],
+)
+MIRRORED = CSH.CategoricalHyperparameter(
+    name="6_mirrored", choices=["None", "mirrored", "mirrored pairwise"]
+)
+BASE_SAMPLER = CSH.CategoricalHyperparameter(
+    name="7_base_sampler", choices=["gaussian", "sobol", "halton"]
+)
+WEIGHTS_OPTION = CSH.CategoricalHyperparameter(
+    name="8_weights_option", choices=["default", "equal", "1/2^lambda"]
+)
+LOCAL_RESTART = CSH.CategoricalHyperparameter(
+    name="90_local_restart", choices=["None", "IPOP", "BIPOP"]
+)
+BOUND_CORRECTION = CSH.CategoricalHyperparameter(
+    name="91_bound_correction",
+    choices=["None", "saturate", "unif_resample", "COTN", "toroidal", "mirror"],
+)
 
 DEFAULT_CFG_SPACE.add_hyperparameter(ACTIVE)
 DEFAULT_CFG_SPACE.add_hyperparameter(ELITIST)
@@ -66,7 +81,7 @@ MODCMA_DEFAULTS = objdict(
         "observation_space_class": "Box",
         "observation_space_args": [-np.inf * np.ones(5), np.inf * np.ones(5)],
         "observation_space_type": np.float32,
-        "reward_range": (-(10 ** 12), 0),
+        "reward_range": (-(10**12), 0),
         "budget": 100,
         "cutoff": 1e6,
         "seed": 0,
@@ -95,7 +110,10 @@ class ModCMABenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         # Read test set if path is specified
-        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+        if (
+            "test_set" not in self.config.keys()
+            and "test_set_path" in self.config.keys()
+        ):
             self.read_instance_set(test=True)
 
         if self.step_size:

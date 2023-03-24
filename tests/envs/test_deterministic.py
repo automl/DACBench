@@ -14,7 +14,7 @@ def assert_state_space_equal(state1, state2):
     elif isinstance(state1, dict):
         assert state1.keys() == state2.keys()
         for key in state1.keys():
-            if 'history' not in key:
+            if "history" not in key:
                 assert_almost_equal(state1[key], state2[key])
     else:
         raise NotImplementedError(f"State space type {type(state1)} not comparable")
@@ -74,7 +74,7 @@ class TestDeterministic(unittest.TestCase):
         self.run_deterministic_test("CMAESBenchmark")
 
     # This has no get_benchmark method
-    #def test_ModeaBenchmark(self):
+    # def test_ModeaBenchmark(self):
     #    self.run_deterministic_test("ModeaBenchmark")
 
     def test_SGDBenchmark(self):

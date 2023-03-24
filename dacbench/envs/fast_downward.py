@@ -5,16 +5,18 @@ by David Speck, André Biedenkapp, Frank Hutter, Robert Mattmüller und Marius L
 Original environment authors: David Speck, André Biedenkapp
 """
 
+import os
 import socket
+import subprocess
 import time
 import typing
 from copy import deepcopy
 from enum import Enum
 from os import remove
 from os.path import join as joinpath
-import subprocess
-import os
+
 import numpy as np
+
 from dacbench import AbstractEnv
 
 

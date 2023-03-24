@@ -1,9 +1,11 @@
-from gymnasium import Wrapper
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import time
+
+import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sb
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
+from gymnasium import Wrapper
 
 sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())

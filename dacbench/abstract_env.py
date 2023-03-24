@@ -1,8 +1,9 @@
 import random
 
+import numpy as np
+
 import gymnasium as gym
 from gymnasium.utils import seeding
-import numpy as np
 
 
 class AbstractEnv(gym.Env):
@@ -136,9 +137,9 @@ class AbstractEnv(gym.Env):
             except TypeError:
                 print("Tuple and Dict action spaces are currently not supported")
                 raise TypeError
-       
+
         # seeding the environment after initialising action space
-        self.seed(config.get("seed", None), config.get("seed_action_space", False))      
+        self.seed(config.get("seed", None), config.get("seed_action_space", False))
 
     def step_(self):
         """
@@ -161,7 +162,7 @@ class AbstractEnv(gym.Env):
         Will either use round robin, random or no progression scheme
         """
         if seed is not None:
-            self.seed(seed, self.config.get("seed_action_space", False))    
+            self.seed(seed, self.config.get("seed_action_space", False))
         self.c_step = 0
         if scheme is None:
             scheme = self.instance_updates
@@ -377,9 +378,9 @@ class AbstractMADACEnv(AbstractEnv):
         """
         super(AbstractMADACEnv, self).__init__(config)
         self.multi_agent = False
-        if 'multi_agent' in config.keys():
+        if "multi_agent" in config.keys():
             self.multi_agent = config.multi_agent
-   
+
         if self.multi_agent:
             space_class = type(self.action_space)
             if space_class == gym.spaces.Box:
@@ -393,8 +394,8 @@ class AbstractMADACEnv(AbstractEnv):
                 raise TypeError
             self.possible_agents = np.arange(num_hps)
             self.hp_names = []
-            if 'config_space' in self.config.keys():
-                self.hp_names = self.config['config_space'].get_hyperparameter_names()
+            if "config_space" in self.config.keys():
+                self.hp_names = self.config["config_space"].get_hyperparameter_names()
             self.max_num_agent = len(self.possible_agents)
             self.env_step = self.step
             self.env_reset = self.reset
@@ -409,7 +410,7 @@ class AbstractMADACEnv(AbstractEnv):
             self.info = None
             # TODO: this should be set to a reasonable default, ideally
             # Else playing with less than the full number of agents will be really hard
-            if 'default_action' in self.config.keys():
+            if "default_action" in self.config.keys():
                 self.action = self.config.default_action
             else:
                 self.action = self.action_space.sample()
@@ -427,7 +428,9 @@ class AbstractMADACEnv(AbstractEnv):
             self.action_spaces = {}
             for a in self.possible_agents:
                 if space_class == gym.spaces.Box:
-                    subspace = gym.spaces.Box(low=np.array([lowers[a]]), high=np.array([uppers[a]]))
+                    subspace = gym.spaces.Box(
+                        low=np.array([lowers[a]]), high=np.array([uppers[a]])
+                    )
                 else:
                     subspace = gym.spaces.Discrete(num_options[a])
                 self.action_spaces[a] = subspace
@@ -436,13 +439,25 @@ class AbstractMADACEnv(AbstractEnv):
         self.observation, self.info = self.env_reset(seed)
 
     def last(self):
-        return self.observation, self.reward, self.termination, self.truncation, self.info
+        return (
+            self.observation,
+            self.reward,
+            self.termination,
+            self.truncation,
+            self.info,
+        )
 
     def multi_agent_step(self, action):
         self.action[self.current_agent] = action
         self.current_agent = self.agents.index(self.current_agent) + 1
         if self.current_agent >= len(self.agents):
-            self.observation, self.reward, self.termination, self.truncation, self.info = self.env_step(self.action)
+            (
+                self.observation,
+                self.reward,
+                self.termination,
+                self.truncation,
+                self.info,
+            ) = self.env_step(self.action)
             self.current_agent = self.agents[0]
 
     def register_agent(self, agent_id):

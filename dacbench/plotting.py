@@ -1,8 +1,8 @@
 from typing import List, Tuple
 
 import numpy as np
-import seaborn as sns
 import pandas as pd
+import seaborn as sns
 
 sns.set_style("darkgrid")
 

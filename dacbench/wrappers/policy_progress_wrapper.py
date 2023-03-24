@@ -1,6 +1,6 @@
-from gym import Wrapper
 import matplotlib.pyplot as plt
 import numpy as np
+from gym import Wrapper
 
 
 class PolicyProgressWrapper(Wrapper):
@@ -98,7 +98,7 @@ class PolicyProgressWrapper(Wrapper):
         return state, reward, terminated, truncated, info
 
     def render_policy_progress(self):
-        """ Plot progress """
+        """Plot progress"""
         plt.figure(figsize=(12, 6))
         plt.plot(np.arange(len(self.policy_progress)), self.policy_progress)
         plt.title("Policy progress over time")

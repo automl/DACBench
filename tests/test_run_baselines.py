@@ -1,16 +1,10 @@
 import tempfile
 import unittest
 from pathlib import Path
-from dacbench.logger import load_logs, log2dataframe
 
-from dacbench.run_baselines import (
-    run_random,
-    DISCRETE_ACTIONS,
-    run_static,
-    run_dynamic_policy,
-    run_optimal,
-    main,
-)
+from dacbench.logger import load_logs, log2dataframe
+from dacbench.run_baselines import (DISCRETE_ACTIONS, main, run_dynamic_policy,
+                                    run_optimal, run_random, run_static)
 
 
 class TestRunBaselines(unittest.TestCase):
@@ -55,7 +49,7 @@ class TestRunBaselines(unittest.TestCase):
         self.run_random_test_with_benchmark("SGDBenchmark")
 
     # no get_benchmark method
-    #def test_run_random_ModeaBenchmark(self):
+    # def test_run_random_ModeaBenchmark(self):
     #    self.run_random_test_with_benchmark("ModeaBenchmark")
 
     def run_static_test_with_benchmark(self, benchmark):
@@ -98,7 +92,7 @@ class TestRunBaselines(unittest.TestCase):
         self.run_static_test_with_benchmark("SGDBenchmark")
 
     # no get_benchmark method
-    #def test_run_static_ModeaBenchmark(self):
+    # def test_run_static_ModeaBenchmark(self):
     #    self.run_static_test_with_benchmark("ModeaBenchmark")
 
     def test_run_dynamic_policy_CMAESBenchmark(self):

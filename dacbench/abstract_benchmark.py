@@ -1,12 +1,11 @@
 import json
+from functools import partial
 from types import FunctionType
 
 import numpy as np
-from gymnasium import spaces
-from functools import partial
-from dacbench import wrappers
 
-# from dacbench import ModuleLogger
+from dacbench import wrappers
+from gymnasium import spaces
 
 
 class AbstractBenchmark:
@@ -140,7 +139,6 @@ class AbstractBenchmark:
         forbiddens = []
 
         for hyperparameter in configuration_space.get_hyperparameters():
-
             if isinstance(hyperparameter, Constant):
                 hyperparameters.append(_build_constant(hyperparameter))
             elif isinstance(hyperparameter, UnParametrizedHyperparameter):
@@ -161,7 +159,11 @@ class AbstractBenchmark:
                 hyperparameters.append(_build_ordinal(hyperparameter))
             else:
                 raise TypeError(
-                    "Unknown type: %s (%s)" % (type(hyperparameter), hyperparameter,)
+                    "Unknown type: %s (%s)"
+                    % (
+                        type(hyperparameter),
+                        hyperparameter,
+                    )
                 )
 
         for condition in configuration_space.get_conditions():
@@ -199,17 +201,25 @@ class AbstractBenchmark:
 
             for hyperparameter in config.config_space["hyperparameters"]:
                 configuration_space.add_hyperparameter(
-                    _construct_hyperparameter(hyperparameter,)
+                    _construct_hyperparameter(
+                        hyperparameter,
+                    )
                 )
 
             for condition in config.config_space["conditions"]:
                 configuration_space.add_condition(
-                    _construct_condition(condition, configuration_space,)
+                    _construct_condition(
+                        condition,
+                        configuration_space,
+                    )
                 )
 
             for forbidden in config.config_space["forbiddens"]:
                 configuration_space.add_forbidden_clause(
-                    _construct_forbidden(forbidden, configuration_space,)
+                    _construct_forbidden(
+                        forbidden,
+                        configuration_space,
+                    )
                 )
             config.config_space = configuration_space
 
@@ -221,6 +231,7 @@ class AbstractBenchmark:
             print(k)
             print(conf[k])
             from copy import deepcopy
+
             del_conf = deepcopy(conf)[k]
             json.dumps(del_conf)
         return json.dumps(conf)

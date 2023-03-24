@@ -1,9 +1,9 @@
-from gymnasium import spaces
-from gymnasium import Wrapper
-import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+import numpy as np
 import seaborn as sb
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
+from gymnasium import Wrapper, spaces
 
 sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())
@@ -237,7 +237,7 @@ class StateTrackingWrapper(Wrapper):
 
         print(self.state_type)
         print(spaces.Tuple)
-        print(self.state_type==spaces.Tuple)
+        print(self.state_type == spaces.Tuple)
         if self.state_type == spaces.Discrete:
             figure = plt.figure(figsize=(20, 20))
             canvas = FigureCanvas(figure)
@@ -286,7 +286,7 @@ class StateTrackingWrapper(Wrapper):
                     p, p2 = plot_single(axarr[i % dim, i // dim], i, x=x, y=y)
             canvas.draw()
         else:
-            raise ValueError('Unknown state type')
+            raise ValueError("Unknown state type")
         width, height = figure.get_size_inches() * figure.get_dpi()
         img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
             int(height), int(width), 3

@@ -1,19 +1,22 @@
+import csv
+import os
+
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
+import numpy as np
+
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import LubyEnv, luby_gen
 from dacbench.wrappers import RewardNoiseWrapper
 
-import numpy as np
-import os
-import csv
-import ConfigSpace as CS
-import ConfigSpace.hyperparameters as CSH
-
-MAX_STEPS = 2 ** 6
+MAX_STEPS = 2**6
 LUBY_SEQUENCE = np.log2([next(luby_gen(i)) for i in range(1, 2 * MAX_STEPS + 2)])
 HISTORY_LENGTH = 5
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
-SEQ = CSH.UniformIntegerHyperparameter(name='sequence_element', lower=0, upper=np.log2(MAX_STEPS))
+SEQ = CSH.UniformIntegerHyperparameter(
+    name="sequence_element", lower=0, upper=np.log2(MAX_STEPS)
+)
 DEFAULT_CFG_SPACE.add_hyperparameter(SEQ)
 
 INFO = {
@@ -42,7 +45,7 @@ LUBY_DEFAULTS = objdict(
         "reward_range": (-1, 0),
         "cutoff": MAX_STEPS,
         "hist_length": HISTORY_LENGTH,
-        "min_steps": 2 ** 3,
+        "min_steps": 2**3,
         "seed": 0,
         "instance_set_path": "../instance_sets/luby/luby_default.csv",
         "benchmark_info": INFO,
@@ -85,7 +88,10 @@ class LubyBenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         # Read test set if path is specified
-        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+        if (
+            "test_set" not in self.config.keys()
+            and "test_set_path" in self.config.keys()
+        ):
             self.read_instance_set(test=True)
 
         env = LubyEnv(self.config)

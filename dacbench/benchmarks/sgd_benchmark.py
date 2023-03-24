@@ -1,16 +1,15 @@
 import csv
 import os
 
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 import numpy as np
-from gymnasium import spaces
 from torch.nn import NLLLoss
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import SGDEnv
 from dacbench.envs.sgd import Reward
-
-import ConfigSpace as CS
-import ConfigSpace.hyperparameters as CSH
+from gymnasium import spaces
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
 LR = CSH.UniformIntegerHyperparameter(name="learning_rate", lower=0, upper=10)

@@ -1,11 +1,12 @@
-import unittest
 import os
+import unittest
 
 import numpy as np
+
 from dacbench import AbstractEnv
-from dacbench.envs.sgd import SGDEnv, Reward
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.benchmarks.sgd_benchmark import SGDBenchmark, SGD_DEFAULTS
+from dacbench.benchmarks.sgd_benchmark import SGD_DEFAULTS, SGDBenchmark
+from dacbench.envs.sgd import Reward, SGDEnv
 from dacbench.wrappers import ObservationWrapper
 
 
@@ -16,7 +17,7 @@ class TestSGDEnv(unittest.TestCase):
 
     @staticmethod
     def data_path(path):
-        return os.path.join(os.path.dirname(__file__), 'data', path)
+        return os.path.join(os.path.dirname(__file__), "data", path)
 
     def test_setup(self):
         self.assertTrue(issubclass(type(self.env), AbstractEnv))
@@ -38,7 +39,7 @@ class TestSGDEnv(unittest.TestCase):
         env = SGDEnv(benchmark.config)
         self.assertEqual(env.reward_type, SGD_DEFAULTS.reward_type)
 
-        benchmark.config.reward_type = 'invalid_reward'
+        benchmark.config.reward_type = "invalid_reward"
         with self.assertRaises(ValueError):
             env = SGDEnv(benchmark.config)
 
@@ -156,7 +157,7 @@ class TestSGDEnv(unittest.TestCase):
                     "validationLoss",
                     "step",
                     "alignment",
-                    "crashed"
+                    "crashed",
                 ],
             )
         )

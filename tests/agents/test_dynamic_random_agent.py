@@ -1,9 +1,10 @@
 import unittest
 
+import numpy as np
+
 from dacbench.agents import DynamicRandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
 from dacbench.wrappers import MultiDiscreteActionWrapper
-import numpy as np
 
 
 class MyTestCase(unittest.TestCase):
@@ -45,7 +46,7 @@ class MyTestCase(unittest.TestCase):
         switching_interval = 3
         agent, env = self.get_agent(switching_interval)
 
-        state, _  = env.reset()
+        state, _ = env.reset()
         reward = 0
         actions = []
         for i in range(21):

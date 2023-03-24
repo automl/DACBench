@@ -6,8 +6,8 @@ from pathlib import Path
 import numpy as np
 
 from dacbench import benchmarks
-from dacbench.agents import StaticAgent, GenericAgent, DynamicRandomAgent
-from dacbench.envs.policies import OPTIMAL_POLICIES, NON_OPTIMAL_POLICIES
+from dacbench.agents import DynamicRandomAgent, GenericAgent, StaticAgent
+from dacbench.envs.policies import NON_OPTIMAL_POLICIES, OPTIMAL_POLICIES
 from dacbench.logger import Logger
 from dacbench.runner import run_benchmark
 from dacbench.wrappers import PerformanceTrackingWrapper
@@ -217,7 +217,6 @@ def main(args):
 
     if args.static:
         for b in benchs:
-
             if args.actions is None:
                 actions = DISCRETE_ACTIONS[b]
             else:

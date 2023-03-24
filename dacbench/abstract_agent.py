@@ -1,5 +1,5 @@
 class AbstractDACBenchAgent:
-    """ Abstract class to implement for use with the runner function """
+    """Abstract class to implement for use with the runner function"""
 
     def __init__(self, env):
         """

@@ -1,6 +1,6 @@
 import numpy as np
-from modcma import ModularCMAES, Parameters
 from IOHexperimenter import IOH_function
+from modcma import ModularCMAES, Parameters
 
 from dacbench import AbstractEnv
 

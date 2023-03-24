@@ -1,6 +1,7 @@
-import unittest
-import os
 import json
+import os
+import unittest
+
 from dacbench.benchmarks import FastDownwardBenchmark
 from dacbench.envs import FastDownwardEnv
 

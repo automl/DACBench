@@ -2,18 +2,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import gymnasium as gym
 import numpy as np
 import pandas as pd
 
-
+import gymnasium as gym
 from dacbench.agents import StaticAgent
-from dacbench.benchmarks import (
-    LubyBenchmark,
-    FastDownwardBenchmark,
-    CMAESBenchmark,
-    ModCMABenchmark
-)
+from dacbench.benchmarks import (CMAESBenchmark, FastDownwardBenchmark,
+                                 LubyBenchmark, ModCMABenchmark)
 from dacbench.logger import Logger, load_logs, log2dataframe
 from dacbench.runner import run_benchmark
 from dacbench.wrappers import ActionFrequencyWrapper
@@ -49,17 +44,17 @@ class TestActionTrackingWrapper(unittest.TestCase):
 
         expected_actions = pd.DataFrame(
             {
-                "action_0": [action[0]]*10,
-                "action_1": [action[1]]*10,
-                "action_10": [action[10]]*10,
-                "action_2": [action[2]]*10,
-                "action_3": [action[3]]*10,
-                "action_4": [action[4]]*10,
-                "action_5": [action[5]]*10,
-                "action_6": [action[6]]*10,
-                "action_7": [action[7]]*10,
-                "action_8": [action[8]]*10,
-                "action_9": [action[9]]*10,
+                "action_0": [action[0]] * 10,
+                "action_1": [action[1]] * 10,
+                "action_10": [action[10]] * 10,
+                "action_2": [action[2]] * 10,
+                "action_3": [action[3]] * 10,
+                "action_4": [action[4]] * 10,
+                "action_5": [action[5]] * 10,
+                "action_6": [action[6]] * 10,
+                "action_7": [action[7]] * 10,
+                "action_8": [action[8]] * 10,
+                "action_9": [action[9]] * 10,
             }
         )
 
@@ -75,7 +70,6 @@ class TestActionTrackingWrapper(unittest.TestCase):
         temp_dir.cleanup()
 
     def test_logging_discrete(self):
-
         temp_dir = tempfile.TemporaryDirectory()
 
         seed = 0
@@ -103,8 +97,8 @@ class TestActionTrackingWrapper(unittest.TestCase):
         logs = load_logs(action_logger.get_logfile())
         dataframe = log2dataframe(logs, wide=True)
 
-        expected_actions = [action]*80
-        
+        expected_actions = [action] * 80
+
         self.assertListEqual(dataframe.action.to_list(), expected_actions)
 
         temp_dir.cleanup()

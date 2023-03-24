@@ -2,7 +2,7 @@ import numpy as np
 
 
 def sig(x, scaling, inflection):
-    """ Simple sigmoid function """
+    """Simple sigmoid function"""
     return 1 / (1 + np.exp(-scaling * (x - inflection)))
 
 
@@ -17,7 +17,7 @@ def get_optimum(env, state):
         dist = 100
         for a in range(env.action_space.nvec[i] + 1):
             if np.abs(sigmoids[i] - a / (env.action_space.nvec[i])) < dist:
-                dist = np.abs(sigmoids[i] - a / (env.action_space.nvec[i]+1))
+                dist = np.abs(sigmoids[i] - a / (env.action_space.nvec[i] + 1))
                 best_action = a
         action.append(best_action)
     return action

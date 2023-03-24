@@ -1,6 +1,6 @@
-import unittest
 import json
 import os
+import unittest
 
 from dacbench.benchmarks import SigmoidBenchmark
 from dacbench.envs import SigmoidEnv

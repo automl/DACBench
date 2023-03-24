@@ -1,8 +1,10 @@
-from dacbench import AbstractMADACEnv
+from typing import Dict, Optional, Tuple, Union
+
 import numpy as np
-from numpy.polynomial import Polynomial
-from typing import Union, Tuple, Optional, Dict
 import pandas as pd
+from numpy.polynomial import Polynomial
+
+from dacbench import AbstractMADACEnv
 
 
 def create_polynomial_instance_set(

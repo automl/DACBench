@@ -3,19 +3,20 @@ Geometric environment.
 Original environment authors: Rasmus von Glahn
 """
 import bisect
-import os
 import itertools
 import math
-from typing import List, Dict, Tuple
+import os
+from typing import Dict, List, Tuple
 
-from mpl_toolkits import mplot3d
-from matplotlib import pyplot as plt
 import numpy as np
 import seaborn as sns
+from matplotlib import pyplot as plt
+from mpl_toolkits import mplot3d
+
+from dacbench import AbstractEnv
 
 sns.set_theme(style="darkgrid")
 
-from dacbench import AbstractEnv
 
 
 class GeometricEnv(AbstractEnv):
@@ -502,7 +503,6 @@ class Functions:
             instance_values = self.get_coordinates()
 
             for dim, function_values in enumerate(instance_values):
-
                 if abs(min(function_values)) > max(function_values):
                     norm_factor = abs(min(function_values))
                 else:

@@ -1,6 +1,7 @@
-from dacbench.benchmarks import TheoryBenchmark
 import unittest
+
 import gymnasium as gym
+from dacbench.benchmarks import TheoryBenchmark
 
 
 class TestTheoryEnv(unittest.TestCase):

@@ -50,9 +50,11 @@ To instantiate a benchmark environment, run:
     bench = SigmoidBenchmark()
     benchmark_env = bench.get_environment()
 
+
 .. automodule:: dacbench.abstract_benchmark
     :members:
     :show-inheritance:
+
 
 .. automodule:: dacbench.abstract_env
     :members:

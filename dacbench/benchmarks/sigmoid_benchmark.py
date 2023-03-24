@@ -1,17 +1,19 @@
-from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import SigmoidEnv, ContinuousSigmoidEnv, ContinuousStateSigmoidEnv
-
-import numpy as np
-import os
 import csv
+import os
+
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
+import numpy as np
+
+from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.envs import (ContinuousSigmoidEnv, ContinuousStateSigmoidEnv,
+                           SigmoidEnv)
 
 ACTION_VALUES = (5, 10)
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
 for i, d in enumerate(ACTION_VALUES):
-    X = CSH.UniformIntegerHyperparameter(name=f'value_dim_{i}', lower=0, upper=d-1)
+    X = CSH.UniformIntegerHyperparameter(name=f"value_dim_{i}", lower=0, upper=d - 1)
     DEFAULT_CFG_SPACE.add_hyperparameter(X)
 
 INFO = {
@@ -90,7 +92,10 @@ class SigmoidBenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         # Read test set if path is specified
-        if "test_set" not in self.config.keys() and "test_set_path" in self.config.keys():
+        if (
+            "test_set" not in self.config.keys()
+            and "test_set_path" in self.config.keys()
+        ):
             self.read_instance_set(test=True)
 
         if (
@@ -132,7 +137,7 @@ class SigmoidBenchmark(AbstractBenchmark):
         values: list
             A list of possible actions per dimension
         """
-        del self.config['config_space']
+        del self.config["config_space"]
         self.config.action_space_args = [values]
         self.config.observation_space_args = [
             np.array([-np.inf for _ in range(1 + len(values) * 3)]),

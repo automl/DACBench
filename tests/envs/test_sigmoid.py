@@ -2,9 +2,10 @@ import unittest
 from unittest import mock
 
 import numpy as np
+
 from dacbench import AbstractEnv
-from dacbench.envs import SigmoidEnv
 from dacbench.benchmarks.sigmoid_benchmark import SIGMOID_DEFAULTS
+from dacbench.envs import SigmoidEnv
 
 
 class TestSigmoidEnv(unittest.TestCase):
@@ -30,7 +31,9 @@ class TestSigmoidEnv(unittest.TestCase):
         )
         self.assertTrue(env.n_actions == len(SIGMOID_DEFAULTS["action_values"]))
         self.assertTrue(env.slope_multiplier == SIGMOID_DEFAULTS["slope_multiplier"])
-        self.assertTrue((env.action_space.nvec+1 == SIGMOID_DEFAULTS["action_values"]).all())
+        self.assertTrue(
+            (env.action_space.nvec + 1 == SIGMOID_DEFAULTS["action_values"]).all()
+        )
 
     def test_reset(self):
         env = self.make_env()

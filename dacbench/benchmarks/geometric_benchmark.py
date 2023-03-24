@@ -1,12 +1,12 @@
-from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import GeometricEnv
-
-import numpy as np
-import os
 import csv
+import os
 
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
+import numpy as np
+
+from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.envs import GeometricEnv
 
 FILE_PATH = os.path.dirname(__file__)
 ACTION_VALUES = (5, 10)
@@ -17,7 +17,10 @@ INFO = {
     "identifier": "Geometric",
     "name": "High Dimensional Geometric Curve Approximation. Curves are geometrical orthogonal.",
     "reward": "Overall Euclidean Distance between Point on Curve and Action Vector for all Dimensions",
-    "state_description": ["Remaining Budget", "Dimensions",],
+    "state_description": [
+        "Remaining Budget",
+        "Dimensions",
+    ],
 }
 
 GEOMETRIC_DEFAULTS = objdict(
@@ -134,7 +137,6 @@ class GeometricBenchmark(AbstractBenchmark):
         path = os.path.join(FILE_PATH, self.config.instance_set_path)
         self.config["instance_set"] = {}
         with open(path, "r") as fh:
-
             known_ids = []
             reader = csv.DictReader(fh)
 

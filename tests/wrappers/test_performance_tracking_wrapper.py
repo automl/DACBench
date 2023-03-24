@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 
 import numpy as np
+
 from dacbench.benchmarks import LubyBenchmark
 from dacbench.wrappers import PerformanceTrackingWrapper
 

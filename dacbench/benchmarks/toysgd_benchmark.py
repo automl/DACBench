@@ -1,14 +1,13 @@
 import os
 
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 import numpy as np
 import pandas as pd
-from gymnasium import spaces
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import ToySGDEnv
-
-import ConfigSpace as CS
-import ConfigSpace.hyperparameters as CSH
+from gymnasium import spaces
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
 LR = CSH.UniformFloatHyperparameter(name="0_log_learning_rate", lower=-10, upper=0)

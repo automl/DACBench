@@ -1,8 +1,9 @@
-import unittest
 import json
 import os
+import unittest
 
 import numpy as np
+
 from dacbench.benchmarks import LubyBenchmark
 from dacbench.envs import LubyEnv
 from dacbench.wrappers import RewardNoiseWrapper

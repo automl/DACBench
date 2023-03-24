@@ -6,10 +6,10 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 """
 
 from typing import List
+
 import numpy as np
 
 from dacbench import AbstractEnv
-
 
 # Instance IDEA 1: shift luby seq -> feat is sum of skipped action values
 # Instance IDEA 2: "Wiggle" luby i.e. luby(t + N(0, 0.1)) -> feat is sampled value
@@ -169,7 +169,7 @@ class LubyEnv(AbstractEnv):
 
 
 def luby_gen(i):
-    """ Generator for the Luby Sequence """
+    """Generator for the Luby Sequence"""
     for k in range(1, 33):
         if i == ((1 << k) - 1):
             yield 1 << (k - 1)

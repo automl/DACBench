@@ -5,18 +5,20 @@ by G.Shala and A. Biedenkapp and N.Awad and S. Adriaensen and M.Lindauer and F. 
 Original author: Gresa Shala
 """
 
-import numpy as np
-from collections import deque
-from cma.evolution_strategy import CMAEvolutionStrategy
-from cma import bbobbenchmarks as bn
-import threading
-import warnings
-from dacbench import AbstractEnv
 import resource
 import sys
+import threading
+import warnings
+from collections import deque
 
-resource.setrlimit(resource.RLIMIT_STACK, (2 ** 35, -1))
-sys.setrecursionlimit(10 ** 9)
+import numpy as np
+from cma import bbobbenchmarks as bn
+from cma.evolution_strategy import CMAEvolutionStrategy
+
+from dacbench import AbstractEnv
+
+resource.setrlimit(resource.RLIMIT_STACK, (2**35, -1))
+sys.setrecursionlimit(10**9)
 
 warnings.filterwarnings("ignore")
 

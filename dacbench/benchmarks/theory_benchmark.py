@@ -1,13 +1,13 @@
-from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs.theory import RLSEnvDiscrete, RLSEnv
-
-import numpy as np
 import os
-import pandas as pd
-import gymnasium as gym
 
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
+import numpy as np
+import pandas as pd
+
+import gymnasium as gym
+from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.envs.theory import RLSEnv, RLSEnvDiscrete
 
 INFO = {
     "identifier": "Theory",

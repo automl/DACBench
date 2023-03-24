@@ -6,8 +6,6 @@
 
 .PHONY: help install-dev check format pre-commit clean build clean-doc clean-build test doc publish
 
-DOCDIR := docs
-
 help:
 	@echo "Makefile DACBench"
 	@echo "* install-dev      to install all dev requirements and install pre-commit"
@@ -26,7 +24,7 @@ PYTEST ?= python -m pytest
 CTAGS ?= ctags
 PIP ?= python -m pip
 MAKE ?= make
-BLACK ?= black
+BLACK ?= python -m black
 ISORT ?= isort
 PYDOCSTYLE ?= pydocstyle
 MYPY ?= mypy
@@ -35,7 +33,7 @@ FLAKE8 ?= flake8
 
 DIR := ${CURDIR}
 DIST := ${CURDIR}/dist
-DOCDIR := ${DIR}/docs
+DOCDIR := ${CURDIR}/docs
 INDEX_HTML := file://${DOCDIR}/html/build/index.html
 
 install-dev:
@@ -46,7 +44,7 @@ check-black:
 	$(BLACK)  dacbench tests --check || :
 
 check-isort:
-	$(ISORT) dacbench tests --check || :
+	$(ISORT) -rc dacbench tests --check || :
 
 check-pydocstyle:
 	$(PYDOCSTYLE) dacbench || :
@@ -68,7 +66,7 @@ format-black:
 	$(BLACK) dacbench tests
 
 format-isort:
-	$(ISORT) dacbench tests
+	$(ISORT) -rc dacbench tests
 
 format: format-black format-isort
 
@@ -89,7 +87,7 @@ clean: clean-doc clean-build
 build:
 	$(PYTHON) setup.py sdist
 
-docs:
+doc:
 	$(MAKE) -C ${DOCDIR} docs
 	@echo
 	@echo "View docs at:"
