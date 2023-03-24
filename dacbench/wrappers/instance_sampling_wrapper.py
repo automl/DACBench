@@ -1,5 +1,5 @@
 import numpy as np
-from gym import Wrapper
+from gymnasium import Wrapper
 from scipy.stats import norm
 
 

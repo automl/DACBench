@@ -1,5 +1,5 @@
 import numpy as np
-from gym import Wrapper, spaces
+from gymnasium import Wrapper, spaces
 
 
 class ObservationWrapper(Wrapper):

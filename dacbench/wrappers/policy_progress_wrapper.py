@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from gym import Wrapper
+from gymnasium import Wrapper
 
 
 class PolicyProgressWrapper(Wrapper):

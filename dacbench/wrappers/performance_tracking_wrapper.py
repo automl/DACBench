@@ -3,7 +3,7 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb
-from gym import Wrapper
+from gymnasium import Wrapper
 
 sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())

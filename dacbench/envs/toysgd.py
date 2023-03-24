@@ -233,4 +233,5 @@ class ToySGDEnv(AbstractMADACEnv):
         plt.show()
 
     def close(self):
+        """Close env."""
         pass
