@@ -1,0 +1,1475 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Functionality through Wrappers &#8212; DACBench Documentation 0.2.0 documentation</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.9ea38e314b9e6d9dab77.js">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Logging Experiments" href="logging.html" />
+    <link rel="prev" title="Modifying Observations &amp; Cost" href="state_and_reward.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+  <a class="navbar-brand" href="../index.html">
+  <!-- <p class="title">DACBench Documentation</p> -->
+  </a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/automl/DACBench" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://twitter.com/automl_org?lang=de" rel="noopener" target="_blank" title="Twitter">
+            <span><i class="fab fa-twitter-square"></i></span>
+            <label class="sr-only">Twitter</label>
+          </a>
+        </li>
+      </ul>
+      </div>
+      
+      <div class="navbar-end-item">
+        <div class="dropdown mt-1">
+    <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
+        data-toggle="dropdown">
+        v0.2.0
+        <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
+        <a class="list-group-item list-group-item-action" href="#">v0.2.0</a>
+    </div>
+</div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <form class="bd-search align-items-center" action="../search.html" method="get" style="width: 100%;">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control btn btn-md" name="q" id="search-input"
+    placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off">
+</form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../index.html">DACBench Documentation</a></h4>
+<div class="mb-3">v0.2.0</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="dac.html">
+   Dynamic Algorithm Configuration - A Short Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="installation.html">
+   How to Install DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="containers.html">
+   Using DACBench Containers
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  The Benchmarks:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmarks.html">
+   Benchmark Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/sigmoid.html">
+   The Sigmoid Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/luby.html">
+   The Luby Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/toy_sgd.html">
+   The ToySGD Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/geometric.html">
+   The Geometric Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/fastdownward.html">
+   The FastDownward Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/theory.html">
+   The Theory Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/cma.html">
+   The PyCMA CMA-ES Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/modcma.html">
+   The IOHProfiler ModCMA Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/sgd.html">
+   The SGD Deep Learning Benchmark
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Using DACBench:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="modifications.html">
+   Saving &amp; Loading Benchmark Configurations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="multi_agent_dac.html">
+   Multi-Agent DAC
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="state_and_reward.html">
+   Modifying Observations &amp; Cost
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Functionality through Wrappers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="logging.html">
+   Logging Experiments
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="plotting.html">
+   Plotting results
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Misc:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="contrib.html">
+   Contributing to DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cite.html">
+   Citing DACBench
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.wrappers.ActionFrequencyWrapper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ActionFrequencyWrapper
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.ActionFrequencyWrapper.__getattribute__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ActionFrequencyWrapper.__getattribute__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.ActionFrequencyWrapper.__setattr__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ActionFrequencyWrapper.__setattr__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.ActionFrequencyWrapper.get_actions">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ActionFrequencyWrapper.get_actions()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.ActionFrequencyWrapper.render_action_tracking">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ActionFrequencyWrapper.render_action_tracking()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.ActionFrequencyWrapper.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ActionFrequencyWrapper.step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.wrappers.EpisodeTimeWrapper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     EpisodeTimeWrapper
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.EpisodeTimeWrapper.__getattribute__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       EpisodeTimeWrapper.__getattribute__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.EpisodeTimeWrapper.__setattr__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       EpisodeTimeWrapper.__setattr__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.EpisodeTimeWrapper.get_times">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       EpisodeTimeWrapper.get_times()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.EpisodeTimeWrapper.render_episode_time">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       EpisodeTimeWrapper.render_episode_time()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.EpisodeTimeWrapper.render_step_time">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       EpisodeTimeWrapper.render_step_time()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.EpisodeTimeWrapper.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       EpisodeTimeWrapper.step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.wrappers.InstanceSamplingWrapper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     InstanceSamplingWrapper
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.InstanceSamplingWrapper.__getattribute__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       InstanceSamplingWrapper.__getattribute__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.InstanceSamplingWrapper.__setattr__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       InstanceSamplingWrapper.__setattr__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.InstanceSamplingWrapper.fit_dist">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       InstanceSamplingWrapper.fit_dist()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.InstanceSamplingWrapper.reset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       InstanceSamplingWrapper.reset()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.wrappers.MultiDiscreteActionWrapper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     MultiDiscreteActionWrapper
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.MultiDiscreteActionWrapper.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MultiDiscreteActionWrapper.step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.wrappers.ObservationWrapper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ObservationWrapper
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.ObservationWrapper.__getattribute__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ObservationWrapper.__getattribute__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.ObservationWrapper.__setattr__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ObservationWrapper.__setattr__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.ObservationWrapper.flatten">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ObservationWrapper.flatten()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.ObservationWrapper.reset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ObservationWrapper.reset()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.ObservationWrapper.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ObservationWrapper.step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.wrappers.PerformanceTrackingWrapper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     PerformanceTrackingWrapper
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.PerformanceTrackingWrapper.__getattribute__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PerformanceTrackingWrapper.__getattribute__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.PerformanceTrackingWrapper.__setattr__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PerformanceTrackingWrapper.__setattr__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.PerformanceTrackingWrapper.get_performance">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PerformanceTrackingWrapper.get_performance()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.PerformanceTrackingWrapper.render_instance_performance">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PerformanceTrackingWrapper.render_instance_performance()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.PerformanceTrackingWrapper.render_performance">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PerformanceTrackingWrapper.render_performance()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.PerformanceTrackingWrapper.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PerformanceTrackingWrapper.step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.wrappers.PolicyProgressWrapper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     PolicyProgressWrapper
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.PolicyProgressWrapper.__getattribute__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PolicyProgressWrapper.__getattribute__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.PolicyProgressWrapper.__setattr__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PolicyProgressWrapper.__setattr__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.PolicyProgressWrapper.render_policy_progress">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PolicyProgressWrapper.render_policy_progress()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.PolicyProgressWrapper.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PolicyProgressWrapper.step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.wrappers.RewardNoiseWrapper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     RewardNoiseWrapper
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.RewardNoiseWrapper.__getattribute__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       RewardNoiseWrapper.__getattribute__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.RewardNoiseWrapper.__setattr__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       RewardNoiseWrapper.__setattr__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.RewardNoiseWrapper.add_noise">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       RewardNoiseWrapper.add_noise()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.RewardNoiseWrapper.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       RewardNoiseWrapper.step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.wrappers.StateTrackingWrapper">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     StateTrackingWrapper
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.StateTrackingWrapper.__getattribute__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StateTrackingWrapper.__getattribute__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.StateTrackingWrapper.__setattr__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StateTrackingWrapper.__setattr__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.StateTrackingWrapper.get_states">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StateTrackingWrapper.get_states()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.StateTrackingWrapper.render_state_tracking">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StateTrackingWrapper.render_state_tracking()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.StateTrackingWrapper.reset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StateTrackingWrapper.reset()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.wrappers.StateTrackingWrapper.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StateTrackingWrapper.step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="functionality-through-wrappers">
+<h1>Functionality through Wrappers<a class="headerlink" href="#functionality-through-wrappers" title="Permalink to this heading">¶</a></h1>
+<p>In order to comfortably provide additional functionality to environments without changing the interface,
+we can use so-called wrappers.
+They execute environment resets and steps internally, but can either alter the environment behavior
+(e.g. by adding noise) or record information about the environment.
+To wrap an existing environment is simple:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.wrappers</span> <span class="kn">import</span> <span class="n">PerformanceTrackingWrapper</span>
+
+<span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">PerformanceTrackingWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The provided environments for tracking performance, state and action information are designed to be
+used with DACBench’s logging functionality.</p>
+<span class="target" id="module-dacbench.wrappers"></span><dl class="py class">
+<dt class="sig sig-object py" id="dacbench.wrappers.ActionFrequencyWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.wrappers.</span></span><span class="sig-name descname"><span class="pre">ActionFrequencyWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/action_tracking_wrapper.html#ActionFrequencyWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ActionFrequencyWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Wrapper</span></code></p>
+<p>Wrapper to action frequency.</p>
+<p>Includes interval mode that returns frequencies in lists of len(interval) instead of one long list.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.ActionFrequencyWrapper.__getattribute__">
+<span class="sig-name descname"><span class="pre">__getattribute__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/action_tracking_wrapper.html#ActionFrequencyWrapper.__getattribute__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ActionFrequencyWrapper.__getattribute__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get attribute value of wrapper if available and of env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Attribute to get</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Value of given name</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.ActionFrequencyWrapper.__setattr__">
+<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/action_tracking_wrapper.html#ActionFrequencyWrapper.__setattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ActionFrequencyWrapper.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set attribute in wrapper if available and in env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Attribute to set</p></li>
+<li><p><strong>value</strong> – Value to set attribute to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.ActionFrequencyWrapper.get_actions">
+<span class="sig-name descname"><span class="pre">get_actions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/action_tracking_wrapper.html#ActionFrequencyWrapper.get_actions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ActionFrequencyWrapper.get_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get state progression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>all states or all states and interval sorted states</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array or np.array, np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.ActionFrequencyWrapper.render_action_tracking">
+<span class="sig-name descname"><span class="pre">render_action_tracking</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/action_tracking_wrapper.html#ActionFrequencyWrapper.render_action_tracking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ActionFrequencyWrapper.render_action_tracking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render action progression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>RBG data of action tracking</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.ActionFrequencyWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/action_tracking_wrapper.html#ActionFrequencyWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ActionFrequencyWrapper.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step and record state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>int</em>) – action to execute</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state, reward, done, metainfo</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array, float, bool, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.wrappers.EpisodeTimeWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.wrappers.</span></span><span class="sig-name descname"><span class="pre">EpisodeTimeWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/episode_time_tracker.html#EpisodeTimeWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.EpisodeTimeWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Wrapper</span></code></p>
+<p>Wrapper to track time spent per episode.</p>
+<p>Includes interval mode that returns times in lists of len(interval) instead of one long list.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.EpisodeTimeWrapper.__getattribute__">
+<span class="sig-name descname"><span class="pre">__getattribute__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/episode_time_tracker.html#EpisodeTimeWrapper.__getattribute__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.EpisodeTimeWrapper.__getattribute__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get attribute value of wrapper if available and of env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Attribute to get</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Value of given name</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.EpisodeTimeWrapper.__setattr__">
+<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/episode_time_tracker.html#EpisodeTimeWrapper.__setattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.EpisodeTimeWrapper.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set attribute in wrapper if available and in env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Attribute to set</p></li>
+<li><p><strong>value</strong> – Value to set attribute to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.EpisodeTimeWrapper.get_times">
+<span class="sig-name descname"><span class="pre">get_times</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/episode_time_tracker.html#EpisodeTimeWrapper.get_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.EpisodeTimeWrapper.get_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>all times or all times and interval sorted times</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array or np.array, np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.EpisodeTimeWrapper.render_episode_time">
+<span class="sig-name descname"><span class="pre">render_episode_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/episode_time_tracker.html#EpisodeTimeWrapper.render_episode_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.EpisodeTimeWrapper.render_episode_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render episode times.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.EpisodeTimeWrapper.render_step_time">
+<span class="sig-name descname"><span class="pre">render_step_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/episode_time_tracker.html#EpisodeTimeWrapper.render_step_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.EpisodeTimeWrapper.render_step_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render step times.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.EpisodeTimeWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/episode_time_tracker.html#EpisodeTimeWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.EpisodeTimeWrapper.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step and record time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>int</em>) – action to execute</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state, reward, terminated, truncated, metainfo</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array, float, bool, bool, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.wrappers.InstanceSamplingWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.wrappers.</span></span><span class="sig-name descname"><span class="pre">InstanceSamplingWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/instance_sampling_wrapper.html#InstanceSamplingWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.InstanceSamplingWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Wrapper</span></code></p>
+<p>Wrapper to sample a new instance at a given time point.</p>
+<p>Instances can either be sampled using a given method or a distribution infered from a given list of instances.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.InstanceSamplingWrapper.__getattribute__">
+<span class="sig-name descname"><span class="pre">__getattribute__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/instance_sampling_wrapper.html#InstanceSamplingWrapper.__getattribute__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.InstanceSamplingWrapper.__getattribute__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get attribute value of wrapper if available and of env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Attribute to get</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Value of given name</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.InstanceSamplingWrapper.__setattr__">
+<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/instance_sampling_wrapper.html#InstanceSamplingWrapper.__setattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.InstanceSamplingWrapper.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set attribute in wrapper if available and in env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Attribute to set</p></li>
+<li><p><strong>value</strong> – Value to set attribute to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.InstanceSamplingWrapper.fit_dist">
+<span class="sig-name descname"><span class="pre">fit_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instances</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/instance_sampling_wrapper.html#InstanceSamplingWrapper.fit_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.InstanceSamplingWrapper.fit_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximate instance distribution in given instance set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>instances</strong> (<em>List</em>) – instance set</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>sampling method for new instances</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>method</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.InstanceSamplingWrapper.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/instance_sampling_wrapper.html#InstanceSamplingWrapper.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.InstanceSamplingWrapper.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset environment and use sampled instance for training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>state</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.wrappers.MultiDiscreteActionWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.wrappers.</span></span><span class="sig-name descname"><span class="pre">MultiDiscreteActionWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/multidiscrete_action_wrapper.html#MultiDiscreteActionWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.MultiDiscreteActionWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Wrapper</span></code></p>
+<p>Wrapper to cast MultiDiscrete action spaces to Discrete. This should improve usability with standard RL libraries.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.MultiDiscreteActionWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/multidiscrete_action_wrapper.html#MultiDiscreteActionWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.MultiDiscreteActionWrapper.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps discrete action value to array.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.wrappers.ObservationWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.wrappers.</span></span><span class="sig-name descname"><span class="pre">ObservationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/observation_wrapper.html#ObservationWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ObservationWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Wrapper</span></code></p>
+<p>Wrapper covert observations spaces to spaces.Box for convenience.</p>
+<p>Currently only supports Dict -&gt; Box</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.ObservationWrapper.__getattribute__">
+<span class="sig-name descname"><span class="pre">__getattribute__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/observation_wrapper.html#ObservationWrapper.__getattribute__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ObservationWrapper.__getattribute__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get attribute value of wrapper if available and of env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Attribute to get</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Value of given name</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.ObservationWrapper.__setattr__">
+<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/observation_wrapper.html#ObservationWrapper.__setattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ObservationWrapper.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set attribute in wrapper if available and in env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Attribute to set</p></li>
+<li><p><strong>value</strong> – Value to set attribute to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.ObservationWrapper.flatten">
+<span class="sig-name descname"><span class="pre">flatten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/observation_wrapper.html#ObservationWrapper.flatten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ObservationWrapper.flatten" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flatten dict to list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.ObservationWrapper.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/observation_wrapper.html#ObservationWrapper.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ObservationWrapper.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step and record distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>state, info</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.ObservationWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/observation_wrapper.html#ObservationWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.ObservationWrapper.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step and record distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>int</em>) – action to execute</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state, reward, terminated, truncated, metainfo</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array, float, bool, bool, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.wrappers.PerformanceTrackingWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.wrappers.</span></span><span class="sig-name descname"><span class="pre">PerformanceTrackingWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">performance_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_instance_performance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/performance_tracking_wrapper.html#PerformanceTrackingWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PerformanceTrackingWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Wrapper</span></code></p>
+<p>Wrapper to track episode performance.</p>
+<p>Includes interval mode that returns performance in lists of len(interval) instead of one long list.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.PerformanceTrackingWrapper.__getattribute__">
+<span class="sig-name descname"><span class="pre">__getattribute__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/performance_tracking_wrapper.html#PerformanceTrackingWrapper.__getattribute__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PerformanceTrackingWrapper.__getattribute__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get attribute value of wrapper if available and of env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Attribute to get</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Value of given name</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.PerformanceTrackingWrapper.__setattr__">
+<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/performance_tracking_wrapper.html#PerformanceTrackingWrapper.__setattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PerformanceTrackingWrapper.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set attribute in wrapper if available and in env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Attribute to set</p></li>
+<li><p><strong>value</strong> – Value to set attribute to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.PerformanceTrackingWrapper.get_performance">
+<span class="sig-name descname"><span class="pre">get_performance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/performance_tracking_wrapper.html#PerformanceTrackingWrapper.get_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PerformanceTrackingWrapper.get_performance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get state performance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>all states or all states and interval sorted states</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array or np.array, np.array or np.array, dict or np.array, np.arry, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.PerformanceTrackingWrapper.render_instance_performance">
+<span class="sig-name descname"><span class="pre">render_instance_performance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/performance_tracking_wrapper.html#PerformanceTrackingWrapper.render_instance_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PerformanceTrackingWrapper.render_instance_performance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot mean performance for each instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.PerformanceTrackingWrapper.render_performance">
+<span class="sig-name descname"><span class="pre">render_performance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/performance_tracking_wrapper.html#PerformanceTrackingWrapper.render_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PerformanceTrackingWrapper.render_performance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot performance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.PerformanceTrackingWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/performance_tracking_wrapper.html#PerformanceTrackingWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PerformanceTrackingWrapper.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step and record performance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>int</em>) – action to execute</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state, reward, done, metainfo</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array, float, bool, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.wrappers.PolicyProgressWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.wrappers.</span></span><span class="sig-name descname"><span class="pre">PolicyProgressWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_optimal</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/policy_progress_wrapper.html#PolicyProgressWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PolicyProgressWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Wrapper</span></code></p>
+<p>Wrapper to track progress towards optimal policy.</p>
+<p>Can only be used if a way to obtain the optimal policy given an instance can be obtained.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.PolicyProgressWrapper.__getattribute__">
+<span class="sig-name descname"><span class="pre">__getattribute__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/policy_progress_wrapper.html#PolicyProgressWrapper.__getattribute__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PolicyProgressWrapper.__getattribute__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get attribute value of wrapper if available and of env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Attribute to get</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Value of given name</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.PolicyProgressWrapper.__setattr__">
+<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/policy_progress_wrapper.html#PolicyProgressWrapper.__setattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PolicyProgressWrapper.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set attribute in wrapper if available and in env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Attribute to set</p></li>
+<li><p><strong>value</strong> – Value to set attribute to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.PolicyProgressWrapper.render_policy_progress">
+<span class="sig-name descname"><span class="pre">render_policy_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/policy_progress_wrapper.html#PolicyProgressWrapper.render_policy_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PolicyProgressWrapper.render_policy_progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot progress.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.PolicyProgressWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/policy_progress_wrapper.html#PolicyProgressWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.PolicyProgressWrapper.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step and record distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>int</em>) – action to execute</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state, reward, terminated, truncated, metainfo</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array, float, bool, bool, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.wrappers.RewardNoiseWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.wrappers.</span></span><span class="sig-name descname"><span class="pre">RewardNoiseWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'standard_normal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/reward_noise_wrapper.html#RewardNoiseWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.RewardNoiseWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Wrapper</span></code></p>
+<p>Wrapper to add noise to the reward signal.</p>
+<p>Noise can be sampled from a custom distribution or any distribution in numpy’s random module.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.RewardNoiseWrapper.__getattribute__">
+<span class="sig-name descname"><span class="pre">__getattribute__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/reward_noise_wrapper.html#RewardNoiseWrapper.__getattribute__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.RewardNoiseWrapper.__getattribute__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get attribute value of wrapper if available and of env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Attribute to get</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Value of given name</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.RewardNoiseWrapper.__setattr__">
+<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/reward_noise_wrapper.html#RewardNoiseWrapper.__setattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.RewardNoiseWrapper.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set attribute in wrapper if available and in env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Attribute to set</p></li>
+<li><p><strong>value</strong> – Value to set attribute to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.RewardNoiseWrapper.add_noise">
+<span class="sig-name descname"><span class="pre">add_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/reward_noise_wrapper.html#RewardNoiseWrapper.add_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.RewardNoiseWrapper.add_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make noise function from distribution name and arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist</strong> (<em>str</em>) – Name of distribution</p></li>
+<li><p><strong>args</strong> (<em>list</em>) – List of distribution arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Noise sampling function</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.RewardNoiseWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/reward_noise_wrapper.html#RewardNoiseWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.RewardNoiseWrapper.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step and add noise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>int</em>) – action to execute</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state, reward, terminated, truncated, metainfo</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array, float, bool, bool, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.wrappers.StateTrackingWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.wrappers.</span></span><span class="sig-name descname"><span class="pre">StateTrackingWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/state_tracking_wrapper.html#StateTrackingWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.StateTrackingWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Wrapper</span></code></p>
+<p>Wrapper to track state changed over time.</p>
+<p>Includes interval mode that returns states in lists of len(interval) instead of one long list.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.StateTrackingWrapper.__getattribute__">
+<span class="sig-name descname"><span class="pre">__getattribute__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/state_tracking_wrapper.html#StateTrackingWrapper.__getattribute__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.StateTrackingWrapper.__getattribute__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get attribute value of wrapper if available and of env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Attribute to get</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Value of given name</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.StateTrackingWrapper.__setattr__">
+<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/state_tracking_wrapper.html#StateTrackingWrapper.__setattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.StateTrackingWrapper.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set attribute in wrapper if available and in env if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Attribute to set</p></li>
+<li><p><strong>value</strong> – Value to set attribute to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.StateTrackingWrapper.get_states">
+<span class="sig-name descname"><span class="pre">get_states</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/state_tracking_wrapper.html#StateTrackingWrapper.get_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.StateTrackingWrapper.get_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get state progression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>all states or all states and interval sorted states</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array or np.array, np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.StateTrackingWrapper.render_state_tracking">
+<span class="sig-name descname"><span class="pre">render_state_tracking</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/state_tracking_wrapper.html#StateTrackingWrapper.render_state_tracking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.StateTrackingWrapper.render_state_tracking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render state progression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>RBG data of state tracking</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.StateTrackingWrapper.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/state_tracking_wrapper.html#StateTrackingWrapper.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.StateTrackingWrapper.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset environment and record starting state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>state, info</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array, {}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.wrappers.StateTrackingWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/wrappers/state_tracking_wrapper.html#StateTrackingWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.wrappers.StateTrackingWrapper.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step and record state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>int</em>) – action to execute</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state, reward, done, metainfo</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array, float, bool, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="state_and_reward.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Modifying Observations &amp; Cost</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="logging.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Logging Experiments</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../_static/js/index.9ea38e314b9e6d9dab77.js"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Theresa Eimer, Maximilian Reimer.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+6.1.3. Template is modified version of <a
+href="https://pydata-sphinx-theme.readthedocs.io">PyData Sphinx Theme</a>. <br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

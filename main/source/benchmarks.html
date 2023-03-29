@@ -1,0 +1,1448 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Benchmark Overview &#8212; DACBench Documentation 0.2.0 documentation</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.9ea38e314b9e6d9dab77.js">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The Sigmoid Toy Benchmark" href="benchmark_docs/sigmoid.html" />
+    <link rel="prev" title="Using DACBench Containers" href="containers.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+  <a class="navbar-brand" href="../index.html">
+  <!-- <p class="title">DACBench Documentation</p> -->
+  </a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/automl/DACBench" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://twitter.com/automl_org?lang=de" rel="noopener" target="_blank" title="Twitter">
+            <span><i class="fab fa-twitter-square"></i></span>
+            <label class="sr-only">Twitter</label>
+          </a>
+        </li>
+      </ul>
+      </div>
+      
+      <div class="navbar-end-item">
+        <div class="dropdown mt-1">
+    <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
+        data-toggle="dropdown">
+        v0.2.0
+        <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
+        <a class="list-group-item list-group-item-action" href="#">v0.2.0</a>
+    </div>
+</div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <form class="bd-search align-items-center" action="../search.html" method="get" style="width: 100%;">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control btn btn-md" name="q" id="search-input"
+    placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off">
+</form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../index.html">DACBench Documentation</a></h4>
+<div class="mb-3">v0.2.0</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="dac.html">
+   Dynamic Algorithm Configuration - A Short Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="installation.html">
+   How to Install DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="containers.html">
+   Using DACBench Containers
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  The Benchmarks:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Benchmark Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/sigmoid.html">
+   The Sigmoid Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/luby.html">
+   The Luby Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/toy_sgd.html">
+   The ToySGD Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/geometric.html">
+   The Geometric Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/fastdownward.html">
+   The FastDownward Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/theory.html">
+   The Theory Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/cma.html">
+   The PyCMA CMA-ES Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/modcma.html">
+   The IOHProfiler ModCMA Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="benchmark_docs/sgd.html">
+   The SGD Deep Learning Benchmark
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Using DACBench:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="modifications.html">
+   Saving &amp; Loading Benchmark Configurations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="multi_agent_dac.html">
+   Multi-Agent DAC
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="state_and_reward.html">
+   Modifying Observations &amp; Cost
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="wrappers.html">
+   Functionality through Wrappers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="logging.html">
+   Logging Experiments
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="plotting.html">
+   Plotting results
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Misc:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="contrib.html">
+   Contributing to DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cite.html">
+   Citing DACBench
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     AbstractBenchmark
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.__eq__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.__eq__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.class_to_str">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.class_to_str()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.dejson_wrappers">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.dejson_wrappers()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.dictify_json">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.dictify_json()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.from_json">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.from_json()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.get_config">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.get_config()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.get_environment">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.get_environment()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.jsonify_dict_space">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.jsonify_dict_space()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.jsonify_wrappers">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.jsonify_wrappers()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.list_to_space">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.list_to_space()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.load_config">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.load_config()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.process_configspace">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.process_configspace()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.read_config_file">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.read_config_file()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.register_wrapper">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.register_wrapper()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.save_config">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.save_config()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.serialize_config">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.serialize_config()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.set_action_space">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.set_action_space()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.set_observation_space">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.set_observation_space()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.set_seed">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.set_seed()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.space_to_list">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.space_to_list()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.AbstractBenchmark.to_json">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractBenchmark.to_json()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.objdict">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     objdict
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.objdict.__delattr__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       objdict.__delattr__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.objdict.__eq__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       objdict.__eq__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.objdict.__getattr__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       objdict.__getattr__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.objdict.__ne__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       objdict.__ne__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.objdict.__setattr__">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       objdict.__setattr__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_benchmark.objdict.copy">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       objdict.copy()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     AbstractEnv
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.get_inst_id">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.get_inst_id()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.get_instance">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.get_instance()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.get_instance_set">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.get_instance_set()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.reset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.reset()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.reset_">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.reset_()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.seed">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.seed()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.set_inst_id">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.set_inst_id()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.set_instance">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.set_instance()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.set_instance_set">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.set_instance_set()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.step_">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.step_()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.use_next_instance">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.use_next_instance()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.use_test_set">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.use_test_set()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractEnv.use_training_set">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractEnv.use_training_set()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     AbstractMADACEnv
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv.agent_selection">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractMADACEnv.agent_selection
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv.infos">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractMADACEnv.infos
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv.last">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractMADACEnv.last()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv.multi_agent_reset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractMADACEnv.multi_agent_reset()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv.multi_agent_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractMADACEnv.multi_agent_step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv.num_agents">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractMADACEnv.num_agents
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv.register_agent">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractMADACEnv.register_agent()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv.remove_agent">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractMADACEnv.remove_agent()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv.rewards">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractMADACEnv.rewards
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv.terminations">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractMADACEnv.terminations
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.abstract_env.AbstractMADACEnv.truncations">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       AbstractMADACEnv.truncations
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="benchmark-overview">
+<span id="benchmarks"></span><h1>Benchmark Overview<a class="headerlink" href="#benchmark-overview" title="Permalink to this heading">¶</a></h1>
+<p>DACBench contains a range of benchmarks in different categories and from different domains.
+There is a range of highly configurable, cheap to run benchmarks that often also include a
+ground truth solution.
+We recommend using these as an introduction to DAC, to verify new algorithms and to
+generate detailed insights.
+They are both based on artificial functions and real algorithms:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="benchmark_docs/sigmoid.html"><span class="doc">Sigmoid</span></a> (Artificial Benchmark):
+Sigmoid function approximation in multiple dimensions.</p></li>
+<li><p><a class="reference internal" href="benchmark_docs/luby.html"><span class="doc">Luby</span></a> (Artificial Benchmark):
+Learning the Luby sequence.</p></li>
+<li><p><a class="reference internal" href="benchmark_docs/toy_sgd.html"><span class="doc">ToySGD</span></a> (Artificial Benchmark):
+Controlling the learning rate in gradient descent.</p></li>
+<li><p><a class="reference internal" href="benchmark_docs/geometric.html"><span class="doc">Geometric</span></a> (Artificial Benchmark):
+Approximating several functions at once.</p></li>
+<li><p>Toy version of the <a class="reference internal" href="benchmark_docs/fastdownward.html"><span class="doc">FastDownward benchmark</span></a>:
+Heuristic selection for the FastDownward Planner with ground truth.</p></li>
+<li><p><a class="reference internal" href="benchmark_docs/theory.html"><span class="doc">Theory benchmark</span></a> with ground truth:
+RLS algorithm on the LeadingOnes problem.</p></li>
+</ul>
+<p>Beyond these smaller scale problems we know a lot about, DACBench also contains less
+interpretable algorithms with larger scopes. These are oftentimes noisier, harder to debug
+and more costly to run and thus present a real challenge for DAC algorithms:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="benchmark_docs/fastdownward.html"><span class="doc">FastDownward benchmark</span></a>: Heuristic selection for the FastDownward Planner on competition tasks.</p></li>
+<li><p><a class="reference internal" href="benchmark_docs/cma.html"><span class="doc">CMA-ES</span></a>: Step-size adpation for CMA-ES.</p></li>
+<li><p><a class="reference internal" href="benchmark_docs/modcma.html"><span class="doc">ModCMA</span></a>: Step-size &amp; algorithm component control for EAs backed by IOHProfiler.</p></li>
+<li><p><a class="reference internal" href="benchmark_docs/sgd.html"><span class="doc">SGD-DL</span></a>: Learning rate adaption for neural networks.</p></li>
+</ul>
+<p>Our benchmarks are based on the <a class="reference external" href="https://gymnasium.farama.org/">gymnasium interface</a> for Reinforcement Learning.
+That means to run a benchmark, you need to create an environment of that benchmark
+to then interact with it.
+We include examples of this interaction between environment and DAC methods in our
+GitHub repository.
+To instantiate a benchmark environment, run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dacbench.benchmarks</span> <span class="kn">import</span> <span class="n">SigmoidBenchmark</span>
+<span class="n">bench</span> <span class="o">=</span> <span class="n">SigmoidBenchmark</span><span class="p">()</span>
+<span class="n">benchmark_env</span> <span class="o">=</span> <span class="n">bench</span><span class="o">.</span><span class="n">get_environment</span><span class="p">()</span>
+</pre></div>
+</div>
+<span class="target" id="module-dacbench.abstract_benchmark"></span><dl class="py class">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.abstract_benchmark.</span></span><span class="sig-name descname"><span class="pre">AbstractBenchmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract template for benchmark classes.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.__eq__">
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.__eq__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for equality.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.class_to_str">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">class_to_str</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.class_to_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.class_to_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get string name from class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.dejson_wrappers">
+<span class="sig-name descname"><span class="pre">dejson_wrappers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapper_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.dejson_wrappers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.dejson_wrappers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load wrapper from list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wrapper_list</strong> (<em>list</em>) – wrapper description to load</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.dictify_json">
+<span class="sig-name descname"><span class="pre">dictify_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.dictify_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.dictify_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Json to dict structure for gym spaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dict_list</strong> (<em>list</em>) – list of dicts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.from_json">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.from_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get config from json dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return current configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current config</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.get_environment">
+<span class="sig-name descname"><span class="pre">get_environment</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.get_environment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make benchmark environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> – Benchmark environment</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>gym.Env</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.jsonify_dict_space">
+<span class="sig-name descname"><span class="pre">jsonify_dict_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_space</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.jsonify_dict_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.jsonify_dict_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gym spaces to json dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dict_space</strong> (<em>dict</em>) – space dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.jsonify_wrappers">
+<span class="sig-name descname"><span class="pre">jsonify_wrappers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.jsonify_wrappers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.jsonify_wrappers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write wrapper description to list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.list_to_space">
+<span class="sig-name descname"><span class="pre">list_to_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.list_to_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.list_to_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make gym space from list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>space_list</strong> (<em>list</em>) – list to space-ify</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.load_config">
+<span class="sig-name descname"><span class="pre">load_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.load_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.load_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="#dacbench.abstract_benchmark.objdict" title="dacbench.abstract_benchmark.objdict"><em>objdict</em></a>) – config to load</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.process_configspace">
+<span class="sig-name descname"><span class="pre">process_configspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configuration_space</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.process_configspace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.process_configspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is largely the builting cs.json.write method, but doesn’t save the result directly. If this is ever implemented in cs, we can replace this method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.read_config_file">
+<span class="sig-name descname"><span class="pre">read_config_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.read_config_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.read_config_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read configuration from file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path to config file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.register_wrapper">
+<span class="sig-name descname"><span class="pre">register_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrap_func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.register_wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.register_wrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register wrapper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wrap_func</strong> (<em>function</em>) – wrapper init function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.save_config">
+<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.save_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write config to path.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.serialize_config">
+<span class="sig-name descname"><span class="pre">serialize_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.serialize_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.serialize_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save configuration to json.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – File to save config to</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.set_action_space">
+<span class="sig-name descname"><span class="pre">set_action_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.set_action_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.set_action_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change action space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind</strong> (<em>str</em>) – Name of action space class</p></li>
+<li><p><strong>args</strong> (<em>list</em>) – List of arguments to pass to action space class</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.set_observation_space">
+<span class="sig-name descname"><span class="pre">set_observation_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.set_observation_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.set_observation_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change observation_space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind</strong> (<em>str</em>) – Name of observation space class</p></li>
+<li><p><strong>args</strong> (<em>list</em>) – List of arguments to pass to observation space class</p></li>
+<li><p><strong>data_type</strong> (<em>type</em>) – Data type of observation space</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.set_seed">
+<span class="sig-name descname"><span class="pre">set_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.set_seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.set_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set environment seed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – New seed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.space_to_list">
+<span class="sig-name descname"><span class="pre">space_to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.space_to_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.space_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make list from gym space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>space</strong> (<em>gym.spaces.Space</em>) – space to parse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write config to json.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.objdict">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.abstract_benchmark.</span></span><span class="sig-name descname"><span class="pre">objdict</span></span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#objdict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.objdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>Modified dict to make config changes more flexible.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.objdict.__delattr__">
+<span class="sig-name descname"><span class="pre">__delattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#objdict.__delattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.objdict.__delattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete attribute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.objdict.__eq__">
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#objdict.__eq__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.objdict.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for equality.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.objdict.__getattr__">
+<span class="sig-name descname"><span class="pre">__getattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#objdict.__getattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.objdict.__getattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get attribute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.objdict.__ne__">
+<span class="sig-name descname"><span class="pre">__ne__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#objdict.__ne__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.objdict.__ne__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for inequality.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.objdict.__setattr__">
+<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#objdict.__setattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.objdict.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set attribute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_benchmark.objdict.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#objdict.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.objdict.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy self.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dacbench.abstract_env"></span><dl class="py class">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.abstract_env.</span></span><span class="sig-name descname"><span class="pre">AbstractEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Env</span></code></p>
+<p>Abstract template for environments.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.get_inst_id">
+<span class="sig-name descname"><span class="pre">get_inst_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.get_inst_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.get_inst_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return instance ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ID of current instance</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.get_instance">
+<span class="sig-name descname"><span class="pre">get_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.get_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.get_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return current instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Currently used instance</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type flexible</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.get_instance_set">
+<span class="sig-name descname"><span class="pre">get_instance_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.get_instance_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.get_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return instance set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of instances</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Seed for the environment</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>state</em> – Environment state</p></li>
+<li><p><strong>info</strong> (<em>dict</em>) – Additional metainfo</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.reset_">
+<span class="sig-name descname"><span class="pre">reset_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.reset_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.reset_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pre-reset function for progressing through the instance set.Will either use round robin, random or no progression scheme.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_action_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set rng seed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> – seed for rng</p></li>
+<li><p><strong>seed_action_space</strong> (<em>bool</em><em>, </em><em>default False</em>) – if to seed the action space as well</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.set_inst_id">
+<span class="sig-name descname"><span class="pre">set_inst_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inst_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.set_inst_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.set_inst_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change current instance ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inst_id</strong> (<em>int</em>) – New instance index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.set_instance">
+<span class="sig-name descname"><span class="pre">set_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.set_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.set_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change currently used instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>instance</strong> – New instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.set_instance_set">
+<span class="sig-name descname"><span class="pre">set_instance_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inst_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.set_instance_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.set_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change instance set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inst_set</strong> (<em>list</em>) – New instance set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> – Action to take</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>state</em> – Environment state</p></li>
+<li><p><em>reward</em> – Environment reward</p></li>
+<li><p><strong>terminated</strong> (<em>bool</em>) – Run finished flag</p></li>
+<li><p><strong>truncated</strong> (<em>bool</em>) – Run timed out flag</p></li>
+<li><p><strong>info</strong> (<em>dict</em>) – Additional metainfo</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.step_">
+<span class="sig-name descname"><span class="pre">step_</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.step_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.step_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pre-step function for step count and cutoff.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>End of episode</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.use_next_instance">
+<span class="sig-name descname"><span class="pre">use_next_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.use_next_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.use_next_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes instance according to chosen instance progession.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>instance</strong> – Instance specification for potentional new instances</p></li>
+<li><p><strong>instance_id</strong> – ID of the instance to switch to</p></li>
+<li><p><strong>scheme</strong> – Update scheme for this progression step (either round robin, random or no progression)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.use_test_set">
+<span class="sig-name descname"><span class="pre">use_test_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.use_test_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.use_test_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change to test instance set.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractEnv.use_training_set">
+<span class="sig-name descname"><span class="pre">use_training_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractEnv.use_training_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractEnv.use_training_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change to training instance set.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.abstract_env.</span></span><span class="sig-name descname"><span class="pre">AbstractMADACEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractMADACEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="multi_agent_dac.html#dacbench.abstract_env.AbstractEnv" title="dacbench.abstract_env.AbstractEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractEnv</span></code></a></p>
+<p>Multi-Agent version of DAC environment.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv.agent_selection">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">agent_selection</span></span><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv.agent_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current agent.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv.infos">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">infos</span></span><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv.infos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current infos per agent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv.last">
+<span class="sig-name descname"><span class="pre">last</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractMADACEnv.last"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv.last" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get current step data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array, float, bool, bool, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv.multi_agent_reset">
+<span class="sig-name descname"><span class="pre">multi_agent_reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractMADACEnv.multi_agent_reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv.multi_agent_reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset env, but don’t return observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – seed to use</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv.multi_agent_step">
+<span class="sig-name descname"><span class="pre">multi_agent_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractMADACEnv.multi_agent_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv.multi_agent_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Step for a single hyperparameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> – the action in the current agent’s dimension</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv.num_agents">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_agents</span></span><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv.num_agents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current number of agents.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv.register_agent">
+<span class="sig-name descname"><span class="pre">register_agent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractMADACEnv.register_agent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv.register_agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>agent_id</strong> (<em>int</em>) – id of the agent to add</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv.remove_agent">
+<span class="sig-name descname"><span class="pre">remove_agent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_env.html#AbstractMADACEnv.remove_agent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv.remove_agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>agent_id</strong> (<em>int</em>) – id of the agent to remove</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv.rewards">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rewards</span></span><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv.rewards" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current rewards values per agent.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv.terminations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">terminations</span></span><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv.terminations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current termination values per agent.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="dacbench.abstract_env.AbstractMADACEnv.truncations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truncations</span></span><a class="headerlink" href="#dacbench.abstract_env.AbstractMADACEnv.truncations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current truncation values per agent.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="containers.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Using DACBench Containers</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="benchmark_docs/sigmoid.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">The Sigmoid Toy Benchmark</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../_static/js/index.9ea38e314b9e6d9dab77.js"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Theresa Eimer, Maximilian Reimer.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+6.1.3. Template is modified version of <a
+href="https://pydata-sphinx-theme.readthedocs.io">PyData Sphinx Theme</a>. <br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,710 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>The Sigmoid Toy Benchmark &#8212; DACBench Documentation 0.2.0 documentation</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.9ea38e314b9e6d9dab77.js">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="The Luby Toy Benchmark" href="luby.html" />
+    <link rel="prev" title="Benchmark Overview" href="../benchmarks.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+  <a class="navbar-brand" href="../../index.html">
+  <!-- <p class="title">DACBench Documentation</p> -->
+  </a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/automl/DACBench" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://twitter.com/automl_org?lang=de" rel="noopener" target="_blank" title="Twitter">
+            <span><i class="fab fa-twitter-square"></i></span>
+            <label class="sr-only">Twitter</label>
+          </a>
+        </li>
+      </ul>
+      </div>
+      
+      <div class="navbar-end-item">
+        <div class="dropdown mt-1">
+    <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
+        data-toggle="dropdown">
+        v0.2.0
+        <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
+        <a class="list-group-item list-group-item-action" href="#">v0.2.0</a>
+    </div>
+</div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <form class="bd-search align-items-center" action="../../search.html" method="get" style="width: 100%;">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control btn btn-md" name="q" id="search-input"
+    placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off">
+</form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../index.html">DACBench Documentation</a></h4>
+<div class="mb-3">v0.2.0</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../dac.html">
+   Dynamic Algorithm Configuration - A Short Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation.html">
+   How to Install DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../containers.html">
+   Using DACBench Containers
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  The Benchmarks:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../benchmarks.html">
+   Benchmark Overview
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   The Sigmoid Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="luby.html">
+   The Luby Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="toy_sgd.html">
+   The ToySGD Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="geometric.html">
+   The Geometric Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="fastdownward.html">
+   The FastDownward Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="theory.html">
+   The Theory Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cma.html">
+   The PyCMA CMA-ES Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="modcma.html">
+   The IOHProfiler ModCMA Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="sgd.html">
+   The SGD Deep Learning Benchmark
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Using DACBench:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../modifications.html">
+   Saving &amp; Loading Benchmark Configurations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../multi_agent_dac.html">
+   Multi-Agent DAC
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../state_and_reward.html">
+   Modifying Observations &amp; Cost
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../wrappers.html">
+   Functionality through Wrappers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../logging.html">
+   Logging Experiments
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../plotting.html">
+   Plotting results
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Misc:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../contrib.html">
+   Contributing to DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../cite.html">
+   Citing DACBench
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     SigmoidBenchmark
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.get_benchmark">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidBenchmark.get_benchmark()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.get_environment">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidBenchmark.get_environment()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.read_instance_set">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidBenchmark.read_instance_set()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.set_action_values">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidBenchmark.set_action_values()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.ContinuousSigmoidEnv">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ContinuousSigmoidEnv
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.ContinuousSigmoidEnv.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ContinuousSigmoidEnv.step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.ContinuousStateSigmoidEnv">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ContinuousStateSigmoidEnv
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.ContinuousStateSigmoidEnv.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ContinuousStateSigmoidEnv.step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.SigmoidEnv">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     SigmoidEnv
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.SigmoidEnv.close">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidEnv.close()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.SigmoidEnv.get_default_reward">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidEnv.get_default_reward()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.SigmoidEnv.get_default_state">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidEnv.get_default_state()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.SigmoidEnv.render">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidEnv.render()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.SigmoidEnv.reset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidEnv.reset()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dacbench.envs.sigmoid.SigmoidEnv.step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SigmoidEnv.step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="the-sigmoid-toy-benchmark">
+<span id="sigmoid"></span><h1>The Sigmoid Toy Benchmark<a class="headerlink" href="#the-sigmoid-toy-benchmark" title="Permalink to this heading">¶</a></h1>
+<div class="line-block">
+<div class="line"><strong>Task:</strong> approximate a sigmoid curve at timestep t in each of one or multiple dimensions</div>
+<div class="line"><strong>Cost:</strong> distance between prediction and function</div>
+<div class="line"><strong>Number of hyperparameters to control:</strong> user specified starting at one integer with no fixed upper limit</div>
+<div class="line"><strong>State Information:</strong> Remaining budget, instance descriptions for each dimension (inflection point and slope), last action for each dimension</div>
+<div class="line"><strong>Noise Level:</strong> None</div>
+<div class="line"><strong>Instance space:</strong> one sigmoid curve consisting of inflection point and slope per dimension. Sampling notebook and example datasets in repository.</div>
+</div>
+<p>This benchmark is not built on top of an algorithm, but is simply a function approximation task.
+In each step until the cutoff, the DAC controller predicts one y-value for a given sigmoid
+curve per task dimension.
+The predictions are discrete, that means there is usually some distance between the true
+function value and the best prediction. This distance is used as a cost function. If multiple
+task dimensions are used, the total cost is computed by multiplying the costs of all dimensions.</p>
+<p>The benchmark is very cheap to run and the instances can be sampled and shaped easily.
+Therefore it’s a good starting point for any new DAC method or to gain specific insights for
+which fine control over the instance distribution is required.</p>
+<p><em>The Sigmoid benchmark was constructed by Biedenkapp et al. for the paper `”Dynamic Algorithm Configuration: Foundation of a New Meta-Algorithmic Framework” &lt;https://www.tnt.uni-hannover.de/papers/data/1432/20-ECAI-DAC.pdf&gt;`_ at ECAI 2020</em></p>
+<span class="target" id="module-dacbench.benchmarks.sigmoid_benchmark"></span><dl class="py class">
+<dt class="sig sig-object py" id="dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.benchmarks.sigmoid_benchmark.</span></span><span class="sig-name descname"><span class="pre">SigmoidBenchmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/benchmarks/sigmoid_benchmark.html#SigmoidBenchmark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../benchmarks.html#dacbench.abstract_benchmark.AbstractBenchmark" title="dacbench.abstract_benchmark.AbstractBenchmark"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractBenchmark</span></code></a></p>
+<p>Benchmark with default configuration &amp; relevant functions for Sigmoid</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.get_benchmark">
+<span class="sig-name descname"><span class="pre">get_benchmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dimension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/benchmarks/sigmoid_benchmark.html#SigmoidBenchmark.get_benchmark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.get_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Benchmark from DAC paper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dimension</strong> (<em>int</em>) – Sigmoid dimension, was 1, 2, 3 or 5 in the paper</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Environment seed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>env</strong> – Sigmoid environment</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dacbench.envs.sigmoid.SigmoidEnv" title="dacbench.envs.sigmoid.SigmoidEnv">SigmoidEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.get_environment">
+<span class="sig-name descname"><span class="pre">get_environment</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/benchmarks/sigmoid_benchmark.html#SigmoidBenchmark.get_environment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.get_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Sigmoid env with current configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Sigmoid environment</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dacbench.envs.sigmoid.SigmoidEnv" title="dacbench.envs.sigmoid.SigmoidEnv">SigmoidEnv</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.read_instance_set">
+<span class="sig-name descname"><span class="pre">read_instance_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/benchmarks/sigmoid_benchmark.html#SigmoidBenchmark.read_instance_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.read_instance_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read instance set from file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.set_action_values">
+<span class="sig-name descname"><span class="pre">set_action_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/benchmarks/sigmoid_benchmark.html#SigmoidBenchmark.set_action_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.benchmarks.sigmoid_benchmark.SigmoidBenchmark.set_action_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapt action values and update dependencies</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>values</strong> (<em>list</em>) – A list of possible actions per dimension</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dacbench.envs.sigmoid"></span><p>Sigmoid environment from:</p>
+<p>“Dynamic Algorithm Configuration:Foundation of a New Meta-Algorithmic Framework”
+by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
+Original environment authors: André Biedenkapp, H. Furkan Bozkurt</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.ContinuousSigmoidEnv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.sigmoid.</span></span><span class="sig-name descname"><span class="pre">ContinuousSigmoidEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#ContinuousSigmoidEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.ContinuousSigmoidEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dacbench.envs.sigmoid.SigmoidEnv" title="dacbench.envs.sigmoid.SigmoidEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">SigmoidEnv</span></code></a></p>
+<p>Environment for tracing sigmoid curves with a continuous state on the x-axis.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.ContinuousSigmoidEnv.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#ContinuousSigmoidEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.ContinuousSigmoidEnv.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step. !!NOTE!! The action here is a list of floats and not a single number !!NOTE!!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>list</em><em> of </em><em>floats</em>) – action(s) to execute</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state, reward, done, info</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array, float, bool, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.ContinuousStateSigmoidEnv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.sigmoid.</span></span><span class="sig-name descname"><span class="pre">ContinuousStateSigmoidEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#ContinuousStateSigmoidEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.ContinuousStateSigmoidEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dacbench.envs.sigmoid.SigmoidEnv" title="dacbench.envs.sigmoid.SigmoidEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">SigmoidEnv</span></code></a></p>
+<p>Environment for tracing sigmoid curves with a continuous state on the x-axis.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.ContinuousStateSigmoidEnv.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#ContinuousStateSigmoidEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.ContinuousStateSigmoidEnv.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>int</em>) – action to execute</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state, reward, done, info</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array, float, bool, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.envs.sigmoid.</span></span><span class="sig-name descname"><span class="pre">SigmoidEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../multi_agent_dac.html#dacbench.abstract_env.AbstractMADACEnv" title="dacbench.abstract_env.AbstractMADACEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractMADACEnv</span></code></a></p>
+<p>Environment for tracing sigmoid curves.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close Env.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Closing confirmation</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.get_default_reward">
+<span class="sig-name descname"><span class="pre">get_default_reward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.get_default_reward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.get_default_reward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get default reward.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.get_default_state">
+<span class="sig-name descname"><span class="pre">get_default_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.get_default_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.get_default_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get default state representation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.render" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render env in human mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mode</strong> (<em>str</em>) – Execution mode</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets env.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Environment state</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dacbench.envs.sigmoid.SigmoidEnv.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dacbench/envs/sigmoid.html#SigmoidEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.envs.sigmoid.SigmoidEnv.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute environment step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>int</em>) – action to execute</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state, reward, terminated, truncated, info</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array, float, bool, bool, dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="../benchmarks.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Benchmark Overview</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="luby.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">The Luby Toy Benchmark</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../../_static/js/index.9ea38e314b9e6d9dab77.js"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Theresa Eimer, Maximilian Reimer.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+6.1.3. Template is modified version of <a
+href="https://pydata-sphinx-theme.readthedocs.io">PyData Sphinx Theme</a>. <br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

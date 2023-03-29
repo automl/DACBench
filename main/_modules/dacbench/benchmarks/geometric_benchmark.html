@@ -1,0 +1,622 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dacbench.benchmarks.geometric_benchmark &#8212; DACBench Documentation 0.2.0 documentation</title>
+    
+  <link href="../../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+    
+  <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+  <a class="navbar-brand" href="../../../index.html">
+  <!-- <p class="title">DACBench Documentation</p> -->
+  </a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/automl/DACBench" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://twitter.com/automl_org?lang=de" rel="noopener" target="_blank" title="Twitter">
+            <span><i class="fab fa-twitter-square"></i></span>
+            <label class="sr-only">Twitter</label>
+          </a>
+        </li>
+      </ul>
+      </div>
+      
+      <div class="navbar-end-item">
+        <div class="dropdown mt-1">
+    <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
+        data-toggle="dropdown">
+        v0.2.0
+        <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
+        <a class="list-group-item list-group-item-action" href="#">v0.2.0</a>
+    </div>
+</div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <form class="bd-search align-items-center" action="../../../search.html" method="get" style="width: 100%;">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control btn btn-md" name="q" id="search-input"
+    placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off">
+</form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
+<div class="mb-3">v0.2.0</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/dac.html">
+   Dynamic Algorithm Configuration - A Short Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/installation.html">
+   How to Install DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/containers.html">
+   Using DACBench Containers
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  The Benchmarks:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/benchmarks.html">
+   Benchmark Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/benchmark_docs/sigmoid.html">
+   The Sigmoid Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/benchmark_docs/luby.html">
+   The Luby Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/benchmark_docs/toy_sgd.html">
+   The ToySGD Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/benchmark_docs/geometric.html">
+   The Geometric Toy Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/benchmark_docs/fastdownward.html">
+   The FastDownward Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/benchmark_docs/theory.html">
+   The Theory Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/benchmark_docs/cma.html">
+   The PyCMA CMA-ES Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/benchmark_docs/modcma.html">
+   The IOHProfiler ModCMA Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/benchmark_docs/sgd.html">
+   The SGD Deep Learning Benchmark
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Using DACBench:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/modifications.html">
+   Saving &amp; Loading Benchmark Configurations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/multi_agent_dac.html">
+   Multi-Agent DAC
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/state_and_reward.html">
+   Modifying Observations &amp; Cost
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/wrappers.html">
+   Functionality through Wrappers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/logging.html">
+   Logging Experiments
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/plotting.html">
+   Plotting results
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Misc:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/contrib.html">
+   Contributing to DACBench
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../source/cite.html">
+   Citing DACBench
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <h1>Source code for dacbench.benchmarks.geometric_benchmark</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">ConfigSpace</span> <span class="k">as</span> <span class="nn">CS</span>
+<span class="kn">import</span> <span class="nn">ConfigSpace.hyperparameters</span> <span class="k">as</span> <span class="nn">CSH</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">dacbench.abstract_benchmark</span> <span class="kn">import</span> <span class="n">AbstractBenchmark</span><span class="p">,</span> <span class="n">objdict</span>
+<span class="kn">from</span> <span class="nn">dacbench.envs</span> <span class="kn">import</span> <span class="n">GeometricEnv</span>
+
+<span class="n">FILE_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">ACTION_VALUES</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="n">DEFAULT_CFG_SPACE</span> <span class="o">=</span> <span class="n">CS</span><span class="o">.</span><span class="n">ConfigurationSpace</span><span class="p">()</span>
+
+<span class="n">INFO</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="s2">&quot;Geometric&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;High Dimensional Geometric Curve Approximation. Curves are geometrical orthogonal.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;reward&quot;</span><span class="p">:</span> <span class="s2">&quot;Overall Euclidean Distance between Point on Curve and Action Vector for all Dimensions&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;state_description&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Remaining Budget&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Dimensions&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+
+<span class="n">GEOMETRIC_DEFAULTS</span> <span class="o">=</span> <span class="n">objdict</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;config_space&quot;</span><span class="p">:</span> <span class="n">DEFAULT_CFG_SPACE</span><span class="p">,</span>
+        <span class="s2">&quot;observation_space_class&quot;</span><span class="p">:</span> <span class="s2">&quot;Box&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;observation_space_type&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+        <span class="s2">&quot;observation_space_args&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;reward_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;multi_agent&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;cutoff&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;action_values&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;action_value_default&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="c1"># if action_values_variable True action_value_mapping will be used instead of action_value_default to define action values</span>
+        <span class="c1"># action_value_mapping defines number of action values for differnet functions</span>
+        <span class="c1"># sigmoid is split in 3 actions, cubic in 7 etc.</span>
+        <span class="s2">&quot;action_values_variable&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;action_value_mapping&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;sigmoid&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">&quot;linear&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">&quot;parabel&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s2">&quot;cubic&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+            <span class="s2">&quot;logarithmic&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">&quot;constant&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;sinus&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;action_interval_mapping&quot;</span><span class="p">:</span> <span class="p">{},</span>  <span class="c1"># maps actions to equally sized intervalls in interval [-1, 1]</span>
+        <span class="s2">&quot;derivative_interval&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>  <span class="c1"># defines how many values are used for derivative calculation</span>
+        <span class="s2">&quot;realistic_trajectory&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># True: coordiantes are used as trajectory, False: Actions are used as trajectories</span>
+        <span class="s2">&quot;instance_set_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">FILE_PATH</span><span class="p">,</span> <span class="s2">&quot;../instance_sets/geometric/geometric_test.csv&quot;</span>
+        <span class="p">),</span>
+        <span class="c1"># correlation table to chain dimensions -&gt; if dim x changes dim y changes as well</span>
+        <span class="c1"># either assign numpy array to correlation table or use create_correlation_table()</span>
+        <span class="s2">&quot;correlation_active&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;correlation_table&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;correlation_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;high&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">)],</span>
+            <span class="s2">&quot;middle&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)],</span>
+            <span class="s2">&quot;low&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)],</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;correlation_mapping&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;high&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="s2">&quot;middle&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+            <span class="s2">&quot;low&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;correlation_depth&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;benchmark_info&quot;</span><span class="p">:</span> <span class="n">INFO</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="GeometricBenchmark"><a class="viewcode-back" href="../../../source/benchmark_docs/geometric.html#dacbench.benchmarks.geometric_benchmark.GeometricBenchmark">[docs]</a><span class="k">class</span> <span class="nc">GeometricBenchmark</span><span class="p">(</span><span class="n">AbstractBenchmark</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Benchmark with default configuration &amp; relevant functions for Geometric</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize Geometric Benchmark</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+<span class="sd">        config_path : str</span>
+<span class="sd">            Path to config file (optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GeometricBenchmark</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">objdict</span><span class="p">(</span><span class="n">GEOMETRIC_DEFAULTS</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">GEOMETRIC_DEFAULTS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">GEOMETRIC_DEFAULTS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;observation_space_type&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;observation_space_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+
+<div class="viewcode-block" id="GeometricBenchmark.get_environment"><a class="viewcode-back" href="../../../source/benchmark_docs/geometric.html#dacbench.benchmarks.geometric_benchmark.GeometricBenchmark.get_environment">[docs]</a>    <span class="k">def</span> <span class="nf">get_environment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return Geometric env with current configuration</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        GeometricEnv</span>
+<span class="sd">            Geometric environment</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;instance_set&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_instance_set</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_action_values</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_action_description</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">correlation_active</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">correlation_table</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_correlation_table</span><span class="p">()</span>
+
+        <span class="n">env</span> <span class="o">=</span> <span class="n">GeometricEnv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_funcs</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">env</span></div>
+
+<div class="viewcode-block" id="GeometricBenchmark.read_instance_set"><a class="viewcode-back" href="../../../source/benchmark_docs/geometric.html#dacbench.benchmarks.geometric_benchmark.GeometricBenchmark.read_instance_set">[docs]</a>    <span class="k">def</span> <span class="nf">read_instance_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read instance set from file</span>
+<span class="sd">        Creates a nested List for every Intance.</span>
+<span class="sd">        The List contains all functions with their respective values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FILE_PATH</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;instance_set&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="n">known_ids</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="n">function_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="nb">id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_ids</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">known_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+                    <span class="c1"># if element == &quot;0&quot; and index != 0:</span>
+                    <span class="c1">#     break</span>
+
+                    <span class="c1"># read numbers from csv as floats</span>
+                    <span class="n">element</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">element</span><span class="p">)</span> <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">element</span>
+
+                    <span class="n">function_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function_list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GeometricBenchmark.get_benchmark"><a class="viewcode-back" href="../../../source/benchmark_docs/geometric.html#dacbench.benchmarks.geometric_benchmark.GeometricBenchmark.get_benchmark">[docs]</a>    <span class="k">def</span> <span class="nf">get_benchmark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        [summary]</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dimension : [type], optional</span>
+<span class="sd">            [description], by default None</span>
+<span class="sd">        seed : int, optional</span>
+<span class="sd">            [description], by default 0</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        [type]</span>
+<span class="sd">            [description]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">objdict</span><span class="p">(</span><span class="n">GEOMETRIC_DEFAULTS</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">benchmark_info</span><span class="p">[</span><span class="s2">&quot;state_description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;Remaining Budget&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Dimensions&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
+        <span class="k">if</span> <span class="s2">&quot;instance_set&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_instance_set</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_action_values</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_action_description</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">correlation_active</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">correlation_table</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_correlation_table</span><span class="p">()</span>
+
+        <span class="n">env</span> <span class="o">=</span> <span class="n">GeometricEnv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">env</span></div>
+
+<div class="viewcode-block" id="GeometricBenchmark.set_action_values"><a class="viewcode-back" href="../../../source/benchmark_docs/geometric.html#dacbench.benchmarks.geometric_benchmark.GeometricBenchmark.set_action_values">[docs]</a>    <span class="k">def</span> <span class="nf">set_action_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adapt action values and update dependencies</span>
+<span class="sd">        Number of actions can differ between functions if configured in DefaultDict</span>
+<span class="sd">        Set observation space args.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">map_action_number</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">action_values_variable</span><span class="p">:</span>
+            <span class="n">map_action_number</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">action_value_mapping</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">function_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">function_name</span> <span class="o">=</span> <span class="n">function_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">value</span> <span class="o">=</span> <span class="n">map_action_number</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">function_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">action_value_default</span>
+            <span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+            <span class="c1"># map intervall [-1, 1] to action values</span>
+            <span class="k">if</span> <span class="n">function_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">action_interval_mapping</span><span class="p">:</span>
+                <span class="n">action_interval</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">step_size</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">value</span>
+
+                <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">step_size</span><span class="p">):</span>
+                    <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">step</span>
+                    <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">step</span> <span class="o">+</span> <span class="n">step_size</span>
+                    <span class="n">middle</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower_bound</span> <span class="o">+</span> <span class="n">upper_bound</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+                    <span class="n">action_interval</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">middle</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">action_interval_mapping</span><span class="p">[</span><span class="n">function_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
+                    <span class="n">action_interval</span><span class="p">,</span> <span class="mi">3</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">action_values</span> <span class="o">=</span> <span class="n">values</span>
+        <span class="n">cs</span> <span class="o">=</span> <span class="n">CS</span><span class="o">.</span><span class="n">ConfigurationSpace</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+            <span class="n">actions</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">UniformIntegerHyperparameter</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;curve_values_dim_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">v</span>
+            <span class="p">)</span>
+            <span class="n">cs</span><span class="o">.</span><span class="n">add_hyperparameter</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config_space</span> <span class="o">=</span> <span class="n">cs</span>
+
+        <span class="n">num_info</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">observation_space_args</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_info</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))]),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;cutoff&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_info</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))]</span>
+            <span class="p">),</span>
+        <span class="p">]</span></div>
+
+<div class="viewcode-block" id="GeometricBenchmark.set_action_description"><a class="viewcode-back" href="../../../source/benchmark_docs/geometric.html#dacbench.benchmarks.geometric_benchmark.GeometricBenchmark.set_action_description">[docs]</a>    <span class="k">def</span> <span class="nf">set_action_description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add Information about Derivative and Coordinate to Description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;Coordinate&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">benchmark_info</span><span class="p">[</span><span class="s2">&quot;state_description&quot;</span><span class="p">]:</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">action_values</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">benchmark_info</span><span class="p">[</span><span class="s2">&quot;state_description&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Derivative</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">action_values</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">benchmark_info</span><span class="p">[</span><span class="s2">&quot;state_description&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coordinate</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GeometricBenchmark.create_correlation_table"><a class="viewcode-back" href="../../../source/benchmark_docs/geometric.html#dacbench.benchmarks.geometric_benchmark.GeometricBenchmark.create_correlation_table">[docs]</a>    <span class="k">def</span> <span class="nf">create_correlation_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create correlation table from Config infos</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_dimensions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">corr_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_dimensions</span><span class="p">,</span> <span class="n">n_dimensions</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">corr_level</span><span class="p">,</span> <span class="n">corr_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">correlation_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">,</span> <span class="n">signum</span> <span class="ow">in</span> <span class="n">corr_info</span><span class="p">:</span>
+                <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">correlation_mapping</span><span class="p">[</span><span class="n">corr_level</span><span class="p">]</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">corr_table</span><span class="p">[</span><span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span> <span class="k">if</span> <span class="n">signum</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span> <span class="k">else</span> <span class="n">value</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;Check your correlation_info dict. Does it have more dimensions than the instance_set?&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">correlation_table</span> <span class="o">=</span> <span class="n">corr_table</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">dacbench.challenge_benchmarks.reward_quality_challenge.reward_functions</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">quadratic_euclidean_distance_reward_geometric</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">geo_bench</span> <span class="o">=</span> <span class="n">GeometricBenchmark</span><span class="p">()</span>
+    <span class="n">geo_bench</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;correlation_active&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">geo_bench</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;reward_function&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quadratic_euclidean_distance_reward_geometric</span>
+
+    <span class="n">env</span> <span class="o">=</span> <span class="n">geo_bench</span><span class="o">.</span><span class="n">get_environment</span><span class="p">()</span>
+
+    <span class="n">opt_policy</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_optimal_policy</span><span class="p">()</span>
+    <span class="c1"># env.render_dimensions([0, 1, 2, 3, 4, 5, 6], &quot;/home/vonglahn/tmp/MultiDAC&quot;)</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">render_3d_dimensions</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;/home/eimer/tmp&quot;</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
+</pre></div>
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../../../_static/js/index.9ea38e314b9e6d9dab77.js"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Theresa Eimer, Maximilian Reimer.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+6.1.3. Template is modified version of <a
+href="https://pydata-sphinx-theme.readthedocs.io">PyData Sphinx Theme</a>. <br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
