@@ -305,7 +305,7 @@ MAX_INT = 1e8
 HISTORY_LENGTH = 5
 
 
-class RLSEnv(AbstractEnv):
+class TheoryEnv(AbstractEnv):
     """
     Environment for RLS with step size.
 
@@ -314,7 +314,7 @@ class RLSEnv(AbstractEnv):
 
     def __init__(self, config, test_env=False) -> None:
         """
-        Initialize RLSEnv.
+        Initialize TheoryEnv.
 
         Parameters
         ----------
@@ -324,7 +324,7 @@ class RLSEnv(AbstractEnv):
             whether to use test mode
 
         """
-        super(RLSEnv, self).__init__(config)
+        super(TheoryEnv, self).__init__(config)
         self.logger = logging.getLogger(self.__str__())
 
         self.test_env = test_env
@@ -423,7 +423,7 @@ class RLSEnv(AbstractEnv):
             Environment state
 
         """
-        super(RLSEnv, self).reset_(seed)
+        super(TheoryEnv, self).reset_(seed)
 
         # current problem size (n) & evaluation limit (max_evals)
         self.n = self.instance.size
@@ -481,7 +481,7 @@ class RLSEnv(AbstractEnv):
             np.array, float, bool, bool, dict
 
         """
-        truncated = super(RLSEnv, self).step_()
+        truncated = super(TheoryEnv, self).step_()
 
         fitness_before_update = self.x.fitness
 
@@ -604,12 +604,12 @@ class RLSEnv(AbstractEnv):
         return True
 
 
-class RLSEnvDiscrete(RLSEnv):
+class TheoryEnvDiscrete(TheoryEnv):
     """RLS environment where the choices of r is discretised."""
 
     def __init__(self, config, test_env=False):
         """Init env."""
-        super(RLSEnvDiscrete, self).__init__(config, test_env)
+        super(TheoryEnvDiscrete, self).__init__(config, test_env)
         assert (
             "action_choices" in config
         ), "Error: action_choices must be specified in benchmark's config"
@@ -627,4 +627,4 @@ class RLSEnvDiscrete(RLSEnv):
         if isinstance(action, np.ndarray) or isinstance(action, list):
             assert len(action) == 1
             action = action[0]
-        return super(RLSEnvDiscrete, self).step(self.action_choices[action])
+        return super(TheoryEnvDiscrete, self).step(self.action_choices[action])

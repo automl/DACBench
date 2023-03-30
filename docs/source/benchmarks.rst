@@ -50,6 +50,14 @@ To instantiate a benchmark environment, run:
     bench = SigmoidBenchmark()
     benchmark_env = bench.get_environment()
 
+Alternatively, if you do not plan on modifying the benchmark configuration, you can also use our the default version in the gymnasium registry:
+
+.. code-block:: python
+
+    import gymnasium as gym
+    import dacbench
+    environment = gym.make("Sigmoid-v0")
+
 
 .. automodule:: dacbench.abstract_benchmark
     :members:

@@ -8,7 +8,7 @@ import Pyro4
 from dacbench.abstract_env import AbstractEnv
 from dacbench.container.container_utils import Decoder, Encoder
 
-NumpyTypes = Union[np.ndarray, np.int, np.float, np.random.RandomState]
+NumpyTypes = Union[np.ndarray, np.int32, np.float32, np.random.RandomState]
 DefaultJsonable = Union[
     bool,
     None,

@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs.theory import RLSEnv, RLSEnvDiscrete
+from dacbench.envs.theory import TheoryEnv, TheoryEnvDiscrete
 
 INFO = {
     "identifier": "Theory",
@@ -73,7 +73,7 @@ class TheoryBenchmark(AbstractBenchmark):
             assert (
                 "max_action" not in self.config
             ), "ERROR: max_action should not be used for discrete action space"
-            self.config.env_class = "RLSEnvDiscrete"
+            self.config.env_class = "TheoryEnvDiscrete"
             n_acts = len(self.config["action_choices"])
             action = CSH.UniformIntegerHyperparameter(name="", lower=0, upper=n_acts)
         else:
@@ -83,7 +83,7 @@ class TheoryBenchmark(AbstractBenchmark):
             assert ("min_action" in self.config) and (
                 "max_action" in self.config
             ), "ERROR: min_action and max_action must be specified"
-            self.config.env_class = "RLSEnv"
+            self.config.env_class = "TheoryEnv"
             action = CSH.UniformFloatHyperparameter(
                 name="Step_size",
                 lower=self.config["min_action"],
@@ -95,7 +95,7 @@ class TheoryBenchmark(AbstractBenchmark):
 
         # create observation space
         self.env_class = globals()[self.config.env_class]
-        assert self.env_class == RLSEnv or self.env_class == RLSEnvDiscrete
+        assert self.env_class == TheoryEnv or self.env_class == TheoryEnvDiscrete
 
         self.config[
             "observation_space"
@@ -104,7 +104,7 @@ class TheoryBenchmark(AbstractBenchmark):
         )
 
     def create_observation_space_from_description(
-        self, obs_description, env_class=RLSEnvDiscrete
+        self, obs_description, env_class=TheoryEnvDiscrete
     ):
         """
         Create a gym observation space (Box only) based on a string containing observation variable names, e.g. "n, f(x), k, k_{t-1}"

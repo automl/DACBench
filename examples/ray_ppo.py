@@ -18,10 +18,10 @@ def make_benchmark(config):
 parser = argparse.ArgumentParser(description="Run ray PPO for DACBench")
 parser.add_argument("--outdir", type=str, default="output", help="Output directory")
 parser.add_argument(
-    "--benchmarks", nargs="+", type=str, default=None, help="Benchmarks to run PPO for"
+    "--benchmarks", nargs="+", type=str, default=["LubyBenchmark"], help="Benchmarks to run PPO for"
 )
 parser.add_argument(
-    "--timesteps", type=int, default=1000000, help="Number of timesteps to run"
+    "--timesteps", type=int, default=10000, help="Number of timesteps to run"
 )
 parser.add_argument(
     "--save_interval", type=int, default=100, help="Checkpoint interval"
@@ -55,5 +55,5 @@ for b in args.benchmarks:
         for i in range(args.timesteps):
             trainer.train()
             if i % args.save_interval == 0:
-                trainer.save(args.outdir + f"/{b}_{s}")
+                trainer.save(args.outdir + f"./{b}_{s}")
         ray.shutdown()

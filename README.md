@@ -1,14 +1,7 @@
-<h1 align="center">
-  <a href="https://www.automl.org/dacbench-benchmarking-dynamic-algorithm-configuration/">
-    <img src="https://www.automl.org/wp-content/themes/automl/images/logo.png" alt="DACBench" width="" >
-  </a>
-<br>
-DACBench
-<br>
-</h1>
+![AutoML.org Logo](https://www.automl.org/wp-content/themes/automl/images/logo.png)
 
-[![Run Python Tests](https://github.com/automl/DACBench/actions/workflows/run-python-tests.yml/badge.svg)](https://github.com/automl/DACBench/actions/workflows/run-python-tests.yml)
-[![Documentation Status](https://readthedocs.org/projects/dacbench/badge/?version=latest)](https://dacbench.readthedocs.io/en/latest/?badge=latest)
+[![Run Python Tests](https://github.com/automl/DACBench/actions/workflows/pytest.yml/badge.svg)](https://github.com/automl/DACBench/actions/workflows/pytest.yml)
+[![Documentation Status](https://github.com/automl/DACBench/actions/workflows/docs.yml/badge.svg)](https://github.com/automl/DACBench/actions/workflows/docs.yml)
 
 DACBench is a benchmark library for Dynamic Algorithm Configuration.
 Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
@@ -24,7 +17,7 @@ You can find baseline data of static and random policies for a given version of 
 We recommend installing DACBench in a virtual environment:
 
 ```
-conda create -n dacbench python=3.6
+conda create -n dacbench python=3.10
 conda activate dacbench
 git clone https://github.com/automl/DACBench.git
 cd DACBench

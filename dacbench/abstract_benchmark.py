@@ -80,7 +80,6 @@ class AbstractBenchmark:
                 self.config[k], list
             ):
                 if type(self.config[k][0]) == np.ndarray:
-                    print(k)
                     conf[k] = list(map(list, conf[k]))
                     for i in range(len(conf[k])):
                         if (

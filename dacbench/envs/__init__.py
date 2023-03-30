@@ -11,16 +11,19 @@ from dacbench.envs.sigmoid import (
     SigmoidEnv,
 )
 from dacbench.envs.toysgd import ToySGDEnv
+from dacbench.envs.theory import TheoryEnv
 
 __all__ = [
     "LubyEnv",
     "luby_gen",
     "SigmoidEnv",
+    "ContinuousSigmoidEnv",
+    "ContinuousStateSigmoidEnv",
     "FastDownwardEnv",
     "ToySGDEnv",
     "GeometricEnv",
+    "TheoryEnv"
 ]
-
 
 cma_spec = importlib.util.find_spec("cma")
 found = cma_spec is not None
@@ -55,16 +58,4 @@ if found:
 else:
     warnings.warn(
         "SGD Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
-    )
-
-theory_spec = importlib.util.find_spec("uuid")
-found = theory_spec is not None
-if found:
-    from dacbench.envs.theory import RLSEnv, RLSEnvDiscrete
-
-    __all__.append("RLSEnv")
-    __all__.append("RLSEnvDiscrete")
-else:
-    warnings.warn(
-        "Theory Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )

@@ -17,6 +17,8 @@ class TestFDBenchmark(unittest.TestCase):
         env = bench.get_environment()
         self.assertTrue(issubclass(type(env), FastDownwardEnv))
 
+    #TODO: This test breaks remote testing, possibly due to too many open ports.
+    #Should be investigated
     # def test_scenarios(self):
     #     scenarios = [
     #         "fd_barman.json",
