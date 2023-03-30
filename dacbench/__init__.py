@@ -11,12 +11,17 @@ from gymnasium.envs.registration import register
 
 from dacbench import benchmarks
 
-for b in benchmarks.__all__:
-    bench = getattr(benchmarks, b)()
-    bench.read_instance_set()
-    env_name = b[:-9]
-    register(
-        id=f"{env_name}-v0",
-        entry_point=f"dacbench.envs:{env_name}Env",
-        kwargs={"config": bench.config},
+try:
+    for b in benchmarks.__all__:
+        bench = getattr(benchmarks, b)()
+        bench.read_instance_set()
+        env_name = b[:-9]
+        register(
+            id=f"{env_name}-v0",
+            entry_point=f"dacbench.envs:{env_name}Env",
+            kwargs={"config": bench.config},
+        )
+except:
+    print(
+        "DACBench Gym registration failed - make sure you have all dependencies installed and their instance sets in the right path!"
     )
