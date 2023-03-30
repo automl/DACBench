@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 
 import numpy as np
+
 from dacbench.benchmarks import LubyBenchmark
 from dacbench.wrappers import PerformanceTrackingWrapper
 
@@ -28,50 +29,52 @@ class TestPerformanceWrapper(unittest.TestCase):
         env = bench.get_environment()
         wrapped = PerformanceTrackingWrapper(env, 2)
 
-        state = wrapped.reset()
+        state, info = wrapped.reset()
         self.assertTrue(len(state) > 1)
+        self.assertTrue(issubclass(type(info), dict))
 
-        state, reward, done, _ = wrapped.step(1)
+        state, reward, terminated, truncated, _ = wrapped.step(1)
         self.assertTrue(len(state) > 1)
         self.assertTrue(reward <= 0)
-        self.assertFalse(done)
+        self.assertFalse(terminated)
+        self.assertFalse(truncated)
 
-        while not done:
-            _, _, done, _ = wrapped.step(1)
+        while not (terminated or truncated):
+            _, _, terminated, truncated, _ = wrapped.step(1)
 
         self.assertTrue(len(wrapped.overall_performance) == 1)
         self.assertTrue(len(wrapped.performance_intervals) == 0)
         self.assertTrue(len(wrapped.current_performance) == 1)
         self.assertTrue(len(wrapped.instance_performances.keys()) == 1)
 
-        done = False
-        while not done:
-            _, _, done, _ = wrapped.step(1)
-        done = False
-        while not done:
-            _, _, done, _ = wrapped.step(1)
+        terminated, truncated = False, False
+        while not (terminated or truncated):
+            _, _, terminated, truncated, _ = wrapped.step(1)
+        terminated, truncated = False, False
+        while not (terminated or truncated):
+            _, _, terminated, truncated, _ = wrapped.step(1)
 
         self.assertTrue(len(wrapped.performance_intervals) == 1)
         self.assertTrue(len(wrapped.current_performance) == 1)
 
         wrapped.reset()
-        done = False
-        while not done:
-            _, _, done, _ = wrapped.step(1)
+        terminated, truncated = False, False
+        while not (terminated or truncated):
+            _, _, terminated, truncated, _ = wrapped.step(1)
         wrapped.reset()
-        done = False
-        while not done:
-            _, _, done, _ = wrapped.step(1)
+        terminated, truncated = False, False
+        while not (terminated or truncated):
+            _, _, terminated, truncated, _ = wrapped.step(1)
         self.assertTrue(len(wrapped.instance_performances.keys()) == 3)
 
         wrapped.reset()
-        done = False
-        while not done:
-            _, _, done, _ = wrapped.step(1)
+        terminated, truncated = False, False
+        while not (terminated or truncated):
+            _, _, terminated, truncated, _ = wrapped.step(1)
         wrapped.reset()
-        done = False
-        while not done:
-            _, _, done, _ = wrapped.step(1)
+        terminated, truncated = False, False
+        while not (terminated or truncated):
+            _, _, terminated, truncated, _ = wrapped.step(1)
         self.assertTrue(len(wrapped.instance_performances.keys()) == 4)
 
     def test_get_performance(self):
@@ -79,14 +82,14 @@ class TestPerformanceWrapper(unittest.TestCase):
         env = bench.get_environment()
         wrapped = PerformanceTrackingWrapper(env)
         wrapped.reset()
-        done = False
-        while not done:
-            _, _, done, _ = wrapped.step(1)
+        terminated, truncated = False, False
+        while not (terminated or truncated):
+            _, _, terminated, truncated, _ = wrapped.step(1)
         wrapped2 = PerformanceTrackingWrapper(env, 2)
         wrapped2.reset()
-        done = False
-        while not done:
-            _, _, done, _ = wrapped2.step(1)
+        terminated, truncated = False, False
+        while not (terminated or truncated):
+            _, _, terminated, truncated, _ = wrapped2.step(1)
         wrapped3 = PerformanceTrackingWrapper(env, 2, track_instance_performance=False)
         wrapped3.reset()
         for i in range(5):
@@ -129,10 +132,10 @@ class TestPerformanceWrapper(unittest.TestCase):
         env = bench.get_environment()
         env = PerformanceTrackingWrapper(env)
         for _ in range(10):
-            done = False
+            terminated, truncated = False, False
             env.reset()
-            while not done:
-                _, _, done, _ = env.step(1)
+            while not (terminated or truncated):
+                _, _, terminated, truncated, _ = env.step(1)
         env.render_performance()
         self.assertTrue(mock_plt.show.called)
         env.render_instance_performance()

@@ -1,8 +1,9 @@
-
 import unittest
+
 import numpy as np
+
 from dacbench import AbstractEnv
-from dacbench.benchmarks.cma_benchmark import CMAESBenchmark, CMAES_DEFAULTS
+from dacbench.benchmarks.cma_benchmark import CMAES_DEFAULTS, CMAESBenchmark
 
 
 class TestCMAEnv(unittest.TestCase):
@@ -33,17 +34,19 @@ class TestCMAEnv(unittest.TestCase):
     def test_step(self):
         env = self.make_env()
         env.reset()
-        state, reward, done, meta = env.step([1])
+        _, reward, terminated, truncated, meta = env.step([1])
         self.assertTrue(reward >= env.reward_range[0])
         print(reward)
         self.assertTrue(reward <= env.reward_range[1])
-        self.assertFalse(done)
+        self.assertFalse(terminated)
+        self.assertFalse(truncated)
         self.assertTrue(len(meta.keys()) == 0)
 
     def test_get_default_state(self):
         env = self.make_env()
-        state = env.reset()
+        state, info = env.reset()
         self.assertTrue(issubclass(type(state), dict))
+        self.assertTrue(issubclass(type(info), dict))
         self.assertTrue(
             np.array_equal(
                 list(state.keys()),
@@ -65,7 +68,7 @@ class TestCMAEnv(unittest.TestCase):
         self.assertTrue(len(state["history_deltas"]) == 2 * env.history_len)
 
         env.step([1])
-        state, _, _, _ = env.step([1])
+        state, _, _, _, _ = env.step([1])
         self.assertTrue(issubclass(type(state), dict))
         self.assertTrue(
             np.array_equal(

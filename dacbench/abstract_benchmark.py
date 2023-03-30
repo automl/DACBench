@@ -1,29 +1,27 @@
 import json
+from functools import partial
 from types import FunctionType
 
 import numpy as np
-from gym import spaces
-from functools import partial
-from dacbench import wrappers
+from gymnasium import spaces
 
-# from dacbench import ModuleLogger
+from dacbench import wrappers
 
 
 class AbstractBenchmark:
-    """
-    Abstract template for benchmark classes
-    """
+    """Abstract template for benchmark classes."""
 
     def __init__(self, config_path=None, config: "objdict" = None):
         """
-        Initialize benchmark class
+        Initialize benchmark class.
 
         Parameters
-        -------
+        ----------
         config_path : str
             Path to load configuration from (if read from file)
         config : objdict
             Object dict containing the config
+
         """
         if config is not None and config_path is not None:
             raise ValueError("Both path to config and config where provided")
@@ -38,23 +36,25 @@ class AbstractBenchmark:
 
     def get_config(self):
         """
-        Return current configuration
+        Return current configuration.
 
         Returns
         -------
         dict
             Current config
+
         """
         return self.config
 
     def serialize_config(self):
         """
-        Save configuration to json
+        Save configuration to json.
 
         Parameters
         ----------
         path : str
             File to save config to
+
         """
         conf = self.config.copy()
         if "observation_space_type" in self.config:
@@ -100,29 +100,26 @@ class AbstractBenchmark:
         return conf
 
     def process_configspace(self, configuration_space):
-        """
-        This is largely the builting cs.json.write method, but doesn't save the result directly
-        If this is ever implemented in cs, we can replace this method
-        """
+        """This is largely the builting cs.json.write method, but doesn't save the result directly. If this is ever implemented in cs, we can replace this method."""
         from ConfigSpace.configuration_space import ConfigurationSpace
         from ConfigSpace.hyperparameters import (
             CategoricalHyperparameter,
-            UniformIntegerHyperparameter,
-            UniformFloatHyperparameter,
-            NormalIntegerHyperparameter,
-            NormalFloatHyperparameter,
-            OrdinalHyperparameter,
             Constant,
+            NormalFloatHyperparameter,
+            NormalIntegerHyperparameter,
+            OrdinalHyperparameter,
+            UniformFloatHyperparameter,
+            UniformIntegerHyperparameter,
             UnParametrizedHyperparameter,
         )
         from ConfigSpace.read_and_write.json import (
-            _build_constant,
-            _build_condition,
-            _build_ordinal,
-            _build_forbidden,
             _build_categorical,
-            _build_normal_int,
+            _build_condition,
+            _build_constant,
+            _build_forbidden,
             _build_normal_float,
+            _build_normal_int,
+            _build_ordinal,
             _build_uniform_float,
             _build_uniform_int,
             _build_unparametrized_hyperparameter,
@@ -139,7 +136,6 @@ class AbstractBenchmark:
         forbiddens = []
 
         for hyperparameter in configuration_space.get_hyperparameters():
-
             if isinstance(hyperparameter, Constant):
                 hyperparameters.append(_build_constant(hyperparameter))
             elif isinstance(hyperparameter, UnParametrizedHyperparameter):
@@ -160,7 +156,11 @@ class AbstractBenchmark:
                 hyperparameters.append(_build_ordinal(hyperparameter))
             else:
                 raise TypeError(
-                    "Unknown type: %s (%s)" % (type(hyperparameter), hyperparameter,)
+                    "Unknown type: %s (%s)"
+                    % (
+                        type(hyperparameter),
+                        hyperparameter,
+                    )
                 )
 
         for condition in configuration_space.get_conditions():
@@ -180,13 +180,14 @@ class AbstractBenchmark:
 
     @classmethod
     def from_json(cls, json_config):
+        """Get config from json dict."""
         config = objdict(json.loads(json_config))
         if "config_space" in config.keys():
             from ConfigSpace import ConfigurationSpace
             from ConfigSpace.read_and_write.json import (
-                _construct_hyperparameter,
-                _construct_forbidden,
                 _construct_condition,
+                _construct_forbidden,
+                _construct_hyperparameter,
             )
 
             if "name" in config.config_space:
@@ -198,32 +199,50 @@ class AbstractBenchmark:
 
             for hyperparameter in config.config_space["hyperparameters"]:
                 configuration_space.add_hyperparameter(
-                    _construct_hyperparameter(hyperparameter,)
+                    _construct_hyperparameter(
+                        hyperparameter,
+                    )
                 )
 
             for condition in config.config_space["conditions"]:
                 configuration_space.add_condition(
-                    _construct_condition(condition, configuration_space,)
+                    _construct_condition(
+                        condition,
+                        configuration_space,
+                    )
                 )
 
             for forbidden in config.config_space["forbiddens"]:
                 configuration_space.add_forbidden_clause(
-                    _construct_forbidden(forbidden, configuration_space,)
+                    _construct_forbidden(
+                        forbidden,
+                        configuration_space,
+                    )
                 )
             config.config_space = configuration_space
 
         return cls(config=config)
 
     def to_json(self):
+        """Write config to json."""
         conf = self.serialize_config()
         return json.dumps(conf)
 
     def save_config(self, path):
+        """Write config to path."""
         conf = self.serialize_config()
         with open(path, "w") as fp:
             json.dump(conf, fp, default=lambda o: "not serializable")
 
     def jsonify_wrappers(self):
+        """
+        Write wrapper description to list.
+
+        Returns
+        -------
+        list
+
+        """
         wrappers = []
         for func in self.wrap_funcs:
             args = func.args
@@ -247,6 +266,15 @@ class AbstractBenchmark:
         return wrappers
 
     def dejson_wrappers(self, wrapper_list):
+        """
+        Load wrapper from list.
+
+        Parameters
+        ----------
+        wrapper_list : list
+            wrapper description to load
+
+        """
         for i in range(len(wrapper_list)):
             import importlib
 
@@ -269,33 +297,37 @@ class AbstractBenchmark:
     @staticmethod
     def __import_from(module: str, name: str):
         """
-        Imports the class / function / ... with name from module
+        Imports the class / function / ... with name from module.
+
         Parameters
         ----------
-        module
-        name
+        module : str
+            module to import from
+        name : str
+            name to import
 
         Returns
         -------
         the imported object
+
         """
         module = __import__(module, fromlist=[name])
         return getattr(module, name)
 
     @classmethod
     def class_to_str(cls):
+        """Get string name from class."""
         return cls.__module__, cls.__name__
 
     @staticmethod
     def __decorate_config_with_functions(conf: dict):
         """
-        Replaced the stringified functions with the callable objects
+        Replaced the stringified functions with the callable objects.
+
         Parameters
         ----------
-        config
-
-        Returns
-        -------
+        conf :
+            config to parse
 
         """
         for key, value in {
@@ -310,16 +342,17 @@ class AbstractBenchmark:
     @staticmethod
     def __stringify_functions(conf: dict) -> dict:
         """
-        Replaced all callables in the config with a
-        triple ('function', module_name, function_name)
+        Replaced all callables in the config with a triple ('function', module_name, function_name).
 
         Parameters
         ----------
-        config
+        conf : dict
+            config to parse
 
         Returns
         -------
         modified dict
+
         """
         for key, value in {
             k: v for k, v in conf.items() if isinstance(v, FunctionType)
@@ -328,6 +361,15 @@ class AbstractBenchmark:
         return conf
 
     def space_to_list(self, space):
+        """
+        Make list from gym space.
+
+        Parameters
+        ----------
+        space: gym.spaces.Space
+            space to parse
+
+        """
         res = []
         if isinstance(space, spaces.Box):
             res.append("Box")
@@ -348,9 +390,19 @@ class AbstractBenchmark:
         return res
 
     def list_to_space(self, space_list):
+        """
+        Make gym space from list.
+
+        Parameters
+        ----------
+        space_list: list
+            list to space-ify
+
+        """
         if space_list[0] == "Dict":
             args = self.dictify_json(space_list[1])
             space = getattr(spaces, space_list[0])(args)
+
         elif len(space_list) == 2:
             space = getattr(spaces, space_list[0])(*space_list[1])
         else:
@@ -361,6 +413,15 @@ class AbstractBenchmark:
         return space
 
     def jsonify_dict_space(self, dict_space):
+        """
+        Gym spaces to json dict.
+
+        Parameters
+        ----------
+        dict_space : dict
+            space dict
+
+        """
         keys = []
         types = []
         arguments = []
@@ -374,25 +435,34 @@ class AbstractBenchmark:
 
             if isinstance(value, spaces.Box):
                 types.append("box")
-                low = value.low.tolist()
-                high = value.high.tolist()
+                low = value.low.astype(float).tolist()
+                high = value.high.astype(float).tolist()
                 arguments.append([low, high])
 
             if isinstance(value, spaces.Discrete):
                 types.append("discrete")
-                n = value.n
+                n = int(value.n)
                 arguments.append([n])
         return [keys, types, arguments]
 
     def dictify_json(self, dict_list):
+        """
+        Json to dict structure for gym spaces.
+
+        Parameters
+        ----------
+        dict_list: list
+            list of dicts
+
+        """
         dict_space = {}
         keys, types, args = dict_list
         for k, type, args_ in zip(keys, types, args):
-            prepared_args = map(np.array, args_)
             if type == "box":
+                prepared_args = map(np.array, args_)
                 dict_space[k] = spaces.Box(*prepared_args, dtype=np.float32)
             elif type == "discrete":
-                dict_space[k] = spaces.Discrete(*prepared_args)
+                dict_space[k] = spaces.Discrete(*args_)
             else:
                 raise TypeError(
                     f"Currently only Discrete and Box spaces are allowed in Dict spaces, got {type}"
@@ -400,6 +470,15 @@ class AbstractBenchmark:
         return dict_space
 
     def load_config(self, config: "objdict"):
+        """
+        Load config.
+
+        Parameters
+        ----------
+        config: objdict
+            config to load
+
+        """
         self.config = config
         if "observation_space_type" in self.config:
             # Types have to be numpy dtype (for gym spaces)s
@@ -443,12 +522,13 @@ class AbstractBenchmark:
 
     def read_config_file(self, path):
         """
-        Read configuration from file
+        Read configuration from file.
 
         Parameters
         ----------
         path : str
             Path to config file
+
         """
         with open(path, "r") as fp:
             config = objdict(json.load(fp))
@@ -457,29 +537,31 @@ class AbstractBenchmark:
 
     def get_environment(self):
         """
-        Make benchmark environment
+        Make benchmark environment.
 
         Returns
         -------
         env : gym.Env
             Benchmark environment
+
         """
         raise NotImplementedError
 
     def set_seed(self, seed):
         """
-        Set environment seed
+        Set environment seed.
 
         Parameters
         ----------
         seed : int
             New seed
+
         """
         self.config["seed"] = seed
 
     def set_action_space(self, kind, args):
         """
-        Change action space
+        Change action space.
 
         Parameters
         ----------
@@ -487,13 +569,14 @@ class AbstractBenchmark:
             Name of action space class
         args: list
             List of arguments to pass to action space class
+
         """
         self.config["action_space"] = kind
         self.config["action_space_args"] = args
 
     def set_observation_space(self, kind, args, data_type):
         """
-        Change observation_space
+        Change observation_space.
 
         Parameters
         ----------
@@ -503,54 +586,60 @@ class AbstractBenchmark:
             List of arguments to pass to observation space class
         data_type : type
             Data type of observation space
+
         """
         self.config["observation_space"] = kind
         self.config["observation_space_args"] = args
         self.config["observation_space_type"] = data_type
 
     def register_wrapper(self, wrap_func):
+        """
+        Register wrapper.
+
+        Parameters
+        ----------
+        wrap_func : function
+            wrapper init function
+
+        """
         if isinstance(wrap_func, list):
             self.wrap_funcs.append(*wrap_func)
         else:
             self.wrap_funcs.append(wrap_func)
 
     def __eq__(self, other):
+        """Check for equality."""
         return type(self) == type(other) and self.config == other.config
 
 
 # This code is taken from https://goodcode.io/articles/python-dict-object/
 class objdict(dict):
-    """
-    Modified dict to make config changes more flexible
-    """
+    """Modified dict to make config changes more flexible."""
 
     def __getattr__(self, name):
+        """Get attribute."""
         if name in self:
             return self[name]
         else:
             raise AttributeError("No such attribute: " + name)
 
     def __setattr__(self, name, value):
+        """Set attribute."""
         self[name] = value
 
     def __delattr__(self, name):
+        """Delete attribute."""
         if name in self:
             del self[name]
         else:
             raise AttributeError("No such attribute: " + name)
 
     def copy(self):
+        """Copy self."""
         return objdict(**super().copy())
 
     def __eq__(self, other):
-        """return isinstance(other, dict) \
-               and set(other.keys()) == set(self.keys()) \
-               and all(
-                        np.array_equal(self[key], other[key])
-                        if any(isinstance(obj[key], np.ndarray) for obj in (self, other))
-                        else other[key] == self[key]
-                    for key in self.keys()
-                )"""
+        """Check for equality."""
         if not isinstance(other, dict):
             return False
         if not set(other.keys()) == set(self.keys()):
@@ -564,4 +653,5 @@ class objdict(dict):
         return all(truth)
 
     def __ne__(self, other):
+        """Check for inequality."""
         return not self == other

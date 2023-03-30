@@ -6,8 +6,8 @@ from pathlib import Path
 import numpy as np
 
 from dacbench import benchmarks
-from dacbench.agents import StaticAgent, GenericAgent, DynamicRandomAgent
-from dacbench.envs.policies import OPTIMAL_POLICIES, NON_OPTIMAL_POLICIES
+from dacbench.agents import DynamicRandomAgent, GenericAgent, StaticAgent
+from dacbench.envs.policies import NON_OPTIMAL_POLICIES, OPTIMAL_POLICIES
 from dacbench.logger import Logger
 from dacbench.runner import run_benchmark
 from dacbench.wrappers import PerformanceTrackingWrapper
@@ -26,7 +26,7 @@ modea_actions = [
     np.arange(3),
 ]
 DISCRETE_ACTIONS = {
-    "SigmoidBenchmark": np.arange(int(np.prod((5, 10)))),
+    "SigmoidBenchmark": list(itertools.product(*[np.arange(val) for val in (5, 10)])),
     "LubyBenchmark": np.arange(6),
     "FastDownwardBenchmark": [0, 1],
     "CMAESBenchmark": [np.around(a, decimals=1) for a in np.linspace(0.2, 10, num=50)],
@@ -36,6 +36,23 @@ DISCRETE_ACTIONS = {
 
 
 def run_random(results_path, benchmark_name, num_episodes, seeds, fixed):
+    """
+    Run random policy.
+
+    Parameters
+    ----------
+    results_path : str
+        Path to where results should be saved
+    benchmark_name : str
+        Name of the benchmark to run
+    num_episodes : int
+        Number of episodes to run for each benchmark
+    seeds : list[int]
+        List of seeds to runs all benchmarks for. If None (default) seeds [1, ..., 10] are used.
+    fixed : int
+        Number of fixed steps per action
+
+    """
     bench = getattr(benchmarks, benchmark_name)()
     for s in seeds:
         if fixed > 1:
@@ -61,6 +78,23 @@ def run_random(results_path, benchmark_name, num_episodes, seeds, fixed):
 
 
 def run_static(results_path, benchmark_name, action, num_episodes, seeds=np.arange(10)):
+    """
+    Run static policy.
+
+    Parameters
+    ----------
+    results_path : str
+        Path to where results should be saved
+    benchmark_name : str
+        Name of the benchmark to run
+    action : int | float
+        The action to run
+    num_episodes : int
+        Number of episodes to run for each benchmark
+    seeds : list[int]
+        List of seeds to runs all benchmarks for. If None (default) seeds [1, ..., 10] are used.
+
+    """
     bench = getattr(benchmarks, benchmark_name)()
     for s in seeds:
         logger = Logger(
@@ -84,6 +118,21 @@ def run_static(results_path, benchmark_name, action, num_episodes, seeds=np.aran
 
 
 def run_optimal(results_path, benchmark_name, num_episodes, seeds):
+    """
+    Run optimal policy.
+
+    Parameters
+    ----------
+    results_path : str
+        Path to where results should be saved
+    benchmark_name : str
+        Name of the benchmark to run
+    num_episodes : int
+        Number of episodes to run for each benchmark
+    seeds : list[int]
+        List of seeds to runs all benchmarks for. If None (default) seeds [1, ..., 10] are used.
+
+    """
     if benchmark_name not in OPTIMAL_POLICIES:
         print("No optimal policy found for this benchmark")
         return
@@ -92,6 +141,21 @@ def run_optimal(results_path, benchmark_name, num_episodes, seeds):
 
 
 def run_dynamic_policy(results_path, benchmark_name, num_episodes, seeds=np.arange(10)):
+    """
+    Run dynamic baseline policy.
+
+    Parameters
+    ----------
+    results_path : str
+        Path to where results should be saved
+    benchmark_name : str
+        Name of the benchmark to run
+    num_episodes : int
+        Number of episodes to run for each benchmark
+    seeds : list[int]
+        List of seeds to runs all benchmarks for. If None (default) seeds [1, ..., 10] are used.
+
+    """
     if benchmark_name not in NON_OPTIMAL_POLICIES:
         print("No dynamic policy found for this benchmark")
     policy = NON_OPTIMAL_POLICIES[benchmark_name]
@@ -99,6 +163,23 @@ def run_dynamic_policy(results_path, benchmark_name, num_episodes, seeds=np.aran
 
 
 def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.arange(10)):
+    """
+    Run generic policy.
+
+    Parameters
+    ----------
+    results_path : str
+        Path to where results should be saved
+    benchmark_name : str
+        Name of the benchmark to run
+    num_episodes : int
+        Number of episodes to run for each benchmark
+    policy : AbstractDACBenchAgent
+        The policy to run
+    seeds : list[int]
+        List of seeds to runs all benchmarks for. If None (default) seeds [1, ..., 10] are used.
+
+    """
     bench = getattr(benchmarks, benchmark_name)()
 
     for s in seeds:
@@ -126,6 +207,7 @@ def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.aran
 
 
 def main(args):
+    """Main evaluation loop."""
     parser = argparse.ArgumentParser(
         description="Run simple baselines for DAC benchmarks",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -217,7 +299,6 @@ def main(args):
 
     if args.static:
         for b in benchs:
-
             if args.actions is None:
                 actions = DISCRETE_ACTIONS[b]
             else:

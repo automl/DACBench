@@ -1,5 +1,6 @@
+from gymnasium import spaces
+
 from dacbench.abstract_agent import AbstractDACBenchAgent
-from gym import spaces
 
 
 class DynamicRandomAgent(AbstractDACBenchAgent):

@@ -1,14 +1,13 @@
 import os
 
+import ConfigSpace as CS
+import ConfigSpace.hyperparameters as CSH
 import numpy as np
 import pandas as pd
-from gym import spaces
+from gymnasium import spaces
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import ToySGDEnv
-
-import ConfigSpace as CS
-import ConfigSpace.hyperparameters as CSH
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
 LR = CSH.UniformFloatHyperparameter(name="0_log_learning_rate", lower=-10, upper=0)
@@ -46,6 +45,7 @@ DEFAULTS = objdict(
         "reward_range": (-np.inf, np.inf),
         "cutoff": 10,
         "seed": 0,
+        "multi_agent": False,
         "instance_set_path": "../instance_sets/toysgd/toysgd_default.csv",
         "benchmark_info": INFO,
     }

@@ -1,16 +1,17 @@
+import os
 import tempfile
+import unittest
 from pathlib import Path
 
-import pytest
-import unittest
-from gym import spaces
-import os
+import matplotlib
 import numpy as np
+import pytest
+from gymnasium import spaces
+
+from dacbench.abstract_agent import AbstractDACBenchAgent
 
 # import shutil
 from dacbench.runner import run_dacbench  # , plot_results
-from dacbench.abstract_agent import AbstractDACBenchAgent
-import matplotlib
 
 matplotlib.use("Agg")
 
@@ -54,7 +55,13 @@ class TestRunner(unittest.TestCase):
             return DummyAgent(env)
 
         with tempfile.TemporaryDirectory() as tmp_dir:
-            run_dacbench(tmp_dir, make, 1, bench=["LubyBenchmark", "SigmoidBenchmark"], seeds=[42])
+            run_dacbench(
+                tmp_dir,
+                make,
+                1,
+                bench=["LubyBenchmark", "SigmoidBenchmark"],
+                seeds=[42],
+            )
             path = Path(tmp_dir)
             self.assertFalse(os.stat(path / "LubyBenchmark") == 0)
             self.assertFalse(os.stat(path / "SigmoidBenchmark") == 0)

@@ -1,12 +1,12 @@
-import unittest
 import json
 import os
+import tempfile
+import unittest
+
 import numpy as np
-from gym.spaces import Box, Discrete, Dict, MultiDiscrete, MultiBinary
+from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-import tempfile
-
 from dacbench.challenge_benchmarks.reward_quality_challenge.reward_functions import (
     random_reward,
 )
@@ -110,7 +110,10 @@ class TestAbstractBenchmark(unittest.TestCase):
 
         bench = AbstractBenchmark()
 
-        space = Box(low=np.array([0, 0]), high=np.array([1, 1]),)
+        space = Box(
+            low=np.array([0, 0]),
+            high=np.array([1, 1]),
+        )
         assert_restorable(space)
 
         space = Discrete(2)
@@ -118,7 +121,10 @@ class TestAbstractBenchmark(unittest.TestCase):
 
         space = Dict(
             {
-                "box": Box(low=np.array([0, 0]), high=np.array([1, 1]),),
+                "box": Box(
+                    low=np.array([0, 0]),
+                    high=np.array([1, 1]),
+                ),
                 "discrete": Discrete(n=2),
             }
         )

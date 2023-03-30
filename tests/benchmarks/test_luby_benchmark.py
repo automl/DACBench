@@ -1,8 +1,9 @@
-import unittest
 import json
 import os
+import unittest
 
 import numpy as np
+
 from dacbench.benchmarks import LubyBenchmark
 from dacbench.envs import LubyEnv
 from dacbench.wrappers import RewardNoiseWrapper
@@ -21,9 +22,10 @@ class TestLubyBenchmark(unittest.TestCase):
             bench = LubyBenchmark(path)
             self.assertTrue(bench.config is not None)
             env = bench.get_environment()
-            state = env.reset()
+            state, info = env.reset()
             self.assertTrue(state is not None)
-            state, _, _, _ = env.step(0)
+            self.assertTrue(info is not None)
+            state, _, _, _, _ = env.step(0)
             self.assertTrue(state is not None)
 
     def test_save_conf(self):
@@ -54,7 +56,7 @@ class TestLubyBenchmark(unittest.TestCase):
         env = bench.get_benchmark()
         self.assertTrue(issubclass(type(env), RewardNoiseWrapper))
         env.reset()
-        _, r, _, _ = env.step(1)
+        _, r, _, _, _ = env.step(1)
         self.assertTrue(r != 0 and r != -1)
 
     def test_cutoff_setting(self):

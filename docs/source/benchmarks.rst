@@ -18,7 +18,7 @@ They are both based on artificial functions and real algorithms:
   Sigmoid function approximation in multiple dimensions.
 - :doc:`Luby <benchmark_docs/luby>` (Artificial Benchmark):
   Learning the Luby sequence.
-- :doc:`ToySGD <benchmark_docs/toysgd>` (Artificial Benchmark):
+- :doc:`ToySGD <benchmark_docs/toy_sgd>` (Artificial Benchmark):
   Controlling the learning rate in gradient descent.
 - :doc:`Geometric <benchmark_docs/geometric>` (Artificial Benchmark):
   Approximating several functions at once.
@@ -34,11 +34,10 @@ and more costly to run and thus present a real challenge for DAC algorithms:
 
 * :doc:`FastDownward benchmark <benchmark_docs/fastdownward>`: Heuristic selection for the FastDownward Planner on competition tasks.
 * :doc:`CMA-ES <benchmark_docs/cma>`: Step-size adpation for CMA-ES.
-* :doc:`ModEA <benchmark_docs/modea>`: Selection of Algorithm Components for EAs.
 * :doc:`ModCMA <benchmark_docs/modcma>`: Step-size & algorithm component control for EAs backed by IOHProfiler.
 * :doc:`SGD-DL <benchmark_docs/sgd>`: Learning rate adaption for neural networks.
 
-Our benchmarks are based on OpenAI's gym interface for Reinforcement Learning.
+Our benchmarks are based on the `gymnasium interface <https://gymnasium.farama.org/>`_ for Reinforcement Learning.
 That means to run a benchmark, you need to create an environment of that benchmark
 to then interact with it.
 We include examples of this interaction between environment and DAC methods in our
@@ -51,9 +50,19 @@ To instantiate a benchmark environment, run:
     bench = SigmoidBenchmark()
     benchmark_env = bench.get_environment()
 
+Alternatively, if you do not plan on modifying the benchmark configuration, you can also use our the default version in the gymnasium registry:
+
+.. code-block:: python
+
+    import gymnasium as gym
+    import dacbench
+    environment = gym.make("Sigmoid-v0")
+
+
 .. automodule:: dacbench.abstract_benchmark
     :members:
     :show-inheritance:
+
 
 .. automodule:: dacbench.abstract_env
     :members:

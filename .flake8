@@ -4,6 +4,7 @@ exclude =
     dacbench/instance_sets,
     __pycache___,
     dacbench/envs/fast-downward,
+    dacbench/envs/rl-plan,
     algorithms
 
 max-line-length = 88

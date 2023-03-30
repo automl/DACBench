@@ -1,8 +1,10 @@
-from dacbench import AbstractEnv
+from typing import Dict, Tuple, Union
+
 import numpy as np
-from numpy.polynomial import Polynomial
-from typing import Union, Tuple, Optional, Dict
 import pandas as pd
+from numpy.polynomial import Polynomial
+
+from dacbench import AbstractMADACEnv
 
 
 def create_polynomial_instance_set(
@@ -12,6 +14,7 @@ def create_polynomial_instance_set(
     low: float = -10,
     high: float = 10,
 ):
+    """Make instance set."""
     instances = []
     for i in range(n_samples):
         coeffs = sample_coefficients(order=order, low=low, high=high)
@@ -29,6 +32,7 @@ def create_polynomial_instance_set(
 
 
 def sample_coefficients(order: int = 2, low: float = -10, high: float = 10):
+    """Sample function coefficients."""
     n_coeffs = order + 1
     coeffs = np.zeros((n_coeffs,))
     coeffs[0] = np.random.uniform(0, high, size=1)
@@ -36,10 +40,9 @@ def sample_coefficients(order: int = 2, low: float = -10, high: float = 10):
     return coeffs
 
 
-class ToySGDEnv(AbstractEnv):
+class ToySGDEnv(AbstractMADACEnv):
     """
     Optimize toy functions with SGD + Momentum.
-
 
     Action: [log_learning_rate, log_momentum] (log base 10)
     State: Dict with entries remaining_budget, gradient, learning_rate, momentum
@@ -56,6 +59,7 @@ class ToySGDEnv(AbstractEnv):
     """
 
     def __init__(self, config):
+        """Init env."""
         super(ToySGDEnv, self).__init__(config)
         self.n_steps_max = config.get("cutoff", 1000)
 
@@ -74,6 +78,7 @@ class ToySGDEnv(AbstractEnv):
         self.n_steps = 0  # type: Optional[int]
 
     def build_objective_function(self):
+        """Make base function."""
         if self.instance["family"] == "polynomial":
             order = int(self.instance["order"])
             if order != 2:
@@ -100,13 +105,14 @@ class ToySGDEnv(AbstractEnv):
             )
 
     def get_initial_position(self):
+        """Get initial position."""
         return 0  # np.random.uniform(-5, 5, size=self.n_dim-1)
 
     def step(
         self, action: Union[float, Tuple[float, float]]
     ) -> Tuple[Dict[str, float], float, bool, Dict]:
         """
-        Take one step with SGD
+        Take one step with SGD.
 
         Parameters
         ----------
@@ -121,10 +127,12 @@ class ToySGDEnv(AbstractEnv):
             - state : Dict[str, float]
                 State with entries "remaining_budget", "gradient", "learning_rate", "momentum"
             - reward : float
-            - done : bool
+            - terminated : bool
+            - truncated : bool
             - info : Dict
+
         """
-        done = False
+        truncated = super(ToySGDEnv, self).step_()
         info = {}
 
         # parse action
@@ -164,21 +172,29 @@ class ToySGDEnv(AbstractEnv):
 
         # Stop criterion
         self.n_steps += 1
-        if self.n_steps > self.n_steps_max:
-            done = True
 
-        return state, reward, done, info
+        return state, reward, False, truncated, info
 
-    def reset(self):
+    def reset(self, seed=None, options={}):
         """
-        Reset environment
+        Reset environment.
+
+        Parameters
+        ----------
+        seed : int
+            seed
+        options : dict
+            options dict (not used)
 
         Returns
         -------
         np.array
             Environment state
+        dict
+            Meta-info
+
         """
-        super(ToySGDEnv, self).reset_()
+        super(ToySGDEnv, self).reset_(seed)
 
         self.velocity = 0
         self.gradient = 0
@@ -198,9 +214,10 @@ class ToySGDEnv(AbstractEnv):
             "gradient": self.gradient,
             "learning_rate": self.learning_rate,
             "momentum": self.momentum,
-        }
+        }, {}
 
     def render(self, **kwargs):
+        """Render progress."""
         import matplotlib.pyplot as plt
 
         history = np.array(self.history).flatten()
@@ -230,4 +247,5 @@ class ToySGDEnv(AbstractEnv):
         plt.show()
 
     def close(self):
+        """Close env."""
         pass

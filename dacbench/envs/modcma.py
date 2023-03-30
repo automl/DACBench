@@ -1,11 +1,11 @@
 import numpy as np
-from modcma import ModularCMAES, Parameters
 from IOHexperimenter import IOH_function
+from modcma import ModularCMAES, Parameters
 
-from dacbench import AbstractEnv
+from dacbench import AbstractMADACEnv
 
 
-class ModCMAEnv(AbstractEnv):
+class ModCMAEnv(AbstractMADACEnv):
     def __init__(self, config):
         super().__init__(config)
 
@@ -16,8 +16,8 @@ class ModCMAEnv(AbstractEnv):
         self.get_reward = config.get("reward_function", self.get_default_reward)
         self.get_state = config.get("state_method", self.get_default_state)
 
-    def reset(self):
-        super().reset_()
+    def reset(self, seed=None, options={}):
+        super().reset_(seed)
         self.dim, self.fid, self.iid, self.representation = self.instance
         self.representation = np.array(self.representation)
         self.objective = IOH_function(
@@ -29,16 +29,16 @@ class ModCMAEnv(AbstractEnv):
                 self.dim, np.array(self.representation).astype(int)
             ),
         )
-        return self.get_state(self)
+        return self.get_state(self), {}
 
     def step(self, action):
-        done = super().step_()
+        truncated = super().step_()
         new_parameters = Parameters.from_config_array(self.dim, action)
         self.es.parameters.update(
             {m: getattr(new_parameters, m) for m in Parameters.__modules__}
         )
-        done = not self.es.step()
-        return self.get_state(self), self.get_reward(self), done, {}
+        terminated = not self.es.step()
+        return self.get_state(self), self.get_reward(self), terminated, truncated, {}
 
     def close(self):
         return True

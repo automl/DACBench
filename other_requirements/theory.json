@@ -1,3 +1,5 @@
 {
-  "theory": ["uuid==1.30"]
+  "theory": [
+    "uuid"
+  ]
 }

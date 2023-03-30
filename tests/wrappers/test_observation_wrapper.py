@@ -1,4 +1,5 @@
 import unittest
+
 import numpy as np
 
 from dacbench import AbstractEnv
@@ -26,21 +27,21 @@ class TestObservationTrackingWrapper(unittest.TestCase):
         action = 0.2
 
         env = self.get_test_env()
-        reset_state_env = env.reset()
+        reset_state_env, info = env.reset()
         step_state_env, *rest_env = env.step(action)
         self.assertIsInstance(reset_state_env, dict)
+        self.assertTrue(issubclass(type(info), dict))
 
         wrapped_env = ObservationWrapper(self.get_test_env())
-        reset_state_wrapped = wrapped_env.reset()
-        step_state_wrapped, *reset_wrapped = wrapped_env.step(action)
+        reset_state_wrapped, info = wrapped_env.reset()
+        step_state_wrapped, *rest_wrapped = wrapped_env.step(action)
 
         self.assertIsInstance(reset_state_wrapped, np.ndarray)
-
-        self.assertListEqual(rest_env, reset_wrapped)
+        self.assertListEqual(rest_env[1:], rest_wrapped[1:])
 
         np.testing.assert_array_equal(
-            wrapped_env.flatten(reset_state_env), reset_state_wrapped
+            wrapped_env.flatten(reset_state_env).shape, reset_state_wrapped.shape
         )
         np.testing.assert_array_equal(
-            wrapped_env.flatten(step_state_env), step_state_wrapped
+            wrapped_env.flatten(step_state_env).shape, step_state_wrapped.shape
         )

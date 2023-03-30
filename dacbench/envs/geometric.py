@@ -3,19 +3,18 @@ Geometric environment.
 Original environment authors: Rasmus von Glahn
 """
 import bisect
-import os
-import itertools
 import math
-from typing import List, Dict, Tuple
+import os
+from typing import Dict, List, Tuple
 
-from mpl_toolkits import mplot3d
-from matplotlib import pyplot as plt
 import numpy as np
 import seaborn as sns
-
-sns.set_theme(style="darkgrid")
+from matplotlib import pyplot as plt
+from mpl_toolkits import mplot3d
 
 from dacbench import AbstractEnv
+
+sns.set_theme(style="darkgrid")
 
 
 class GeometricEnv(AbstractEnv):
@@ -50,7 +49,6 @@ class GeometricEnv(AbstractEnv):
         self._prev_state = None
         self.action = None
         self.n_actions = len(self.action_vals)
-        self.action_mapper = {}
 
         # Functions
         self.functions = Functions(
@@ -72,13 +70,6 @@ class GeometricEnv(AbstractEnv):
 
         self.derivative = []
         self.derivative_set = {}
-
-        # Map actions from int to vector representation
-        for idx, prod_idx in zip(
-            range(np.prod(config["action_values"])),
-            itertools.product(*[np.arange(val) for val in config["action_values"]]),
-        ):
-            self.action_mapper[idx] = prod_idx
 
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
@@ -124,12 +115,6 @@ class GeometricEnv(AbstractEnv):
                 )
 
         optimal_policy = optimal_policy.astype(int)
-        if not vector_action:
-            reverse_action_mapper = {v: k for k, v in self.action_mapper.items()}
-            optimal_policy = [
-                reverse_action_mapper[tuple(vec)] for vec in optimal_policy
-            ]
-
         return optimal_policy
 
     def step(self, action: int):
@@ -143,21 +128,15 @@ class GeometricEnv(AbstractEnv):
 
         Returns
         -------
-        np.array, float, bool, dict
-            state, reward, done, info
+        np.array, float, bool, bool, dict
+            state, reward, terminated, truncated, info
         """
         self.done = super(GeometricEnv, self).step_()
-
-        # map integer action to vector
-        action_vec = self.action_mapper[action]
-        assert self.n_actions == len(
-            action_vec
-        ), f"action should be of length {self.n_actions}."
-        self.action = action_vec
+        self.action = action
 
         coords = self.functions.get_coordinates_at_time_step(self.c_step)
         self.coord_trajectory.append(coords)
-        self.action_trajectory.append(np.array(action_vec))
+        self.action_trajectory.append(action)
 
         self.coord_trajectory_set[self.inst_id] = self.coord_trajectory
         self.action_trajectory_set[self.inst_id] = self.action_trajectory
@@ -183,9 +162,9 @@ class GeometricEnv(AbstractEnv):
         if math.isnan(reward):
             raise ValueError(f"Reward NAN Coords: {coords}, step: {self.c_step}")
 
-        return next_state, reward, self.done, {}
+        return next_state, reward, False, self.done, {}
 
-    def reset(self) -> List[int]:
+    def reset(self, seed=None, options={}) -> List[int]:
         """
         Resets env
 
@@ -193,8 +172,10 @@ class GeometricEnv(AbstractEnv):
         -------
         numpy.array
             Environment state
+        dict
+            Meta-info
         """
-        super(GeometricEnv, self).reset_()
+        super(GeometricEnv, self).reset_(seed)
         self.functions.set_instance(self.instance, self.instance_index)
 
         if self.c_step:
@@ -209,7 +190,7 @@ class GeometricEnv(AbstractEnv):
         )
         self._prev_state = None
 
-        return self.get_state(self)
+        return self.get_state(self), {}
 
     def get_default_reward(self, _) -> float:
         """
@@ -493,8 +474,8 @@ class Functions:
             derrivative = np.zeros(self.n_actions)
             for step in range(lower_bound, upper_bound):
                 der = np.subtract(
-                    np.array(trajectory[step], dtype=np.float),
-                    np.array(trajectory[step - 1], dtype=np.float),
+                    np.array(trajectory[step], dtype=np.float32),
+                    np.array(trajectory[step - 1], dtype=np.float32),
                 )
                 derrivative = np.add(derrivative, der)
 
@@ -502,8 +483,8 @@ class Functions:
 
         elif c_step == 1:
             derrivative = np.subtract(
-                np.array(trajectory[c_step], dtype=np.float),
-                np.array(trajectory[c_step - 1], dtype=np.float),
+                np.array(trajectory[c_step], dtype=np.float32),
+                np.array(trajectory[c_step - 1], dtype=np.float32),
             )
 
         else:
@@ -520,7 +501,6 @@ class Functions:
             instance_values = self.get_coordinates()
 
             for dim, function_values in enumerate(instance_values):
-
                 if abs(min(function_values)) > max(function_values):
                     norm_factor = abs(min(function_values))
                 else:

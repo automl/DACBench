@@ -6,10 +6,10 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 """
 
 from typing import List
+
 import numpy as np
 
 from dacbench import AbstractEnv
-
 
 # Instance IDEA 1: shift luby seq -> feat is sum of skipped action values
 # Instance IDEA 2: "Wiggle" luby i.e. luby(t + N(0, 0.1)) -> feat is sampled value
@@ -73,8 +73,8 @@ class LubyEnv(AbstractEnv):
 
         Returns
         -------
-        np.array, float, bool, dict
-            state, reward, done, info
+        np.array, float, bool, bool, dict
+            state, reward, terminated, truncated, info
         """
         self.done = super(LubyEnv, self).step_()
         self.prev_state = self._state.copy()
@@ -95,9 +95,9 @@ class LubyEnv(AbstractEnv):
         # the t+1 timestep.
         luby_t = max(1, int(np.round(self._jenny_i + self._start_shift + self.__error)))
         self._next_goal = self._seq[luby_t - 1]
-        return self.get_state(self), reward, self.done, {}
+        return self.get_state(self), reward, False, self.done, {}
 
-    def reset(self) -> List[int]:
+    def reset(self, seed=None, options={}) -> List[int]:
         """
         Resets env
 
@@ -106,7 +106,7 @@ class LubyEnv(AbstractEnv):
         numpy.array
             Environment state
         """
-        super(LubyEnv, self).reset_()
+        super(LubyEnv, self).reset_(seed)
         self._start_shift = self.instance[0]
         self._sticky_shif = self.instance[1]
         self._r = 0
@@ -117,7 +117,7 @@ class LubyEnv(AbstractEnv):
         luby_t = max(1, int(np.round(self._jenny_i + self._start_shift + self.__error)))
         self._next_goal = self._seq[luby_t - 1]
         self.done = False
-        return self.get_state(self)
+        return self.get_state(self), {}
 
     def get_default_reward(self, _):
         if self.action == self._next_goal:
@@ -169,7 +169,7 @@ class LubyEnv(AbstractEnv):
 
 
 def luby_gen(i):
-    """ Generator for the Luby Sequence """
+    """Generator for the Luby Sequence"""
     for k in range(1, 33):
         if i == ((1 << k) - 1):
             yield 1 << (k - 1)

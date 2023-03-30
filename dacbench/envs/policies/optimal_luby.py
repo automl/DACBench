@@ -1,5 +1,5 @@
 def luby_gen(i):
-    """ Generator for the Luby Sequence """
+    """Generator for the Luby Sequence"""
     for k in range(1, 33):
         if i == ((1 << k) - 1):
             yield 1 << (k - 1)

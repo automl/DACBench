@@ -18,7 +18,7 @@ def easy_sigmoid(self):
     action_diffs = self.action - action
     r = 0
     for i in range(len(action_diffs)):
-        r += 10 ** i * action_diffs[i]
+        r += 10**i * action_diffs[i]
     r = max(self.reward_range[0], min(self.reward_range[1], r))
     return r
 

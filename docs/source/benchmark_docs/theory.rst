@@ -1,8 +1,8 @@
 .. _theory:
 
-====================
+=====================
 The Theory Benchmark
-====================
+=====================
 
 | **Task:** controlling number of flips in RLS on LeadingOnes
 | **Cost:** number of iterations until solution

@@ -2,13 +2,14 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+
 import numpy as np
-from gym import spaces
-from gym.spaces import Discrete, MultiDiscrete, Dict, Box
+from gymnasium import spaces
+from gymnasium.spaces import Box, Dict, Discrete, MultiDiscrete
 
 from dacbench.agents.simple_agents import RandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
-from dacbench.logger import ModuleLogger, Logger, log2dataframe
+from dacbench.logger import Logger, ModuleLogger, log2dataframe
 
 
 class TestLogger(unittest.TestCase):
@@ -36,11 +37,11 @@ class TestLogger(unittest.TestCase):
             logger.reset_episode()
 
             for episode in range(episodes):
-                state = env.reset()
-                done = False
+                state, _ = env.reset()
+                terminated, truncated = False, False
                 reward = 0
                 step = 0
-                while not done:
+                while not (terminated or truncated):
                     action = agent.act(state, reward)
                     env_logger.log(
                         "logged_step",
@@ -54,14 +55,18 @@ class TestLogger(unittest.TestCase):
                         "logged_episode",
                         episode,
                     )
-                    next_state, reward, done, _ = env.step(action)
+                    next_state, reward, terminated, truncated, _ = env.step(action)
                     env_logger.log(
                         "reward",
                         reward,
                     )
                     env_logger.log(
-                        "done",
-                        done,
+                        "terminated",
+                        terminated,
+                    )
+                    env_logger.log(
+                        "truncated",
+                        truncated,
                     )
                     agent.train(next_state, reward)
                     state = next_state

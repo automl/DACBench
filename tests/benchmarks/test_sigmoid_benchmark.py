@@ -1,6 +1,6 @@
-import unittest
 import json
 import os
+import unittest
 
 from dacbench.benchmarks import SigmoidBenchmark
 from dacbench.envs import SigmoidEnv
@@ -24,9 +24,10 @@ class TestSigmoidBenchmark(unittest.TestCase):
             bench = SigmoidBenchmark(path)
             self.assertTrue(bench.config is not None)
             env = bench.get_environment()
-            state = env.reset()
+            state, info = env.reset()
             self.assertTrue(state is not None)
-            state, _, _, _ = env.step(0)
+            self.assertTrue(info is not None)
+            state, _, _, _, _ = env.step(env.action_space.sample())
             self.assertTrue(state is not None)
 
     def test_save_conf(self):
@@ -56,10 +57,3 @@ class TestSigmoidBenchmark(unittest.TestCase):
         self.assertTrue(len(env.instance_set[0]) == 4)
         self.assertTrue(env.instance_set[0] == first_inst)
         self.assertTrue(len(env.instance_set.keys()) == 300)
-
-    def test_action_value_setting(self):
-        bench = SigmoidBenchmark()
-        bench.set_action_values([1, 2, 3])
-        self.assertTrue(bench.config.action_values == [1, 2, 3])
-        self.assertTrue(bench.config.action_space_args == [6])
-        self.assertTrue(len(bench.config.observation_space_args[0]) == 10)

@@ -1,4 +1,4 @@
-.. _benchmarks:
+.. _contrib:
 
 ========================
 Contributing to DACBench

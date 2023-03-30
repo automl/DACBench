@@ -1,9 +1,9 @@
 from collections import defaultdict
 
-from gym import Wrapper
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb
+from gymnasium import Wrapper
 
 sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())
@@ -12,6 +12,7 @@ current_palette = list(sb.color_palette())
 class PerformanceTrackingWrapper(Wrapper):
     """
     Wrapper to track episode performance.
+
     Includes interval mode that returns performance in lists of len(interval) instead of one long list.
     """
 
@@ -23,10 +24,10 @@ class PerformanceTrackingWrapper(Wrapper):
         logger=None,
     ):
         """
-        Initialize wrapper
+        Initialize wrapper.
 
         Parameters
-        -------
+        ----------
         env : gym.Env
             Environment to wrap
         performance_interval : int
@@ -34,6 +35,8 @@ class PerformanceTrackingWrapper(Wrapper):
         track_instance_performance : bool
             Indicates whether to track per-instance performance
         logger : dacbench.logger.ModuleLogger
+            logger to write to
+
         """
         super(PerformanceTrackingWrapper, self).__init__(env)
         self.performance_interval = performance_interval
@@ -50,7 +53,7 @@ class PerformanceTrackingWrapper(Wrapper):
 
     def __setattr__(self, name, value):
         """
-        Set attribute in wrapper if available and in env if not
+        Set attribute in wrapper if available and in env if not.
 
         Parameters
         ----------
@@ -58,6 +61,7 @@ class PerformanceTrackingWrapper(Wrapper):
             Attribute to set
         value
             Value to set attribute to
+
         """
         if name in [
             "performance_interval",
@@ -80,7 +84,7 @@ class PerformanceTrackingWrapper(Wrapper):
 
     def __getattribute__(self, name):
         """
-        Get attribute value of wrapper if available and of env if not
+        Get attribute value of wrapper if available and of env if not.
 
         Parameters
         ----------
@@ -91,6 +95,7 @@ class PerformanceTrackingWrapper(Wrapper):
         -------
         value
             Value of given name
+
         """
         if name in [
             "performance_interval",
@@ -114,7 +119,7 @@ class PerformanceTrackingWrapper(Wrapper):
 
     def step(self, action):
         """
-        Execute environment step and record performance
+        Execute environment step and record performance.
 
         Parameters
         ----------
@@ -125,11 +130,12 @@ class PerformanceTrackingWrapper(Wrapper):
         -------
         np.array, float, bool, dict
             state, reward, done, metainfo
+
         """
-        state, reward, done, info = self.env.step(action)
+        state, reward, terminated, truncated, info = self.env.step(action)
         self.episode_performance += reward
 
-        if done:
+        if terminated or truncated:
             self.overall_performance.append(self.episode_performance)
             if self.logger is not None:
                 self.logger.log(
@@ -147,11 +153,11 @@ class PerformanceTrackingWrapper(Wrapper):
                 key = "".join(str(e) for e in self.env.instance)
                 self.instance_performances[key].append(self.episode_performance)
             self.episode_performance = 0
-        return state, reward, done, info
+        return state, reward, terminated, truncated, info
 
     def get_performance(self):
         """
-        Get state performance
+        Get state performance.
 
         Returns
         -------
@@ -178,7 +184,7 @@ class PerformanceTrackingWrapper(Wrapper):
             return self.overall_performance
 
     def render_performance(self):
-        """ Plot performance """
+        """Plot performance."""
         plt.figure(figsize=(12, 6))
         plt.plot(
             np.arange(len(self.overall_performance) // 2),
@@ -190,7 +196,7 @@ class PerformanceTrackingWrapper(Wrapper):
         plt.show()
 
     def render_instance_performance(self):
-        """ Plot mean performance for each instance """
+        """Plot mean performance for each instance."""
         plt.figure(figsize=(12, 6))
         plt.title("Mean Performance per Instance")
         plt.ylabel("Mean reward")

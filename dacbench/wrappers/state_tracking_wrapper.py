@@ -1,9 +1,8 @@
-from gym import spaces
-from gym import Wrapper
-import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+import numpy as np
 import seaborn as sb
+from gymnasium import Wrapper, spaces
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 sb.set_style("darkgrid")
 current_palette = list(sb.color_palette())
@@ -11,21 +10,24 @@ current_palette = list(sb.color_palette())
 
 class StateTrackingWrapper(Wrapper):
     """
-    Wrapper to track state changed over time
+    Wrapper to track state changed over time.
+
     Includes interval mode that returns states in lists of len(interval) instead of one long list.
     """
 
     def __init__(self, env, state_interval=None, logger=None):
         """
-        Initialize wrapper
+        Initialize wrapper.
 
         Parameters
-        -------
+        ----------
         env : gym.Env
             Environment to wrap
         state_interval : int
             If not none, mean in given intervals is tracked, too
         logger : dacbench.logger.ModuleLogger
+            logger to write to
+
         """
         super(StateTrackingWrapper, self).__init__(env)
         self.state_interval = state_interval
@@ -46,7 +48,7 @@ class StateTrackingWrapper(Wrapper):
 
     def __setattr__(self, name, value):
         """
-        Set attribute in wrapper if available and in env if not
+        Set attribute in wrapper if available and in env if not.
 
         Parameters
         ----------
@@ -54,6 +56,7 @@ class StateTrackingWrapper(Wrapper):
             Attribute to set
         value
             Value to set attribute to
+
         """
         if name in [
             "state_interval",
@@ -75,7 +78,7 @@ class StateTrackingWrapper(Wrapper):
 
     def __getattribute__(self, name):
         """
-        Get attribute value of wrapper if available and of env if not
+        Get attribute value of wrapper if available and of env if not.
 
         Parameters
         ----------
@@ -86,6 +89,7 @@ class StateTrackingWrapper(Wrapper):
         -------
         value
             Value of given name
+
         """
         if name in [
             "state_interval",
@@ -108,14 +112,15 @@ class StateTrackingWrapper(Wrapper):
 
     def reset(self):
         """
-        Reset environment and record starting state
+        Reset environment and record starting state.
 
         Returns
         -------
-        np.array
-            state
+        np.array, {}
+            state, info
+
         """
-        state = self.env.reset()
+        state, info = self.env.reset()
         self.overall_states.append(state)
         if self.state_interval:
             if len(self.current_states) < self.state_interval:
@@ -123,11 +128,11 @@ class StateTrackingWrapper(Wrapper):
             else:
                 self.state_intervals.append(self.current_states)
                 self.current_states = [state]
-        return state
+        return state, info
 
     def step(self, action):
         """
-        Execute environment step and record state
+        Execute environment step and record state.
 
         Parameters
         ----------
@@ -138,8 +143,9 @@ class StateTrackingWrapper(Wrapper):
         -------
         np.array, float, bool, dict
             state, reward, done, metainfo
+
         """
-        state, reward, done, info = self.env.step(action)
+        state, reward, terminated, truncated, info = self.env.step(action)
         self.overall_states.append(state)
         if self.logger is not None:
             self.logger.log_space("state", state, self.state_description)
@@ -149,11 +155,11 @@ class StateTrackingWrapper(Wrapper):
             else:
                 self.state_intervals.append(self.current_states)
                 self.current_states = [state]
-        return state, reward, done, info
+        return state, reward, terminated, truncated, info
 
     def get_states(self):
         """
-        Get state progression
+        Get state progression.
 
         Returns
         -------
@@ -170,12 +176,13 @@ class StateTrackingWrapper(Wrapper):
 
     def render_state_tracking(self):
         """
-        Render state progression
+        Render state progression.
 
         Returns
         -------
         np.array
             RBG data of state tracking
+
         """
 
         def plot_single(ax=None, index=None, title=None, x=False, y=False):
@@ -282,6 +289,8 @@ class StateTrackingWrapper(Wrapper):
                     y = i % state_length // dim == 0
                     p, p2 = plot_single(axarr[i % dim, i // dim], i, x=x, y=y)
             canvas.draw()
+        else:
+            raise ValueError("Unknown state type")
         width, height = figure.get_size_inches() * figure.get_dpi()
         img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
             int(height), int(width), 3

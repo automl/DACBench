@@ -1,12 +1,12 @@
-from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import GeometricEnv
-
-import numpy as np
-import os
 import csv
+import os
 
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
+import numpy as np
+
+from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.envs import GeometricEnv
 
 FILE_PATH = os.path.dirname(__file__)
 ACTION_VALUES = (5, 10)
@@ -17,7 +17,10 @@ INFO = {
     "identifier": "Geometric",
     "name": "High Dimensional Geometric Curve Approximation. Curves are geometrical orthogonal.",
     "reward": "Overall Euclidean Distance between Point on Curve and Action Vector for all Dimensions",
-    "state_description": ["Remaining Budget", "Dimensions",],
+    "state_description": [
+        "Remaining Budget",
+        "Dimensions",
+    ],
 }
 
 GEOMETRIC_DEFAULTS = objdict(
@@ -28,6 +31,7 @@ GEOMETRIC_DEFAULTS = objdict(
         "observation_space_args": [],
         "reward_range": (0, 1),
         "seed": 0,
+        "multi_agent": False,
         "cutoff": 10,
         "action_values": [],
         "action_value_default": 4,
@@ -133,7 +137,6 @@ class GeometricBenchmark(AbstractBenchmark):
         path = os.path.join(FILE_PATH, self.config.instance_set_path)
         self.config["instance_set"] = {}
         with open(path, "r") as fh:
-
             known_ids = []
             reader = csv.DictReader(fh)
 
@@ -233,10 +236,11 @@ class GeometricBenchmark(AbstractBenchmark):
 
         self.config.action_values = values
         cs = CS.ConfigurationSpace()
-        actions = CSH.UniformIntegerHyperparameter(
-            name="curve_values", lower=0, upper=int(np.prod(values))
-        )
-        cs.add_hyperparameter(actions)
+        for i, v in enumerate(values):
+            actions = CSH.UniformIntegerHyperparameter(
+                name=f"curve_values_dim_{i}", lower=0, upper=v
+            )
+            cs.add_hyperparameter(actions)
         self.config.config_space = cs
 
         num_info = 2

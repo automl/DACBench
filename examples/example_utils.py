@@ -2,13 +2,6 @@ import gym
 import argparse
 import numpy as np
 from collections import defaultdict, namedtuple
-import chainer
-from chainer import functions as F
-from chainer import links as L
-from chainer import optimizers
-from chainerrl import q_functions, replay_buffer, explorers, policies, links, v_function
-from chainerrl.agents import DQN, a3c
-from chainerrl.recurrent import RecurrentChainMixin
 
 from dacbench.logger import Logger
 
@@ -22,11 +15,11 @@ class DummyEnv(gym.Env):
 
     def step(self, action):
         self.c_step += 1
-        return np.array([0]), 0, self.c_step > 9, {}
+        return np.array([0]), 0, False, self.c_step > 9, {}
 
     def reset(self):
         self.c_step = 0
-        return np.array([1])
+        return np.array([1]), {}
 
 
 class QTable(dict):
@@ -142,7 +135,7 @@ def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
     """
     cumuls = []
     for _ in range(nevaluations):
-        evaluation_state = this_environment.reset()
+        evaluation_state, _ = this_environment.reset()
         episode_length, cummulative_reward = 0, 0
         expected_reward = np.max(Q[evaluation_state])
         greedy = make_tabular_policy(Q, 0, this_environment.action_space.n)
@@ -150,12 +143,12 @@ def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
             evaluation_action = np.random.choice(
                 list(range(this_environment.action_space.n)), p=greedy(evaluation_state)
             )
-            s_, evaluation_reward, evaluation_done, _ = this_environment.step(
+            s_, evaluation_reward, eval_done, evaluation_done, _ = this_environment.step(
                 evaluation_action
             )
             cummulative_reward += evaluation_reward
             episode_length += 1
-            if evaluation_done:
+            if evaluation_done or eval_done:
                 break
 
             evaluation_state = s_
@@ -175,15 +168,15 @@ def update(
     :param discount_factor: discounting factor
     """
     # Need to parse to string to easily handle list as state with defdict
-    policy_state = environment.reset()
+    policy_state, _ = environment.reset()
     episode_length, cummulative_reward = 0, 0
     expected_reward = np.max(Q[policy_state])
-    done = False
-    while not done:  # roll out episode
+    terminated, truncated = False, False
+    while not (terminated or truncated):  # roll out episode
         policy_action = np.random.choice(
             list(range(environment.action_space.n)), p=policy(policy_state)
         )
-        s_, policy_reward, done, _ = environment.step(policy_action)
+        s_, policy_reward, terminated, truncated, _ = environment.step(policy_action)
         cummulative_reward += policy_reward
         episode_length += 1
         Q[[policy_state, policy_action]] = Q[[policy_state, policy_action]] + alpha * (
@@ -213,101 +206,3 @@ def zeroOne(stringput):
         raise argparse.ArgumentTypeError("%r is not in [0, 1]", stringput)
 
     return val
-
-
-# Example model class taken from chainerrl examples:
-# https://github.com/chainer/chainerrl/blob/master/examples/gym/train_a3c_gym.py
-
-
-class A3CFFSoftmax(chainer.ChainList, a3c.A3CModel):
-    """An example of A3C feedforward softmax policy."""
-
-    def __init__(self, ndim_obs, n_actions, hidden_sizes=(200, 200)):
-        self.pi = policies.SoftmaxPolicy(
-            model=links.MLP(ndim_obs, n_actions, hidden_sizes)
-        )
-        self.v = links.MLP(ndim_obs, 1, hidden_sizes=hidden_sizes)
-        super().__init__(self.pi, self.v)
-
-    def pi_and_v(self, state):
-        return self.pi(state), self.v(state)
-
-
-class A3CLSTMGaussian(chainer.ChainList, a3c.A3CModel, RecurrentChainMixin):
-    """An example of A3C recurrent Gaussian policy."""
-
-    def __init__(self, obs_size, action_size, hidden_size=200, lstm_size=128):
-        self.pi_head = L.Linear(obs_size, hidden_size)
-        self.v_head = L.Linear(obs_size, hidden_size)
-        self.pi_lstm = L.LSTM(hidden_size, lstm_size)
-        self.v_lstm = L.LSTM(hidden_size, lstm_size)
-        self.pi = policies.FCGaussianPolicy(lstm_size, action_size)
-        self.v = v_function.FCVFunction(lstm_size)
-        super().__init__(
-            self.pi_head, self.v_head, self.pi_lstm, self.v_lstm, self.pi, self.v
-        )
-
-    def pi_and_v(self, state):
-        def forward(head, lstm, tail):
-            h = F.relu(head(state))
-            h = lstm(h)
-            return tail(h)
-
-        pout = forward(self.pi_head, self.pi_lstm, self.pi)
-        vout = forward(self.v_head, self.v_lstm, self.v)
-
-        return pout, vout
-
-
-def make_chainer_a3c(obs_size, action_size):
-    model = A3CLSTMGaussian(obs_size, action_size)
-    opt = optimizers.Adam(eps=1e-2)
-    opt.setup(model)
-    agent = a3c.A3C(model, opt, 10 ** 5, 0.9)
-    return agent
-
-
-def make_chainer_dqn(obs_size, action_space):
-    q_func = q_functions.FCStateQFunctionWithDiscreteAction(
-        obs_size, action_space.n, 50, 1
-    )
-    explorer = explorers.ConstantEpsilonGreedy(0.1, action_space.sample)
-    opt = optimizers.Adam(eps=1e-2)
-    opt.setup(q_func)
-    rbuf = replay_buffer.ReplayBuffer(10 ** 5)
-    agent = DQN(q_func, opt, rbuf, explorer=explorer, gamma=0.9)
-    return agent
-
-
-def flatten(li):
-    return [value for sublist in li for value in sublist]
-
-
-def train_chainer(
-    agent, env, num_episodes=10, flatten_state=False, logger: Logger = None
-):
-    for i in range(num_episodes):
-        state = env.reset()
-        if flatten_state:
-            state = np.array(flatten([state[k] for k in state.keys()]))
-            state = state.astype(np.float32)
-        done = False
-        r = 0
-        reward = 0
-        while not done:
-            action = agent.act_and_train(state, reward)
-            next_state, reward, done, _ = env.step(action)
-            r += reward
-            if flatten_state:
-                state = np.array(flatten([next_state[k] for k in next_state.keys()]))
-                state = state.astype(np.float32)
-            else:
-                state = next_state
-            if logger is not None:
-                logger.next_step()
-        agent.stop_episode_and_train(state, reward, done=done)
-        if logger is not None:
-            logger.next_episode()
-        print(
-            f"Episode {i}/{num_episodes}...........................................Reward: {r}"
-        )

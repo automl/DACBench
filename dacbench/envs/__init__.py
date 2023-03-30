@@ -1,26 +1,29 @@
 # flake8: noqa: F401
+import importlib
+import warnings
+
+from dacbench.envs.fast_downward import FastDownwardEnv
+from dacbench.envs.geometric import GeometricEnv
 from dacbench.envs.luby import LubyEnv, luby_gen
 from dacbench.envs.sigmoid import (
-    SigmoidEnv,
     ContinuousSigmoidEnv,
     ContinuousStateSigmoidEnv,
+    SigmoidEnv,
 )
-from dacbench.envs.fast_downward import FastDownwardEnv
+from dacbench.envs.theory import TheoryEnv
 from dacbench.envs.toysgd import ToySGDEnv
-from dacbench.envs.geometric import GeometricEnv
 
 __all__ = [
     "LubyEnv",
     "luby_gen",
     "SigmoidEnv",
+    "ContinuousSigmoidEnv",
+    "ContinuousStateSigmoidEnv",
     "FastDownwardEnv",
     "ToySGDEnv",
     "GeometricEnv",
+    "TheoryEnv",
 ]
-
-
-import importlib
-import warnings
 
 cma_spec = importlib.util.find_spec("cma")
 found = cma_spec is not None
@@ -31,17 +34,6 @@ if found:
 else:
     warnings.warn(
         "CMA-ES Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
-    )
-
-modea_spec = importlib.util.find_spec("modea")
-found = modea_spec is not None
-if found:
-    from dacbench.envs.modea import ModeaEnv
-
-    __all__.append("ModeaEnv")
-else:
-    warnings.warn(
-        "Modea Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )
 
 modcma_spec = importlib.util.find_spec("modcma")
@@ -66,16 +58,4 @@ if found:
 else:
     warnings.warn(
         "SGD Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
-    )
-
-theory_spec = importlib.util.find_spec("uuid")
-found = theory_spec is not None
-if found:
-    from dacbench.envs.theory import RLSEnvDiscrete, RLSEnv
-
-    __all__.append("RLSEnv")
-    __all__.append("RLSEnvDiscrete")
-else:
-    warnings.warn(
-        "Theory Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )

@@ -3,12 +3,11 @@ import unittest
 from itertools import groupby
 from pathlib import Path
 
-import gym
+import gymnasium as gym
 import numpy as np
 
-
 from dacbench.agents import StaticAgent
-from dacbench.benchmarks import LubyBenchmark, CMAESBenchmark
+from dacbench.benchmarks import CMAESBenchmark, LubyBenchmark
 from dacbench.logger import Logger, load_logs, log2dataframe
 from dacbench.runner import run_benchmark
 from dacbench.wrappers import StateTrackingWrapper
@@ -126,20 +125,22 @@ class TestStateTrackingWrapper(unittest.TestCase):
         env = bench.get_environment()
         wrapped = StateTrackingWrapper(env, 2)
 
-        state = wrapped.reset()
+        state, info = wrapped.reset()
+        self.assertTrue(issubclass(type(info), dict))
         self.assertTrue(len(state) > 1)
         self.assertTrue(len(wrapped.overall_states) == 1)
 
-        state, reward, done, _ = wrapped.step(1)
+        state, reward, terminated, truncated, _ = wrapped.step(1)
         self.assertTrue(len(state) > 1)
         self.assertTrue(reward <= 0)
-        self.assertFalse(done)
+        self.assertFalse(terminated)
+        self.assertFalse(truncated)
 
         self.assertTrue(len(wrapped.overall_states) == 2)
         self.assertTrue(len(wrapped.current_states) == 2)
         self.assertTrue(len(wrapped.state_intervals) == 0)
 
-        state = wrapped.reset()
+        state, _ = wrapped.reset()
         self.assertTrue(len(wrapped.overall_states) == 3)
         self.assertTrue(len(wrapped.current_states) == 1)
         self.assertTrue(len(wrapped.state_intervals) == 1)
@@ -225,10 +226,10 @@ class TestStateTrackingWrapper(unittest.TestCase):
                 self.metadata = {}
 
             def reset(self):
-                return 1
+                return 1, {}
 
-            def step(self, action):
-                return 1, 1, 1, 1
+            def step(self, _):
+                return 1, 1, 1, 1, {}
 
         env = discrete_obs_env()
         wrapped = StateTrackingWrapper(env, 2)
@@ -245,10 +246,10 @@ class TestStateTrackingWrapper(unittest.TestCase):
                 self.metadata = {}
 
             def reset(self):
-                return [1, 2]
+                return [1, 2], {}
 
-            def step(self, action):
-                return [1, 2], 1, 1, 1
+            def step(self, _):
+                return [1, 2], 1, 1, 1, {}
 
         env = multi_discrete_obs_env()
         wrapped = StateTrackingWrapper(env)
@@ -265,10 +266,10 @@ class TestStateTrackingWrapper(unittest.TestCase):
                 self.metadata = {}
 
             def reset(self):
-                return [1, 1]
+                return [1, 1], {}
 
-            def step(self, action):
-                return [1, 1], 1, 1, 1
+            def step(self, _):
+                return [1, 1], 1, 1, 1, {}
 
         env = multi_binary_obs_env()
         wrapped = StateTrackingWrapper(env)
