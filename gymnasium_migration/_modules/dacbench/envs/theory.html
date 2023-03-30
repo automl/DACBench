@@ -362,7 +362,7 @@
 <span class="sd">        locs: 1d-array</span>
 <span class="sd">            positions where bits are flipped</span>
 
-<span class="sd">        Returns </span>
+<span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">            the new individual after the flip</span>
 
@@ -385,7 +385,7 @@
 <span class="sd">        locs_xprime: : 1d boolean/integer array</span>
 <span class="sd">            positions where we change to xprime&#39;s bits</span>
 
-<span class="sd">        Returns </span>
+<span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">            the new individual after the crossover</span>
 
@@ -402,7 +402,7 @@
 <span class="sd">        Generate n_childs children by flipping exactly l bits</span>
 
 <span class="sd">        Returns</span>
-<span class="sd">        ------- </span>
+<span class="sd">        -------</span>
 <span class="sd">            the best child (maximum fitness), its fitness and number of evaluations used</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -474,7 +474,7 @@
 <span class="sd">        count_different_inds_only : bool</span>
 <span class="sd">            whether to only count different individuals</span>
 <span class="sd">        rng:</span>
-<span class="sd">            random number generator    </span>
+<span class="sd">            random number generator</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="mi">1</span>
@@ -582,7 +582,7 @@
 <span class="n">HISTORY_LENGTH</span> <span class="o">=</span> <span class="mi">5</span>
 
 
-<div class="viewcode-block" id="RLSEnv"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.RLSEnv">[docs]</a><span class="k">class</span> <span class="nc">RLSEnv</span><span class="p">(</span><span class="n">AbstractEnv</span><span class="p">):</span>
+<div class="viewcode-block" id="TheoryEnv"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv">[docs]</a><span class="k">class</span> <span class="nc">TheoryEnv</span><span class="p">(</span><span class="n">AbstractEnv</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Environment for RLS with step size.</span>
 
@@ -591,7 +591,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">test_env</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize RLSEnv.</span>
+<span class="sd">        Initialize TheoryEnv.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -601,7 +601,7 @@
 <span class="sd">            whether to use test mode</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RLSEnv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TheoryEnv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">test_env</span> <span class="o">=</span> <span class="n">test_env</span>
@@ -677,7 +677,7 @@
         <span class="k">if</span> <span class="s2">&quot;outdir&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
 
-<div class="viewcode-block" id="RLSEnv.get_obs_domain_from_name"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.RLSEnv.get_obs_domain_from_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_obs_domain_from_name</span><span class="p">(</span><span class="n">var_name</span><span class="p">):</span>
+<div class="viewcode-block" id="TheoryEnv.get_obs_domain_from_name"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv.get_obs_domain_from_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_obs_domain_from_name</span><span class="p">(</span><span class="n">var_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get default lower and upperbound of a observation variable based on its name.</span>
 
@@ -690,7 +690,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span></div>
 
-<div class="viewcode-block" id="RLSEnv.reset"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.RLSEnv.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="TheoryEnv.reset"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{}):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Resets env.</span>
 
@@ -700,7 +700,7 @@
 <span class="sd">            Environment state</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RLSEnv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">reset_</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TheoryEnv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">reset_</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
         <span class="c1"># current problem size (n) &amp; evaluation limit (max_evals)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">size</span>
@@ -739,11 +739,11 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span><span class="p">(),</span> <span class="p">{}</span></div>
 
-<div class="viewcode-block" id="RLSEnv.get_state"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.RLSEnv.get_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TheoryEnv.get_state"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv.get_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return state.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">f</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_functions</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="RLSEnv.step"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.RLSEnv.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="TheoryEnv.step"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Execute environment step.</span>
 
@@ -758,7 +758,7 @@
 <span class="sd">            np.array, float, bool, bool, dict</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">truncated</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">RLSEnv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">step_</span><span class="p">()</span>
+        <span class="n">truncated</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">TheoryEnv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">step_</span><span class="p">()</span>
 
         <span class="n">fitness_before_update</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span>
 
@@ -866,7 +866,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span><span class="p">(),</span> <span class="n">reward</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">returned_info</span></div>
 
-<div class="viewcode-block" id="RLSEnv.close"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.RLSEnv.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="TheoryEnv.close"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close Env.</span>
 
@@ -881,12 +881,12 @@
         <span class="k">return</span> <span class="kc">True</span></div></div>
 
 
-<div class="viewcode-block" id="RLSEnvDiscrete"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.RLSEnvDiscrete">[docs]</a><span class="k">class</span> <span class="nc">RLSEnvDiscrete</span><span class="p">(</span><span class="n">RLSEnv</span><span class="p">):</span>
+<div class="viewcode-block" id="TheoryEnvDiscrete"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnvDiscrete">[docs]</a><span class="k">class</span> <span class="nc">TheoryEnvDiscrete</span><span class="p">(</span><span class="n">TheoryEnv</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;RLS environment where the choices of r is discretised.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">test_env</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Init env.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RLSEnvDiscrete</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">test_env</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TheoryEnvDiscrete</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">test_env</span><span class="p">)</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="s2">&quot;action_choices&quot;</span> <span class="ow">in</span> <span class="n">config</span>
         <span class="p">),</span> <span class="s2">&quot;Error: action_choices must be specified in benchmark&#39;s config&quot;</span>
@@ -899,12 +899,12 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_choices</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;action_choices&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="RLSEnvDiscrete.step"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.RLSEnvDiscrete.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="TheoryEnvDiscrete.step"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnvDiscrete.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Take step.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">RLSEnvDiscrete</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_choices</span><span class="p">[</span><span class="n">action</span><span class="p">])</span></div></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">TheoryEnvDiscrete</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_choices</span><span class="p">[</span><span class="n">action</span><span class="p">])</span></div></div>
 </pre></div>
 
               </div>
