@@ -184,6 +184,7 @@ class StateTrackingWrapper(Wrapper):
             RBG data of state tracking
 
         """
+
         def plot_single(ax=None, index=None, title=None, x=False, y=False):
             if ax is None:
                 plt.xlabel("Episode")

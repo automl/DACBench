@@ -326,7 +326,7 @@ class AbstractBenchmark:
 
         Parameters
         ----------
-        conf : 
+        conf :
             config to parse
 
         """

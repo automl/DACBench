@@ -10,8 +10,8 @@ from dacbench.envs.sigmoid import (
     ContinuousStateSigmoidEnv,
     SigmoidEnv,
 )
-from dacbench.envs.toysgd import ToySGDEnv
 from dacbench.envs.theory import TheoryEnv
+from dacbench.envs.toysgd import ToySGDEnv
 
 __all__ = [
     "LubyEnv",
@@ -22,7 +22,7 @@ __all__ = [
     "FastDownwardEnv",
     "ToySGDEnv",
     "GeometricEnv",
-    "TheoryEnv"
+    "TheoryEnv",
 ]
 
 cma_spec = importlib.util.find_spec("cma")

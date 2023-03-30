@@ -8,6 +8,7 @@ from dacbench.abstract_env import AbstractEnv, AbstractMADACEnv
 __all__ = ["AbstractEnv", "AbstractMADACEnv", "AbstractBenchmark"]
 
 from gymnasium.envs.registration import register
+
 from dacbench import benchmarks
 
 for b in benchmarks.__all__:
@@ -17,5 +18,5 @@ for b in benchmarks.__all__:
     register(
         id=f"{env_name}-v0",
         entry_point=f"dacbench.envs:{env_name}Env",
-        kwargs={'config': bench.config}
-)
+        kwargs={"config": bench.config},
+    )

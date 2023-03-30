@@ -111,7 +111,7 @@ class RewardNoiseWrapper(Wrapper):
         -------
         function
             Noise sampling function
-            
+
         """
         rng = np.random.default_rng()
         function = getattr(rng, dist)

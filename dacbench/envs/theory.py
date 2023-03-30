@@ -85,7 +85,7 @@ class BinaryProblem:
         locs: 1d-array
             positions where bits are flipped
 
-        Returns 
+        Returns
         -------
             the new individual after the flip
 
@@ -108,7 +108,7 @@ class BinaryProblem:
         locs_xprime: : 1d boolean/integer array
             positions where we change to xprime's bits
 
-        Returns 
+        Returns
         -------
             the new individual after the crossover
 
@@ -125,7 +125,7 @@ class BinaryProblem:
         Generate n_childs children by flipping exactly l bits
 
         Returns
-        ------- 
+        -------
             the best child (maximum fitness), its fitness and number of evaluations used
 
         """
@@ -197,7 +197,7 @@ class BinaryProblem:
         count_different_inds_only : bool
             whether to only count different individuals
         rng:
-            random number generator    
+            random number generator
 
         """
         assert p <= 1

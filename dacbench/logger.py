@@ -30,7 +30,7 @@ def load_logs(log_file: Path) -> List[Dict]:
         }
         ...
     }
-    
+
     Parameters
     ----------
     log_file: pathlib.Path

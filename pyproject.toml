@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 [tool.pydocstyle]
 inherit = false
 ignore = 'D100,D212,D401,D203,D404,D104,D400,D415'
-match = '.*\.py'
+match = 'dacbench/.*\.py'
 
 [tool.pytest.ini_options]
 filterwarnings = [

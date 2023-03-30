@@ -4,6 +4,7 @@
 The main change in this version is going from OpenAI's gym to the newer gymnasium version. The outward change is slight, but this interface is now **incompatible with version 0.1.0**. 
 To adapt to this version, you'll mainly have to replace instances of 'done' for termination with two variables: 'terminated' indication algorithm termination and 'truncated' indicating a timeout.
 Combined they're equal to the old 'done'.
+Additonally, the default version of the environments is now available in the gym registry.
 
 ### Multi-Agent / Round Robin Control Option
 We added more options for controlling several hyperparameters at once. Using the PettingZoo API, users can now select which hyperparameters to control and use a typical Multi-Agent RL interface to do it.

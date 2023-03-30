@@ -41,7 +41,7 @@ def json_decode(json_str: str) -> Jsonable:
 @Pyro4.expose
 class RemoteEnvironmentServer:
     """Server for remote environment."""
-    
+
     def __init__(self, env):
         """Make env server."""
         self.__env: AbstractEnv = env
