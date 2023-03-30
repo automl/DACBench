@@ -4,8 +4,8 @@ import unittest
 from pathlib import Path
 
 import numpy as np
-from gym import spaces
-from gym.spaces import Box, Dict, Discrete, MultiDiscrete
+from gymnasium import spaces
+from gymnasium.spaces import Box, Dict, Discrete, MultiDiscrete
 
 from dacbench.agents.simple_agents import RandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
