@@ -1,5 +1,3 @@
-![AutoML.org Logo](https://www.automl.org/wp-content/themes/automl/images/logo.png)
-
 [![Run Python Tests](https://github.com/automl/DACBench/actions/workflows/pytest.yml/badge.svg)](https://github.com/automl/DACBench/actions/workflows/pytest.yml)
 [![Documentation Status](https://github.com/automl/DACBench/actions/workflows/docs.yml/badge.svg)](https://github.com/automl/DACBench/actions/workflows/docs.yml)
 
