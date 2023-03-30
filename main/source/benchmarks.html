@@ -850,6 +850,12 @@ To instantiate a benchmark environment, run:</p>
 <span class="n">benchmark_env</span> <span class="o">=</span> <span class="n">bench</span><span class="o">.</span><span class="n">get_environment</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>Alternatively, if you do not plan on modifying the benchmark configuration, you can also use our the default version in the gymnasium registry:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">dacbench</span>
+<span class="n">environment</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Sigmoid-v0&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <span class="target" id="module-dacbench.abstract_benchmark"></span><dl class="py class">
 <dt class="sig sig-object py" id="dacbench.abstract_benchmark.AbstractBenchmark">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dacbench.abstract_benchmark.</span></span><span class="sig-name descname"><span class="pre">AbstractBenchmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dacbench/abstract_benchmark.html#AbstractBenchmark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dacbench.abstract_benchmark.AbstractBenchmark" title="Permalink to this definition">¶</a></dt>

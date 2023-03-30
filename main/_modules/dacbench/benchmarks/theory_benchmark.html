@@ -284,7 +284,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">dacbench.abstract_benchmark</span> <span class="kn">import</span> <span class="n">AbstractBenchmark</span><span class="p">,</span> <span class="n">objdict</span>
-<span class="kn">from</span> <span class="nn">dacbench.envs.theory</span> <span class="kn">import</span> <span class="n">RLSEnv</span><span class="p">,</span> <span class="n">RLSEnvDiscrete</span>
+<span class="kn">from</span> <span class="nn">dacbench.envs.theory</span> <span class="kn">import</span> <span class="n">TheoryEnv</span><span class="p">,</span> <span class="n">TheoryEnvDiscrete</span>
 
 <span class="n">INFO</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="s2">&quot;Theory&quot;</span><span class="p">,</span>
@@ -350,7 +350,7 @@
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="s2">&quot;max_action&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
             <span class="p">),</span> <span class="s2">&quot;ERROR: max_action should not be used for discrete action space&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">env_class</span> <span class="o">=</span> <span class="s2">&quot;RLSEnvDiscrete&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">env_class</span> <span class="o">=</span> <span class="s2">&quot;TheoryEnvDiscrete&quot;</span>
             <span class="n">n_acts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;action_choices&quot;</span><span class="p">])</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">UniformIntegerHyperparameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">n_acts</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -360,7 +360,7 @@
             <span class="k">assert</span> <span class="p">(</span><span class="s2">&quot;min_action&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
                 <span class="s2">&quot;max_action&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
             <span class="p">),</span> <span class="s2">&quot;ERROR: min_action and max_action must be specified&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">env_class</span> <span class="o">=</span> <span class="s2">&quot;RLSEnv&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">env_class</span> <span class="o">=</span> <span class="s2">&quot;TheoryEnv&quot;</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">UniformFloatHyperparameter</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Step_size&quot;</span><span class="p">,</span>
                 <span class="n">lower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;min_action&quot;</span><span class="p">],</span>
@@ -372,7 +372,7 @@
 
         <span class="c1"># create observation space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env_class</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">env_class</span><span class="p">]</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_class</span> <span class="o">==</span> <span class="n">RLSEnv</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_class</span> <span class="o">==</span> <span class="n">RLSEnvDiscrete</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_class</span> <span class="o">==</span> <span class="n">TheoryEnv</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_class</span> <span class="o">==</span> <span class="n">TheoryEnvDiscrete</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span>
             <span class="s2">&quot;observation_space&quot;</span>
@@ -381,7 +381,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="TheoryBenchmark.create_observation_space_from_description"><a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.benchmarks.theory_benchmark.TheoryBenchmark.create_observation_space_from_description">[docs]</a>    <span class="k">def</span> <span class="nf">create_observation_space_from_description</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">obs_description</span><span class="p">,</span> <span class="n">env_class</span><span class="o">=</span><span class="n">RLSEnvDiscrete</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">obs_description</span><span class="p">,</span> <span class="n">env_class</span><span class="o">=</span><span class="n">TheoryEnvDiscrete</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a gym observation space (Box only) based on a string containing observation variable names, e.g. &quot;n, f(x), k, k_{t-1}&quot;</span>
