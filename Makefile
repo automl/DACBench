@@ -94,7 +94,7 @@ doc:
 # This is done to prevent accidental publishing but provide the same conveniences
 publish: clean-build build
 	$(PIP) install twine
-	$(PYTHON) -m twine upload --repository testpypi ${DIST}/*
+	$(PYTHON) -m twine upload --verbose --repository testpypi ${DIST}/*
 	@echo
 	@echo "Test with the following line:"
 	@echo "pip install --index-url https://test.pypi.org/simple/ dacbench"
