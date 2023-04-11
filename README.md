@@ -17,6 +17,11 @@ We recommend installing DACBench in a virtual environment:
 ```
 conda create -n dacbench python=3.10
 conda activate dacbench
+pip install dacbench
+```
+
+Instead of using pip, you can also use the GitHub repo directly:
+```
 git clone https://github.com/automl/DACBench.git
 cd DACBench
 git submodule update --init --recursive
@@ -27,7 +32,7 @@ For any other benchmark, you may use a singularity container as provided by us (
 to install the SGDBenchmark, run:
 
 ```
-pip install -e .[sgd]
+pip install dacbench[sgd]
 ```
 
 To use FastDownward, you first need to build the solver itself. We recommend using
@@ -38,7 +43,7 @@ cmake version 3.10.2. The command is:
 
 You can also install all dependencies like so:
 ```
-pip install -e .[all,dev,example,docs]
+pip install dacbench[all,dev,example,docs]
 ```
 
 ## Containerized Benchmarks
