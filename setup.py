@@ -13,5 +13,6 @@ def get_other_requirements():
 
 
 setup(
+    version="0.2.1",
     packages=find_packages(exclude=['tests', 'examples', 'dacbench.wrappers.*', 'dacbench.envs.fast-downward/*']),
 )
