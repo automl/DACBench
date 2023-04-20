@@ -10,7 +10,6 @@ on:
   push:
     branches:
       - main
-      - gymnasium_migration
 
   # Trigger on a open/push to a PR targeting one of these branches
   pull_request:
