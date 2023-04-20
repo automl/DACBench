@@ -1,6 +1,3 @@
-[![Run Python Tests](https://github.com/automl/DACBench/actions/workflows/pytest.yml/badge.svg)](https://github.com/automl/DACBench/actions/workflows/pytest.yml)
-[![Documentation Status](https://github.com/automl/DACBench/actions/workflows/docs.yml/badge.svg)](https://github.com/automl/DACBench/actions/workflows/docs.yml)
-
 DACBench is a benchmark library for Dynamic Algorithm Configuration.
 Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
