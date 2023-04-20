@@ -35,7 +35,7 @@ jobs:
     - name: Install dependencies
       id: install
       run: |
-        pip install ".[dev,all,docs]"
+        python -m pip install ".[dev,all,docs]"
 
     - name: Make docs
       run: |
@@ -43,13 +43,13 @@ jobs:
         make doc
 
     - name: Pull latest gh-pages
-      if: (contains(github.ref, 'gymnasium_migration') || contains(github.ref, 'main')) && github.event_name == 'push'
+      if: contains(github.ref, 'main') && github.event_name == 'push'
       run: |
         cd ..
         git clone https://github.com/${{ github.repository }}.git --branch gh-pages --single-branch gh-pages
 
     - name: Copy new docs into gh-pages
-      if: (contains(github.ref, 'gymnasium_migration') || contains(github.ref, 'main')) && github.event_name == 'push'
+      if: contains(github.ref, 'main') && github.event_name == 'push'
       run: |
         branch_name=${GITHUB_REF##*/}
         cd ../gh-pages
@@ -58,7 +58,7 @@ jobs:
 
 
     - name: Push to gh-pages
-      if: (contains(github.ref, 'gymnasium_migration') || contains(github.ref, 'main')) && github.event_name == 'push'
+      if: contains(github.ref, 'main') && github.event_name == 'push'
       run: |
         last_commit=$(git log --pretty=format:"%an: %s")
         cd ../gh-pages
