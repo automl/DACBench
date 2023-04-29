@@ -300,66 +300,58 @@ def make_eval(config, network):
         #TODO: vmap this
         #for _ in range(config["num_eval_episodes"]):
         #    rewards.append(_env_episode(rng, env_params, network_params))
-        return np.mean(rewards)[0]
+        return np.mean(rewards)
     return eval
 
 class AutoRLEnv(AbstractEnv):
     def __init__(self, config) -> None:
         super().__init__(config)
-        # TODO: this should set to first instance
-        # The config itself should go to the benchmark def
-        self.train_config = {
-            "lr": 2.5e-4,
-            "num_envs": 4,
-            "num_steps": 128,
-            "total_timesteps": 5e3,
-            "update_epochs": 4,
-            "num_minibatches": 4,
-            "gamma": 0.99,
-            "gae_lambda": 0.95,
-            "clip_eps": 0.2,
-            "ent_coef": 0.01,
-            "vf_coef": 0.5,
-            "max_grad_norm": 0.5,
-            "activation": "tanh",
-            "env_name": "CartPole-v1", 
-            "num_eval_episodes": 10}
+        self.checkpoint = self.config["checkpoint"]
+        self.checkpoint_dir = self.config["checkpoint_dir"]
         self.checkpointer = orbax.checkpoint.PyTreeCheckpointer()
         self.rng = jax.random.PRNGKey(30)#self.config.seed)
         self.episode = 0
 
+        if "reward_function" in config.keys():
+            self.get_reward = config["reward_function"]
+        else:
+            self.get_reward = self.get_default_reward
+
+        if "state_method" in config.keys():
+            self.get_state = config["state_method"]
+        else:
+            self.get_state = self.get_default_state
+
     def reset(self, seed: int = None, options={}):
-        #TODO comply with reset
         super().reset_(seed)
-        # TODO: instance adaption should happen here
-        # Probably by update of train config
-        self.env, self.env_params = gymnax.make(self.train_config["env_name"])
+        self.env, self.env_params = gymnax.make(self.instance["env_name"])
         # TODO: env wrapping should be optional
-        #env = FlattenObservationWrapper(env)
-        #env = LogWrapper(env)
-        self.network = ActorCritic(self.env.action_space(self.env_params).n, activation=self.train_config["activation"])
+        self.env = FlattenObservationWrapper(self.env)
+        self.env = LogWrapper(self.env)
+        self.network = ActorCritic(self.env.action_space(self.env_params).n, activation=self.instance["activation"])
         init_x = jnp.zeros(self.env.observation_space(self.env_params).shape)
         _, _rng = jax.random.split(self.rng)
         if "load" in options.keys():
             restored = self.checkpointer.restore(options["load"])
             self.network_params = restored["params"]
-            self.train_config = restored["train_config"]
+            self.instance = restored["config"]
         else:
             self.network_params = self.network.init(_rng, init_x)
         # TODO: jit
-        self.eval_func = make_eval(self.train_config, self.network)
+        self.eval_func = make_eval(self.instance, self.network)
         return self.get_state(self), {}
     
     def step(self, action):
         self.done = super().step_()
-        self.train_config.update(action)
-        self.train_func = jax.jit(make_train(self.train_config, self.env, self.network))
+        self.instance.update(action)
+        self.train_func = jax.jit(make_train(self.instance, self.env, self.network))
         out = self.train_func(self.rng, self.env_params, self.network_params)
         self.network_params = out["runner_state"][0].params
-        reward = self.get_default_reward(self)
-        ckpt = {'config': self.train_config, 'params': self.network_params}
-        save_args = orbax_utils.save_args_from_target(ckpt)
-        self.checkpointer.save(self.checkpoint_dir+f"_episode_{self.episode}_step_{self.c_step}", ckpt, save_args=save_args)
+        reward = self.get_reward(self)
+        if self.checkpoint and self.done:
+            ckpt = {'config': self.instance, 'params': self.network_params}
+            save_args = orbax_utils.save_args_from_target(ckpt)
+            self.checkpointer.save(self.checkpoint_dir+f"_episode_{self.episode}_step_{self.c_step}", ckpt, save_args=save_args)
         return self.get_state(self), reward, False, self.done, {}
     
     def get_default_reward(self, _):
@@ -369,24 +361,3 @@ class AutoRLEnv(AbstractEnv):
     def get_default_state(self, _):
         return np.array([])
 
-if __name__ == "__main__":
-    config = {
-        "LR": 2.5e-4,
-        "NUM_ENVS": 4,
-        "NUM_STEPS": 128,
-        "TOTAL_TIMESTEPS": 5e5,
-        "UPDATE_EPOCHS": 4,
-        "NUM_MINIBATCHES": 4,
-        "GAMMA": 0.99,
-        "GAE_LAMBDA": 0.95,
-        "CLIP_EPS": 0.2,
-        "ENT_COEF": 0.01,
-        "VF_COEF": 0.5,
-        "MAX_GRAD_NORM": 0.5,
-        "ACTIVATION": "tanh",
-        "ENV_NAME": "CartPole-v1",
-        "ANNEAL_LR": True,
-    }
-    rng = jax.random.PRNGKey(30)
-    train_jit = jax.jit(make_train(config))
-    out = train_jit(rng)

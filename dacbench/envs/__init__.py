@@ -59,3 +59,14 @@ else:
     warnings.warn(
         "SGD Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )
+
+autorl_spec = importlib.util.find_spec("gymnax")
+found = autorl_spec is not None
+if found:
+    from dacbench.envs.autorl import AutoRLEnv
+
+    __all__.append("AutoRLEnv")
+else:
+    warnings.warn(
+        "Autorl Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
+    )

@@ -50,13 +50,13 @@ else:
         "SGD Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )
 
-theory_spec = importlib.util.find_spec("uuid")
-found = theory_spec is not None
+autorl_spec = importlib.util.find_spec("gymnax")
+found = autorl_spec is not None
 if found:
-    from dacbench.benchmarks.theory_benchmark import TheoryBenchmark
+    from dacbench.benchmarks.autorl_benchmark import AutoRLBenchmark
 
-    __all__.append("TheoryBenchmark")
+    __all__.append("AutoRLBenchmark")
 else:
     warnings.warn(
-        "Theory Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
+        "AutoRL Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )

@@ -5,7 +5,7 @@ by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
 Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 """
 
-from typing import List
+from typing import List, Dict, Tuple
 
 import numpy as np
 
@@ -97,7 +97,7 @@ class LubyEnv(AbstractEnv):
         self._next_goal = self._seq[luby_t - 1]
         return self.get_state(self), reward, False, self.done, {}
 
-    def reset(self, seed=None, options={}) -> List[int]:
+    def reset(self, seed=None, options={}) -> Tuple[List[int], Dict]:
         """
         Resets env
 
