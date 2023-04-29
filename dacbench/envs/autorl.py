@@ -6,7 +6,7 @@ import numpy as np
 import optax
 from flax.linen.initializers import constant, orthogonal
 from flax.training import orbax_utils
-from typing import Sequence, NamedTuple, Any
+from typing import Sequence, NamedTuple
 from flax.training.train_state import TrainState
 import distrax
 import gymnax
@@ -229,7 +229,7 @@ def make_train(config, env, network):
 
                 train_state, traj_batch, advantages, targets, rng = update_state
                 rng, _rng = jax.random.split(rng)
-                batch_size = config["minibatch_size"] * config["num_minibatches"]
+                batch_size = int(config["minibatch_size"] * config["num_minibatches"])
                 assert (
                     batch_size == config["num_steps"] * config["num_envs"]
                 ), "batch size must be equal to number of steps * number of envs"
@@ -275,6 +275,9 @@ def make_train(config, env, network):
 
 def make_eval(config, network):
     env, env_params = gymnax.make(config["env_name"])
+    # TODO: env wrapping should be optional
+    env = FlattenObservationWrapper(env)
+    env = LogWrapper(env)
     def _env_episode(rng, env_params, network_params, _):
         reset_rng = jax.random.split(rng, 1)
         obsv, env_state = jax.vmap(env.reset, in_axes=(0, None))(reset_rng, env_params)
@@ -330,6 +333,7 @@ class AutoRLEnv(AbstractEnv):
         self.env = LogWrapper(self.env)
         self.network = ActorCritic(self.env.action_space(self.env_params).n, activation=self.instance["activation"])
         init_x = jnp.zeros(self.env.observation_space(self.env_params).shape)
+
         _, _rng = jax.random.split(self.rng)
         if "load" in options.keys():
             restored = self.checkpointer.restore(options["load"])

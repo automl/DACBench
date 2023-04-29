@@ -71,7 +71,7 @@ config_minatar_full =  {
             "num_eval_episodes": 10}
 
 bench = AutoRLBenchmark()
-bench.instance_set = {0: config_cartpole_full}
+bench.config.instance_set = {0: config_cartpole_full}
 env = bench.get_environment()
 env.reset()
 start = time.time()
@@ -80,7 +80,7 @@ end = time.time() - start
 print(f"CartPole took {np.round(end, decimals=2)}s for {reward} points in 100000 steps.")
 
 bench = AutoRLBenchmark()
-bench.instance_set = {0: config_cartpole}
+bench.config.instance_set = {0: config_cartpole}
 env = bench.get_environment()
 env.reset()
 start = time.time()
@@ -93,7 +93,7 @@ end = time.time() - start
 print(f"CartPole took {np.round(end, decimals=2)}s for {reward} points in 100000 steps in 1563 intervals of 64 steps.")
 
 bench = AutoRLBenchmark()
-bench.instance_set = {0: config_minatar_full}
+bench.config.instance_set = {0: config_minatar_full}
 env = bench.get_environment()
 env.reset()
 start = time.time()
@@ -102,7 +102,7 @@ end = time.time() - start
 print(f"MinAtar Breakout took {np.round(end, decimals=2)}s for {reward} points in 10M steps.")
 
 bench = AutoRLBenchmark()
-bench.instance_set = {0: config_minatar_breakout}
+bench.config.instance_set = {0: config_minatar_breakout}
 env = bench.get_environment()
 env.reset()
 start = time.time()
