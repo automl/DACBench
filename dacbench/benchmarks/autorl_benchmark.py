@@ -30,7 +30,8 @@ DEFAULT_RL_CONFIG = {
             "max_grad_norm": 0.5,
             "activation": "tanh",
             "env_name": "CartPole-v1", 
-            "num_eval_episodes": 10}
+            "num_eval_episodes": 10,
+            "env_framework": "gymnax"}
 
 INFO = {
     "identifier": "AutoRL",

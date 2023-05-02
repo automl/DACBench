@@ -7,6 +7,11 @@ from gymnax.wrappers.purerl import LogWrapper, FlattenObservationWrapper
 import flax.linen as nn
 from flax.linen.initializers import constant, orthogonal
 import distrax
+import gymnasium as gym
+from gymnasium.wrappers import AutoResetWrapper, FlattenObservation
+import chex
+from typing import Union, Optional, Tuple
+from gymnax.environments import EnvState, EnvParams
 
 
 class ActorCritic(nn.Module):
@@ -72,12 +77,103 @@ class Q(nn.Module):
         )
 
         return q
+    
+def make_env(instance):
+    if instance["env_framework"] == "gymnax":
+        env, env_params = gymnax.make(instance["env_name"])
+        env = FlattenObservationWrapper(env)
+    else: 
+        env = gym.make(instance["env_name"])
+        # Gymnax does autoreset anyway
+        env = AutoResetWrapper(env)
+        env = FlattenObservation(env)
+        env = GymToGymnaxWrapper(env)
+        env_params = None
+    env = LogWrapper(env)
+    return env, env_params
+
+class JaxifyGymOutput(gym.Wrapper):
+    def step(self, action):
+        s, r, te,tr,  _ = self.env.step(action)
+        r = np.ones(s.shape)*r
+        d = np.ones(s.shape)*int(te or tr)
+        return np.stack([s, r, d]).astype(np.float32)
+    
+
+def make_bool(data):
+    return np.array([bool(data)])
+
+
+class GymToGymnaxWrapper(gymnax.environments.environment.Environment):
+    def __init__(self, env):
+        super().__init__()
+        self.done = False
+        self.env = JaxifyGymOutput(env)
+        self.state = None
+        self.state_type = None
+
+    def step_env(
+        self,
+        key: chex.PRNGKey,
+        state: EnvState,
+        action: Union[int, float],
+        params: EnvParams,
+    ):
+        """Environment-specific step transition."""
+        # TODO: this is obviously super wasteful for large state spaces - how can we fix it?
+        result_shape = jax.core.ShapedArray(np.repeat(self.state[None,...],3,axis=0).shape, jnp.float32)
+        result = jax.pure_callback(self.env.step, result_shape, action)
+        s = result[0].astype(self.state_type)
+        r = result[1].mean()
+        d = result[2].mean()
+        result_shape = jax.core.ShapedArray((1,), bool)
+        self.done = jax.pure_callback(make_bool, result_shape, d)[0]
+        return s, {}, r, self.done, {}
+
+    def reset_env(
+        self, key: chex.PRNGKey, params: EnvParams
+    ):
+        """Environment-specific reset."""
+        self.done = False
+        self.state, _ = self.env.reset()
+        self.state_type = self.state.dtype
+        return self.state, {}
+
+    def get_obs(self, state: EnvState) -> chex.Array:
+        """Applies observation function to state."""
+        return state
+
+    def is_terminal(self, state: EnvState, params: EnvParams) -> bool:
+        """Check whether state transition is terminal."""
+        return self.done
+    
+    @property
+    def num_actions(self) -> int:
+        """Number of actions possible in environment."""
+        if isinstance(self.env.action_space, gym.spaces.Box):
+            return len(self.env.action_space.low)
+        else:
+            return self.env.action_space.n
+
+    def action_space(self, params: EnvParams):
+        """Action space of the environment."""
+        return self.env.action_space
+
+    def observation_space(self, params: EnvParams):
+        """Observation space of the environment."""
+        return gymnax.environments.spaces.Box(self.env.observation_space.low, self.env.observation_space.high, self.env.observation_space.low.shape)
+
+    def state_space(self, params: EnvParams):
+        """State space of the environment."""
+        return gymnax.environments.spaces.Dict({})
+    
+    @property
+    def default_params(self) -> EnvParams:
+        return EnvParams(500)
+    
 
 def make_eval(config, network):
-    env, env_params = gymnax.make(config["env_name"])
-    # TODO: env wrapping should be optional
-    env = FlattenObservationWrapper(env)
-    env = LogWrapper(env)
+    env, env_params = make_env(config)
     def _env_episode(rng, env_params, network_params, _):
         reset_rng = jax.random.split(rng, 1)
         obsv, env_state = jax.vmap(env.reset, in_axes=(0, None))(reset_rng, env_params)

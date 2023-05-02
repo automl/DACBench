@@ -53,8 +53,9 @@ config_minatar_breakout =  {
             "max_grad_norm": 0.5,
             "activation": "tanh",
             "hidden_size": 256,
-            "env_name": "Breakout-MinAtar", 
-            "num_eval_episodes": 10}
+            "env_name": "BreakoutDeterministic-v4", 
+            "num_eval_episodes": 10,
+            "env_framework": "gym"}
 
 config_minatar_full =  {
             "lr": 5e-4,
@@ -71,17 +72,30 @@ config_minatar_full =  {
             "max_grad_norm": 0.5,
             "activation": "tanh",
             "hidden_size": 256,
-            "env_name": "Breakout-MinAtar", 
-            "num_eval_episodes": 10}
+            "env_name": "BreakoutDeterministic-v4", 
+            "num_eval_episodes": 10,
+            "env_framework": "gym"}
 
 bench = AutoRLBenchmark()
 bench.config.instance_set = {0: config_cartpole_full}
+bench.config.env_framework = "gymnax"
 env = bench.get_environment()
 env.reset()
 start = time.time()
 _, reward, _, _, _ = env.step({})
 end = time.time() - start
-print(f"CartPole took {np.round(end, decimals=2)}s for {reward} points in 100000 steps.")
+print(f"CartPole took {np.round(end, decimals=2)}s for {reward} points in 500000 steps in the gymnax version.")
+
+bench = AutoRLBenchmark()
+bench.config.instance_set = {0: config_cartpole_full}
+bench.config.env_framework = "gym"
+env = bench.get_environment()
+env.reset()
+start = time.time()
+_, reward, _, _, _ = env.step({})
+end = time.time() - start
+print(f"CartPole took {np.round(end, decimals=2)}s for {reward} points in 500000 steps in the gym version.")
+
 
 bench = AutoRLBenchmark()
 bench.config.instance_set = {0: config_cartpole}
@@ -103,7 +117,7 @@ env.reset()
 start = time.time()
 _, reward, _, _, _ = env.step({})
 end = time.time() - start
-print(f"MinAtar Breakout took {np.round(end, decimals=2)}s for {reward} points in 10M steps.")
+print(f"Breakout took {np.round(end, decimals=2)}s for {reward} points in 10M steps.")
 
 bench = AutoRLBenchmark()
 bench.config.instance_set = {0: config_minatar_breakout}
@@ -114,6 +128,6 @@ for i in range(10):#000):
     _, reward, _, _, _ = env.step({})
     if i == 0:
         end = time.time() - start
-        print(f"MinAtar Breakout took {np.round(end, decimals=2)}s for {reward} points in 1000 steps.")
+        print(f"Breakout took {np.round(end, decimals=2)}s for {reward} points in 1000 steps.")
 end = time.time() - start
-print(f"MinAtar Breakout took {np.round(end, decimals=2)}s for {reward} points in 10M steps in 10 intervals of 1e6 steps.")
+print(f"Breakout took {np.round(end, decimals=2)}s for {reward} points in 10M steps in 10 intervals of 1e6 steps.")

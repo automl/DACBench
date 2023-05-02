@@ -2,11 +2,9 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from flax.training import orbax_utils
-import gymnax
-from gymnax.wrappers.purerl import LogWrapper, FlattenObservationWrapper
 import orbax
 from dacbench import AbstractEnv
-from dacbench.envs.autorl_utils import make_train_ppo, make_eval, ActorCritic
+from dacbench.envs.autorl_utils import make_train_ppo, make_eval, ActorCritic, make_env
 
 
 class AutoRLEnv(AbstractEnv):
@@ -37,11 +35,7 @@ class AutoRLEnv(AbstractEnv):
 
     def reset(self, seed: int = None, options={}):
         super().reset_(seed)
-        self.env, self.env_params = gymnax.make(self.instance["env_name"])
-        # TODO: env wrapping should be optional
-        # TODO: probably should use auto-reset wrapper, though
-        self.env = FlattenObservationWrapper(self.env)
-        self.env = LogWrapper(self.env)
+        self.env, self.env_params = make_env(self.instance)
         self.rng, _rng = jax.random.split(self.rng)
         reset_rng = jax.random.split(_rng, self.instance["num_envs"])
         self.last_obsv, self.last_env_state = jax.vmap(self.env.reset, in_axes=(0, None))(reset_rng, self.env_params)
@@ -61,7 +55,7 @@ class AutoRLEnv(AbstractEnv):
     def step(self, action):
         self.done = super().step_()
         self.instance.update(action)
-        self.train_func = jax.jit(self.make_train(self.instance, self.env, self.network))
+        self.train_func = self.make_train(self.instance, self.env, self.network)#jax.jit(self.make_train(self.instance, self.env, self.network))
         out = self.train_func(self.rng, self.env_params, self.network_params, self.last_obsv, self.last_env_state)
         self.network_params = out["runner_state"][0].params
         self.last_obsv = out["runner_state"][2]
