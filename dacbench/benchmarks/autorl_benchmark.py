@@ -53,7 +53,9 @@ AUTORL_DEFAULTS = objdict(
         "benchmark_info": INFO,
         "checkpoint": True,
         "checkpoint_dir": "autorl_checkpoints",
-        "instance_set": {0: DEFAULT_RL_CONFIG}
+        "instance_set": {0: DEFAULT_RL_CONFIG},
+        "track_trajectory": False,
+        "grad_obs": False
     }
 )
 

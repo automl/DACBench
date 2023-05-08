@@ -5,6 +5,7 @@ import optax
 from flax.training.train_state import TrainState
 from typing import NamedTuple
 
+
 class Transition(NamedTuple):
     done: jnp.ndarray
     action: jnp.ndarray
@@ -12,12 +13,15 @@ class Transition(NamedTuple):
     reward: jnp.ndarray
     obs: jnp.ndarray
     info: jnp.ndarray
-    
+
+
 # TODO: right now this is basically a stub
 def make_train_dqn(config, env, network):
-
     def train(rng, env_params, network_params, obsv, env_state):
-        tx = optax.chain(optax.clip_by_global_norm(config["max_grad_norm"]), optax.adam(config["lr"], eps=1e-5))
+        tx = optax.chain(
+            optax.clip_by_global_norm(config["max_grad_norm"]),
+            optax.adam(config["lr"], eps=1e-5),
+        )
         train_state = TrainState.create(
             apply_fn=network.apply,
             params=network_params,
@@ -38,19 +42,17 @@ def make_train_dqn(config, env, network):
                 # STEP ENV
                 rng, _rng = jax.random.split(rng)
                 rng_step = jax.random.split(_rng, config["num_envs"])
-                obsv, env_state, reward, done, info = jax.vmap(env.step, in_axes=(0,0,0,None))(
-                    rng_step, env_state, action, env_params
-                )
-                transition = Transition(
-                    done, action, q, reward, last_obs, info
-                )
+                obsv, env_state, reward, done, info = jax.vmap(
+                    env.step, in_axes=(0, 0, 0, None)
+                )(rng_step, env_state, action, env_params)
+                transition = Transition(done, action, q, reward, last_obs, info)
                 runner_state = (train_state, env_state, obsv, rng)
                 return runner_state, transition
 
             runner_state, traj_batch = jax.lax.scan(
                 _env_step, runner_state, None, config["num_steps"]
             )
-            #TODO: make replay buffer and add
+            # TODO: make replay buffer and add
 
             # UPDATE NETWORK
             # TODO: make DQN

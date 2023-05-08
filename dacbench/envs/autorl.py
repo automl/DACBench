@@ -9,13 +9,15 @@ from dacbench.envs.autorl_utils import make_train_ppo, make_eval, ActorCritic, m
 
 class AutoRLEnv(AbstractEnv):
     ALGORITHMS = {"ppo": make_train_ppo}
+
     def __init__(self, config) -> None:
         super().__init__(config)
         self.checkpoint = self.config["checkpoint"]
         self.checkpoint_dir = self.config["checkpoint_dir"]
         self.checkpointer = orbax.checkpoint.PyTreeCheckpointer()
-        self.rng = jax.random.PRNGKey(30)#self.config.seed)
+        self.rng = jax.random.PRNGKey(30)  # self.config.seed)
         self.episode = 0
+        self.track_traj = self.config.track_trajectory
 
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
@@ -24,6 +26,8 @@ class AutoRLEnv(AbstractEnv):
 
         if "state_method" in config.keys():
             self.get_state = config["state_method"]
+        elif self.config.grad_obs:
+            self.get_state = self.get_gradient_state
         else:
             self.get_state = self.get_default_state
 
@@ -32,14 +36,19 @@ class AutoRLEnv(AbstractEnv):
         else:
             self.make_train = make_train_ppo
 
-
     def reset(self, seed: int = None, options={}):
         super().reset_(seed)
         self.env, self.env_params = make_env(self.instance)
         self.rng, _rng = jax.random.split(self.rng)
         reset_rng = jax.random.split(_rng, self.instance["num_envs"])
-        self.last_obsv, self.last_env_state = jax.vmap(self.env.reset, in_axes=(0, None))(reset_rng, self.env_params)
-        self.network = ActorCritic(self.env.action_space(self.env_params).n, activation=self.instance["activation"], hidden_size=self.instance["hidden_size"])
+        self.last_obsv, self.last_env_state = jax.vmap(
+            self.env.reset, in_axes=(0, None)
+        )(reset_rng, self.env_params)
+        self.network = ActorCritic(
+            self.env.action_space(self.env_params).n,
+            activation=self.instance["activation"],
+            hidden_size=self.instance["hidden_size"],
+        )
         init_x = jnp.zeros(self.env.observation_space(self.env_params).shape)
         _, _rng = jax.random.split(self.rng)
         if "load" in options.keys():
@@ -51,26 +60,63 @@ class AutoRLEnv(AbstractEnv):
         # TODO: jit
         self.eval_func = make_eval(self.instance, self.network)
         return self.get_state(self), {}
-    
+
     def step(self, action):
         self.done = super().step_()
         self.instance.update(action)
-        self.train_func = self.make_train(self.instance, self.env, self.network)#jax.jit(self.make_train(self.instance, self.env, self.network))
-        out = self.train_func(self.rng, self.env_params, self.network_params, self.last_obsv, self.last_env_state)
-        self.network_params = out["runner_state"][0].params
-        self.last_obsv = out["runner_state"][2]
-        self.last_env_state = out["runner_state"][1]
+        self.instance["track_traj"] = self.track_traj
+        self.instance["track_metrics"] = self.config.grad_obs
+        self.train_func = jax.jit(
+            self.make_train(self.instance, self.env, self.network)
+        )
+        runner_state, metrics = self.train_func(
+            self.rng,
+            self.env_params,
+            self.network_params,
+            self.last_obsv,
+            self.last_env_state,
+        )
+        if self.track_traj:
+            metrics, self.loss_info, self.grad_info, self.traj, self.additional_info = metrics
+        elif self.config.grad_obs:
+            metrics, self.loss_info, self.grad_info, self.additional_info = metrics
+        self.network_params = runner_state[0].params
+        self.last_obsv = runner_state[2]
+        self.last_env_state = runner_state[1]
         reward = self.get_reward(self)
         if self.checkpoint and self.done:
-            ckpt = {'config': self.instance, 'params': self.network_params}
+            ckpt = {
+                "config": self.instance,
+                "params": self.network_params,
+                "metrics:": metrics,
+            }
+            if self.config.grad_obs:
+                ckpt["loss"] = self.loss_info
+                ckpt["gradients"] = self.grad_info
+                ckpt["additional_info"] = self.additional_info
+            if self.instance["track_traj"]:
+                ckpt["trajectory"] = self.traj
             save_args = orbax_utils.save_args_from_target(ckpt)
-            self.checkpointer.save(self.checkpoint_dir+f"_episode_{self.episode}_step_{self.c_step}", ckpt, save_args=save_args)
+            self.checkpointer.save(
+                self.checkpoint_dir + f"_episode_{self.episode}_step_{self.c_step}",
+                ckpt,
+                save_args=save_args,
+            )
         return self.get_state(self), reward, False, self.done, {}
-    
+
     def get_default_reward(self, _):
         return self.eval_func(self.rng, self.network_params)
 
     # TODO: implement
+    # Useful features could be: total deltas of grad norm and grad var, instance info...
     def get_default_state(self, _):
-        return np.array([])
+        return np.array([self.c_step, self.c_step * self.instance["total_timesteps"]])
 
+    def get_gradient_state(self, _):
+        if self.c_step == 0:
+            grad_norm = 0
+            grad_var = 0
+        else:
+            grad_norm = self.grad_info
+            grad_var = self.grad_info
+        return np.array([self.c_step, self.c_step * self.instance["total_timesteps"]], grad_norm, grad_var)
