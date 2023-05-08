@@ -80,18 +80,20 @@ config_minatar_full =  {
             "env_framework": "gym",
             "track_traj": False}
 
-# bench = AutoRLBenchmark()
-# bench.config.instance_set = {0: config_cartpole_full}
-# #bench.config.checkpoint = True
-# #bench.config.checkpoint_dir = "test_cartpole"
-# bench.config.cutoff = 1
-# env = bench.get_environment()
-# env.reset()
-# start = time.time()
-# _, reward, te, tr, _ = env.step({})
-# end = time.time() - start
-# print(te or tr)
-# print(f"CartPole took {np.round(end, decimals=2)}s for {reward} points in 1M steps in the gymnax version (including saving all data).")
+bench = AutoRLBenchmark()
+bench.config.instance_set = {0: config_cartpole_full}
+bench.config.checkpoint = True
+bench.config.checkpoint_dir = "test_cartpole"
+bench.config.grad_obs = True
+bench.config.track_trajectory = True
+bench.config.cutoff = 1
+env = bench.get_environment()
+env.reset()
+start = time.time()
+_, reward, te, tr, _ = env.step({})
+end = time.time() - start
+print(te or tr)
+print(f"CartPole took {np.round(end, decimals=2)}s for {reward} points in 1M steps in the gymnax version (including saving all data).")
 
 # bench = AutoRLBenchmark()
 # bench.config.instance_set = {0: config_cartpole_full}
@@ -118,19 +120,18 @@ config_minatar_full =  {
 # print(f"CartPole took {np.round(end, decimals=2)}s for {reward} points in 100000 steps in 10 intervals of 10000 steps.")
 
 
-
-bench = AutoRLBenchmark()
-bench.config.instance_set = {0: config_minatar_full}
-env = bench.get_environment()
-env.reset()
-start = time.time()
-for i in range(int(1)):
-    _, reward, _, _, _ = env.step({})
-    if i == 0:
-        end = time.time() - start
-        print(f"ProcGen took {np.round(end, decimals=2)}s for {reward} points in 1.000.000 steps.")
-end = time.time() - start
-print(f"ProcGen took {np.round(end, decimals=2)}s for {reward} points in 25M steps in 25 intervals of 1.000.000 steps.")
+# bench = AutoRLBenchmark()
+# bench.config.instance_set = {0: config_minatar_full}
+# env = bench.get_environment()
+# env.reset()
+# start = time.time()
+# for i in range(int(1)):
+#     _, reward, _, _, _ = env.step({})
+#     if i == 0:
+#         end = time.time() - start
+#         print(f"ProcGen took {np.round(end, decimals=2)}s for {reward} points in 1.000.000 steps.")
+# end = time.time() - start
+# print(f"ProcGen took {np.round(end, decimals=2)}s for {reward} points in 25M steps in 25 intervals of 1.000.000 steps.")
 
 # bench = AutoRLBenchmark()
 # bench.config.instance_set = {0: config_minatar_full}

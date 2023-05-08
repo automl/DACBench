@@ -91,11 +91,18 @@ class AutoRLEnv(AbstractEnv):
                 "metrics:": metrics,
             }
             if self.config.grad_obs:
-                ckpt["loss"] = self.loss_info
-                ckpt["gradients"] = self.grad_info
-                ckpt["additional_info"] = self.additional_info
+                ckpt["value_loss"] = jnp.concatenate(self.loss_info[0], axis=0)
+                ckpt["actor_loss"] = jnp.concatenate(self.loss_info[1], axis=0)
+                ckpt["gradients"] = self.grad_info["params"]
+                ckpt["additional_info"] = jnp.concatenate(self.additional_info, axis=0)
             if self.instance["track_traj"]:
-                ckpt["trajectory"] = self.traj
+                ckpt["trajectory"] = {}
+                ckpt["trajectory"]["states"] = jnp.concatenate(self.traj.obs, axis=0)
+                ckpt["trajectory"]["value"] = jnp.concatenate(self.traj.value, axis=0)
+                ckpt["trajectory"]["action"] = jnp.concatenate(self.traj.action, axis=0)
+                ckpt["trajectory"]["reward"] = jnp.concatenate(self.traj.reward, axis=0)
+                ckpt["trajectory"]["log_prob"] = jnp.concatenate(self.traj.log_prob, axis=0)
+                ckpt["trajectory"]["dones"] = jnp.concatenate(self.traj.done, axis=0)
             save_args = orbax_utils.save_args_from_target(ckpt)
             self.checkpointer.save(
                 self.checkpoint_dir + f"_episode_{self.episode}_step_{self.c_step}",
@@ -119,4 +126,4 @@ class AutoRLEnv(AbstractEnv):
         else:
             grad_norm = self.grad_info
             grad_var = self.grad_info
-        return np.array([self.c_step, self.c_step * self.instance["total_timesteps"]], grad_norm, grad_var)
+        return np.array([self.c_step, self.c_step * self.instance["total_timesteps"], grad_norm, grad_var])
