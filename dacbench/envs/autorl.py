@@ -124,6 +124,7 @@ class AutoRLEnv(AbstractEnv):
             grad_norm = 0
             grad_var = 0
         else:
-            grad_norm = self.grad_info
-            grad_var = self.grad_info
+            grad_info = [self.grad_info["params"][k][kk] for k in self.grad_info["params"] for kk in self.grad_info["params"][k]]
+            grad_norm = np.mean([jnp.linalg.norm(g) for g in grad_info])
+            grad_var = np.mean([jnp.var(g) for g in grad_info])
         return np.array([self.c_step, self.c_step * self.instance["total_timesteps"], grad_norm, grad_var])
