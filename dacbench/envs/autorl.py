@@ -5,6 +5,7 @@ from flax.training import orbax_utils
 import orbax
 from dacbench import AbstractEnv
 from dacbench.envs.autorl_utils import make_train_ppo, make_eval, ActorCritic, make_env
+import logging
 
 
 class AutoRLEnv(AbstractEnv):
@@ -15,7 +16,7 @@ class AutoRLEnv(AbstractEnv):
         self.checkpoint = self.config["checkpoint"]
         self.checkpoint_dir = self.config["checkpoint_dir"]
         self.checkpointer = orbax.checkpoint.PyTreeCheckpointer()
-        self.rng = jax.random.PRNGKey(30)  # self.config.seed)
+        self.rng = jax.random.PRNGKey(self.config.seed)
         self.episode = 0
         self.track_traj = self.config.track_trajectory
 
@@ -57,7 +58,6 @@ class AutoRLEnv(AbstractEnv):
             self.instance = restored["config"]
         else:
             self.network_params = self.network.init(_rng, init_x)
-        # TODO: jit
         self.eval_func = make_eval(self.instance, self.network)
         return self.get_state(self), {}
 
@@ -84,7 +84,7 @@ class AutoRLEnv(AbstractEnv):
         self.last_obsv = runner_state[2]
         self.last_env_state = runner_state[1]
         reward = self.get_reward(self)
-        if self.checkpoint and self.done:
+        if self.checkpoint:
             ckpt = {
                 "config": self.instance,
                 "params": self.network_params,
@@ -104,8 +104,18 @@ class AutoRLEnv(AbstractEnv):
                 ckpt["trajectory"]["log_prob"] = jnp.concatenate(self.traj.log_prob, axis=0)
                 ckpt["trajectory"]["dones"] = jnp.concatenate(self.traj.done, axis=0)
             save_args = orbax_utils.save_args_from_target(ckpt)
+            checkpoint_name = self.checkpoint_dir + "/"
+            if "checkpoint_name" in self.config.keys():
+                checkpoint_name += self.config["checkpoint_name"]
+
+            if not self.done:
+                checkpoint_name += f"_episode_{self.episode}_step_{self.c_step}"
+            elif self.done and not "checkpoint_name" in self.config.keys():
+                checkpoint_name += "final"
+            
+            logging.info(f"Saving checkpoint to {checkpoint_name}")
             self.checkpointer.save(
-                self.checkpoint_dir + f"_episode_{self.episode}_step_{self.c_step}",
+                checkpoint_name,
                 ckpt,
                 save_args=save_args,
             )
