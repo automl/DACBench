@@ -5,7 +5,6 @@ from flax.training import orbax_utils
 import orbax
 from dacbench import AbstractEnv
 from dacbench.envs.autorl_utils import make_train_ppo, make_eval, ActorCritic, make_env
-import logging
 
 
 class AutoRLEnv(AbstractEnv):
@@ -107,13 +106,12 @@ class AutoRLEnv(AbstractEnv):
             checkpoint_name = self.checkpoint_dir + "/"
             if "checkpoint_name" in self.config.keys():
                 checkpoint_name += self.config["checkpoint_name"]
-
-            if not self.done:
-                checkpoint_name += f"_episode_{self.episode}_step_{self.c_step}"
-            elif self.done and not "checkpoint_name" in self.config.keys():
-                checkpoint_name += "final"
+            else:
+                if not self.done:
+                    checkpoint_name += f"_episode_{self.episode}_step_{self.c_step}"
+                else:
+                    checkpoint_name += "final"
             
-            logging.info(f"Saving checkpoint to {checkpoint_name}")
             self.checkpointer.save(
                 checkpoint_name,
                 ckpt,
