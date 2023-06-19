@@ -93,7 +93,20 @@ class AutoRLEnv(AbstractEnv):
                 ckpt["value_loss"] = jnp.concatenate(self.loss_info[0], axis=0)
                 ckpt["actor_loss"] = jnp.concatenate(self.loss_info[1], axis=0)
                 ckpt["gradients"] = self.grad_info["params"]
-                ckpt["additional_info"] = jnp.concatenate(self.additional_info, axis=0)
+                for k in self.additional_info:
+                    if k == "minibatches":
+                        ckpt["minibatch"] = {}
+                        ckpt["minibatch"]["states"] = jnp.concatenate(self.additional_info[k][0].obs, axis=0)
+                        ckpt["minibatch"]["value"] = jnp.concatenate(self.additional_info[k][0].value, axis=0)
+                        ckpt["minibatch"]["action"] = jnp.concatenate(self.additional_info[k][0].action, axis=0)
+                        ckpt["minibatch"]["reward"] = jnp.concatenate(self.additional_info[k][0].reward, axis=0)
+                        ckpt["minibatch"]["log_prob"] = jnp.concatenate(self.additional_info[k][0].log_prob, axis=0)
+                        ckpt["minibatch"]["dones"] = jnp.concatenate(self.additional_info[k][0].done, axis=0)
+                        ckpt["minibatch"]["advantages"] = jnp.concatenate(self.additional_info[k][1], axis=0)
+                        ckpt["minibatch"]["targets"] = jnp.concatenate(self.additional_info[k][2], axis=0)
+                    else:
+                        ckpt[k] = jnp.concatenate(self.additional_info[k], axis=0)
+
             if self.instance["track_traj"]:
                 ckpt["trajectory"] = {}
                 ckpt["trajectory"]["states"] = jnp.concatenate(self.traj.obs, axis=0)
@@ -122,7 +135,6 @@ class AutoRLEnv(AbstractEnv):
     def get_default_reward(self, _):
         return self.eval_func(self.rng, self.network_params)
 
-    # TODO: implement
     # Useful features could be: total deltas of grad norm and grad var, instance info...
     def get_default_state(self, _):
         return np.array([self.c_step, self.c_step * self.instance["total_timesteps"]])
