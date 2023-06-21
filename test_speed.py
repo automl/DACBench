@@ -31,14 +31,14 @@ config_cartpole_full =  {
             "gamma": 0.99,
             "gae_lambda": 0.95,
             "clip_eps": 0.2,
-            "ent_coef": 0.01,
+            "ent_coef": 0.1,
             "vf_coef": 0.5,
             "max_grad_norm": 0.5,
             "activation": "tanh",
             "hidden_size": 64,
-            "env_name": "CartPole-v1", 
+            "env_name": "Pendulum-v1", 
             "num_eval_episodes": 10,
-            "env_framework": "gym",
+            "env_framework": "gymnax",
             "checkpoint_dir": "test_cartpole"}
 
 config_minatar_breakout =  {

@@ -18,6 +18,7 @@ class ActorCritic(nn.Module):
     action_dim: Sequence[int]
     activation: str = "tanh"
     hidden_size: int = 64
+    discrete = True
 
     @nn.compact
     def __call__(self, x):
@@ -40,7 +41,11 @@ class ActorCritic(nn.Module):
         actor_mean = nn.Dense(
             self.action_dim, kernel_init=orthogonal(0.01), bias_init=constant(0.0)
         )(actor_mean)
-        pi = distrax.Categorical(logits=actor_mean)
+        if self.discrete:
+            pi = distrax.Categorical(logits=actor_mean)
+        else:
+            actor_logtstd = self.param("log_std", nn.initializers.zeros, (self.action_dim,))
+            pi = distrax.MultivariateNormalDiag(actor_mean, jnp.exp(actor_logtstd))
 
         critic = nn.Dense(
             self.hidden_size,

@@ -5,6 +5,7 @@ from flax.training import orbax_utils
 import orbax
 from dacbench import AbstractEnv
 from dacbench.envs.autorl_utils import make_train_ppo, make_eval, ActorCritic, make_env
+import gymnax
 
 
 class AutoRLEnv(AbstractEnv):
@@ -44,11 +45,21 @@ class AutoRLEnv(AbstractEnv):
         self.last_obsv, self.last_env_state = jax.vmap(
             self.env.reset, in_axes=(0, None)
         )(reset_rng, self.env_params)
+        if isinstance(self.env.action_space(), gymnax.environments.spaces.Discrete):
+            action_size = self.env.action_space(self.env_params).n
+            discrete = True
+        elif isinstance(self.env.action_space(), gymnax.environments.spaces.Box):
+            action_size = self.env.action_space(self.env_params).shape[0]
+            discrete = False
+        else:
+            raise NotImplementedError(f"Only Discrete and Box action spaces are supported, got {self.env.action_space()}.")
+        
         self.network = ActorCritic(
-            self.env.action_space(self.env_params).n,
+            action_size,
             activation=self.instance["activation"],
             hidden_size=self.instance["hidden_size"],
         )
+        self.network.discrete = discrete
         init_x = jnp.zeros(self.env.observation_space(self.env_params).shape)
         _, _rng = jax.random.split(self.rng)
         if "load" in options.keys():
