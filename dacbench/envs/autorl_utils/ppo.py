@@ -178,16 +178,15 @@ def make_train_ppo(config, env, network):
                 _update_epoch, update_state, None, config["update_epochs"]
             )
             train_state = update_state[0]
-            metric = traj_batch.info
             rng = update_state[-1]
 
             runner_state = (train_state, env_state, last_obs, rng)
             if config["track_traj"]:
-                out = (metric, loss_info, grads, traj_batch, {"advantages": advantages, "minibatches": minibatches})
+                out = (loss_info, grads, traj_batch, {"advantages": advantages, "minibatches": minibatches})
             elif config["track_metrics"]:
-                out = (metric, loss_info, grads, advantages)
+                out = (loss_info, grads, {"advantages": advantages})
             else:
-                out = metric
+                out = None
             return runner_state, out
 
         rng, _rng = jax.random.split(rng)

@@ -2,99 +2,12 @@ import jax
 import gymnax
 import numpy as np
 import jax.numpy as jnp
-from typing import Sequence
 from gymnax.wrappers.purerl import LogWrapper, FlattenObservationWrapper
-import flax.linen as nn
-from flax.linen.initializers import constant, orthogonal
-import distrax
 import gymnasium as gym
 from gymnasium.wrappers import AutoResetWrapper, FlattenObservation
 import chex
 from typing import Union
 from gymnax.environments import EnvState, EnvParams
-
-
-class ActorCritic(nn.Module):
-    action_dim: Sequence[int]
-    activation: str = "tanh"
-    hidden_size: int = 64
-    discrete: bool = True
-
-    def setup(self):
-        if self.activation == "relu":
-            self.activation_func = nn.relu
-        else:
-            self.activation_func = nn.tanh
-        self.dense0 = nn.Dense(
-            self.hidden_size,
-            kernel_init=orthogonal(np.sqrt(2)),
-            bias_init=constant(0.0),
-        )
-        self.dense1 = nn.Dense(
-            self.hidden_size,
-            kernel_init=orthogonal(np.sqrt(2)),
-            bias_init=constant(0.0),
-        )
-        self.out_layer = nn.Dense(
-            self.action_dim, kernel_init=orthogonal(0.01), bias_init=constant(0.0)
-        )
-
-        self.actor_logtstd = self.param("log_std", nn.initializers.zeros, (self.action_dim,))
-
-        self.critic0 = nn.Dense(
-            self.hidden_size,
-            kernel_init=orthogonal(np.sqrt(2)),
-            bias_init=constant(0.0),
-        )
-        self.critic1 = nn.Dense(
-            self.hidden_size,
-            kernel_init=orthogonal(np.sqrt(2)),
-            bias_init=constant(0.0),
-        )
-        self.critic_out = nn.Dense(1, kernel_init=orthogonal(1.0), bias_init=constant(0.0))
-
-    def __call__(self, x):
-        actor_mean = self.dense0(x)
-        actor_mean = self.activation_func(actor_mean)
-        actor_mean = self.dense1(actor_mean)
-        actor_mean = self.activation_func(actor_mean)
-        actor_mean = self.out_layer(actor_mean)
-        if self.discrete:
-            pi = distrax.Categorical(logits=actor_mean)
-        else:
-            pi = distrax.MultivariateNormalDiag(actor_mean, jnp.exp(self.actor_logtstd))
-        
-        critic = self.critic0(x)
-        critic = self.activation_func(critic)
-        critic = self.critic1(critic)
-        critic = self.activation_func(critic)
-        critic = self.critic_out(
-            critic
-        )
-
-        return pi, jnp.squeeze(critic, axis=-1)
-
-
-class Q(nn.Module):
-    action_dim: Sequence[int]
-    activation: str = "tanh"
-
-    @nn.compact
-    def __call__(self, x):
-        if self.activation == "relu":
-            activation = nn.relu
-        else:
-            activation = nn.tanh
-
-        q = nn.Dense(64, kernel_init=orthogonal(np.sqrt(2)), bias_init=constant(0.0))(x)
-        q = activation(q)
-        q = nn.Dense(64, kernel_init=orthogonal(np.sqrt(2)), bias_init=constant(0.0))(q)
-        q = activation(q)
-        q = nn.Dense(
-            self.action_dim, kernel_init=orthogonal(1.0), bias_init=constant(0.0)
-        )(q)
-
-        return q
 
 
 def make_env(instance):
@@ -239,9 +152,14 @@ def make_eval(config, network):
         while not done:
             # SELECT ACTION
             rng, _rng = jax.random.split(rng)
-            pi, value = network.apply(network_params, obsv)
-            action = pi.sample(seed=_rng)
-
+            #TODO: make this pretty
+            try:
+                pi, value = network.apply(network_params, obsv)
+                action = pi.sample(seed=_rng)
+            except:
+                q_values = network.apply(network_params, obsv)
+                action = q_values.argmax(axis=-1)
+            
             # STEP ENV
             rng, _rng = jax.random.split(rng)
             rng_step = jax.random.split(_rng, 1)

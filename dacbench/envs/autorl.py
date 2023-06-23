@@ -4,12 +4,12 @@ import numpy as np
 from flax.training import orbax_utils
 import orbax
 from dacbench import AbstractEnv
-from dacbench.envs.autorl_utils import make_train_ppo, make_eval, ActorCritic, make_env
+from dacbench.envs.autorl_utils import make_train_ppo, make_train_dqn, make_eval, ActorCritic, Q, make_env
 import gymnax
 
 
 class AutoRLEnv(AbstractEnv):
-    ALGORITHMS = {"ppo": make_train_ppo}
+    ALGORITHMS = {"ppo": (make_train_ppo, ActorCritic), "dqn": (make_train_dqn, Q)}
 
     def __init__(self, config) -> None:
         super().__init__(config)
@@ -33,9 +33,11 @@ class AutoRLEnv(AbstractEnv):
             self.get_state = self.get_default_state
 
         if "algorithm" in config.keys():
-            self.make_train = self.ALGORITHMS[config.algorithm]
+            self.make_train = self.ALGORITHMS[config.algorithm][0]
+            self.network_cls = self.ALGORITHMS[config.algorithm][1]
         else:
             self.make_train = make_train_ppo
+            self.network_cls = ActorCritic
 
     def reset(self, seed: int = None, options={}):
         super().reset_(seed)
@@ -54,7 +56,7 @@ class AutoRLEnv(AbstractEnv):
         else:
             raise NotImplementedError(f"Only Discrete and Box action spaces are supported, got {self.env.action_space()}.")
         
-        self.network = ActorCritic(
+        self.network = self.network_cls(
             action_size,
             activation=self.instance["activation"],
             hidden_size=self.instance["hidden_size"],
@@ -67,8 +69,11 @@ class AutoRLEnv(AbstractEnv):
             restored = self.checkpointer.restore(options["load"])
             self.network_params = restored["params"]
             self.instance = restored["config"]
+            if "target" in restored.keys():
+                self.target_params = restored["target"]
         else:
             self.network_params = self.network.init(_rng, init_x)
+            self.target_params = self.network.init(_rng, init_x)
         self.eval_func = make_eval(self.instance, self.network)
         return self.get_state(self), {}
 
@@ -80,17 +85,16 @@ class AutoRLEnv(AbstractEnv):
         self.train_func = jax.jit(
             self.make_train(self.instance, self.env, self.network)
         )
-        runner_state, metrics = self.train_func(
-            self.rng,
-            self.env_params,
-            self.network_params,
-            self.last_obsv,
-            self.last_env_state,
-        )
+
+        train_args = (self.rng, self.env_params, self.network_params, self.last_obsv, self.last_env_state)
+        if self.config.algorithm == "dqn":
+            train_args = (self.rng, self.env_params, self.network_params, self.target_params, self.last_obsv, self.last_env_state)
+
+        runner_state, metrics = self.train_func(*train_args)
         if self.track_traj:
-            metrics, self.loss_info, self.grad_info, self.traj, self.additional_info = metrics
+            self.loss_info, self.grad_info, self.traj, self.additional_info = metrics
         elif self.config.grad_obs:
-            metrics, self.loss_info, self.grad_info, self.additional_info = metrics
+            self.loss_info, self.grad_info, self.additional_info = metrics
         self.network_params = runner_state[0].params
         self.last_obsv = runner_state[2]
         self.last_env_state = runner_state[1]
@@ -99,12 +103,23 @@ class AutoRLEnv(AbstractEnv):
             ckpt = {
                 "config": self.instance,
                 "params": self.network_params,
-                "metrics:": metrics,
             }
+            if "target" in self.instance.keys():
+                if self.instance["target"]:
+                    ckpt["target"] = self.target_params
+
             if self.config.grad_obs:
-                ckpt["value_loss"] = jnp.concatenate(self.loss_info[0], axis=0)
-                ckpt["actor_loss"] = jnp.concatenate(self.loss_info[1], axis=0)
-                ckpt["gradients"] = self.grad_info["params"]
+                if self.config.algorithm == "ppo":
+                    ckpt["value_loss"] = jnp.concatenate(self.loss_info[0], axis=0)
+                    ckpt["actor_loss"] = jnp.concatenate(self.loss_info[1], axis=0)
+                elif self.config.algorithm == "dqn":
+                    ckpt["loss"] = self.loss_info
+
+                if self.config.algorithm == "ppo":
+                    ckpt["gradients"] = self.grad_info["params"]
+                elif self.config.algorithm == "dqn":
+                    ckpt["gradients"] = self.grad_info 
+
                 for k in self.additional_info:
                     if k == "minibatches":
                         ckpt["minibatch"] = {}
@@ -122,11 +137,14 @@ class AutoRLEnv(AbstractEnv):
             if self.instance["track_traj"]:
                 ckpt["trajectory"] = {}
                 ckpt["trajectory"]["states"] = jnp.concatenate(self.traj.obs, axis=0)
-                ckpt["trajectory"]["value"] = jnp.concatenate(self.traj.value, axis=0)
                 ckpt["trajectory"]["action"] = jnp.concatenate(self.traj.action, axis=0)
                 ckpt["trajectory"]["reward"] = jnp.concatenate(self.traj.reward, axis=0)
-                ckpt["trajectory"]["log_prob"] = jnp.concatenate(self.traj.log_prob, axis=0)
                 ckpt["trajectory"]["dones"] = jnp.concatenate(self.traj.done, axis=0)
+                if self.config.algorithm == "ppo":
+                    ckpt["trajectory"]["value"] = jnp.concatenate(self.traj.value, axis=0)
+                    ckpt["trajectory"]["log_prob"] = jnp.concatenate(self.traj.log_prob, axis=0)
+                elif self.config.algorithm == "dqn":
+                    ckpt["trajectory"]["q_pred"] = jnp.concatenate(self.traj.q_pred, axis=0)
             save_args = orbax_utils.save_args_from_target(ckpt)
             checkpoint_name = self.checkpoint_dir + "/"
             if "checkpoint_name" in self.config.keys():
