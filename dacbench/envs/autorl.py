@@ -58,8 +58,9 @@ class AutoRLEnv(AbstractEnv):
             action_size,
             activation=self.instance["activation"],
             hidden_size=self.instance["hidden_size"],
+            discrete=discrete,
         )
-        self.network.discrete = discrete
+
         init_x = jnp.zeros(self.env.observation_space(self.env_params).shape)
         _, _rng = jax.random.split(self.rng)
         if "load" in options.keys():
@@ -155,7 +156,7 @@ class AutoRLEnv(AbstractEnv):
             grad_norm = 0
             grad_var = 0
         else:
-            grad_info = [self.grad_info["params"][k][kk] for k in self.grad_info["params"] for kk in self.grad_info["params"][k]]
-            grad_norm = np.mean([jnp.linalg.norm(g) for g in grad_info])
-            grad_var = np.mean([jnp.var(g) for g in grad_info])
+            grad_info = None #[self.grad_info["params"][k][kk] for k in self.grad_info["params"] for kk in self.grad_info["params"][k]]
+            grad_norm = None# np.mean([jnp.linalg.norm(g) for g in grad_info])
+            grad_var = None#np.mean([jnp.var(g) for g in grad_info])
         return np.array([self.c_step, self.c_step * self.instance["total_timesteps"], grad_norm, grad_var])
