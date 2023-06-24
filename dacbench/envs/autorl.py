@@ -15,7 +15,6 @@ class AutoRLEnv(AbstractEnv):
         super().__init__(config)
         self.checkpoint = self.config["checkpoint"]
         self.checkpoint_dir = self.config["checkpoint_dir"]
-        self.checkpointer = orbax.checkpoint.PyTreeCheckpointer()
         self.rng = jax.random.PRNGKey(self.config.seed)
         self.episode = 0
         self.track_traj = self.config.track_trajectory
@@ -100,15 +99,35 @@ class AutoRLEnv(AbstractEnv):
         self.last_env_state = runner_state[1]
         reward = self.get_reward(self)
         if self.checkpoint:
+            #Checkpoint setup
+            checkpoint_name = self.checkpoint_dir + "/"
+            if "checkpoint_name" in self.config.keys():
+                checkpoint_name += self.config["checkpoint_name"]
+            else:
+                if not self.done:
+                    checkpoint_name += f"_episode_{self.episode}_step_{self.c_step}"
+                else:
+                    checkpoint_name += "final"
+            
             ckpt = {
                 "config": self.instance,
                 "params": self.network_params,
             }
+
             if "target" in self.instance.keys():
                 if self.instance["target"]:
                     ckpt["target"] = self.target_params
 
+            save_args = orbax_utils.save_args_from_target(ckpt)
+            checkpointer = orbax.checkpoint.PyTreeCheckpointer()
+            checkpointer.save(
+                checkpoint_name,
+                ckpt,
+                save_args=save_args
+            )
+
             if self.config.grad_obs:
+                ckpt = {}
                 if self.config.algorithm == "ppo":
                     ckpt["value_loss"] = jnp.concatenate(self.loss_info[0], axis=0)
                     ckpt["actor_loss"] = jnp.concatenate(self.loss_info[1], axis=0)
@@ -133,8 +152,18 @@ class AutoRLEnv(AbstractEnv):
                         ckpt["minibatch"]["targets"] = jnp.concatenate(self.additional_info[k][2], axis=0)
                     else:
                         ckpt[k] = jnp.concatenate(self.additional_info[k], axis=0)
+                
+                save_args = orbax_utils.save_args_from_target(ckpt)
+                checkpointer = orbax.checkpoint.PyTreeCheckpointer()
+                grad_checkpoint = checkpoint_name+"_extras"
+                checkpointer.save(
+                    grad_checkpoint,
+                    ckpt,
+                    save_args=save_args,
+                    )
 
             if self.instance["track_traj"]:
+                ckpt = {}
                 ckpt["trajectory"] = {}
                 ckpt["trajectory"]["states"] = jnp.concatenate(self.traj.obs, axis=0)
                 ckpt["trajectory"]["action"] = jnp.concatenate(self.traj.action, axis=0)
@@ -145,21 +174,16 @@ class AutoRLEnv(AbstractEnv):
                     ckpt["trajectory"]["log_prob"] = jnp.concatenate(self.traj.log_prob, axis=0)
                 elif self.config.algorithm == "dqn":
                     ckpt["trajectory"]["q_pred"] = jnp.concatenate(self.traj.q_pred, axis=0)
-            save_args = orbax_utils.save_args_from_target(ckpt)
-            checkpoint_name = self.checkpoint_dir + "/"
-            if "checkpoint_name" in self.config.keys():
-                checkpoint_name += self.config["checkpoint_name"]
-            else:
-                if not self.done:
-                    checkpoint_name += f"_episode_{self.episode}_step_{self.c_step}"
-                else:
-                    checkpoint_name += "final"
+
+                save_args = orbax_utils.save_args_from_target(ckpt)
+                checkpointer = orbax.checkpoint.PyTreeCheckpointer()
+                traj_checkpoint = checkpoint_name+"_trajectory"
+                checkpointer.save(
+                    traj_checkpoint,
+                    ckpt,
+                    save_args=save_args,
+                    )
             
-            self.checkpointer.save(
-                checkpoint_name,
-                ckpt,
-                save_args=save_args,
-            )
         return self.get_state(self), reward, False, self.done, {}
 
     def get_default_reward(self, _):
