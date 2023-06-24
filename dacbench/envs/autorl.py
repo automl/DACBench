@@ -17,7 +17,6 @@ class AutoRLEnv(AbstractEnv):
         self.checkpoint_dir = self.config["checkpoint_dir"]
         self.rng = jax.random.PRNGKey(self.config.seed)
         self.episode = 0
-        self.track_traj = self.config.track_trajectory
 
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
@@ -79,7 +78,7 @@ class AutoRLEnv(AbstractEnv):
     def step(self, action):
         self.done = super().step_()
         self.instance.update(action)
-        self.instance["track_traj"] = self.track_traj
+        self.instance["track_traj"] = "trajectory" in self.checkpoint
         self.instance["track_metrics"] = self.config.grad_obs
         self.train_func = jax.jit(
             self.make_train(self.instance, self.env, self.network)
@@ -90,10 +89,10 @@ class AutoRLEnv(AbstractEnv):
             train_args = (self.rng, self.env_params, self.network_params, self.target_params, self.last_obsv, self.last_env_state)
 
         runner_state, metrics = self.train_func(*train_args)
-        if self.track_traj:
-            self.loss_info, self.grad_info, self.traj, self.additional_info = metrics
+        if "trajectory" in self.checkpoint:
+            self.loss_info, self.grad_info, self.param_info, self.traj, self.additional_info = metrics
         elif self.config.grad_obs:
-            self.loss_info, self.grad_info, self.additional_info = metrics
+            self.loss_info, self.grad_info, self.param_info, self.additional_info = metrics
         self.network_params = runner_state[0].params
         self.last_obsv = runner_state[2]
         self.last_env_state = runner_state[1]
@@ -111,12 +110,13 @@ class AutoRLEnv(AbstractEnv):
             
             ckpt = {
                 "config": self.instance,
-                "params": self.network_params,
             }
 
-            if "target" in self.instance.keys():
-                if self.instance["target"]:
-                    ckpt["target"] = self.target_params
+            if "policy" in self.checkpoint:
+                ckpt["params"] = self.network_params,
+                if "target" in self.instance.keys():
+                    if self.instance["target"]:
+                        ckpt["target"] = self.target_params
 
             save_args = orbax_utils.save_args_from_target(ckpt)
             checkpointer = orbax.checkpoint.PyTreeCheckpointer()
@@ -126,7 +126,7 @@ class AutoRLEnv(AbstractEnv):
                 save_args=save_args
             )
 
-            if self.config.grad_obs:
+            if "loss" in self.checkpoint:
                 ckpt = {}
                 if self.config.algorithm == "ppo":
                     ckpt["value_loss"] = jnp.concatenate(self.loss_info[0], axis=0)
@@ -134,22 +134,58 @@ class AutoRLEnv(AbstractEnv):
                 elif self.config.algorithm == "dqn":
                     ckpt["loss"] = self.loss_info
 
+                save_args = orbax_utils.save_args_from_target(ckpt)
+                checkpointer = orbax.checkpoint.PyTreeCheckpointer()
+                grad_checkpoint = checkpoint_name+"_loss"
+                checkpointer.save(
+                    grad_checkpoint,
+                    ckpt,
+                    save_args=save_args,
+                    )
+
+            if "gradients" in self.checkpoint:
+                ckpt = {}
                 if self.config.algorithm == "ppo":
                     ckpt["gradients"] = self.grad_info["params"]
                 elif self.config.algorithm == "dqn":
                     ckpt["gradients"] = self.grad_info 
 
+                save_args = orbax_utils.save_args_from_target(ckpt)
+                checkpointer = orbax.checkpoint.PyTreeCheckpointer()
+                grad_checkpoint = checkpoint_name+"_gradients"
+                checkpointer.save(
+                    grad_checkpoint,
+                    ckpt,
+                    save_args=save_args,
+                    )
+            
+            if "param_history" in self.checkpoint:
+                ckpt = {}
+                if self.config.algorithm == "ppo":
+                    ckpt["param_history"] = self.param_info["params"]
+
+                save_args = orbax_utils.save_args_from_target(ckpt)
+                checkpointer = orbax.checkpoint.PyTreeCheckpointer()
+                grad_checkpoint = checkpoint_name+"_params"
+                checkpointer.save(
+                    grad_checkpoint,
+                    ckpt,
+                    save_args=save_args,
+                    )
+
+            if "extras" in self.checkpoint:
+                ckpt = {}
                 for k in self.additional_info:
                     if k == "minibatches":
-                        ckpt["minibatch"] = {}
-                        ckpt["minibatch"]["states"] = jnp.concatenate(self.additional_info[k][0].obs, axis=0)
-                        ckpt["minibatch"]["value"] = jnp.concatenate(self.additional_info[k][0].value, axis=0)
-                        ckpt["minibatch"]["action"] = jnp.concatenate(self.additional_info[k][0].action, axis=0)
-                        ckpt["minibatch"]["reward"] = jnp.concatenate(self.additional_info[k][0].reward, axis=0)
-                        ckpt["minibatch"]["log_prob"] = jnp.concatenate(self.additional_info[k][0].log_prob, axis=0)
-                        ckpt["minibatch"]["dones"] = jnp.concatenate(self.additional_info[k][0].done, axis=0)
-                        ckpt["minibatch"]["advantages"] = jnp.concatenate(self.additional_info[k][1], axis=0)
-                        ckpt["minibatch"]["targets"] = jnp.concatenate(self.additional_info[k][2], axis=0)
+                        ckpt["minibatches"] = {}
+                        ckpt["minibatches"]["states"] = jnp.concatenate(self.additional_info[k][0].obs, axis=0)
+                        ckpt["minibatches"]["value"] = jnp.concatenate(self.additional_info[k][0].value, axis=0)
+                        ckpt["minibatches"]["action"] = jnp.concatenate(self.additional_info[k][0].action, axis=0)
+                        ckpt["minibatches"]["reward"] = jnp.concatenate(self.additional_info[k][0].reward, axis=0)
+                        ckpt["minibatches"]["log_prob"] = jnp.concatenate(self.additional_info[k][0].log_prob, axis=0)
+                        ckpt["minibatches"]["dones"] = jnp.concatenate(self.additional_info[k][0].done, axis=0)
+                        ckpt["minibatches"]["advantages"] = jnp.concatenate(self.additional_info[k][1], axis=0)
+                        ckpt["minibatches"]["targets"] = jnp.concatenate(self.additional_info[k][2], axis=0)
                     else:
                         ckpt[k] = jnp.concatenate(self.additional_info[k], axis=0)
                 
@@ -162,7 +198,7 @@ class AutoRLEnv(AbstractEnv):
                     save_args=save_args,
                     )
 
-            if self.instance["track_traj"]:
+            if "trajectory" in self.checkpoint:
                 ckpt = {}
                 ckpt["trajectory"] = {}
                 ckpt["trajectory"]["states"] = jnp.concatenate(self.traj.obs, axis=0)

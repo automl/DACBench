@@ -46,9 +46,10 @@ def make_train_dqn(config, env, network):
                 q_pred = q_pred[jnp.arange(q_pred.shape[0]), actions.squeeze().astype(int)]  # (batch_size,)
                 return ((q_pred - next_q_value) ** 2).mean(), q_pred
 
+            params = train_state.params
             (loss_value, q_pred), grads = jax.value_and_grad(mse_loss, has_aux=True)(train_state.params)
             train_state = train_state.apply_gradients(grads=grads)
-            return train_state, loss_value, q_pred, grads
+            return train_state, loss_value, q_pred, grads, params
     
         def _update_step(runner_state, unused):
             runner_state, replay = runner_state
@@ -94,7 +95,7 @@ def make_train_dqn(config, env, network):
                 batch_as = actions[batch_inds, env_indices]
                 batch_ds = dones[batch_inds, env_indices].reshape(-1, 1)
                 batch_rs = rewards[batch_inds, env_indices].reshape(-1, 1)
-                train_state, loss, q_pred, grads = update(
+                train_state, loss, q_pred, grads, param_history = update(
                         train_state,
                         batch_obs,
                         batch_as,
@@ -102,10 +103,10 @@ def make_train_dqn(config, env, network):
                         batch_rs,
                         batch_ds,
                     )
-                return train_state, loss, q_pred, grads
+                return train_state, loss, q_pred, grads, param_history
 
             def dont_update(train_state):
-                return train_state, ((jnp.array([0]) - jnp.array([0])) ** 2).mean(), jnp.zeros(config["batch_size"]), train_state.params
+                return train_state, ((jnp.array([0]) - jnp.array([0])) ** 2).mean(), jnp.zeros(config["batch_size"]), train_state.params, train_state.params
             
             def target_update():
                 return train_state.replace(target_params=optax.incremental_update(train_state.params, train_state.target_params, config["tau"]))
@@ -113,14 +114,14 @@ def make_train_dqn(config, env, network):
             def dont_target_update():
                 return train_state
             
-            train_state, loss, q_pred, grads = jax.lax.cond((global_step > config["learning_starts"]) & (global_step % config["train_frequency"] == 0), do_update, dont_update, train_state)
+            train_state, loss, q_pred, grads, param_history = jax.lax.cond((global_step > config["learning_starts"]) & (global_step % config["train_frequency"] == 0), do_update, dont_update, train_state)
             if config["target"]:
                 train_state = jax.lax.cond((global_step > config["learning_starts"]) & (global_step % config["target_network_frequency"] == 0), target_update, dont_target_update)
 
             runner_state = (train_state, env_state, global_step, obsv, rng)
             replay = (observations, actions, next_observations, rewards, dones, pos)
             if config["track_traj"]:
-                metric = (loss, grads, Transition(obs=last_obs, action=action, reward=reward, done=done, info=info, q_pred=[q_pred]), {})
+                metric = (loss, grads, param_history, Transition(obs=last_obs, action=action, reward=reward, done=done, info=info, q_pred=[q_pred]), {})
             elif config["track_metrics"]:
                 metric = (loss, grads, {"q_pred": [q_pred]})
             else:

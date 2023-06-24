@@ -51,7 +51,7 @@ AUTORL_DEFAULTS = objdict(
         "cutoff": 1000,
         "seed": 0,
         "benchmark_info": INFO,
-        "checkpoint": True,
+        "checkpoint": ["policy"],
         "checkpoint_dir": "autorl_checkpoints",
         "instance_set": {0: DEFAULT_RL_CONFIG},
         "track_trajectory": False,

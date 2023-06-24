@@ -142,7 +142,7 @@ def make_train_ppo(config, env, network):
                     )
                     train_state = train_state.apply_gradients(grads=grads)
                     if config["track_metrics"]:
-                        out = (total_loss, grads)
+                        out = (total_loss, grads, train_state.params)
                     else:
                         out = (None, None)
                     return train_state, out
@@ -167,14 +167,14 @@ def make_train_ppo(config, env, network):
                     ),
                     shuffled_batch,
                 )
-                train_state, (total_loss, grads) = jax.lax.scan(
+                train_state, (total_loss, grads, param_history) = jax.lax.scan(
                     _update_minbatch, train_state, minibatches
                 )
                 update_state = (train_state, traj_batch, advantages, targets, rng)
-                return update_state, (total_loss, grads, minibatches)
+                return update_state, (total_loss, grads, param_history, minibatches)
 
             update_state = (train_state, traj_batch, advantages, targets, rng)
-            update_state, (loss_info, grads, minibatches) = jax.lax.scan(
+            update_state, (loss_info, grads, param_history, minibatches) = jax.lax.scan(
                 _update_epoch, update_state, None, config["update_epochs"]
             )
             train_state = update_state[0]
@@ -182,9 +182,9 @@ def make_train_ppo(config, env, network):
 
             runner_state = (train_state, env_state, last_obs, rng)
             if config["track_traj"]:
-                out = (loss_info, grads, traj_batch, {"advantages": advantages, "minibatches": minibatches})
+                out = (loss_info, grads, param_history, traj_batch, {"advantages": advantages, "minibatches": minibatches})
             elif config["track_metrics"]:
-                out = (loss_info, grads, {"advantages": advantages})
+                out = (loss_info, grads, param_history, {"advantages": advantages})
             else:
                 out = None
             return runner_state, out
