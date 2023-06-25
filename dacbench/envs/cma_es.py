@@ -17,8 +17,8 @@ from cma.evolution_strategy import CMAEvolutionStrategy
 
 from dacbench import AbstractEnv
 
-resource.setrlimit(resource.RLIMIT_STACK, (2**35, -1))
-sys.setrecursionlimit(10**9)
+#resource.setrlimit(resource.RLIMIT_STACK, (2**35, -1))
+#sys.setrecursionlimit(10**9)
 
 warnings.filterwarnings("ignore")
 

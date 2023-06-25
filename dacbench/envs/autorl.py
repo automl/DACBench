@@ -64,11 +64,12 @@ class AutoRLEnv(AbstractEnv):
         init_x = jnp.zeros(self.env.observation_space(self.env_params).shape)
         _, _rng = jax.random.split(self.rng)
         if "load" in options.keys():
-            restored = self.checkpointer.restore(options["load"])
-            self.network_params = restored["params"]
+            checkpointer = orbax.checkpoint.PyTreeCheckpointer()
+            restored = checkpointer.restore(options["load"])
+            self.network_params = restored["params"][0]
             self.instance = restored["config"]
             if "target" in restored.keys():
-                self.target_params = restored["target"]
+                self.target_params = restored["target"][0]
         else:
             self.network_params = self.network.init(_rng, init_x)
             self.target_params = self.network.init(_rng, init_x)
@@ -113,7 +114,7 @@ class AutoRLEnv(AbstractEnv):
             }
 
             if "policy" in self.checkpoint:
-                ckpt["params"] = self.network_params,
+                ckpt["params"] = self.network_params
                 if "target" in self.instance.keys():
                     if self.instance["target"]:
                         ckpt["target"] = self.target_params
