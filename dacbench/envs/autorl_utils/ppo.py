@@ -144,7 +144,7 @@ def make_train_ppo(config, env, network):
                     if config["track_metrics"]:
                         out = (total_loss, grads, train_state.params)
                     else:
-                        out = (None, None)
+                        out = (None, None, None)
                     return train_state, out
 
                 train_state, traj_batch, advantages, targets, rng = update_state
