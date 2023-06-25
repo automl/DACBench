@@ -66,10 +66,14 @@ class AutoRLEnv(AbstractEnv):
         if "load" in options.keys():
             checkpointer = orbax.checkpoint.PyTreeCheckpointer()
             restored = checkpointer.restore(options["load"])
-            self.network_params = restored["params"][0]
+            self.network_params = restored["params"]
+            if isinstance(self.network_params, list):
+                self.network_params = self.network_params[0]
             self.instance = restored["config"]
             if "target" in restored.keys():
                 self.target_params = restored["target"][0]
+                if isinstance(self.target_params, list):
+                    self.target_params = self.target_params[0]
         else:
             self.network_params = self.network.init(_rng, init_x)
             self.target_params = self.network.init(_rng, init_x)
