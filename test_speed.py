@@ -81,10 +81,10 @@ config_minatar_full =  {
 
 bench = AutoRLBenchmark()
 bench.config.instance_set = {0: config_cartpole_dqn}
-bench.config.checkpoint = True
+bench.config.checkpoint = ["policy", "loss", "optimizer_state", "extras"]
+bench.config.track_traj = True
 bench.config.checkpoint_dir = "test_cartpole"
 bench.config.grad_obs = True
-bench.config.track_trajectory = True
 bench.config.cutoff = 1
 bench.config.algorithm = "dqn"
 env = bench.get_environment()

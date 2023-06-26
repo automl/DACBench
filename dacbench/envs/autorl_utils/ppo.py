@@ -3,7 +3,7 @@ import jax
 import jax.numpy as jnp
 import optax
 from typing import NamedTuple
-from flax.training.train_state import TrainState
+from .common import ExtendedTrainState
 
 
 class Transition(NamedTuple):
@@ -24,15 +24,20 @@ def make_train_ppo(config, env, network):
         config["num_envs"] * config["num_steps"] // config["num_minibatches"]
     )
 
-    def train(rng, env_params, network_params, obsv, env_state):
+    def train(rng, env_params, network_params, opt_state, obsv, env_state):
         tx = optax.chain(
-            optax.clip_by_global_norm(config["max_grad_norm"]),
-            optax.adam(config["lr"], eps=1e-5),
-        )
-        train_state = TrainState.create(
+                optax.clip_by_global_norm(config["max_grad_norm"]),
+                optax.adam(config["lr"], eps=1e-5),
+            )
+        
+        if opt_state is None:
+            opt_state = tx.init(network_params)
+
+        train_state = ExtendedTrainState.create_with_opt_state(
             apply_fn=network.apply,
             params=network_params,
             tx=tx,
+            opt_state=opt_state,
         )
 
         # TRAIN LOOP
@@ -137,12 +142,13 @@ def make_train_ppo(config, env, network):
                         return total_loss, (value_loss, loss_actor, entropy)
 
                     grad_fn = jax.value_and_grad(_loss_fn, has_aux=True)
-                    total_loss, grads = grad_fn(
+                    opt_state = train_state.opt_state
+                    total_loss, grads= grad_fn(
                         train_state.params, traj_batch, advantages, targets
                     )
                     train_state = train_state.apply_gradients(grads=grads)
                     if config["track_metrics"]:
-                        out = (total_loss, grads, train_state.params)
+                        out = (total_loss, grads, opt_state)
                     else:
                         out = (None, None, None)
                     return train_state, out
@@ -167,14 +173,14 @@ def make_train_ppo(config, env, network):
                     ),
                     shuffled_batch,
                 )
-                train_state, (total_loss, grads, param_history) = jax.lax.scan(
+                train_state, (total_loss, grads, opt_state) = jax.lax.scan(
                     _update_minbatch, train_state, minibatches
                 )
                 update_state = (train_state, traj_batch, advantages, targets, rng)
-                return update_state, (total_loss, grads, param_history, minibatches)
+                return update_state, (total_loss, grads, opt_state, minibatches)
 
             update_state = (train_state, traj_batch, advantages, targets, rng)
-            update_state, (loss_info, grads, param_history, minibatches) = jax.lax.scan(
+            update_state, (loss_info, grads, opt_state, minibatches) = jax.lax.scan(
                 _update_epoch, update_state, None, config["update_epochs"]
             )
             train_state = update_state[0]
@@ -182,9 +188,9 @@ def make_train_ppo(config, env, network):
 
             runner_state = (train_state, env_state, last_obs, rng)
             if config["track_traj"]:
-                out = (loss_info, grads, param_history, traj_batch, {"advantages": advantages, "minibatches": minibatches})
+                out = (loss_info, grads, opt_state, traj_batch, {"advantages": advantages, "minibatches": minibatches})
             elif config["track_metrics"]:
-                out = (loss_info, grads, param_history, {"advantages": advantages})
+                out = (loss_info, grads, opt_state, {"advantages": advantages})
             else:
                 out = None
             return runner_state, out

@@ -3,7 +3,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import optax
-from flax.training.train_state import TrainState
+from .common import ExtendedTrainState
 from typing import NamedTuple
 
 
@@ -17,12 +17,15 @@ class Transition(NamedTuple):
 
 
 def make_train_dqn(config, env, network):
-    def train(rng, env_params, network_params, target_params, obsv, env_state):
+    def train(rng, env_params, network_params, target_params, opt_state, obsv, env_state):
 
         train_state_kwargs = {"apply_fn": network.apply, "params": network_params, "tx": optax.adam(config["lr"], eps=1e-5)}
+        if opt_state is not None:
+            train_state_kwargs["opt_state"] = opt_state
+            
         if config["target"]:
             train_state_kwargs["target_params"] = target_params
-        train_state = TrainState.create(**train_state_kwargs)
+        train_state = ExtendedTrainState.create_with_opt_state(**train_state_kwargs)
         
         pos = 0
         observations = jnp.zeros((int(config["buffer_size"]), config["num_envs"], *env.observation_space(env_params).shape))
@@ -49,7 +52,7 @@ def make_train_dqn(config, env, network):
             params = train_state.params
             (loss_value, q_pred), grads = jax.value_and_grad(mse_loss, has_aux=True)(train_state.params)
             train_state = train_state.apply_gradients(grads=grads)
-            return train_state, loss_value, q_pred, grads, params
+            return train_state, loss_value, q_pred, grads, train_state.opt_state
     
         def _update_step(runner_state, unused):
             runner_state, replay = runner_state
@@ -95,7 +98,7 @@ def make_train_dqn(config, env, network):
                 batch_as = actions[batch_inds, env_indices]
                 batch_ds = dones[batch_inds, env_indices].reshape(-1, 1)
                 batch_rs = rewards[batch_inds, env_indices].reshape(-1, 1)
-                train_state, loss, q_pred, grads, param_history = update(
+                train_state, loss, q_pred, grads, opt_state = update(
                         train_state,
                         batch_obs,
                         batch_as,
@@ -103,10 +106,10 @@ def make_train_dqn(config, env, network):
                         batch_rs,
                         batch_ds,
                     )
-                return train_state, loss, q_pred, grads, param_history
+                return train_state, loss, q_pred, grads, opt_state
 
             def dont_update(train_state):
-                return train_state, ((jnp.array([0]) - jnp.array([0])) ** 2).mean(), jnp.zeros(config["batch_size"]), train_state.params, train_state.params
+                return train_state, ((jnp.array([0]) - jnp.array([0])) ** 2).mean(), jnp.zeros(config["batch_size"]), train_state.params, train_state.opt_state
             
             def target_update():
                 return train_state.replace(target_params=optax.incremental_update(train_state.params, train_state.target_params, config["tau"]))
@@ -114,16 +117,16 @@ def make_train_dqn(config, env, network):
             def dont_target_update():
                 return train_state
             
-            train_state, loss, q_pred, grads, param_history = jax.lax.cond((global_step > config["learning_starts"]) & (global_step % config["train_frequency"] == 0), do_update, dont_update, train_state)
+            train_state, loss, q_pred, grads, opt_state = jax.lax.cond((global_step > config["learning_starts"]) & (global_step % config["train_frequency"] == 0), do_update, dont_update, train_state)
             if config["target"]:
                 train_state = jax.lax.cond((global_step > config["learning_starts"]) & (global_step % config["target_network_frequency"] == 0), target_update, dont_target_update)
 
             runner_state = (train_state, env_state, global_step, obsv, rng)
             replay = (observations, actions, next_observations, rewards, dones, pos)
             if config["track_traj"]:
-                metric = (loss, grads, param_history, Transition(obs=last_obs, action=action, reward=reward, done=done, info=info, q_pred=[q_pred]), {})
+                metric = (loss, grads, opt_state, Transition(obs=last_obs, action=action, reward=reward, done=done, info=info, q_pred=[q_pred]), {})
             elif config["track_metrics"]:
-                metric = (loss, grads, {"q_pred": [q_pred]})
+                metric = (loss, grads, opt_state, {"q_pred": [q_pred]})
             else:
                 metric = None
             return (runner_state, replay), metric

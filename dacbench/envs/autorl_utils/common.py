@@ -8,6 +8,22 @@ from gymnasium.wrappers import AutoResetWrapper, FlattenObservation
 import chex
 from typing import Union
 from gymnax.environments import EnvState, EnvParams
+from flax.training.train_state import TrainState
+
+
+class ExtendedTrainState(TrainState):
+    @classmethod
+    def create_with_opt_state(cls, *, apply_fn, params, tx, opt_state, **kwargs):
+        if opt_state is None:
+            opt_state = tx.init(params)
+        return cls(
+            step=0,
+            apply_fn=apply_fn,
+            params=params,
+            tx=tx,
+            opt_state=opt_state,
+            **kwargs,
+        )
 
 
 def make_env(instance):

@@ -74,9 +74,14 @@ class AutoRLEnv(AbstractEnv):
                 self.target_params = restored["target"][0]
                 if isinstance(self.target_params, list):
                     self.target_params = self.target_params[0]
+            try:
+                self.opt_state = restored["opt_state"]
+            except:
+                self.opt_state = None
         else:
             self.network_params = self.network.init(_rng, init_x)
             self.target_params = self.network.init(_rng, init_x)
+            self.opt_state = None
         self.eval_func = make_eval(self.instance, self.network)
         return self.get_state(self), {}
 
@@ -89,15 +94,15 @@ class AutoRLEnv(AbstractEnv):
             self.make_train(self.instance, self.env, self.network)
         )
 
-        train_args = (self.rng, self.env_params, self.network_params, self.last_obsv, self.last_env_state)
+        train_args = (self.rng, self.env_params, self.network_params, self.opt_state, self.last_obsv, self.last_env_state)
         if self.config.algorithm == "dqn":
-            train_args = (self.rng, self.env_params, self.network_params, self.target_params, self.last_obsv, self.last_env_state)
+            train_args = (self.rng, self.env_params, self.network_params, self.target_params, self.opt_state, self.last_obsv, self.last_env_state)
 
         runner_state, metrics = self.train_func(*train_args)
         if "trajectory" in self.checkpoint:
-            self.loss_info, self.grad_info, self.param_info, self.traj, self.additional_info = metrics
+            self.loss_info, self.grad_info, self.opt_info, self.traj, self.additional_info = metrics
         elif self.config.grad_obs:
-            self.loss_info, self.grad_info, self.param_info, self.additional_info = metrics
+            self.loss_info, self.grad_info, self.opt_info, self.additional_info = metrics
         self.network_params = runner_state[0].params
         self.last_obsv = runner_state[2]
         self.last_env_state = runner_state[1]
@@ -115,6 +120,7 @@ class AutoRLEnv(AbstractEnv):
             
             ckpt = {
                 "config": self.instance,
+                "optimizer_state": self.opt_state,
             }
 
             if "policy" in self.checkpoint:
@@ -141,39 +147,9 @@ class AutoRLEnv(AbstractEnv):
 
                 save_args = orbax_utils.save_args_from_target(ckpt)
                 checkpointer = orbax.checkpoint.PyTreeCheckpointer()
-                grad_checkpoint = checkpoint_name+"_loss"
+                loss_checkpoint = checkpoint_name+"_loss"
                 checkpointer.save(
-                    grad_checkpoint,
-                    ckpt,
-                    save_args=save_args,
-                    )
-
-            if "gradients" in self.checkpoint:
-                ckpt = {}
-                if self.config.algorithm == "ppo":
-                    ckpt["gradients"] = self.grad_info["params"]
-                elif self.config.algorithm == "dqn":
-                    ckpt["gradients"] = self.grad_info 
-
-                save_args = orbax_utils.save_args_from_target(ckpt)
-                checkpointer = orbax.checkpoint.PyTreeCheckpointer()
-                grad_checkpoint = checkpoint_name+"_gradients"
-                checkpointer.save(
-                    grad_checkpoint,
-                    ckpt,
-                    save_args=save_args,
-                    )
-            
-            if "param_history" in self.checkpoint:
-                ckpt = {}
-                if self.config.algorithm == "ppo":
-                    ckpt["param_history"] = self.param_info["params"]
-
-                save_args = orbax_utils.save_args_from_target(ckpt)
-                checkpointer = orbax.checkpoint.PyTreeCheckpointer()
-                grad_checkpoint = checkpoint_name+"_params"
-                checkpointer.save(
-                    grad_checkpoint,
+                    loss_checkpoint,
                     ckpt,
                     save_args=save_args,
                     )
@@ -196,9 +172,9 @@ class AutoRLEnv(AbstractEnv):
                 
                 save_args = orbax_utils.save_args_from_target(ckpt)
                 checkpointer = orbax.checkpoint.PyTreeCheckpointer()
-                grad_checkpoint = checkpoint_name+"_extras"
+                extras_checkpoint = checkpoint_name+"_extras"
                 checkpointer.save(
-                    grad_checkpoint,
+                    extras_checkpoint,
                     ckpt,
                     save_args=save_args,
                     )
@@ -239,7 +215,9 @@ class AutoRLEnv(AbstractEnv):
             grad_norm = 0
             grad_var = 0
         else:
-            grad_info = None #[self.grad_info["params"][k][kk] for k in self.grad_info["params"] for kk in self.grad_info["params"][k]]
-            grad_norm = None# np.mean([jnp.linalg.norm(g) for g in grad_info])
-            grad_var = None#np.mean([jnp.var(g) for g in grad_info])
+            if self.config.algorithm == "ppo":
+                self.grad_info = self.grad_info["params"]
+            grad_info = [self.grad_info[k][kk] for k in self.grad_info for kk in self.grad_info[k]]
+            grad_norm = np.mean([jnp.linalg.norm(g) for g in grad_info])
+            grad_var = np.mean([jnp.var(g) for g in grad_info])
         return np.array([self.c_step, self.c_step * self.instance["total_timesteps"], grad_norm, grad_var])
