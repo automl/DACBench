@@ -215,9 +215,12 @@ class AutoRLEnv(AbstractEnv):
             grad_norm = 0
             grad_var = 0
         else:
+            grad_info = self.grad_info
             if self.config.algorithm == "ppo":
-                self.grad_info = self.grad_info["params"]
-            grad_info = [self.grad_info[k][kk] for k in self.grad_info for kk in self.grad_info[k]]
+                import flax
+                grad_info = grad_info["params"]
+                grad_info = {k: v for (k, v) in grad_info.items() if isinstance(v, flax.core.frozen_dict.FrozenDict)}
+            grad_info = [grad_info[g][k] for g in grad_info.keys() for k in grad_info[g].keys()]
             grad_norm = np.mean([jnp.linalg.norm(g) for g in grad_info])
             grad_var = np.mean([jnp.var(g) for g in grad_info])
         return np.array([self.c_step, self.c_step * self.instance["total_timesteps"], grad_norm, grad_var])
