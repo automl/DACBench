@@ -153,21 +153,33 @@ class AutoRLEnv(AbstractEnv):
                     ckpt,
                     save_args=save_args,
                     )
+                
+            if "minibatches" in self.checkpoint and "trajectory" in self.checkpoint:
+                ckpt = {}
+                ckpt["minibatches"] = {}
+                ckpt["minibatches"]["states"] = jnp.concatenate(self.additional_info["minibatches"][0].obs, axis=0)
+                ckpt["minibatches"]["value"] = jnp.concatenate(self.additional_info["minibatches"][0].value, axis=0)
+                ckpt["minibatches"]["action"] = jnp.concatenate(self.additional_info["minibatches"][0].action, axis=0)
+                ckpt["minibatches"]["reward"] = jnp.concatenate(self.additional_info["minibatches"][0].reward, axis=0)
+                ckpt["minibatches"]["log_prob"] = jnp.concatenate(self.additional_info["minibatches"][0].log_prob, axis=0)
+                ckpt["minibatches"]["dones"] = jnp.concatenate(self.additional_info["minibatches"][0].done, axis=0)
+                ckpt["minibatches"]["advantages"] = jnp.concatenate(self.additional_info["minibatches"][1], axis=0)
+                ckpt["minibatches"]["targets"] = jnp.concatenate(self.additional_info["minibatches"][2], axis=0)
+                save_args = orbax_utils.save_args_from_target(ckpt)
+                checkpointer = orbax.checkpoint.PyTreeCheckpointer()
+                minibatch_checkpoint = checkpoint_name+"_minibatches"
+                checkpointer.save(
+                    minibatch_checkpoint,
+                    ckpt,
+                    save_args=save_args,
+                    )
 
             if "extras" in self.checkpoint:
                 ckpt = {}
                 for k in self.additional_info:
-                    if k == "minibatches":
-                        ckpt["minibatches"] = {}
-                        ckpt["minibatches"]["states"] = jnp.concatenate(self.additional_info[k][0].obs, axis=0)
-                        ckpt["minibatches"]["value"] = jnp.concatenate(self.additional_info[k][0].value, axis=0)
-                        ckpt["minibatches"]["action"] = jnp.concatenate(self.additional_info[k][0].action, axis=0)
-                        ckpt["minibatches"]["reward"] = jnp.concatenate(self.additional_info[k][0].reward, axis=0)
-                        ckpt["minibatches"]["log_prob"] = jnp.concatenate(self.additional_info[k][0].log_prob, axis=0)
-                        ckpt["minibatches"]["dones"] = jnp.concatenate(self.additional_info[k][0].done, axis=0)
-                        ckpt["minibatches"]["advantages"] = jnp.concatenate(self.additional_info[k][1], axis=0)
-                        ckpt["minibatches"]["targets"] = jnp.concatenate(self.additional_info[k][2], axis=0)
-                    else:
+                    if k == "param_history":
+                        ckpt[k] = self.additional_info[k]
+                    elif k != "minibatches":
                         ckpt[k] = jnp.concatenate(self.additional_info[k], axis=0)
                 
                 save_args = orbax_utils.save_args_from_target(ckpt)

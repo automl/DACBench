@@ -177,10 +177,10 @@ def make_train_ppo(config, env, network):
                     _update_minbatch, train_state, minibatches
                 )
                 update_state = (train_state, traj_batch, advantages, targets, rng)
-                return update_state, (total_loss, grads, opt_state, minibatches)
+                return update_state, (total_loss, grads, opt_state, minibatches, train_state.params.unfreeze().copy())
 
             update_state = (train_state, traj_batch, advantages, targets, rng)
-            update_state, (loss_info, grads, opt_state, minibatches) = jax.lax.scan(
+            update_state, (loss_info, grads, opt_state, minibatches, param_hist) = jax.lax.scan(
                 _update_epoch, update_state, None, config["update_epochs"]
             )
             train_state = update_state[0]
@@ -188,13 +188,13 @@ def make_train_ppo(config, env, network):
 
             runner_state = (train_state, env_state, last_obs, rng)
             if config["track_traj"]:
-                out = (loss_info, grads, opt_state, traj_batch, {"advantages": advantages, "minibatches": minibatches})
+                out = (loss_info, grads, opt_state, traj_batch, {"advantages": advantages, "param_history": param_hist["params"], "minibatches": minibatches})
             elif config["track_metrics"]:
-                out = (loss_info, grads, opt_state, {"advantages": advantages})
+                out = (loss_info, grads, opt_state, {"advantages": advantages, "param_history": param_hist["params"]})
             else:
                 out = None
             return runner_state, out
-
+        
         rng, _rng = jax.random.split(rng)
         runner_state = (train_state, env_state, obsv, _rng)
         runner_state, out = jax.lax.scan(
