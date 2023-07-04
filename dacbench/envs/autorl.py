@@ -120,8 +120,10 @@ class AutoRLEnv(AbstractEnv):
             
             ckpt = {
                 "config": self.instance,
-                "optimizer_state": self.opt_info,
             }
+
+            if "opt_state" in self.checkpoint:
+                ckpt["optimizer_state"] = self.opt_info
 
             if "policy" in self.checkpoint:
                 ckpt["params"] = self.network_params
