@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import seaborn as sb
+import numpy as np
 
 from dacbench import benchmarks
 from dacbench.logger import Logger
@@ -30,22 +31,27 @@ def run_benchmark(env, agent, num_episodes, logger=None):
         logger.reset_episode()
         logger.set_env(env)
 
+    rewards = []
     for _ in range(num_episodes):
         state, _ = env.reset()
         terminated, truncated = False, False
+        r = 0
         reward = 0
         while not (terminated or truncated):
             action = agent.act(state, reward)
             next_state, reward, terminated, truncated, _ = env.step(action)
             agent.train(next_state, reward)
+            r += reward
             state = next_state
             if logger is not None:
                 logger.next_step()
         agent.end_episode(state, reward)
+        rewards.append(r)
 
         if logger is not None:
             logger.next_episode()
     env.close()
+    return np.mean(rewards)
 
 
 def run_dacbench(results_path, agent_method, num_episodes, bench=None, seeds=None):

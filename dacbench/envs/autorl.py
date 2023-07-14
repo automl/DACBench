@@ -45,14 +45,14 @@ class AutoRLEnv(AbstractEnv):
         self.last_obsv, self.last_env_state = jax.vmap(
             self.env.reset, in_axes=(0, None)
         )(reset_rng, self.env_params)
-        if isinstance(self.env.action_space(), gymnax.environments.spaces.Discrete):
+        if isinstance(self.env.action_space(self.env_params), gymnax.environments.spaces.Discrete):
             action_size = self.env.action_space(self.env_params).n
             discrete = True
-        elif isinstance(self.env.action_space(), gymnax.environments.spaces.Box):
+        elif isinstance(self.env.action_space(self.env_params), gymnax.environments.spaces.Box):
             action_size = self.env.action_space(self.env_params).shape[0]
             discrete = False
         else:
-            raise NotImplementedError(f"Only Discrete and Box action spaces are supported, got {self.env.action_space()}.")
+            raise NotImplementedError(f"Only Discrete and Box action spaces are supported, got {self.env.action_space(self.env_params)}.")
         
         self.network = self.network_cls(
             action_size,
@@ -86,6 +86,10 @@ class AutoRLEnv(AbstractEnv):
         return self.get_state(self), {}
 
     def step(self, action):
+        if "algorithm" in action.keys():
+            print(f"Changing algorithm to {action['algorithm']} - attention, this will reinstantiate the network!")
+            self.switch_algorithm(action["algorithm"])
+
         self.done = super().step_()
         self.instance.update(action)
         self.instance["track_traj"] = "trajectory" in self.checkpoint
@@ -111,10 +115,10 @@ class AutoRLEnv(AbstractEnv):
             #Checkpoint setup
             checkpoint_name = self.checkpoint_dir + "/"
             if "checkpoint_name" in self.config.keys():
-                checkpoint_name += self.config["checkpoint_name"]
+                checkpoint_name += self.config["checkpoint_name"] + "_"
             else:
                 if not self.done:
-                    checkpoint_name += f"_episode_{self.episode}_step_{self.c_step}"
+                    checkpoint_name += f"episode_{self.episode}_step_{self.c_step}"
                 else:
                     checkpoint_name += "final"
             
@@ -128,8 +132,7 @@ class AutoRLEnv(AbstractEnv):
             if "policy" in self.checkpoint:
                 ckpt["params"] = self.network_params
                 if "target" in self.instance.keys():
-                    if self.instance["target"]:
-                        ckpt["target"] = self.target_params
+                    ckpt["target"] = self.target_params
 
             save_args = orbax_utils.save_args_from_target(ckpt)
             checkpointer = orbax.checkpoint.PyTreeCheckpointer()
@@ -219,6 +222,11 @@ class AutoRLEnv(AbstractEnv):
 
     def get_default_reward(self, _):
         return self.eval_func(self.rng, self.network_params)
+    
+    def switch_algorithm(self, new_algorithm):
+        self.make_train = self.ALGORITHMS[new_algorithm][0]
+        self.network_cls = self.ALGORITHMS[new_algorithm][1]
+        self.reset()
 
     # Useful features could be: total deltas of grad norm and grad var, instance info...
     def get_default_state(self, _):

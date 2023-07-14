@@ -1,8 +1,26 @@
 import time
 import numpy as np
 from dacbench.benchmarks import AutoRLBenchmark
+single_env_cartpole =  {
+            "lr": 2.5e-4,
+            "num_envs": 4,
+            "num_steps": 128,
+            "total_timesteps": 1e6,
+            "update_epochs": 4,
+            "num_minibatches": 4,
+            "gamma": 0.99,
+            "gae_lambda": 0.95,
+            "clip_eps": 0.2,
+            "ent_coef": 0.01,
+            "vf_coef": 0.5,
+            "max_grad_norm": 0.5,
+            "activation": "tanh",
+            "hidden_size": 64,
+            "env_name": "CartPole-v1", 
+            "num_eval_episodes": 10,
+            "env_framework": "gymnax"}
 
-config_cartpole =  {
+single_env_cartpole_dynamic =  {
             "lr": 2.5e-4,
             "num_envs": 4,
             "num_steps": 128,
@@ -21,7 +39,81 @@ config_cartpole =  {
             "num_eval_episodes": 10,
             "env_framework": "gymnax"}
 
-config_cartpole_dqn =  {
+single_env_ant =  {
+            "lr": 2.5e-4,
+            "num_envs": 4,
+            "num_steps": 128,
+            "total_timesteps": 1e6,
+            "update_epochs": 4,
+            "num_minibatches": 4,
+            "gamma": 0.99,
+            "gae_lambda": 0.95,
+            "clip_eps": 0.2,
+            "ent_coef": 0.01,
+            "vf_coef": 0.5,
+            "max_grad_norm": 0.5,
+            "activation": "tanh",
+            "hidden_size": 64,
+            "env_name": "CartPole-v1", 
+            "num_eval_episodes": 10,
+            "env_framework": "gymnax"}
+
+single_env_ant_dynamic =  {
+            "lr": 2.5e-4,
+            "num_envs": 4,
+            "num_steps": 128,
+            "total_timesteps": 5e4,
+            "update_epochs": 4,
+            "num_minibatches": 4,
+            "gamma": 0.99,
+            "gae_lambda": 0.95,
+            "clip_eps": 0.2,
+            "ent_coef": 0.01,
+            "vf_coef": 0.5,
+            "max_grad_norm": 0.5,
+            "activation": "tanh",
+            "hidden_size": 64,
+            "env_name": "CartPole-v1", 
+            "num_eval_episodes": 10,
+            "env_framework": "gymnax"}
+
+single_env_minatar =  {
+            "lr": 2.5e-4,
+            "num_envs": 4,
+            "total_timesteps": 1e7,
+            "learning_starts": 1000,
+            "target_network_update_freq": 500,
+            "buffer_size": 1e6,
+            "train_frequency": 1,
+            "batch_size": 32,
+            "epsilon": 0.1,
+            "gamma": 0.9,
+            "target": False,
+            "activation": "tanh",
+            "hidden_size": 64,
+            "env_name": "Asterix-MinAtar", 
+            "num_eval_episodes": 10,
+            "env_framework": "gymnax"}
+
+single_env_minatar_dynamic =  {
+            "lr": 2.5e-4,
+            "num_envs": 4,
+            "total_timesteps": 5e5,
+            "learning_starts": 1000,
+            "target_network_update_freq": 500,
+            "buffer_size": 1e6,
+            "train_frequency": 1,
+            "batch_size": 32,
+            "epsilon": 0.1,
+            "gamma": 0.9,
+            "target": False,
+            "activation": "tanh",
+            "hidden_size": 64,
+            "env_name": "Asterix-MinAtar", 
+            "num_eval_episodes": 10,
+            "env_framework": "gymnax"}
+
+single_env_minigrid =  {
             "lr": 2.5e-4,
             "num_envs": 4,
             "total_timesteps": 1e6,
@@ -35,10 +127,27 @@ config_cartpole_dqn =  {
             "target": False,
             "activation": "tanh",
             "hidden_size": 64,
-            "env_name": "CartPole-v1", 
+            "env_name": "MiniGrid-DoorKey-5x5-v0", 
             "num_eval_episodes": 10,
-            "env_framework": "gymnax",
-            "checkpoint_dir": "test_cartpole"}
+            "env_framework": "gym"}
+
+single_env_minigrid_dynamic =  {
+            "lr": 2.5e-4,
+            "num_envs": 4,
+            "total_timesteps": 5e4,
+            "learning_starts": 1000,
+            "target_network_update_freq": 500,
+            "buffer_size": 1e6,
+            "train_frequency": 1,
+            "batch_size": 32,
+            "epsilon": 0.1,
+            "gamma": 0.9,
+            "target": False,
+            "activation": "tanh",
+            "hidden_size": 64,
+            "env_name": "MiniGrid-DoorKey-5x5-v0", 
+            "num_eval_episodes": 10,
+            "env_framework": "gym"}
 
 config_minatar_breakout =  {
             "lr": 5e-4,
@@ -80,20 +189,45 @@ config_minatar_full =  {
             "track_traj": False}
 
 bench = AutoRLBenchmark()
-bench.config.instance_set = {0: config_cartpole_dqn}
-bench.config.checkpoint = ["policy", "loss", "optimizer_state", "extras"]
-bench.config.track_traj = True
-bench.config.checkpoint_dir = "test_cartpole"
-bench.config.grad_obs = True
+bench.config.instance_set = {0: single_env_minigrid}
+bench.config.checkpoint = ["policy"]
+bench.config.track_traj = False
+bench.config.checkpoint_dir = "autorl_benchmarks/single_env_level_2"
+bench.config.grad_obs = False
 bench.config.cutoff = 1
 bench.config.algorithm = "dqn"
-env = bench.get_environment()
-env.reset()
-start = time.time()
-_, reward, te, tr, _ = env.step({})
-end = time.time() - start
-print(te or tr)
-print(f"CartPole took {np.round(end, decimals=2)}s for {reward} points in 1M steps in the gymnax version (including saving all data).")
+bench.save_config("dacbench/additional_configs/autorl/single_env_level_2.json")
+
+bench = AutoRLBenchmark()
+bench.config.instance_set = {0: single_env_minigrid_dynamic}
+bench.config.checkpoint = ["policy"]
+bench.config.track_traj = False
+bench.config.checkpoint_dir = "autorl_benchmarks/single_env_level_2_dynamic"
+bench.config.grad_obs = False
+bench.config.cutoff = 20
+bench.config.algorithm = "dqn"
+bench.save_config("dacbench/additional_configs/autorl/single_env_level_2_dynamic.json")
+
+bench = AutoRLBenchmark()
+bench.config.instance_set = {0: single_env_minigrid}
+bench.config.checkpoint = ["policy"]
+bench.config.track_traj = False
+bench.config.checkpoint_dir = "autorl_benchmarks/single_env_level_2_test"
+bench.config.grad_obs = False
+bench.config.cutoff = 1
+bench.config.algorithm = "dqn"
+bench.save_config("dacbench/additional_configs/autorl/single_env_level_2_test.json")
+
+bench = AutoRLBenchmark()
+bench.config.instance_set = {0: single_env_minigrid_dynamic}
+bench.config.checkpoint = ["policy"]
+bench.config.track_traj = False
+bench.config.checkpoint_dir = "autorl_benchmarks/single_env_level_2_dynamic_test"
+bench.config.grad_obs = False
+bench.config.cutoff = 20
+bench.config.algorithm = "dqn"
+bench.save_config("dacbench/additional_configs/autorl/single_env_level_2_dynamic_test.json")
+
 
 # bench = AutoRLBenchmark()
 # bench.config.instance_set = {0: config_cartpole_full}

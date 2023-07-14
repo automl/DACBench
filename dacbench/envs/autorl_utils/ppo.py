@@ -39,7 +39,6 @@ def make_train_ppo(config, env, network):
             tx=tx,
             opt_state=opt_state,
         )
-
         # TRAIN LOOP
         def _update_step(runner_state, unused):
             # COLLECT TRAJECTORIES
