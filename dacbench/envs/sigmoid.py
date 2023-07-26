@@ -51,6 +51,19 @@ class SigmoidEnv(AbstractMADACEnv):
         else:
             self.get_state = self.get_default_state
 
+        self.observation = None
+        self.reward = None
+        self.termination = False
+        self.truncation = False
+        self.info = {}
+
+    def save_last(self, next_state, reward, done, info):
+        self.observation = next_state
+        self.reward = reward
+        self.termination = False
+        self.truncation = done
+        self.info = info
+
     def step(self, action: int):
         """
         Execute environment step.
@@ -70,7 +83,10 @@ class SigmoidEnv(AbstractMADACEnv):
         self.last_action = action
         next_state = self.get_state(self)
         self._prev_state = next_state
-        return next_state, self.get_reward(self), False, self.done, {}
+        reward = self.get_reward(self)
+        info = {}
+        self.save_last(next_state, reward, self.done, info)
+        return next_state, reward, False, self.done, {}
 
     def reset(self, seed=None, options={}) -> List[int]:
         """
