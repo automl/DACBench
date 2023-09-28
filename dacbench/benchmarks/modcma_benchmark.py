@@ -7,7 +7,7 @@ import numpy as np
 from modcma import Parameters
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs import CMAStepSizeEnv, ModCMAEnv
+from dacbench.envs import ModStepSizeCMAEnv
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
 ACTIVE = CSH.CategoricalHyperparameter(name="0_active", choices=[True, False])
@@ -85,6 +85,7 @@ MODCMA_DEFAULTS = objdict(
         "budget": 100,
         "cutoff": 1e6,
         "seed": 0,
+        "step_size": False,
         "multi_agent": False,
         "instance_set_path": os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -103,7 +104,7 @@ class ModCMABenchmark(AbstractBenchmark):
     def __init__(self, config_path: str = None, step_size=False, config=None):
         super().__init__(config_path, config)
         self.config = objdict(MODCMA_DEFAULTS.copy(), **(self.config or dict()))
-        self.step_size = step_size
+        self.config.step_size = step_size
 
     def get_environment(self):
         if "instance_set" not in self.config:
@@ -116,12 +117,12 @@ class ModCMABenchmark(AbstractBenchmark):
         ):
             self.read_instance_set(test=True)
 
-        if self.step_size:
+        if self.config.step_size:
             self.config.action_space_class = "Box"
             self.config.action_space_args = [np.array([0]), np.array([10])]
-            env = CMAStepSizeEnv(self.config)
-        else:
-            env = ModCMAEnv(self.config)
+        
+        env = ModStepSizeCMAEnv(self.config)
+        
         for func in self.wrap_funcs:
             env = func(env)
         return env
@@ -150,4 +151,4 @@ class ModCMABenchmark(AbstractBenchmark):
         self.config.seed = seed
         self.read_instance_set()
         self.read_instance_set(test=True)
-        return ModCMAEnv(self.config)
+        return ModStepSizeCMAEnv(self.config)

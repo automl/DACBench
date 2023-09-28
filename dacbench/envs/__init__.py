@@ -39,11 +39,8 @@ else:
 modcma_spec = importlib.util.find_spec("modcma")
 found = modcma_spec is not None
 if found:
-    from dacbench.envs.cma_step_size import CMAStepSizeEnv
-    from dacbench.envs.modcma import ModCMAEnv
-
-    __all__.append("ModCMAEnv")
-    __all__.append("CMAStepSizeEnv")
+    from dacbench.envs.cma_mod_stepsize import ModStepSizeCMAEnv
+    __all__.append("ModStepSizeCMAEnv")
 else:
     warnings.warn(
         "ModCMA Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
