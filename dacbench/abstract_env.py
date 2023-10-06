@@ -116,7 +116,6 @@ class AbstractEnv(gym.Env):
                         "Only float, integer and categorical hyperparameters are supported as of now"
                     )
             # Mixed action space
-            # TODO: implement this
             else:
                 subspaces = {}
                 for t, a in zip(action_types, actions):
