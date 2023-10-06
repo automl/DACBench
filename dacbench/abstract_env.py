@@ -118,7 +118,21 @@ class AbstractEnv(gym.Env):
             # Mixed action space
             # TODO: implement this
             else:
-                raise ValueError("Mixed type config spaces are currently not supported")
+                subspaces = {}
+                for t, a in zip(action_types, actions):
+                    if "Float" in t:
+                        subspaces[a.name] = gym.spaces.Box(low=a.lower, high=a.upper, dtype=np.float32)
+                    elif "Integer" in t or "Categorical" in t:
+                        try:
+                            n = a.upper - a.lower
+                        except:
+                            n = len(a.choices)
+                        subspaces[a.name] = gym.spaces.Discrete(n)
+                    else:
+                        raise ValueError(
+                            "Only float, integer and categorical hyperparameters are supported as of now"
+                        )
+                self.action_space = gym.spaces.Dict(subspaces)
         elif "action_space" in config.keys():
             self.action_space = config["action_space"]
         else:
