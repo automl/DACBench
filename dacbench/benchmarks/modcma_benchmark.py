@@ -17,8 +17,8 @@ SEQUENTIAL = CSH.CategoricalHyperparameter(name="3_sequential", choices=[True, F
 THRESHOLD_CONVERGENCE = CSH.CategoricalHyperparameter(
     name="4_threshold_convergence", choices=[True, False]
 )
-STEP_SIZE_ADAPTION = CSH.CategoricalHyperparameter(
-    name="5_step_size_adaption",
+STEP_SIZE_ADAPTATION = CSH.CategoricalHyperparameter(
+    name="5_step_size_adaptation",
     choices=["csa", "tpa", "msr", "xnes", "m-xnes", "lp-xnes", "psr"],
 )
 MIRRORED = CSH.CategoricalHyperparameter(
@@ -37,18 +37,19 @@ BOUND_CORRECTION = CSH.CategoricalHyperparameter(
     name="91_bound_correction",
     choices=["None", "saturate", "unif_resample", "COTN", "toroidal", "mirror"],
 )
-
+STEP_SIZE = CS.Float(name="92_step_size", bounds=(0.0, 10.0))
 DEFAULT_CFG_SPACE.add_hyperparameter(ACTIVE)
 DEFAULT_CFG_SPACE.add_hyperparameter(ELITIST)
 DEFAULT_CFG_SPACE.add_hyperparameter(ORTHOGONAL)
 DEFAULT_CFG_SPACE.add_hyperparameter(SEQUENTIAL)
 DEFAULT_CFG_SPACE.add_hyperparameter(THRESHOLD_CONVERGENCE)
-DEFAULT_CFG_SPACE.add_hyperparameter(STEP_SIZE_ADAPTION)
+DEFAULT_CFG_SPACE.add_hyperparameter(STEP_SIZE_ADAPTATION)
 DEFAULT_CFG_SPACE.add_hyperparameter(MIRRORED)
 DEFAULT_CFG_SPACE.add_hyperparameter(BASE_SAMPLER)
 DEFAULT_CFG_SPACE.add_hyperparameter(WEIGHTS_OPTION)
 DEFAULT_CFG_SPACE.add_hyperparameter(LOCAL_RESTART)
 DEFAULT_CFG_SPACE.add_hyperparameter(BOUND_CORRECTION)
+DEFAULT_CFG_SPACE.add_hyperparameter(STEP_SIZE)
 
 INFO = {
     "identifier": "ModCMA",
@@ -85,7 +86,6 @@ MODCMA_DEFAULTS = objdict(
         "budget": 100,
         "cutoff": 1e6,
         "seed": 0,
-        "step_size": False,
         "multi_agent": False,
         "instance_set_path": os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -101,10 +101,9 @@ MODCMA_DEFAULTS = objdict(
 
 
 class ModCMABenchmark(AbstractBenchmark):
-    def __init__(self, config_path: str = None, step_size=False, config=None):
+    def __init__(self, config_path: str = None, config=None):
         super().__init__(config_path, config)
         self.config = objdict(MODCMA_DEFAULTS.copy(), **(self.config or dict()))
-        self.config.step_size = step_size
 
     def get_environment(self):
         if "instance_set" not in self.config:
@@ -116,10 +115,6 @@ class ModCMABenchmark(AbstractBenchmark):
             and "test_set_path" in self.config.keys()
         ):
             self.read_instance_set(test=True)
-
-        if self.config.step_size:
-            self.config.action_space_class = "Box"
-            self.config.action_space_args = [np.array([0]), np.array([10])]
         
         env = ModStepSizeCMAEnv(self.config)
         
