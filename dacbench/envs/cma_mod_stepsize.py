@@ -1,5 +1,7 @@
 import numpy as np
 import re
+import warnings
+from collections import OrderedDict
 from IOHexperimenter import IOH_function
 from modcma import ModularCMAES, Parameters
 
@@ -27,26 +29,22 @@ class ModStepSizeCMAEnv(AbstractMADACEnv):
         )
 
         # Find all set hyperparam_defaults and replace cma defaults
-        for name in config["config_space"].keys():
-            value = self.config.get(name)
-            if value:
-                self.hyperparam_defaults[self.uniform_name(name)] = value
+        if "config_space" in config.keys():
+            for name in config["config_space"].keys():
+                value = self.config.get(name)
+                if value:
+                    self.hyperparam_defaults[self.uniform_name(name)] = value
 
         self.get_reward = config.get("reward_function", self.get_default_reward)
         self.get_state = config.get("state_method", self.get_default_state)
 
     def uniform_name(self, name):
         # Convert name of parameters uniformly to lowercase, separated with _ and no numbers
-        pattern = "\d*_(?P<name>[a-zA-Z]*)"
+        pattern = '^\d+_'
 
-        uni_name = re.finditer(pattern, name)
-        n_name: str = ""
-        for n in uni_name:
-            if n_name != "":
-                n_name += "_"
-            n_name += n.group("name")
-        n_name = n_name.lower()
-        return n_name
+        # Use re.sub to remove the leading number and underscore
+        result = re.sub(pattern, '', name)
+        return result.lower()
 
     def reset(self, seed=None, options={}):
         super().reset_(seed)
@@ -67,24 +65,33 @@ class ModStepSizeCMAEnv(AbstractMADACEnv):
 
         # Get all action values and uniform names
         complete_action = {}
-        for hp in action.keys():
-            n_name = self.uniform_name(hp)
-            if n_name == "step_size":
-                # Step size is set separately
-                self.es.parameters.sigma = action[hp][0]
-            else:
-                # Save parameter values from actions
-                complete_action[n_name] = action[hp]
+        if type(action) is OrderedDict:
+            for hp in action.keys():
+                n_name = self.uniform_name(hp)
+                if n_name == "step_size":
+                    # Step size is set separately
+                    self.es.parameters.sigma = action[hp][0]
+                else:
+                    # Save parameter values from actions
+                    complete_action[n_name] = action[hp]
 
-        # Complete the given action with defaults
-        for default in self.hyperparam_defaults.keys():
-            if default == "step_size":
-                continue
-            if default not in complete_action:
-                complete_action[default] = self.hyperparam_defaults[default]
-
+            # Complete the given action with defaults
+            for default in self.hyperparam_defaults.keys():
+                if default == "step_size":
+                    continue
+                if default not in complete_action:
+                    complete_action[default] = self.hyperparam_defaults[default]
+            complete_action = complete_action.values()
+            
+        else:
+            if len(action) < len(Parameters.__modules__):
+                warnings.warn("Len of action is not equal to number of hyperparams." +
+                               "As no dict is given, no meaningfull correction can be done")
+                action.extend([0] * (len(Parameters.__modules__) - len(action)))
+            complete_action = action
+        
         new_parameters = Parameters.from_config_array(
-            self.dim, complete_action.values()
+            self.dim, complete_action
         )
         self.es.parameters.update(
             {m: getattr(new_parameters, m) for m in Parameters.__modules__}

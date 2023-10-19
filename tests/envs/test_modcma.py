@@ -2,10 +2,11 @@ import unittest
 
 import numpy as np
 from gymnasium import spaces
+from collections import OrderedDict
 
 from dacbench import AbstractEnv
 from dacbench.abstract_benchmark import objdict
-from dacbench.envs import ModCMAEnv
+from dacbench.envs import ModStepSizeCMAEnv
 
 
 class TestModCMAEnv(unittest.TestCase):
@@ -22,7 +23,7 @@ class TestModCMAEnv(unittest.TestCase):
             low=-np.inf * np.ones(5), high=np.inf * np.ones(5)
         )
         config.reward_range = (-(10**12), 0)
-        env = ModCMAEnv(config)
+        env = ModStepSizeCMAEnv(config)
         return env
 
     def test_setup(self):
@@ -38,7 +39,9 @@ class TestModCMAEnv(unittest.TestCase):
     def test_step(self):
         env = self.make_env()
         env.reset()
-        state, reward, terminated, truncated, meta = env.step(np.ones(11, dtype=int))
+        param_keys = 'active','elitist','orthogonal','sequential','threshold_convergence','step_size_adaptation','mirrored','base_sampler','weights_option','local_restart','bound_correction'
+        rand_dict = {key: 1 for key in param_keys}
+        state, reward, terminated, truncated, meta = env.step(OrderedDict(rand_dict))     #env.step(np.ones(12, dtype=int))
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertFalse(terminated)
