@@ -18,3 +18,5 @@ test/*.json
 
 # pycharm specific stuff
 .idea
+
+.vscode/

@@ -61,7 +61,6 @@ class ToySGDEnv(AbstractMADACEnv):
     def __init__(self, config):
         """Init env."""
         super(ToySGDEnv, self).__init__(config)
-        self.n_steps_max = config.get("cutoff", 1000)
 
         self.velocity = 0
         self.gradient = 0
@@ -75,7 +74,6 @@ class ToySGDEnv(AbstractMADACEnv):
         self.f_cur = None
         self.momentum = 0  # type: Optional[float]
         self.learning_rate = None  # type: Optional[float]
-        self.n_steps = 0  # type: Optional[int]
 
     def build_objective_function(self):
         """Make base function."""
@@ -153,7 +151,7 @@ class ToySGDEnv(AbstractMADACEnv):
         self.gradient = self.objective_function_deriv(self.x_cur)
 
         # State
-        remaining_budget = self.n_steps_max - self.n_steps
+        remaining_budget = self.n_steps - self.c_step
         state = {
             "remaining_budget": remaining_budget,
             "gradient": self.gradient,
@@ -169,9 +167,6 @@ class ToySGDEnv(AbstractMADACEnv):
         reward = -log_regret
 
         self.history.append(self.x_cur)
-
-        # Stop criterion
-        self.n_steps += 1
 
         return state, reward, False, truncated, info
 
@@ -207,10 +202,11 @@ class ToySGDEnv(AbstractMADACEnv):
         self.f_cur = None
         self.momentum = 0
         self.learning_rate = 0
-        self.n_steps = 0
+        # self.n_steps = 0
         self.build_objective_function()
+        remaining_budget = self.n_steps - self.c_step
         return {
-            "remaining_budget": self.n_steps_max,
+            "remaining_budget": remaining_budget,
             "gradient": self.gradient,
             "learning_rate": self.learning_rate,
             "momentum": self.momentum,
