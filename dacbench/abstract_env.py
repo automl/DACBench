@@ -169,12 +169,16 @@ class AbstractEnv(gym.Env):
         return truncated
 
     def reset_(self, seed=0, options={}, instance=None, instance_id=None, scheme=None):
-        """Pre-reset function for progressing through the instance set.Will either use round robin, random or no progression scheme."""
+        """Pre-reset function for progressing through the instance set. Will either use round robin, random or no progression scheme."""
         if seed is not None:
             self.seed(seed, self.config.get("seed_action_space", False))
         self.c_step = 0
         if scheme is None:
-            scheme = self.instance_updates
+            scheme = self.instance_updates if "scheme" not in options.keys() else options["scheme"]
+        if instance is None:
+            instance = None if "instance" not in options.keys() else options["instance"]
+        if instance_id is None:
+            instance_id = None if "instance_id" not in options.keys() else options["instance_id"]
         self.use_next_instance(instance, instance_id, scheme=scheme)
 
     def use_next_instance(self, instance=None, instance_id=None, scheme=None):
