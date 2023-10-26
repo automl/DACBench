@@ -4,7 +4,7 @@ import numpy as np
 from flax.training import orbax_utils
 import orbax
 from dacbench import AbstractEnv
-from dacbench.envs.autorl_utils import make_train_ppo, make_train_dqn, make_eval, ActorCritic, Q, make_env
+from dacbench.envs.autorl_utils import make_train_ppo, make_train_dqn, make_eval, ActorCritic, Q, make_env, uniform_replay
 import gymnax
 
 
@@ -46,7 +46,7 @@ class AutoRLEnv(AbstractEnv):
             self.env.reset, in_axes=(0, None)
         )(reset_rng, self.env_params)
         if isinstance(self.env.action_space(self.env_params), gymnax.environments.spaces.Discrete):
-            action_size = self.env.action_space(self.env_params).n
+            action_size = 1
             discrete = True
         elif isinstance(self.env.action_space(self.env_params), gymnax.environments.spaces.Box):
             action_size = self.env.action_space(self.env_params).shape[0]
@@ -69,6 +69,7 @@ class AutoRLEnv(AbstractEnv):
             self.network_params = restored["params"]
             if isinstance(self.network_params, list):
                 self.network_params = self.network_params[0]
+            self.buffer_state = restored["buffer_state"]
             self.instance = restored["config"]
             if "target" in restored.keys():
                 self.target_params = restored["target"][0]
@@ -81,6 +82,8 @@ class AutoRLEnv(AbstractEnv):
         else:
             self.network_params = self.network.init(_rng, init_x)
             self.target_params = self.network.init(_rng, init_x)
+            buffer = uniform_replay(max_size=int(self.instance["buffer_size"]), beta=self.instance["beta"])
+            self.buffer_state = buffer.init_fn((jnp.zeros(init_x.shape), jnp.zeros(init_x.shape), jnp.zeros(action_size), jnp.zeros(1), jnp.zeros(1)), jnp.zeros(1))
             self.opt_state = None
         self.eval_func = make_eval(self.instance, self.network)
         return self.get_state(self), {}
@@ -98,9 +101,9 @@ class AutoRLEnv(AbstractEnv):
             self.make_train(self.instance, self.env, self.network)
         )
 
-        train_args = (self.rng, self.env_params, self.network_params, self.opt_state, self.last_obsv, self.last_env_state)
+        train_args = (self.rng, self.env_params, self.network_params, self.opt_state, self.last_obsv, self.last_env_state, self.buffer_state)
         if self.config.algorithm == "dqn":
-            train_args = (self.rng, self.env_params, self.network_params, self.target_params, self.opt_state, self.last_obsv, self.last_env_state)
+            train_args = (self.rng, self.env_params, self.network_params, self.target_params, self.opt_state, self.last_obsv, self.last_env_state, self.buffer_state)
 
         runner_state, metrics = self.train_func(*train_args)
         if "trajectory" in self.checkpoint:
@@ -110,6 +113,7 @@ class AutoRLEnv(AbstractEnv):
         self.network_params = runner_state[0].params
         self.last_obsv = runner_state[2]
         self.last_env_state = runner_state[1]
+        self.buffer_state = runner_state[4]
         reward = self.get_reward(self)
         if self.checkpoint:
             #Checkpoint setup
@@ -133,6 +137,9 @@ class AutoRLEnv(AbstractEnv):
                 ckpt["params"] = self.network_params
                 if "target" in self.instance.keys():
                     ckpt["target"] = self.target_params
+
+            if "buffer" in self.checkpoint:
+                ckpt["buffer_state"] = self.buffer_state,
 
             save_args = orbax_utils.save_args_from_target(ckpt)
             checkpointer = orbax.checkpoint.PyTreeCheckpointer()
