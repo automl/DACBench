@@ -46,6 +46,7 @@ DEFAULTS = objdict(
         "cutoff": 10,
         "seed": 0,
         "multi_agent": False,
+        "batch_size": 16,
         "instance_set_path": "../instance_sets/toysgd/toysgd_default.csv",
         "benchmark_info": INFO,
     }
