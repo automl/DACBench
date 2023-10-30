@@ -14,6 +14,7 @@ from minigrid.wrappers import RGBImgObsWrapper
 
 class ExtendedTrainState(TrainState):
     target_params: Union[None, chex.Array, dict] = None
+
     @classmethod
     def create_with_opt_state(cls, *, apply_fn, params, tx, opt_state, **kwargs):
         if opt_state is None:
@@ -27,7 +28,7 @@ class ExtendedTrainState(TrainState):
             **kwargs,
         )
         return obj
-        
+
 
 class ImageExtractionWrapper(gym.Wrapper):
     def __init__(self, env):
@@ -37,11 +38,11 @@ class ImageExtractionWrapper(gym.Wrapper):
     def reset(self, **kwargs):
         obs, info = self.env.reset(**kwargs)
         return obs["image"], info
-    
+
     def step(self, action):
         obs, reward, tr, te, info = self.env.step(action)
         return obs["image"], reward, tr, te, info
-    
+
 
 def make_env(instance):
     if instance["env_framework"] == "gymnax":
@@ -49,6 +50,7 @@ def make_env(instance):
         env = FlattenObservationWrapper(env)
     elif instance["env_framework"] == "brax":
         from brax import envs
+
         env = envs.get_environment(instance["env_name"], backend="generalized")
         env = envs.training.wrap(env)
         env = BraxToGymnaxWrapper(env)
@@ -57,6 +59,7 @@ def make_env(instance):
         if instance["env_name"].startswith("procgen"):
             import procgen
             import gym as old_gym
+
             env = old_gym.make(instance["env_name"])
             env = GymToGymnasiumWrapper(env)
         elif instance["env_name"].lower().startswith("minigrid"):
@@ -76,8 +79,11 @@ def make_env(instance):
 
 def to_gymnasium_space(space):
     import gym as old_gym
+
     if isinstance(space, old_gym.spaces.Box):
-        new_space = gym.spaces.Box(low=space.low, high=space.high, dtype=space.low.dtype)
+        new_space = gym.spaces.Box(
+            low=space.low, high=space.high, dtype=space.low.dtype
+        )
     elif isinstance(space, old_gym.spaces.Discrete):
         new_space = gym.spaces.Discrete(space.n)
     else:
@@ -96,22 +102,26 @@ class BraxToGymnaxWrapper(gymnax.environments.environment.Environment):
     def internal_step(self, key, state, action, params):
         state = self.env.step(state, jnp.array([action]))
         return state.obs[0], state, state.reward[0], state.done[0], {}
-    
+
     def internal_reset(self, key: chex.PRNGKey, params: EnvParams):
         state = self.env.reset(rng=jnp.array([key]))
         return state.obs[0], state
-    
+
     @property
     def default_params(self):
         return None
-    
+
     def action_space(self, params: EnvParams):
         """Action space of the environment."""
-        return gymnax.environments.spaces.Box(low=-np.inf, high=np.inf, shape=(self.env.action_size,))
+        return gymnax.environments.spaces.Box(
+            low=-np.inf, high=np.inf, shape=(self.env.action_size,)
+        )
 
     def observation_space(self, params: EnvParams):
         """Observation space of the environment."""
-        return gymnax.environments.spaces.Box(low=-np.inf, high=np.inf, shape=(self.env.observation_size,))
+        return gymnax.environments.spaces.Box(
+            low=-np.inf, high=np.inf, shape=(self.env.observation_size,)
+        )
 
 
 class GymToGymnasiumWrapper(gym.Wrapper):
@@ -123,7 +133,7 @@ class GymToGymnasiumWrapper(gym.Wrapper):
 
     def reset(self, seed=None, options={}):
         return self.env.reset(), {}
-    
+
     def step(self, action):
         s, r, d, i = self.env.step(action)
         return s, r, d, False, i
@@ -198,11 +208,14 @@ class GymToGymnaxWrapper(gymnax.environments.environment.Environment):
             return gymnax.environments.spaces.Box(
                 self.env.action_space.low,
                 self.env.action_space.high,
-                self.env.action_space.low.shape)
+                self.env.action_space.low.shape,
+            )
         elif isinstance(self.env.action_space, gym.spaces.Discrete):
             return gymnax.environments.spaces.Discrete(self.env.action_space.n)
-        else:   
-            raise NotImplementedError("Only Box and Discrete action spaces are supported.")
+        else:
+            raise NotImplementedError(
+                "Only Box and Discrete action spaces are supported."
+            )
 
     def observation_space(self, params: EnvParams):
         """Observation space of the environment."""
@@ -232,14 +245,14 @@ def make_eval(config, network):
         while not done:
             # SELECT ACTION
             rng, _rng = jax.random.split(rng)
-            #TODO: make this pretty
+            # TODO: make this pretty
             try:
                 pi, value = network.apply(network_params, obsv)
                 action = pi.sample(seed=_rng)
             except:
                 q_values = network.apply(network_params, obsv)
                 action = q_values.argmax(axis=-1)
-            
+
             # STEP ENV
             rng, _rng = jax.random.split(rng)
             rng_step = jax.random.split(_rng, 1)

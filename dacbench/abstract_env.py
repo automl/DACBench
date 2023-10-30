@@ -124,7 +124,9 @@ class AbstractEnv(gym.Env):
                         action_spaces[a.name] = gym.spaces.Box(
                             low=a.lower, high=a.upper
                         )
-                    elif "Integer" in action_types[i] or "Categorical" in action_types[i]:
+                    elif (
+                        "Integer" in action_types[i] or "Categorical" in action_types[i]
+                    ):
                         try:
                             n = a.upper - a.lower
                         except:

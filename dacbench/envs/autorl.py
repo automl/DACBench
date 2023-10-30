@@ -4,7 +4,15 @@ import numpy as np
 from flax.training import orbax_utils
 import orbax
 from dacbench import AbstractEnv
-from dacbench.envs.autorl_utils import make_train_ppo, make_train_dqn, make_eval, ActorCritic, Q, make_env, uniform_replay
+from dacbench.envs.autorl_utils import (
+    make_train_ppo,
+    make_train_dqn,
+    make_eval,
+    ActorCritic,
+    Q,
+    make_env,
+    uniform_replay,
+)
 import gymnax
 
 
@@ -45,15 +53,21 @@ class AutoRLEnv(AbstractEnv):
         self.last_obsv, self.last_env_state = jax.vmap(
             self.env.reset, in_axes=(0, None)
         )(reset_rng, self.env_params)
-        if isinstance(self.env.action_space(self.env_params), gymnax.environments.spaces.Discrete):
+        if isinstance(
+            self.env.action_space(self.env_params), gymnax.environments.spaces.Discrete
+        ):
             action_size = 1
             discrete = True
-        elif isinstance(self.env.action_space(self.env_params), gymnax.environments.spaces.Box):
+        elif isinstance(
+            self.env.action_space(self.env_params), gymnax.environments.spaces.Box
+        ):
             action_size = self.env.action_space(self.env_params).shape[0]
             discrete = False
         else:
-            raise NotImplementedError(f"Only Discrete and Box action spaces are supported, got {self.env.action_space(self.env_params)}.")
-        
+            raise NotImplementedError(
+                f"Only Discrete and Box action spaces are supported, got {self.env.action_space(self.env_params)}."
+            )
+
         self.network = self.network_cls(
             action_size,
             activation=self.instance["activation"],
@@ -82,15 +96,28 @@ class AutoRLEnv(AbstractEnv):
         else:
             self.network_params = self.network.init(_rng, init_x)
             self.target_params = self.network.init(_rng, init_x)
-            buffer = uniform_replay(max_size=int(self.instance["buffer_size"]), beta=self.instance["beta"])
-            self.buffer_state = buffer.init_fn((jnp.zeros(init_x.shape), jnp.zeros(init_x.shape), jnp.zeros(action_size), jnp.zeros(1), jnp.zeros(1)), jnp.zeros(1))
+            buffer = uniform_replay(
+                max_size=int(self.instance["buffer_size"]), beta=self.instance["beta"]
+            )
+            self.buffer_state = buffer.init_fn(
+                (
+                    jnp.zeros(init_x.shape),
+                    jnp.zeros(init_x.shape),
+                    jnp.zeros(action_size),
+                    jnp.zeros(1),
+                    jnp.zeros(1),
+                ),
+                jnp.zeros(1),
+            )
             self.opt_state = None
         self.eval_func = make_eval(self.instance, self.network)
         return self.get_state(self), {}
 
     def step(self, action):
         if "algorithm" in action.keys():
-            print(f"Changing algorithm to {action['algorithm']} - attention, this will reinstantiate the network!")
+            print(
+                f"Changing algorithm to {action['algorithm']} - attention, this will reinstantiate the network!"
+            )
             self.switch_algorithm(action["algorithm"])
 
         self.done = super().step_()
@@ -101,22 +128,50 @@ class AutoRLEnv(AbstractEnv):
             self.make_train(self.instance, self.env, self.network)
         )
 
-        train_args = (self.rng, self.env_params, self.network_params, self.opt_state, self.last_obsv, self.last_env_state, self.buffer_state)
+        train_args = (
+            self.rng,
+            self.env_params,
+            self.network_params,
+            self.opt_state,
+            self.last_obsv,
+            self.last_env_state,
+            self.buffer_state,
+        )
         if self.config.algorithm == "dqn":
-            train_args = (self.rng, self.env_params, self.network_params, self.target_params, self.opt_state, self.last_obsv, self.last_env_state, self.buffer_state)
+            train_args = (
+                self.rng,
+                self.env_params,
+                self.network_params,
+                self.target_params,
+                self.opt_state,
+                self.last_obsv,
+                self.last_env_state,
+                self.buffer_state,
+            )
 
         runner_state, metrics = self.train_func(*train_args)
         if "trajectory" in self.checkpoint:
-            self.loss_info, self.grad_info, self.opt_info, self.traj, self.additional_info = metrics
+            (
+                self.loss_info,
+                self.grad_info,
+                self.opt_info,
+                self.traj,
+                self.additional_info,
+            ) = metrics
         elif self.config.grad_obs:
-            self.loss_info, self.grad_info, self.opt_info, self.additional_info = metrics
+            (
+                self.loss_info,
+                self.grad_info,
+                self.opt_info,
+                self.additional_info,
+            ) = metrics
         self.network_params = runner_state[0].params
         self.last_obsv = runner_state[2]
         self.last_env_state = runner_state[1]
         self.buffer_state = runner_state[4]
         reward = self.get_reward(self)
         if self.checkpoint:
-            #Checkpoint setup
+            # Checkpoint setup
             checkpoint_name = self.checkpoint_dir + "/"
             if "checkpoint_name" in self.config.keys():
                 checkpoint_name += self.config["checkpoint_name"] + "_"
@@ -125,7 +180,7 @@ class AutoRLEnv(AbstractEnv):
                     checkpoint_name += f"episode_{self.episode}_step_{self.c_step}"
                 else:
                     checkpoint_name += "final"
-            
+
             ckpt = {
                 "config": self.instance,
             }
@@ -139,15 +194,11 @@ class AutoRLEnv(AbstractEnv):
                     ckpt["target"] = self.target_params
 
             if "buffer" in self.checkpoint:
-                ckpt["buffer_state"] = self.buffer_state,
+                ckpt["buffer_state"] = (self.buffer_state,)
 
             save_args = orbax_utils.save_args_from_target(ckpt)
             checkpointer = orbax.checkpoint.PyTreeCheckpointer()
-            checkpointer.save(
-                checkpoint_name,
-                ckpt,
-                save_args=save_args
-            )
+            checkpointer.save(checkpoint_name, ckpt, save_args=save_args)
 
             if "loss" in self.checkpoint:
                 ckpt = {}
@@ -159,32 +210,48 @@ class AutoRLEnv(AbstractEnv):
 
                 save_args = orbax_utils.save_args_from_target(ckpt)
                 checkpointer = orbax.checkpoint.PyTreeCheckpointer()
-                loss_checkpoint = checkpoint_name+"_loss"
+                loss_checkpoint = checkpoint_name + "_loss"
                 checkpointer.save(
                     loss_checkpoint,
                     ckpt,
                     save_args=save_args,
-                    )
-                
+                )
+
             if "minibatches" in self.checkpoint and "trajectory" in self.checkpoint:
                 ckpt = {}
                 ckpt["minibatches"] = {}
-                ckpt["minibatches"]["states"] = jnp.concatenate(self.additional_info["minibatches"][0].obs, axis=0)
-                ckpt["minibatches"]["value"] = jnp.concatenate(self.additional_info["minibatches"][0].value, axis=0)
-                ckpt["minibatches"]["action"] = jnp.concatenate(self.additional_info["minibatches"][0].action, axis=0)
-                ckpt["minibatches"]["reward"] = jnp.concatenate(self.additional_info["minibatches"][0].reward, axis=0)
-                ckpt["minibatches"]["log_prob"] = jnp.concatenate(self.additional_info["minibatches"][0].log_prob, axis=0)
-                ckpt["minibatches"]["dones"] = jnp.concatenate(self.additional_info["minibatches"][0].done, axis=0)
-                ckpt["minibatches"]["advantages"] = jnp.concatenate(self.additional_info["minibatches"][1], axis=0)
-                ckpt["minibatches"]["targets"] = jnp.concatenate(self.additional_info["minibatches"][2], axis=0)
+                ckpt["minibatches"]["states"] = jnp.concatenate(
+                    self.additional_info["minibatches"][0].obs, axis=0
+                )
+                ckpt["minibatches"]["value"] = jnp.concatenate(
+                    self.additional_info["minibatches"][0].value, axis=0
+                )
+                ckpt["minibatches"]["action"] = jnp.concatenate(
+                    self.additional_info["minibatches"][0].action, axis=0
+                )
+                ckpt["minibatches"]["reward"] = jnp.concatenate(
+                    self.additional_info["minibatches"][0].reward, axis=0
+                )
+                ckpt["minibatches"]["log_prob"] = jnp.concatenate(
+                    self.additional_info["minibatches"][0].log_prob, axis=0
+                )
+                ckpt["minibatches"]["dones"] = jnp.concatenate(
+                    self.additional_info["minibatches"][0].done, axis=0
+                )
+                ckpt["minibatches"]["advantages"] = jnp.concatenate(
+                    self.additional_info["minibatches"][1], axis=0
+                )
+                ckpt["minibatches"]["targets"] = jnp.concatenate(
+                    self.additional_info["minibatches"][2], axis=0
+                )
                 save_args = orbax_utils.save_args_from_target(ckpt)
                 checkpointer = orbax.checkpoint.PyTreeCheckpointer()
-                minibatch_checkpoint = checkpoint_name+"_minibatches"
+                minibatch_checkpoint = checkpoint_name + "_minibatches"
                 checkpointer.save(
                     minibatch_checkpoint,
                     ckpt,
                     save_args=save_args,
-                    )
+                )
 
             if "extras" in self.checkpoint:
                 ckpt = {}
@@ -193,15 +260,15 @@ class AutoRLEnv(AbstractEnv):
                         ckpt[k] = self.additional_info[k]
                     elif k != "minibatches":
                         ckpt[k] = jnp.concatenate(self.additional_info[k], axis=0)
-                
+
                 save_args = orbax_utils.save_args_from_target(ckpt)
                 checkpointer = orbax.checkpoint.PyTreeCheckpointer()
-                extras_checkpoint = checkpoint_name+"_extras"
+                extras_checkpoint = checkpoint_name + "_extras"
                 checkpointer.save(
                     extras_checkpoint,
                     ckpt,
                     save_args=save_args,
-                    )
+                )
 
             if "trajectory" in self.checkpoint:
                 ckpt = {}
@@ -211,25 +278,31 @@ class AutoRLEnv(AbstractEnv):
                 ckpt["trajectory"]["reward"] = jnp.concatenate(self.traj.reward, axis=0)
                 ckpt["trajectory"]["dones"] = jnp.concatenate(self.traj.done, axis=0)
                 if self.config.algorithm == "ppo":
-                    ckpt["trajectory"]["value"] = jnp.concatenate(self.traj.value, axis=0)
-                    ckpt["trajectory"]["log_prob"] = jnp.concatenate(self.traj.log_prob, axis=0)
+                    ckpt["trajectory"]["value"] = jnp.concatenate(
+                        self.traj.value, axis=0
+                    )
+                    ckpt["trajectory"]["log_prob"] = jnp.concatenate(
+                        self.traj.log_prob, axis=0
+                    )
                 elif self.config.algorithm == "dqn":
-                    ckpt["trajectory"]["q_pred"] = jnp.concatenate(self.traj.q_pred, axis=0)
+                    ckpt["trajectory"]["q_pred"] = jnp.concatenate(
+                        self.traj.q_pred, axis=0
+                    )
 
                 save_args = orbax_utils.save_args_from_target(ckpt)
                 checkpointer = orbax.checkpoint.PyTreeCheckpointer()
-                traj_checkpoint = checkpoint_name+"_trajectory"
+                traj_checkpoint = checkpoint_name + "_trajectory"
                 checkpointer.save(
                     traj_checkpoint,
                     ckpt,
                     save_args=save_args,
-                    )
-            
+                )
+
         return self.get_state(self), reward, False, self.done, {}
 
     def get_default_reward(self, _):
         return self.eval_func(self.rng, self.network_params)
-    
+
     def switch_algorithm(self, new_algorithm):
         self.make_train = self.ALGORITHMS[new_algorithm][0]
         self.network_cls = self.ALGORITHMS[new_algorithm][1]
@@ -247,9 +320,23 @@ class AutoRLEnv(AbstractEnv):
             grad_info = self.grad_info
             if self.config.algorithm == "ppo":
                 import flax
+
                 grad_info = grad_info["params"]
-                grad_info = {k: v for (k, v) in grad_info.items() if isinstance(v, flax.core.frozen_dict.FrozenDict)}
-            grad_info = [grad_info[g][k] for g in grad_info.keys() for k in grad_info[g].keys()]
+                grad_info = {
+                    k: v
+                    for (k, v) in grad_info.items()
+                    if isinstance(v, flax.core.frozen_dict.FrozenDict)
+                }
+            grad_info = [
+                grad_info[g][k] for g in grad_info.keys() for k in grad_info[g].keys()
+            ]
             grad_norm = np.mean([jnp.linalg.norm(g) for g in grad_info])
             grad_var = np.mean([jnp.var(g) for g in grad_info])
-        return np.array([self.c_step, self.c_step * self.instance["total_timesteps"], grad_norm, grad_var])
+        return np.array(
+            [
+                self.c_step,
+                self.c_step * self.instance["total_timesteps"],
+                grad_norm,
+                grad_var,
+            ]
+        )

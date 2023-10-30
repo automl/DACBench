@@ -177,44 +177,42 @@ class AbstractBenchmark:
         rval["forbiddens"] = forbiddens
 
         return rval
-    
+
     def get_configspace(self, configspace_dict):
         from ConfigSpace import ConfigurationSpace
         from ConfigSpace.read_and_write.json import (
-                _construct_condition,
-                _construct_forbidden,
-                _construct_hyperparameter,
-            )
+            _construct_condition,
+            _construct_forbidden,
+            _construct_hyperparameter,
+        )
 
         if "name" in configspace_dict:
-            configuration_space = ConfigurationSpace(
-                    name=configspace_dict["name"]
-                )
+            configuration_space = ConfigurationSpace(name=configspace_dict["name"])
         else:
             configuration_space = ConfigurationSpace()
 
         for hyperparameter in configspace_dict["hyperparameters"]:
             configuration_space.add_hyperparameter(
-                    _construct_hyperparameter(
-                        hyperparameter,
-                    )
+                _construct_hyperparameter(
+                    hyperparameter,
                 )
+            )
 
         for condition in configspace_dict["conditions"]:
             configuration_space.add_condition(
-                    _construct_condition(
-                        condition,
-                        configuration_space,
-                    )
+                _construct_condition(
+                    condition,
+                    configuration_space,
                 )
+            )
 
         for forbidden in configspace_dict["forbiddens"]:
             configuration_space.add_forbidden_clause(
-                    _construct_forbidden(
-                        forbidden,
-                        configuration_space,
-                    )
+                _construct_forbidden(
+                    forbidden,
+                    configuration_space,
                 )
+            )
         return configuration_space
 
     @classmethod
@@ -548,7 +546,9 @@ class AbstractBenchmark:
             )
 
         if "config_space" in self.config:
-            self.config["config_space"] = self.get_configspace(self.config["config_space"])
+            self.config["config_space"] = self.get_configspace(
+                self.config["config_space"]
+            )
 
         if "wrappers" in self.config:
             self.dejson_wrappers(self.config["wrappers"])
