@@ -16,10 +16,7 @@ class Transition(NamedTuple):
     info: jnp.ndarray
 
 
-def make_train_ppo(config, env, network):
-    config["num_updates"] = (
-        config["total_timesteps"] // config["num_steps"] // config["num_envs"]
-    )
+def make_train_ppo(config, env, network, num_updates):
     config["minibatch_size"] = (
         config["num_envs"] * config["num_steps"] // config["num_minibatches"]
     )
@@ -197,7 +194,7 @@ def make_train_ppo(config, env, network):
         rng, _rng = jax.random.split(rng)
         runner_state = (train_state, env_state, obsv, _rng)
         runner_state, out = jax.lax.scan(
-            _update_step, runner_state, None, config["num_updates"]
+            _update_step, runner_state, None, num_updates
         )
         return runner_state, out
 

@@ -83,6 +83,14 @@ class AutoRLEnv(AbstractEnv):
             self.target_params = self.network.init(_rng, init_x)
             self.opt_state = None
         self.eval_func = make_eval(self.instance, self.network)
+        if self.config.algorithm == "ppo":
+            self.total_updates = (self.instance["total_timesteps"] // self.instance["num_steps"] // self.instance["num_envs"])
+            self.update_interval = self.total_updates // self.n_steps
+            if self.update_interval < 1:
+                self.update_interval = 1
+                print("WARNING: The number of iterations selected in combination with your timestep, num_env and num_step settings results in 0 steps per iteration. Rounded up to 1, this means more total steps will be executed.")
+        else:
+            self.update_interval = None
         return self.get_state(self), {}
 
     def step(self, action):
@@ -94,8 +102,9 @@ class AutoRLEnv(AbstractEnv):
         self.instance.update(action)
         self.instance["track_traj"] = "trajectory" in self.checkpoint
         self.instance["track_metrics"] = self.config.grad_obs
+
         self.train_func = jax.jit(
-            self.make_train(self.instance, self.env, self.network)
+            self.make_train(self.instance, self.env, self.network, self.update_interval)
         )
 
         train_args = (self.rng, self.env_params, self.network_params, self.opt_state, self.last_obsv, self.last_env_state)
