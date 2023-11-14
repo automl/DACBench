@@ -4,6 +4,7 @@ import jax.numpy as jnp
 import optax
 from typing import NamedTuple
 from .common import ExtendedTrainState
+from .dqn import uniform_replay
 
 
 class Transition(NamedTuple):
@@ -21,12 +22,14 @@ def make_train_ppo(config, env, network, num_updates):
         config["num_envs"] * config["num_steps"] // config["num_minibatches"]
     )
 
-    def train(rng, env_params, network_params, opt_state, obsv, env_state):
+    def train(
+        rng, env_params, network_params, opt_state, obsv, env_state, buffer_state
+    ):
         tx = optax.chain(
-                optax.clip_by_global_norm(config["max_grad_norm"]),
-                optax.adam(config["lr"], eps=1e-5),
-            )
-        
+            optax.clip_by_global_norm(config["max_grad_norm"]),
+            optax.adam(config["lr"], eps=1e-5),
+        )
+
         if opt_state is None:
             opt_state = tx.init(network_params)
 
@@ -36,11 +39,15 @@ def make_train_ppo(config, env, network, num_updates):
             tx=tx,
             opt_state=opt_state,
         )
+        buffer = uniform_replay(
+            max_size=int(config["buffer_size"]), beta=config["beta"]
+        )
+
         # TRAIN LOOP
         def _update_step(runner_state, unused):
             # COLLECT TRAJECTORIES
             def _env_step(runner_state, unused):
-                train_state, env_state, last_obs, rng = runner_state
+                train_state, env_state, last_obs, rng, buffer_state = runner_state
 
                 # SELECT ACTION
                 rng, _rng = jax.random.split(rng)
@@ -54,10 +61,23 @@ def make_train_ppo(config, env, network, num_updates):
                 obsv, env_state, reward, done, info = jax.vmap(
                     env.step, in_axes=(0, 0, 0, None)
                 )(rng_step, env_state, action, env_params)
+                buffer_state = buffer.add_batch_fn(
+                    buffer_state,
+                    (
+                        (
+                            last_obs,
+                            obsv,
+                            jnp.expand_dims(action, -1),
+                            jnp.expand_dims(reward, -1),
+                            jnp.expand_dims(done, -1),
+                        ),
+                        jnp.zeros((*reward.shape, 1)),
+                    ),
+                )
                 transition = Transition(
                     done, action, value, reward, log_prob, last_obs, info
                 )
-                runner_state = (train_state, env_state, obsv, rng)
+                runner_state = (train_state, env_state, obsv, rng, buffer_state)
                 return runner_state, transition
 
             runner_state, traj_batch = jax.lax.scan(
@@ -65,7 +85,7 @@ def make_train_ppo(config, env, network, num_updates):
             )
 
             # CALCULATE ADVANTAGE
-            train_state, env_state, last_obs, rng = runner_state
+            train_state, env_state, last_obs, rng, buffer_state = runner_state
             _, last_val = network.apply(train_state.params, last_obs)
 
             def _calculate_gae(traj_batch, last_val):
@@ -139,7 +159,7 @@ def make_train_ppo(config, env, network, num_updates):
 
                     grad_fn = jax.value_and_grad(_loss_fn, has_aux=True)
                     opt_state = train_state.opt_state
-                    total_loss, grads= grad_fn(
+                    total_loss, grads = grad_fn(
                         train_state.params, traj_batch, advantages, targets
                     )
                     train_state = train_state.apply_gradients(grads=grads)
@@ -173,26 +193,51 @@ def make_train_ppo(config, env, network, num_updates):
                     _update_minbatch, train_state, minibatches
                 )
                 update_state = (train_state, traj_batch, advantages, targets, rng)
-                return update_state, (total_loss, grads, opt_state, minibatches, train_state.params.unfreeze().copy())
+                return update_state, (
+                    total_loss,
+                    grads,
+                    opt_state,
+                    minibatches,
+                    train_state.params.unfreeze().copy(),
+                )
 
             update_state = (train_state, traj_batch, advantages, targets, rng)
-            update_state, (loss_info, grads, opt_state, minibatches, param_hist) = jax.lax.scan(
-                _update_epoch, update_state, None, config["update_epochs"]
-            )
+            update_state, (
+                loss_info,
+                grads,
+                opt_state,
+                minibatches,
+                param_hist,
+            ) = jax.lax.scan(_update_epoch, update_state, None, config["update_epochs"])
             train_state = update_state[0]
             rng = update_state[-1]
 
-            runner_state = (train_state, env_state, last_obs, rng)
+            runner_state = (train_state, env_state, last_obs, rng, buffer_state)
             if config["track_traj"]:
-                out = (loss_info, grads, opt_state, traj_batch, {"advantages": advantages, "param_history": param_hist["params"], "minibatches": minibatches})
+                out = (
+                    loss_info,
+                    grads,
+                    opt_state,
+                    traj_batch,
+                    {
+                        "advantages": advantages,
+                        "param_history": param_hist["params"],
+                        "minibatches": minibatches,
+                    },
+                )
             elif config["track_metrics"]:
-                out = (loss_info, grads, opt_state, {"advantages": advantages, "param_history": param_hist["params"]})
+                out = (
+                    loss_info,
+                    grads,
+                    opt_state,
+                    {"advantages": advantages, "param_history": param_hist["params"]},
+                )
             else:
                 out = None
             return runner_state, out
-        
+
         rng, _rng = jax.random.split(rng)
-        runner_state = (train_state, env_state, obsv, _rng)
+        runner_state = (train_state, env_state, obsv, _rng, buffer_state)
         runner_state, out = jax.lax.scan(
             _update_step, runner_state, None, num_updates
         )
