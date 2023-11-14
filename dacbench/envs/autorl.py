@@ -272,6 +272,8 @@ class AutoRLEnv(AbstractEnv):
                         ckpt[k] = self.additional_info[k]
                     elif k != "minibatches":
                         ckpt[k] = jnp.concatenate(self.additional_info[k], axis=0)
+                    elif "gradient_history" in self.checkpoint:
+                        ckpt["gradient_history"] = self.grad_info["params"]
 
                 save_args = orbax_utils.save_args_from_target(ckpt)
                 checkpointer = orbax.checkpoint.PyTreeCheckpointer()
