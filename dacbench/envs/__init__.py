@@ -49,7 +49,7 @@ else:
 sgd_spec = importlib.util.find_spec("backpack")
 found = sgd_spec is not None
 if found:
-    from dacbench.envs.sgd import SGDEnv
+    from dacbench.envs.sgd_new import SGDEnv
 
     __all__.append("SGDEnv")
 else:
