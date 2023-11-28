@@ -207,7 +207,7 @@ def uniform_replay(max_size: int, beta: float):
     )
 
 
-def make_train_dqn(config, env, network):
+def make_train_dqn(config, env, network, _):
     def train(
         rng,
         env_params,
