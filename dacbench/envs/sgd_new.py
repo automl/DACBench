@@ -11,23 +11,26 @@ from dacbench.envs.env_utils.utils import random_torchvision_loader
 def optimizer_action(optimizer: torch.optim.Optimizer, action: float) -> None:
     for g in optimizer.param_groups:
         g["lr"] = action[0]
-        print(f"learning rate: {g['lr']}")
     return optimizer
 
 
-def test(model, loss_function, loader, device="cpu"):
-    """Evaluate given `model` on `loss_function`.
+def test(model, loss_function, loader, batch_size: None | int = "None", device="cpu"):
+    """Evaluate given `model` on `loss_function`. Size defines batch size. If none then full batch.
 
     Returns:
-        test_losses: Full batch validation loss per data point
+        test_losses: Batch validation loss per data point
     """
     model.eval()
     test_losses = []
+    i = 0
     with torch.no_grad():
         for data, target in loader:
             data, target = data.to(device), target.to(device)
             output = model(data)
             test_losses.append(loss_function(output, target))
+            i += 1
+            if batch_size is not None and i >= batch_size:
+                break
     test_losses = torch.cat(test_losses)
     return test_losses
 
@@ -47,29 +50,18 @@ def forward_backward(model, loss_function, loader, device="cpu"):
     return loss
 
 
-def noisy_validate(model, loss_function, loader, device="cpu"):
-    model.eval()
-    with torch.no_grad():
-        (data, target) = next(loader)
-        data, target = data.to(device), target.to(device)
-        output = model(data)
-        loss = loss_function(output, target)
-    return loss
-
-
 class SGDEnv(AbstractMADACEnv):
     """
     The SGD DAC Environment implements the problem of dynamically configuring the learning rate hyperparameter of a
     neural network optimizer (more specifically, torch.optim.AdamW) for a supervised learning task. While training,
-    the model is evaluated after every epoch and a checkpoint of the model with minimal validation loss is retained.
+    the model is evaluated after every epoch.
 
     Actions correspond to learning rate values in [0,+inf[
     For observation space check `observation_space` method docstring.
     For instance space check the `SGDInstance` class docstring
     Reward:
-        negative loss of checkpoint on test_loader of the instance  if done and a valid checkpoint is available
-        crash_penalty of the instance                               if done and no checkpoint is available
-                                                                    (~ crash / divergence in first epoch)
+        negative loss of model on test_loader of the instance       if done
+        crash_penalty of the instance                               if crashed
         0                                                           otherwise
     """
 
@@ -92,8 +84,9 @@ class SGDEnv(AbstractMADACEnv):
 
         # Get loaders for instance
         datasets, loaders = random_torchvision_loader(
+            config.get("Seed"),
             config.get("instance_set_path"),
-            "MNIST",
+            None,  # If set to None, random data set is chosen; else specific set can be set: e.g. "MNIST"
             self.batch_size,
             self.batch_size,
             config.get("fraction_of_dataset"),
@@ -110,28 +103,19 @@ class SGDEnv(AbstractMADACEnv):
         truncated = super(SGDEnv, self).step_()
         info = {}
 
-        # default_rng_state = torch.get_rng_state()
-        # torch.set_rng_state(self.env_rng_state)
-
         self.optimizer = optimizer_action(self.optimizer, action)
         self.optimizer.step()
         self.optimizer.zero_grad()
 
+        # self.train_iter = self.train_loader
         train_args = [
             self.model,
             self.loss_function,
             self.train_iter,
             self.device,
         ]
-        try:
-            self.loss = forward_backward(*train_args)
-        except StopIteration:
-            self.train_iter = iter(self.train_loader)
-            train_args[2] = self.train_iter
-            self.loss = forward_backward(*train_args)
+        self.loss = forward_backward(*train_args)
 
-        # self.env_rng_state.data = torch.get_rng_state()
-        # torch.set_rng_state(default_rng_state)
         crashed = (
             not torch.isfinite(self.loss).any()
             or not torch.isfinite(
@@ -139,33 +123,39 @@ class SGDEnv(AbstractMADACEnv):
             ).any()
         )
 
-        self._done = truncated or crashed
+        if crashed:
+            return (
+                state,
+                self.crash_penalty,
+                False,
+                truncated,
+                info,
+            )  # TODO: Negative or positive reward?
+
+        self._done = truncated
 
         if (
             self.n_steps % len(self.train_loader) == 0 or self._done
         ):  # Calculate validation loss at the end of an epoch
-            validation_loss = test(
-                self.model, self.loss_function, self.validation_loader, self.device
-            )
-
-            self.validation_loss_last_epoch = validation_loss.mean()
-            if self.validation_loss_last_epoch <= self.min_validation_loss:
-                self.min_validation_loss = self.validation_loss_last_epoch
-                self.checkpoint = copy.deepcopy(self.model)
-
+            batch_size = None
         else:
-            val_args = [
-                self.model,
-                self.loss_function,
-                self.validation_iter,
-                self.device,
-            ]
-            try:
-                validation_loss = noisy_validate(*val_args)
-            except StopIteration:
-                self.validation_iter = iter(self.validation_loader)
-                val_args[2] = self.validation_iter
-                validation_loss = noisy_validate(*val_args)
+            batch_size = 1
+
+        val_args = [
+            self.model,
+            self.loss_function,
+            self.validation_iter,
+            batch_size,
+            self.device,
+        ]
+        validation_loss = test(*val_args)
+
+        self.validation_loss = validation_loss.mean()
+        if (
+            self.min_validation_loss is None
+            or self.validation_loss <= self.min_validation_loss
+        ):
+            self.min_validation_loss = self.validation_loss
 
         state = {
             "step": self.n_steps,
@@ -175,16 +165,16 @@ class SGDEnv(AbstractMADACEnv):
         }
 
         if self._done:
-            if self.checkpoint is None:
-                reward = -self.crash_penalty
-            else:
-                test_losses = test(
-                    self.checkpoint, self.loss_function, self.test_loader, self.device
-                )
-                reward = max(
-                    -test_losses.sum().item() / len(self.test_loader.dataset),
-                    -self.crash_penalty,
-                )
+            test_losses = test(
+                self.model,
+                self.loss_function,
+                self.test_loader,
+                None,
+                self.device,
+            )
+            reward = -test_losses.sum().item() / len(
+                self.test_loader.dataset
+            )  # TODO: Warum minus?
         else:
             reward = 0.0
         return state, reward, False, truncated, info
@@ -206,36 +196,17 @@ class SGDEnv(AbstractMADACEnv):
         self.optimizer: torch.optim.Optimizer = torch.optim.AdamW(
             **self.optimizer_params, params=self.model.parameters()
         )
+        self.loss = 0
 
-        self.optimizer.zero_grad()
-        self.loss = forward_backward(
-            self.model,
-            self.loss_function,
-            self.train_iter,
-            self.device,
-        )
-        self.env_rng_state: torch.Tensor = copy.deepcopy(torch.get_rng_state())
-        self.validation_loss_last_epoch = None
-        self.checkpoint = None
-        self.min_validation_loss = self.crash_penalty
-        val_args = [
-            self.model,
-            self.loss_function,
-            iter(self.validation_loader),
-            self.device,
-        ]
-        validation_loss = noisy_validate(*val_args)
+        self.validation_loss = None
+        self.min_validation_loss = None
+
         return {
             "step": 0,
             "loss": self.loss,
-            "validation_loss": validation_loss,
+            "validation_loss": 0,
             "crashed": False,
         }, {}
-
-    # def seed(self, seed=None):
-    #     torch.backends.cudnn.benchmark = False
-    #     torch.backends.cudnn.deterministic = True
-    #     return super().seed(seed)
 
     def render(self, mode="human"):
         if mode == "human":
@@ -247,7 +218,7 @@ class SGDEnv(AbstractMADACEnv):
                 f"epoch {epoch}/{epoch_cutoff}, "
                 f"batch {batch}/{len(self.train_loader)}, "
                 f"batch_loss {self.loss.mean()}, "
-                f"val_loss_last_epoch {self.validation_loss_last_epoch}"
+                f"val_loss {self.validation_loss}"
             )
         else:
             raise NotImplementedError

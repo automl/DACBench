@@ -41,8 +41,9 @@ DATASETS = {
 
 
 def random_torchvision_loader(
+    seed: int,
     dataset_path: str,
-    name: str,
+    name: str | None,
     batch_size: int,
     noisy_validation_batch_size: int,
     fraction_of_dataset: float,
@@ -51,6 +52,9 @@ def random_torchvision_loader(
     **kwargs,
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """Create train, validation, test loaders for `name` dataset."""
+    if name == None:
+        np.random.seed(seed)
+        name = np.random.choice(np.array(list(DATASETS.keys())))
     transform = DATASETS[name]["transform"]
     train_dataset = getattr(datasets, name)(
         dataset_path, train=True, download=True, transform=transform
@@ -73,6 +77,103 @@ def random_torchvision_loader(
     val_loader = DataLoader(val, batch_size=noisy_validation_batch_size)
     test_loader = DataLoader(test, batch_size=64)
     return (train_dataset, test), (train_loader, val_loader, test_loader)
+
+
+def random_instance(rng: np.random.RandomState):
+    """Samples a random Instance"""
+    default_rng_state = torch.get_rng_state()
+    seed = rng.randint(1, 4294967295, dtype=np.int64)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    instance = _random_instance(rng)
+    torch.set_rng_state(default_rng_state)
+    return instance
+
+
+def _random_instance(
+    rng: np.random.RandomState,
+    **kwargs,
+):
+    """Helper for samling a random instance."""
+    batch_size = 2 ** int(np.exp(rng.uniform(low=np.log(4), high=np.log(8))))
+    noisy_validation_batch_size = 2 ** int(
+        np.exp(copy.deepcopy(rng).uniform(low=np.log(4), high=np.log(8)))
+    )
+    fraction_of_dataset = rng.choice([1, 0.5, 0.2, 0.1])
+    train_validation_ratio = (
+        1 - int(np.exp(rng.uniform(low=np.log(5), high=np.log(20)))) / 100
+    )
+    model, n_conv_layers = random_architecture(
+        rng, datasets[0][0][0].shape, len(datasets[0].classes)
+    )
+    optimizer_params = sample_optimizer_params(rng, **kwargs)
+    loss = F.nll_loss
+    n_params = len(torch.nn.utils.parameters_to_vector(model.parameters()))
+    target_runtime = 60
+    epoch_cutoff = max(
+        1,
+        int(
+            batch_size
+            / len(datasets[0])
+            * (target_runtime - 0.5)
+            / (0.01 + 0.00035 * batch_size + (0.0000002 * n_params) ** 2)
+        ),
+    )
+    loaders = [[1, 2, 3, 4, 5, 6]]  # TODO!!
+    cutoff = int(len(loaders[0]) * epoch_cutoff)
+
+    crash_penalty = np.log(len(datasets[0].classes))
+    return (
+        model,
+        optimizer_params,
+        loss,
+        batch_size,
+        noisy_validation_batch_size,
+        train_validation_ratio,
+        fraction_of_dataset,
+        cutoff,
+        crash_penalty,
+        n_conv_layers,
+    )
+
+
+def sample_optimizer_params(rng, **kwargs):
+    """Samples optimizer parameters according to below rules.
+    - With 0.8 probability keep default of all parameters
+    - For each hyperparameter, with 0.5 probability sample a new value else keep default
+    """
+    modify = rng.rand()
+
+    weight_decay = (
+        np.exp(rng.uniform(low=np.log(1e-6), high=np.log(0.1)))
+        if modify > 0.8 and rng.rand() > 0.5
+        else 1e-2
+    )
+
+    eps = (
+        np.exp(rng.uniform(low=np.log(1e-10), high=np.log(1e-6)))
+        if modify > 0.8 and rng.rand() > 0.5
+        else 1e-8
+    )
+
+    beta1 = 1 - (
+        np.exp(rng.uniform(low=np.log(0.0001), high=np.log(0.2)))
+        if modify > 0.8 and rng.rand() > 0.5
+        else 0.1
+    )
+
+    beta2 = 1 - (
+        np.exp(rng.uniform(low=np.log(0.0001), high=np.log(0.2)))
+        if modify > 0.8 and rng.rand() > 0.5
+        else 0.0001
+    )
+
+    return {
+        "weight_decay": weight_decay,
+        "eps": eps,
+        "betas": (beta1, beta2),
+    }
 
 
 def random_architecture(

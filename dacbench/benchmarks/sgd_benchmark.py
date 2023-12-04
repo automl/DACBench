@@ -10,9 +10,10 @@ from gymnasium import spaces
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import SGDEnv
 from dacbench.envs.sgd import Reward
+from dacbench.envs.env_utils import utils
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
-LR = CS.Float(name="learning_rate", bounds=(0.0, 0.5))
+LR = CS.Float(name="learning_rate", bounds=(0.0, 0.05))
 DEFAULT_CFG_SPACE.add_hyperparameter(LR)
 
 
@@ -82,7 +83,7 @@ SGD_DEFAULTS = objdict(
                 # "alignment": spaces.Box(low=0, high=1, shape=(1,)),
             }
         ],
-        # "device": "cpu",
+        "shuffle_training": True,
         "reward_type": Reward.LogDiffTraining,
         "model": neural_network,
         "optimizer_params": {
@@ -105,7 +106,7 @@ SGD_DEFAULTS = objdict(
         # "cd_paper_reconstruction": False,
         # "cd_bias_correction": True,
         # "terminate_on_crash": False,
-        "crash_penalty": 0.0,
+        "crash_penalty": 100.0,
         "multi_agent": False,
         "instance_set_path": "../instance_sets/sgd/sgd_train_100instances.csv",
         "benchmark_info": INFO,
@@ -133,7 +134,7 @@ class SGDBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for SGD
     """
 
-    def __init__(self, config_path=None, config=None):
+    def __init__(self, config_path=None, config=None, use_generator=False):
         """
         Initialize SGD Benchmark
 
@@ -149,6 +150,22 @@ class SGDBenchmark(AbstractBenchmark):
         for key in SGD_DEFAULTS:
             if key not in self.config:
                 self.config[key] = SGD_DEFAULTS[key]
+
+        if use_generator:
+            (
+                model,
+                optimizer_params,
+                loss,
+                batch_size,
+                noisy_validation_batch_size,
+                train_validation_ratio,
+                fraction_of_dataset,
+                loaders,
+                cutoff,
+                crash_penalty,
+                n_conv_layers,
+            ) = utils.random_instance(np.random.RandomState(SGD_DEFAULTS("seed")))
+            pass  # Replace generated things
 
     def get_environment(self):
         """
