@@ -63,7 +63,13 @@ class AutoRLEnv(AbstractEnv):
             self.env.action_space(self.env_params), gymnax.environments.spaces.Box
         ):
             action_size = self.env.action_space(self.env_params).shape[0]
-            action_buffer_size = action_size
+            if len(self.env.action_space(self.env_params).shape) > 1:
+                action_buffer_size = [
+                    self.env.action_space(self.env_params).shape[0],
+                    self.env.action_space(self.env_params).shape[1],
+                ]
+            else:
+                action_buffer_size = action_size
             discrete = False
         else:
             raise NotImplementedError(
@@ -115,21 +121,27 @@ class AutoRLEnv(AbstractEnv):
             self.opt_state = None
         self.eval_func = make_eval(self.instance, self.network)
         if self.config.algorithm == "ppo":
-            self.total_updates = (self.instance["total_timesteps"] // self.instance["num_steps"] // self.instance["num_envs"])
+            self.total_updates = (
+                self.instance["total_timesteps"]
+                // self.instance["num_steps"]
+                // self.instance["num_envs"]
+            )
             self.update_interval = np.ceil(self.total_updates / self.n_steps)
             if self.update_interval < 1:
                 self.update_interval = 1
-                print("WARNING: The number of iterations selected in combination with your timestep, num_env and num_step settings results in 0 steps per iteration. Rounded up to 1, this means more total steps will be executed.")
+                print(
+                    "WARNING: The number of iterations selected in combination with your timestep, num_env and num_step settings results in 0 steps per iteration. Rounded up to 1, this means more total steps will be executed."
+                )
         else:
             self.update_interval = None
         return self.get_state(self), {}
 
     def step(self, action):
         if "algorithm" in action.keys():
-           print(
-               f"Changing algorithm to {action['algorithm']} - attention, this will reinstantiate the network!"
-           )
-           self.switch_algorithm(action["algorithm"])
+            print(
+                f"Changing algorithm to {action['algorithm']} - attention, this will reinstantiate the network!"
+            )
+            self.switch_algorithm(action["algorithm"])
 
         self.done = super().step_()
         self.instance.update(action)
