@@ -53,6 +53,7 @@ class AutoRLEnv(AbstractEnv):
         self.last_obsv, self.last_env_state = jax.vmap(
             self.env.reset, in_axes=(0, None)
         )(reset_rng, self.env_params)
+
         if isinstance(
             self.env.action_space(self.env_params), gymnax.environments.spaces.Discrete
         ):
@@ -68,8 +69,11 @@ class AutoRLEnv(AbstractEnv):
                     self.env.action_space(self.env_params).shape[0],
                     self.env.action_space(self.env_params).shape[1],
                 ]
+            elif self.env.name == "BraxToGymnaxWrapper":
+                action_buffer_size = [action_size, 1]
             else:
                 action_buffer_size = action_size
+
             discrete = False
         else:
             raise NotImplementedError(
