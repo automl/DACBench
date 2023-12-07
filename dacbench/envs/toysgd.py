@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Union
+from typing import Dict, Tuple, Union, Optional
 
 import numpy as np
 import pandas as pd

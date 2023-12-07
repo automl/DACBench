@@ -41,7 +41,7 @@ class CMAESEnv(AbstractMADACEnv):
 
     def uniform_name(self, name):
         # Convert name of parameters uniformly to lowercase, separated with _ and no numbers
-        pattern = "^\d+_"
+        pattern = r"^\d+_"
 
         # Use re.sub to remove the leading number and underscore
         result = re.sub(pattern, "", name)

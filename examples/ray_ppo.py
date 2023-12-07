@@ -18,7 +18,11 @@ def make_benchmark(config):
 parser = argparse.ArgumentParser(description="Run ray PPO for DACBench")
 parser.add_argument("--outdir", type=str, default="output", help="Output directory")
 parser.add_argument(
-    "--benchmarks", nargs="+", type=str, default=["LubyBenchmark"], help="Benchmarks to run PPO for"
+    "--benchmarks",
+    nargs="+",
+    type=str,
+    default=["LubyBenchmark"],
+    help="Benchmarks to run PPO for",
 )
 parser.add_argument(
     "--timesteps", type=int, default=10000, help="Number of timesteps to run"

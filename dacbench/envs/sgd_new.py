@@ -1,9 +1,6 @@
-import copy
-from typing import Dict, Iterator, Optional, Tuple, Union
+from typing import Iterator, Tuple
 
-import numpy as np
 import torch
-from torch.utils.data.dataloader import DataLoader
 
 from dacbench import AbstractMADACEnv
 from dacbench.envs.env_utils.utils import random_torchvision_loader
@@ -128,7 +125,7 @@ class SGDEnv(AbstractMADACEnv):
 
         if crashed:
             return (
-                state,
+                None,
                 self.crash_penalty,
                 False,
                 truncated,

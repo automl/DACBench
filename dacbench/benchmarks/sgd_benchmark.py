@@ -2,7 +2,6 @@ import csv
 import os
 
 import ConfigSpace as CS
-import ConfigSpace.hyperparameters as CSH
 import numpy as np
 from gymnasium import spaces
 from torch import nn

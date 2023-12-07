@@ -1,8 +1,4 @@
 import copy
-import os
-import random
-from collections import namedtuple
-from dataclasses import dataclass
 from typing import Tuple
 
 import numpy as np
@@ -52,7 +48,7 @@ def random_torchvision_loader(
     **kwargs,
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """Create train, validation, test loaders for `name` dataset."""
-    if name == None:
+    if name is None:
         np.random.seed(seed)
         name = np.random.choice(np.array(list(DATASETS.keys())))
     transform = DATASETS[name]["transform"]

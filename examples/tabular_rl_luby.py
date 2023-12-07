@@ -62,7 +62,6 @@ def q_learning(
         epsilon, decay_starts, num_episodes, epsilon_decay
     )
     for i_episode in range(num_episodes):
-
         epsilon = epsilon_schedule[i_episode]
         # The policy we're following
         policy = make_tabular_policy(Q, epsilon, environment.action_space.n)
