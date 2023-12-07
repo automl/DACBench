@@ -4,7 +4,6 @@ from pathlib import Path
 
 from dacbench.logger import load_logs, log2dataframe
 from dacbench.run_baselines import (
-    DISCRETE_ACTIONS,
     main,
     run_dynamic_policy,
     run_optimal,
@@ -61,7 +60,7 @@ class TestRunBaselines(unittest.TestCase):
     def run_static_test_with_benchmark(self, benchmark):
         seeds = [42]
         num_episodes = 3
-        action = DISCRETE_ACTIONS[benchmark][0]
+        action = benchmark.get_environment().action_space.sample()
         with tempfile.TemporaryDirectory() as temp_dir:
             result_path = Path(temp_dir)
 

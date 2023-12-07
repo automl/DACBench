@@ -90,6 +90,8 @@ class CMAESEnv(AbstractMADACEnv):
                     "Len of action is not equal to number of hyperparams."
                     + "As no dict is given, no meaningfull correction can be done"
                 )
+                if isinstance(action, np.ndarray):
+                    action = action.astype(int).tolist()
                 action.extend([0] * (len(Parameters.__modules__) - len(action)))
             complete_action = action
 
@@ -119,3 +121,6 @@ class CMAESEnv(AbstractMADACEnv):
                 self.iid,
             ]
         )
+
+    def render(self, mode="human"):
+        raise NotImplementedError("CMA-ES does not support rendering at this point")

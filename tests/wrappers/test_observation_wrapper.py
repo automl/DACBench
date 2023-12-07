@@ -1,16 +1,37 @@
 import unittest
 
 import numpy as np
+import gymnasium as gym
 
 from dacbench import AbstractEnv
-from dacbench.benchmarks import CMAESBenchmark
 from dacbench.wrappers import ObservationWrapper
+
+dummy_config = {
+    "instance_set": {0: 1},
+    "benchmark_info": None,
+    "cutoff": 10,
+    "observation_space": gym.spaces.Dict(
+        {
+            "one": gym.spaces.Discrete(2),
+            "two": gym.spaces.Box(low=np.array([-1, 1]), high=np.array([1, 5])),
+        }
+    ),
+    "reward_range": (0, 1),
+    "action_space": gym.spaces.Discrete(2),
+}
+
+
+class DummyDictEnv(AbstractEnv):
+    def step(self, _):
+        return {"one": 1, "two": np.array([1, 2])}, 0, False, False, {}
+
+    def reset(self):
+        return {}, {}
 
 
 class TestObservationTrackingWrapper(unittest.TestCase):
     def get_test_env(self) -> AbstractEnv:
-        bench = CMAESBenchmark()
-        env = bench.get_benchmark(seed=42)
+        env = DummyDictEnv(dummy_config)
         return env
 
     def test_flatten(self):

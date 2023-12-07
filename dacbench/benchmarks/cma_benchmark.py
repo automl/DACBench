@@ -65,7 +65,7 @@ INFO = {
 }
 
 
-MODCMA_DEFAULTS = objdict(
+CMAES_DEFAULTS = objdict(
     {
         "config_space": DEFAULT_CFG_SPACE,
         "action_space_class": "MultiDiscrete",
@@ -103,7 +103,7 @@ MODCMA_DEFAULTS = objdict(
 class CMAESBenchmark(AbstractBenchmark):
     def __init__(self, config_path: str = None, config=None):
         super().__init__(config_path, config)
-        self.config = objdict(MODCMA_DEFAULTS.copy(), **(self.config or dict()))
+        self.config = objdict(CMAES_DEFAULTS.copy(), **(self.config or dict()))
 
     def get_environment(self):
         if "instance_set" not in self.config:
