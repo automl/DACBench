@@ -1,6 +1,6 @@
+import copy
 import os
 import random
-import copy
 from collections import namedtuple
 from dataclasses import dataclass
 from typing import Tuple

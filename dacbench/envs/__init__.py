@@ -25,8 +25,8 @@ __all__ = [
     "TheoryEnv",
 ]
 
-cma_spec = importlib.util.find_spec("cma")
-found = cma_spec is not None
+modcma_spec = importlib.util.find_spec("modcma")
+found = modcma_spec is not None
 if found:
     from dacbench.envs.cma_es import CMAESEnv
 
@@ -34,16 +34,6 @@ if found:
 else:
     warnings.warn(
         "CMA-ES Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
-    )
-
-modcma_spec = importlib.util.find_spec("modcma")
-found = modcma_spec is not None
-if found:
-    from dacbench.envs.cma_mod_stepsize import ModStepSizeCMAEnv
-    __all__.append("ModStepSizeCMAEnv")
-else:
-    warnings.warn(
-        "ModCMA Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )
 
 sgd_spec = importlib.util.find_spec("backpack")

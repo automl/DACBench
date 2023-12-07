@@ -1,104 +1,112 @@
-import csv
+import itertools
 import os
 
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
 import numpy as np
-from gymnasium import spaces
+from modcma import Parameters
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import CMAESEnv
 
-HISTORY_LENGTH = 40
-INPUT_DIM = 10
-
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
-STEP_SIZE = CSH.UniformFloatHyperparameter(name="Step_size", lower=0, upper=10)
+ACTIVE = CSH.CategoricalHyperparameter(name="0_active", choices=[True, False])
+ELITIST = CSH.CategoricalHyperparameter(name="1_elitist", choices=[True, False])
+ORTHOGONAL = CSH.CategoricalHyperparameter(name="2_orthogonal", choices=[True, False])
+SEQUENTIAL = CSH.CategoricalHyperparameter(name="3_sequential", choices=[True, False])
+THRESHOLD_CONVERGENCE = CSH.CategoricalHyperparameter(
+    name="4_threshold_convergence", choices=[True, False]
+)
+STEP_SIZE_ADAPTATION = CSH.CategoricalHyperparameter(
+    name="5_step_size_adaptation",
+    choices=["csa", "tpa", "msr", "xnes", "m-xnes", "lp-xnes", "psr"],
+)
+MIRRORED = CSH.CategoricalHyperparameter(
+    name="6_mirrored", choices=["None", "mirrored", "mirrored pairwise"]
+)
+BASE_SAMPLER = CSH.CategoricalHyperparameter(
+    name="7_base_sampler", choices=["gaussian", "sobol", "halton"]
+)
+WEIGHTS_OPTION = CSH.CategoricalHyperparameter(
+    name="8_weights_option", choices=["default", "equal", "1/2^lambda"]
+)
+LOCAL_RESTART = CSH.CategoricalHyperparameter(
+    name="90_local_restart", choices=["None", "IPOP", "BIPOP"]
+)
+BOUND_CORRECTION = CSH.CategoricalHyperparameter(
+    name="91_bound_correction",
+    choices=["None", "saturate", "unif_resample", "COTN", "toroidal", "mirror"],
+)
+STEP_SIZE = CS.Float(name="92_step_size", bounds=(0.0, 10.0))
+DEFAULT_CFG_SPACE.add_hyperparameter(ACTIVE)
+DEFAULT_CFG_SPACE.add_hyperparameter(ELITIST)
+DEFAULT_CFG_SPACE.add_hyperparameter(ORTHOGONAL)
+DEFAULT_CFG_SPACE.add_hyperparameter(SEQUENTIAL)
+DEFAULT_CFG_SPACE.add_hyperparameter(THRESHOLD_CONVERGENCE)
+DEFAULT_CFG_SPACE.add_hyperparameter(STEP_SIZE_ADAPTATION)
+DEFAULT_CFG_SPACE.add_hyperparameter(MIRRORED)
+DEFAULT_CFG_SPACE.add_hyperparameter(BASE_SAMPLER)
+DEFAULT_CFG_SPACE.add_hyperparameter(WEIGHTS_OPTION)
+DEFAULT_CFG_SPACE.add_hyperparameter(LOCAL_RESTART)
+DEFAULT_CFG_SPACE.add_hyperparameter(BOUND_CORRECTION)
 DEFAULT_CFG_SPACE.add_hyperparameter(STEP_SIZE)
 
 INFO = {
-    "identifier": "CMA-ES",
-    "name": "Step-size adaption in CMA-ES",
+    "identifier": "ModCMA",
+    "name": "Online Selection of CMA-ES Variants",
     "reward": "Negative best function value",
     "state_description": [
-        "Loc",
-        "Past Deltas",
-        "Population Size",
+        "Generation Size",
         "Sigma",
-        "History Deltas",
-        "Past Sigma Deltas",
+        "Remaining Budget",
+        "Function ID",
+        "Instance ID",
     ],
 }
 
-CMAES_DEFAULTS = objdict(
+
+MODCMA_DEFAULTS = objdict(
     {
-        "action_space_class": "Box",
-        "action_space_args": [np.array([0]), np.array([10])],
         "config_space": DEFAULT_CFG_SPACE,
-        "observation_space_class": "Dict",
-        "observation_space_type": None,
-        "observation_space_args": [
-            {
-                "current_loc": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(INPUT_DIM).shape
-                ),
-                "past_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape
-                ),
-                "current_ps": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
-                "current_sigma": spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
-                "history_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH * 2).shape
-                ),
-                "past_sigma_deltas": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=np.arange(HISTORY_LENGTH).shape
-                ),
-            }
+        "action_space_class": "MultiDiscrete",
+        "action_space_args": [
+            list(
+                map(
+                    lambda m: len(
+                        getattr(getattr(Parameters, m), "options", [False, True])
+                    ),
+                    Parameters.__modules__,
+                )
+            )
         ],
-        "reward_range": (-(10**9), 0),
+        "observation_space_class": "Box",
+        "observation_space_args": [-np.inf * np.ones(5), np.inf * np.ones(5)],
+        "observation_space_type": np.float32,
+        "reward_range": (-(10**12), 0),
+        "budget": 100,
         "cutoff": 1e6,
-        "hist_length": HISTORY_LENGTH,
-        "popsize": 10,
         "seed": 0,
-        "instance_set_path": "../instance_sets/cma/cma_train.csv",
-        "test_set_path": "../instance_sets/cma/cma_test.csv",
+        "multi_agent": False,
+        "instance_set_path": os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../instance_sets/modea/modea_train.csv",
+        ),
+        "test_set_path": os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../instance_sets/modea/modea_train.csv",
+        ),
         "benchmark_info": INFO,
     }
 )
 
 
 class CMAESBenchmark(AbstractBenchmark):
-    """
-    Benchmark with default configuration & relevant functions for CMA-ES
-    """
-
-    def __init__(self, config_path=None, config=None):
-        """
-        Initialize CMA Benchmark
-
-        Parameters
-        -------
-        config_path : str
-            Path to config file (optional)
-        """
-        super(CMAESBenchmark, self).__init__(config_path, config)
-        if not self.config:
-            self.config = objdict(CMAES_DEFAULTS.copy())
-
-        for key in CMAES_DEFAULTS:
-            if key not in self.config:
-                self.config[key] = CMAES_DEFAULTS[key]
+    def __init__(self, config_path: str = None, config=None):
+        super().__init__(config_path, config)
+        self.config = objdict(MODCMA_DEFAULTS.copy(), **(self.config or dict()))
 
     def get_environment(self):
-        """
-        Return CMAESEnv env with current configuration
-
-        Returns
-        -------
-        CMAESEnv
-            CMAES environment
-        """
-        if "instance_set" not in self.config.keys():
+        if "instance_set" not in self.config:
             self.read_instance_set()
 
         # Read test set if path is specified
@@ -109,59 +117,26 @@ class CMAESBenchmark(AbstractBenchmark):
             self.read_instance_set(test=True)
 
         env = CMAESEnv(self.config)
+
         for func in self.wrap_funcs:
             env = func(env)
-
         return env
 
     def read_instance_set(self, test=False):
-        """
-        Read path of instances from config into list
-        """
         if test:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.test_set_path
-            )
+            path = self.config.test_set_path
             keyword = "test_set"
         else:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.instance_set_path
-            )
+            path = self.config.instance_set_path
             keyword = "instance_set"
 
-        self.config[keyword] = {}
+        self.config[keyword] = dict()
         with open(path, "r") as fh:
-            reader = csv.DictReader(fh)
-            for row in reader:
-                init_locs = [float(row[f"init_loc{i}"]) for i in range(int(row["dim"]))]
-                instance = [
-                    int(row["fcn_index"]),
-                    int(row["dim"]),
-                    float(row["init_sigma"]),
-                    init_locs,
+            for line in itertools.islice(fh, 1, None):
+                _id, dim, fid, iid, *representation = line.strip().split(",")
+                self.config[keyword][int(_id)] = [
+                    int(dim),
+                    int(fid),
+                    int(iid),
+                    list(map(int, representation)),
                 ]
-                self.config[keyword][int(row["ID"])] = instance
-
-    def get_benchmark(self, seed=0):
-        """
-        Get benchmark from the LTO paper
-
-        Parameters
-        -------
-        seed : int
-            Environment seed
-
-        Returns
-        -------
-        env : CMAESEnv
-            CMAES environment
-        """
-        self.config = objdict(CMAES_DEFAULTS.copy())
-        self.config.seed = seed
-        self.read_instance_set()
-        self.read_instance_set(test=True)
-        return CMAESEnv(self.config)

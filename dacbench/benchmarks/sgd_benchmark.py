@@ -4,13 +4,13 @@ import os
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
 import numpy as np
-from torch import nn
 from gymnasium import spaces
+from torch import nn
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import SGDEnv
-from dacbench.envs.sgd import Reward
 from dacbench.envs.env_utils import utils
+from dacbench.envs.sgd import Reward
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
 LR = CS.Float(name="learning_rate", bounds=(0.0, 0.05))

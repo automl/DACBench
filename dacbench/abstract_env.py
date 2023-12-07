@@ -1,11 +1,12 @@
 import random
+from abc import ABC, abstractmethod
 
 import gymnasium as gym
 import numpy as np
 from gymnasium.utils import seeding
 
 
-class AbstractEnv(gym.Env):
+class AbstractEnv(ABC, gym.Env):
     """Abstract template for environments."""
 
     def __init__(self, config):
@@ -120,7 +121,9 @@ class AbstractEnv(gym.Env):
                 subspaces = {}
                 for t, a in zip(action_types, actions):
                     if "Float" in t:
-                        subspaces[a.name] = gym.spaces.Box(low=a.lower, high=a.upper, dtype=np.float32)
+                        subspaces[a.name] = gym.spaces.Box(
+                            low=a.lower, high=a.upper, dtype=np.float32
+                        )
                     elif "Integer" in t or "Categorical" in t:
                         try:
                             n = a.upper - a.lower
@@ -174,11 +177,17 @@ class AbstractEnv(gym.Env):
             self.seed(seed, self.config.get("seed_action_space", False))
         self.c_step = 0
         if scheme is None:
-            scheme = self.instance_updates if "scheme" not in options.keys() else options["scheme"]
+            scheme = (
+                self.instance_updates
+                if "scheme" not in options.keys()
+                else options["scheme"]
+            )
         if instance is None:
             instance = None if "instance" not in options.keys() else options["instance"]
         if instance_id is None:
-            instance_id = None if "instance_id" not in options.keys() else options["instance_id"]
+            instance_id = (
+                None if "instance_id" not in options.keys() else options["instance_id"]
+            )
         self.use_next_instance(instance, instance_id, scheme=scheme)
 
     def use_next_instance(self, instance=None, instance_id=None, scheme=None):
@@ -208,6 +217,7 @@ class AbstractEnv(gym.Env):
             self.inst_id = np.random.choice(self.instance_id_list)
             self.instance = self.instance_set[self.inst_id]
 
+    @abstractmethod
     def step(self, action):
         """
         Execute environment step.
@@ -233,6 +243,7 @@ class AbstractEnv(gym.Env):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def reset(self, seed: int = None):
         """
         Reset environment.

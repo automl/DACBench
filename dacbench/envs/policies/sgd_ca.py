@@ -12,7 +12,7 @@ class CosineAnnealingAgent(AbstractDACBenchAgent):
         self.last_epoch = -1
         super(CosineAnnealingAgent, self).__init__(env)
 
-    def act(self, state, reward):
+    def act(self, state=None, reward=None):
         self.last_epoch += 1
         if self.last_epoch == 0:
             return self.base_lr
@@ -27,8 +27,8 @@ class CosineAnnealingAgent(AbstractDACBenchAgent):
             1 + math.cos(math.pi * (self.last_epoch - 1) / self.t_max)
         ) * (self.current_lr - self.eta_min) + self.eta_min
 
-    def train(self, state, reward):
+    def train(self, state=None, reward=None):
         pass
 
-    def end_episode(self, state, reward):
+    def end_episode(self, state=None, reward=None):
         pass

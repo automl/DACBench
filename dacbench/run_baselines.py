@@ -1,38 +1,16 @@
 import argparse
-import itertools
 import sys
 from pathlib import Path
 
 import numpy as np
 
 from dacbench import benchmarks
+from dacbench.abstract_agent import AbstractDACBenchAgent
 from dacbench.agents import DynamicRandomAgent, GenericAgent, StaticAgent
 from dacbench.envs.policies import NON_OPTIMAL_POLICIES, OPTIMAL_POLICIES
 from dacbench.logger import Logger
 from dacbench.runner import run_benchmark
 from dacbench.wrappers import PerformanceTrackingWrapper
-
-modea_actions = [
-    np.arange(2),
-    np.arange(2),
-    np.arange(2),
-    np.arange(2),
-    np.arange(2),
-    np.arange(2),
-    np.arange(2),
-    np.arange(2),
-    np.arange(2),
-    np.arange(3),
-    np.arange(3),
-]
-DISCRETE_ACTIONS = {
-    "SigmoidBenchmark": list(itertools.product(*[np.arange(val) for val in (5, 10)])),
-    "LubyBenchmark": np.arange(6),
-    "FastDownwardBenchmark": [0, 1],
-    "CMAESBenchmark": [np.around(a, decimals=1) for a in np.linspace(0.2, 10, num=50)],
-    "ModeaBenchmark": list(itertools.product(*modea_actions)),
-    "SGDBenchmark": [np.around(a, decimals=1) for a in np.linspace(0, 10, num=50)],
-}
 
 
 def run_random(results_path, benchmark_name, num_episodes, seeds, fixed):
@@ -195,7 +173,11 @@ def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.aran
         env = PerformanceTrackingWrapper(
             env, logger=logger.add_module(PerformanceTrackingWrapper)
         )
-        agent = GenericAgent(env, policy)
+
+        if not issubclass(policy, AbstractDACBenchAgent):
+            agent = GenericAgent(env, policy)
+        else:
+            agent = policy(env)
 
         logger.add_agent(agent)
         logger.add_benchmark(bench)
@@ -245,31 +227,12 @@ def main(args):
         action="store_true",
         help=f"Run dynamic baseline. Only available for {', '.join(NON_OPTIMAL_POLICIES.keys())}",
     )
-
-    shortened_possible_actions = {
-        benchmark: ", ".join(
-            (
-                map(str, actions)
-                if len(actions) < 4
-                else map(str, [*actions[:3], "...", actions[-1]])
-            )
-        )
-        for benchmark, actions in DISCRETE_ACTIONS.items()
-    }
-
-    possible_actions = ", ".join(
-        [
-            f"{benchmark} : {actions}"
-            for benchmark, actions in shortened_possible_actions.items()
-        ]
-    )
     parser.add_argument(
         "--actions",
         nargs="+",
         type=float,
         default=None,
-        help="Action(s) for static policy. Make sure, that the actions correspond to the benchmarks. Available action "
-        f"are {possible_actions}",
+        help="Action(s) for static policy. Make sure, that the actions correspond to the benchmarks.",
     )
     parser.add_argument(
         "--seeds",
@@ -300,7 +263,7 @@ def main(args):
     if args.static:
         for b in benchs:
             if args.actions is None:
-                actions = DISCRETE_ACTIONS[b]
+                raise ValueError("Missing actions argument for static policy.")
             else:
                 actions = args.actions
                 if b == "FastDownwardBenchmark":

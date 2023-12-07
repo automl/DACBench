@@ -1,9 +1,10 @@
 import copy
-from typing import Iterator, Optional, Tuple, Union, Dict
+from typing import Dict, Iterator, Optional, Tuple, Union
 
 import numpy as np
 import torch
 from torch.utils.data.dataloader import DataLoader
+
 from dacbench import AbstractMADACEnv
 from dacbench.envs.env_utils.utils import random_torchvision_loader
 
@@ -102,6 +103,8 @@ class SGDEnv(AbstractMADACEnv):
         performs another forward/backward pass (update only in the next step)."""
         truncated = super(SGDEnv, self).step_()
         info = {}
+        if isinstance(action, float):
+            action = [action]
 
         self.optimizer = optimizer_action(self.optimizer, action)
         self.optimizer.step()
