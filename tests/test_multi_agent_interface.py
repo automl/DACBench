@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from dacbench.benchmarks import CMAESBenchmark, SigmoidBenchmark, ToySGDBenchmark
+from dacbench.benchmarks import SigmoidBenchmark, ToySGDBenchmark
 from dacbench.envs import SigmoidEnv, ToySGDEnv
 
 
@@ -19,7 +19,7 @@ class TestMultiAgentInterface(unittest.TestCase):
         self.assertTrue(issubclass(type(env), ToySGDEnv))
 
     def test_empty_reset_step(self):
-        bench = CMAESBenchmark()
+        bench = SigmoidBenchmark()
         bench.config["multi_agent"] = True
         env = bench.get_environment()
         out = env.reset()
@@ -29,7 +29,7 @@ class TestMultiAgentInterface(unittest.TestCase):
         self.assertTrue(out is None)
 
     def test_last(self):
-        bench = CMAESBenchmark()
+        bench = ToySGDBenchmark()
         bench.config["multi_agent"] = True
         env = bench.get_environment()
         env.reset()

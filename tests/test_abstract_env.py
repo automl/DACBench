@@ -6,15 +6,15 @@ from gymnasium import spaces
 from dacbench.abstract_env import AbstractEnv
 
 
+class LessAbstractEnv(AbstractEnv):
+    def reset(self, seed: int = None):
+        pass
+
+    def step(self, action):
+        pass
+
+
 class TestAbstractEnv(unittest.TestCase):
-    def test_not_implemented_methods(self):
-        env = self.make_env()
-        with self.assertRaises(NotImplementedError):
-            env.step(0)
-
-        with self.assertRaises(NotImplementedError):
-            env.reset()
-
     def test_exceptions(self):
         config = {
             "action_space_class": "Discrete",
@@ -31,7 +31,7 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
         }
         with self.assertRaises(TypeError):
-            AbstractEnv(config)
+            LessAbstractEnv(config)
 
         config = {
             "action_space_class": "Discrete",
@@ -44,7 +44,7 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": {0: 1, 1: 1},
         }
         with self.assertRaises(KeyError):
-            AbstractEnv(config)
+            LessAbstractEnv(config)
 
         config = {
             "action_space_class": "Discrete",
@@ -60,7 +60,7 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": {0: 1, 1: 1},
         }
         with self.assertRaises(KeyError):
-            AbstractEnv(config)
+            LessAbstractEnv(config)
 
         config = {
             "action_space_class": "Tuple",
@@ -77,7 +77,7 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": {0: 1, 1: 1},
         }
         with self.assertRaises(TypeError):
-            AbstractEnv(config)
+            LessAbstractEnv(config)
 
         config = {
             "action_space_args": np.array([4]).astype(np.float32),
@@ -93,7 +93,7 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": {0: 1, 1: 1},
         }
         with self.assertRaises(KeyError):
-            AbstractEnv(config)
+            LessAbstractEnv(config)
 
     def make_env(self):
         config = {
@@ -110,7 +110,7 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
             "instance_set": {0: 1, 1: 1},
         }
-        env = AbstractEnv(config)
+        env = LessAbstractEnv(config)
         return env
 
     def test_setup(self):
@@ -129,7 +129,7 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
             "instance_set": {0: 1, 1: 1},
         }
-        env = AbstractEnv(config)
+        env = LessAbstractEnv(config)
         self.assertTrue(len(env.instance_set) >= 1)
         self.assertTrue(env.n_steps > 0)
         self.assertTrue(type(env.reward_range) is tuple)

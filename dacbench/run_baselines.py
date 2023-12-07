@@ -5,7 +5,6 @@ from pathlib import Path
 import numpy as np
 
 from dacbench import benchmarks
-from dacbench.abstract_agent import AbstractDACBenchAgent
 from dacbench.agents import DynamicRandomAgent, GenericAgent, StaticAgent
 from dacbench.envs.policies import NON_OPTIMAL_POLICIES, OPTIMAL_POLICIES
 from dacbench.logger import Logger
@@ -174,10 +173,10 @@ def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.aran
             env, logger=logger.add_module(PerformanceTrackingWrapper)
         )
 
-        if not issubclass(policy, AbstractDACBenchAgent):
-            agent = GenericAgent(env, policy)
-        else:
+        try:
             agent = policy(env)
+        except:
+            agent = GenericAgent(env, policy)
 
         logger.add_agent(agent)
         logger.add_benchmark(bench)
