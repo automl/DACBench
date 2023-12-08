@@ -217,6 +217,7 @@ def make_train_dqn(config, env, network, _):
         obsv,
         env_state,
         buffer_state,
+        global_step
     ):
         train_state_kwargs = {
             "apply_fn": network.apply,
@@ -232,7 +233,7 @@ def make_train_dqn(config, env, network, _):
         buffer.sample_fn = (
             weighted_sample if config["prioritize_replay"] else uniform_sample
         )
-        global_step = 0
+        global_step = global_step
 
         # TRAIN LOOP
         def update(
@@ -267,10 +268,10 @@ def make_train_dqn(config, env, network, _):
         def _update_step(runner_state, unused):
             (
                 train_state,
-                buffer_state,
                 env_state,
                 last_obs,
                 rng,
+                buffer_state,
                 global_step,
             ) = runner_state
             rng, _rng = jax.random.split(rng)
@@ -383,6 +384,7 @@ def make_train_dqn(config, env, network, _):
                 None,
                 config["train_frequency"],
             )
+
             train_state, loss, q_pred, grads, opt_state = jax.lax.cond(
                 (global_step > config["learning_starts"])
                 & (global_step % config["train_frequency"] == 0),
@@ -399,10 +401,10 @@ def make_train_dqn(config, env, network, _):
             )
             runner_state = (
                 train_state,
-                buffer_state,
                 env_state,
                 last_obs,
                 rng,
+                buffer_state,
                 global_step,
             )
             if config["track_traj"]:
@@ -432,7 +434,7 @@ def make_train_dqn(config, env, network, _):
             return runner_state, metric
 
         rng, _rng = jax.random.split(rng)
-        runner_state = (train_state, buffer_state, env_state, obsv, _rng, global_step)
+        runner_state = (train_state, env_state, obsv, _rng, buffer_state, global_step)
         runner_state, out = jax.lax.scan(
             _update_step, runner_state, None, (config["total_timesteps"]//config["train_frequency"])//config["num_envs"]
         )

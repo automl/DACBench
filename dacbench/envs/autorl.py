@@ -2,6 +2,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from flax.training import orbax_utils
+from flax.core.frozen_dict import FrozenDict
 import orbax
 from dacbench import AbstractEnv
 from dacbench.envs.autorl_utils import (
@@ -12,6 +13,7 @@ from dacbench.envs.autorl_utils import (
     Q,
     make_env,
     uniform_replay,
+    UniformReplayBufferState
 )
 import gymnax
 
@@ -53,6 +55,7 @@ class AutoRLEnv(AbstractEnv):
         self.last_obsv, self.last_env_state = jax.vmap(
             self.env.reset, in_axes=(0, None)
         )(reset_rng, self.env_params)
+        self.global_step = 0
 
         if isinstance(
             self.env.action_space(self.env_params), gymnax.environments.spaces.Discrete
@@ -86,8 +89,21 @@ class AutoRLEnv(AbstractEnv):
             hidden_size=self.instance["hidden_size"],
             discrete=discrete,
         )
-
+        buffer = uniform_replay(
+            max_size=int(self.instance["buffer_size"]), beta=self.instance["beta"]
+        )
         init_x = jnp.zeros(self.env.observation_space(self.env_params).shape)
+        self.buffer_state = buffer.init_fn(
+                (
+                    jnp.zeros(init_x.shape),
+                    jnp.zeros(init_x.shape),
+                    jnp.zeros(action_buffer_size),
+                    jnp.zeros(1),
+                    jnp.zeros(1),
+                ),
+                jnp.zeros(1),
+            )
+        
         _, _rng = jax.random.split(self.rng)
         if "load" in options.keys():
             checkpointer = orbax.checkpoint.PyTreeCheckpointer()
@@ -95,7 +111,16 @@ class AutoRLEnv(AbstractEnv):
             self.network_params = restored["params"]
             if isinstance(self.network_params, list):
                 self.network_params = self.network_params[0]
-            self.buffer_state = restored["buffer_state"]
+            self.network_params = FrozenDict(self.network_params)
+            if "buffer_obs" in restored.keys():
+                obs = restored["buffer_obs"]
+                next_obs = restored["buffer_next_obs"]
+                actions = restored["buffer_actions"]
+                rewards = restored["buffer_rewards"]
+                dones = restored["buffer_dones"]
+                weights = restored["buffer_weights"]
+                self.buffer_state = buffer.add_batch_fn(self.buffer_state, ((obs, next_obs, actions, rewards, dones), weights))
+                
             self.instance = restored["config"]
             if "target" in restored.keys():
                 self.target_params = restored["target"][0]
@@ -108,20 +133,6 @@ class AutoRLEnv(AbstractEnv):
         else:
             self.network_params = self.network.init(_rng, init_x)
             self.target_params = self.network.init(_rng, init_x)
-            buffer = uniform_replay(
-                max_size=int(self.instance["buffer_size"]), beta=self.instance["beta"]
-            )
-
-            self.buffer_state = buffer.init_fn(
-                (
-                    jnp.zeros(init_x.shape),
-                    jnp.zeros(init_x.shape),
-                    jnp.zeros(action_buffer_size),
-                    jnp.zeros(1),
-                    jnp.zeros(1),
-                ),
-                jnp.zeros(1),
-            )
             self.opt_state = None
         self.eval_func = make_eval(self.instance, self.network)
         if self.config.algorithm == "ppo":
@@ -175,6 +186,7 @@ class AutoRLEnv(AbstractEnv):
                 self.last_obsv,
                 self.last_env_state,
                 self.buffer_state,
+                self.global_step
             )
 
         runner_state, metrics = self.train_func(*train_args)
@@ -182,7 +194,6 @@ class AutoRLEnv(AbstractEnv):
             (
                 self.loss_info,
                 self.grad_info,
-                self.opt_info,
                 self.traj,
                 self.additional_info,
             ) = metrics
@@ -190,24 +201,26 @@ class AutoRLEnv(AbstractEnv):
             (
                 self.loss_info,
                 self.grad_info,
-                self.opt_info,
                 self.additional_info,
             ) = metrics
         self.network_params = runner_state[0].params
         self.last_obsv = runner_state[2]
         self.last_env_state = runner_state[1]
         self.buffer_state = runner_state[4]
+        self.opt_info = runner_state[0].opt_state
+        if self.config.algorithm == "dqn":
+            self.global_step = runner_state[5]
         reward = self.get_reward(self)
         if self.checkpoint:
             # Checkpoint setup
             checkpoint_name = self.checkpoint_dir + "/"
             if "checkpoint_name" in self.config.keys():
-                checkpoint_name += self.config["checkpoint_name"] + "_"
+                checkpoint_name += self.config["checkpoint_name"]
             else:
                 if not self.done:
-                    checkpoint_name += f"episode_{self.episode}_step_{self.c_step}"
+                    checkpoint_name += f"_episode_{self.episode}_step_{self.c_step}"
                 else:
-                    checkpoint_name += "final"
+                    checkpoint_name += "_final"
 
             ckpt = {
                 "config": self.instance,
@@ -222,7 +235,12 @@ class AutoRLEnv(AbstractEnv):
                     ckpt["target"] = self.target_params
 
             if "buffer" in self.checkpoint:
-                ckpt["buffer_state"] = (self.buffer_state,)
+                ckpt["buffer_obs"] = self.buffer_state.storage.data[0]
+                ckpt["buffer_next_obs"] = self.buffer_state.storage.data[1]
+                ckpt["buffer_actions"] = self.buffer_state.storage.data[2]
+                ckpt["buffer_rewards"] = self.buffer_state.storage.data[3]
+                ckpt["buffer_dones"] = self.buffer_state.storage.data[4]
+                ckpt["buffer_weights"] = self.buffer_state.storage.weights
 
             save_args = orbax_utils.save_args_from_target(ckpt)
             checkpointer = orbax.checkpoint.PyTreeCheckpointer()

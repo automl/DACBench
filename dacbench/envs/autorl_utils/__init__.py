@@ -1,7 +1,7 @@
 from .common import make_eval, make_env
 from .models import ActorCritic, Q
 from .ppo import make_train_ppo
-from .dqn import make_train_dqn, uniform_replay
+from .dqn import make_train_dqn, uniform_replay, UniformReplayBufferState
 
 __all__ = [
     "make_eval",
@@ -11,4 +11,5 @@ __all__ = [
     "Q",
     "make_env",
     "uniform_replay",
+    "UniformReplayBufferState"
 ]

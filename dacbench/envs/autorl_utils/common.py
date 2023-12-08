@@ -14,6 +14,7 @@ from minigrid.wrappers import RGBImgObsWrapper
 
 class ExtendedTrainState(TrainState):
     target_params: Union[None, chex.Array, dict] = None
+    opt_state = None
 
     @classmethod
     def create_with_opt_state(cls, *, apply_fn, params, tx, opt_state, **kwargs):

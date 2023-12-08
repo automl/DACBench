@@ -158,15 +158,14 @@ def make_train_ppo(config, env, network, num_updates):
                         return total_loss, (value_loss, loss_actor, entropy)
 
                     grad_fn = jax.value_and_grad(_loss_fn, has_aux=True)
-                    opt_state = train_state.opt_state
                     total_loss, grads = grad_fn(
                         train_state.params, traj_batch, advantages, targets
                     )
                     train_state = train_state.apply_gradients(grads=grads)
                     if config["track_metrics"]:
-                        out = (total_loss, grads, opt_state)
+                        out = (total_loss, grads)
                     else:
-                        out = (None, None, None)
+                        out = (None, None)
                     return train_state, out
 
                 train_state, traj_batch, advantages, targets, rng = update_state
@@ -189,14 +188,13 @@ def make_train_ppo(config, env, network, num_updates):
                     ),
                     shuffled_batch,
                 )
-                train_state, (total_loss, grads, opt_state) = jax.lax.scan(
+                train_state, (total_loss, grads) = jax.lax.scan(
                     _update_minbatch, train_state, minibatches
                 )
                 update_state = (train_state, traj_batch, advantages, targets, rng)
                 return update_state, (
                     total_loss,
                     grads,
-                    opt_state,
                     minibatches,
                     train_state.params.unfreeze().copy(),
                 )
@@ -205,7 +203,6 @@ def make_train_ppo(config, env, network, num_updates):
             update_state, (
                 loss_info,
                 grads,
-                opt_state,
                 minibatches,
                 param_hist,
             ) = jax.lax.scan(_update_epoch, update_state, None, config["update_epochs"])
@@ -217,7 +214,6 @@ def make_train_ppo(config, env, network, num_updates):
                 out = (
                     loss_info,
                     grads,
-                    opt_state,
                     traj_batch,
                     {
                         "advantages": advantages,
@@ -229,7 +225,6 @@ def make_train_ppo(config, env, network, num_updates):
                 out = (
                     loss_info,
                     grads,
-                    opt_state,
                     {"advantages": advantages, "param_history": param_hist["params"]},
                 )
             else:
