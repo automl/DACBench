@@ -1,5 +1,3 @@
-from typing import Iterator, Tuple
-
 import torch
 
 from dacbench import AbstractMADACEnv
@@ -12,22 +10,33 @@ def optimizer_action(optimizer: torch.optim.Optimizer, action: float) -> None:
     return optimizer
 
 
-def test(model, loss_function, loader, batch_size: None | int = "None", device="cpu"):
-    """Evaluate given `model` on `loss_function`. Size defines batch size. If none then full batch.
+def test(
+    model,
+    loss_function,
+    loader,
+    batch_size,
+    batch_percentage: float = 1.0,
+    device="cpu",
+):
+    """Evaluate given `model` on `loss_function`.
+
+    Percentage defines how much percentage of the data shall be used. If nothing given the whole data is used.
 
     Returns:
         test_losses: Batch validation loss per data point
     """
+    nmb_sets = batch_percentage * (len(loader.dataset) / batch_size)
     model.eval()
     test_losses = []
     i = 0
+
     with torch.no_grad():
         for data, target in loader:
             data, target = data.to(device), target.to(device)
             output = model(data)
             test_losses.append(loss_function(output, target))
             i += 1
-            if batch_size is not None and i >= batch_size:
+            if i >= nmb_sets:
                 break
     test_losses = torch.cat(test_losses)
     return test_losses
@@ -40,7 +49,7 @@ def forward_backward(model, loss_function, loader, device="cpu"):
         loss: Mini batch training loss per data point
     """
     model.train()
-    (data, target) = next(loader)
+    (data, target) = next(iter(loader))
     data, target = data.to(device), target.to(device)
     output = model(data)
     loss = loss_function(output, target)
@@ -72,8 +81,6 @@ class SGDEnv(AbstractMADACEnv):
 
         self.learning_rate = None
         self.optimizer_type = torch.optim.AdamW
-        self.train_iter: Iterator[Tuple[torch.Tensor, torch.Tensor]]
-        self.validation_iter: Iterator[Tuple[torch.Tensor, torch.Tensor]]
         self.optimizer_params = config.get("optimizer_params")
         self.batch_size = config.get("training_batch_size")
         self.model = config.get("model")
@@ -81,15 +88,13 @@ class SGDEnv(AbstractMADACEnv):
         self.loss_function = config.loss_function(**config.loss_function_kwargs)
 
         # Get loaders for instance
-        datasets, loaders = random_torchvision_loader(
-            config.get("Seed"),
+        self.datasets, loaders = random_torchvision_loader(
+            config.get("seed"),
             config.get("instance_set_path"),
             None,  # If set to None, random data set is chosen; else specific set can be set: e.g. "MNIST"
             self.batch_size,
-            self.batch_size,
             config.get("fraction_of_dataset"),
             config.get("train_validation_ratio"),
-            True,
         )
         self.train_loader, self.validation_loader, self.test_loader = loaders
 
@@ -107,11 +112,10 @@ class SGDEnv(AbstractMADACEnv):
         self.optimizer.step()
         self.optimizer.zero_grad()
 
-        # self.train_iter = self.train_loader
         train_args = [
             self.model,
             self.loss_function,
-            self.train_iter,
+            self.train_loader,
             self.device,
         ]
         self.loss = forward_backward(*train_args)
@@ -123,29 +127,37 @@ class SGDEnv(AbstractMADACEnv):
             ).any()
         )
 
+        state = {
+            "step": self.n_steps,
+            "loss": self.loss,
+            "validation_loss": -self.crash_penalty,
+            "done": True,
+        }
+
         if crashed:
             return (
-                None,
-                self.crash_penalty,
+                state,
+                -self.crash_penalty,
                 False,
-                truncated,
+                True,
                 info,
-            )  # TODO: Negative or positive reward?
+            )
 
         self._done = truncated
 
         if (
             self.n_steps % len(self.train_loader) == 0 or self._done
         ):  # Calculate validation loss at the end of an epoch
-            batch_size = None
+            batch_percentage = 1.0
         else:
-            batch_size = 1
+            batch_percentage = 0.1
 
         val_args = [
             self.model,
             self.loss_function,
-            self.validation_iter,
-            batch_size,
+            self.validation_loader,
+            self.batch_size,
+            batch_percentage,
             self.device,
         ]
         validation_loss = test(*val_args)
@@ -165,16 +177,16 @@ class SGDEnv(AbstractMADACEnv):
         }
 
         if self._done:
-            test_losses = test(
+            val_args = [
                 self.model,
                 self.loss_function,
                 self.test_loader,
-                None,
+                self.batch_size,
+                1.0,
                 self.device,
-            )
-            reward = -test_losses.sum().item() / len(
-                self.test_loader.dataset
-            )  # TODO: Warum minus?
+            ]
+            test_losses = test(*val_args)
+            reward = -test_losses.sum().item() / len(self.test_loader.dataset)
         else:
             reward = 0.0
         return state, reward, False, truncated, info
@@ -186,12 +198,8 @@ class SGDEnv(AbstractMADACEnv):
 
         self.learning_rate = 0
         self.optimizer_type = torch.optim.AdamW
-        self.train_iter: Iterator[Tuple[torch.Tensor, torch.Tensor]]
-        self.validation_iter: Iterator[Tuple[torch.Tensor, torch.Tensor]]
         self.info = {}
 
-        self.train_iter = iter(self.train_loader)
-        self.validation_iter = iter(self.validation_loader)
         self.model.to(self.device)
         self.optimizer: torch.optim.Optimizer = torch.optim.AdamW(
             **self.optimizer_params, params=self.model.parameters()

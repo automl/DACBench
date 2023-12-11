@@ -1,4 +1,3 @@
-import copy
 from typing import Tuple
 
 import numpy as np
@@ -41,16 +40,22 @@ def random_torchvision_loader(
     dataset_path: str,
     name: str | None,
     batch_size: int,
-    noisy_validation_batch_size: int,
     fraction_of_dataset: float,
-    train_validation_ratio: float,
-    shuffle_training: bool,
+    train_validation_ratio: float | None,
     **kwargs,
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """Create train, validation, test loaders for `name` dataset."""
+    rng = np.random.RandomState(seed)
+
     if name is None:
         np.random.seed(seed)
         name = np.random.choice(np.array(list(DATASETS.keys())))
+
+    if train_validation_ratio is None:
+        train_validation_ratio = (
+            1 - int(np.exp(rng.uniform(low=np.log(5), high=np.log(20)))) / 100
+        )
+
     transform = DATASETS[name]["transform"]
     train_dataset = getattr(datasets, name)(
         dataset_path, train=True, download=True, transform=transform
@@ -68,56 +73,38 @@ def random_torchvision_loader(
         train_dataset, [train_size, len(train_dataset) - train_size]
     )
     train_loader = DataLoader(
-        train, batch_size=batch_size, drop_last=True, shuffle=shuffle_training
+        train, batch_size=batch_size, drop_last=True, shuffle=True
     )
-    val_loader = DataLoader(val, batch_size=noisy_validation_batch_size)
+    val_loader = DataLoader(val, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test, batch_size=64)
     return (train_dataset, test), (train_loader, val_loader, test_loader)
 
 
-def random_instance(rng: np.random.RandomState):
+def random_instance(rng: np.random.RandomState, datasets):
     """Samples a random Instance"""
     default_rng_state = torch.get_rng_state()
     seed = rng.randint(1, 4294967295, dtype=np.int64)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-    instance = _random_instance(rng)
+    instance = _random_instance(rng, datasets)
     torch.set_rng_state(default_rng_state)
     return instance
 
 
 def _random_instance(
     rng: np.random.RandomState,
+    datasets,
     **kwargs,
 ):
     """Helper for samling a random instance."""
     batch_size = 2 ** int(np.exp(rng.uniform(low=np.log(4), high=np.log(8))))
-    noisy_validation_batch_size = 2 ** int(
-        np.exp(copy.deepcopy(rng).uniform(low=np.log(4), high=np.log(8)))
-    )
-    fraction_of_dataset = rng.choice([1, 0.5, 0.2, 0.1])
-    train_validation_ratio = (
-        1 - int(np.exp(rng.uniform(low=np.log(5), high=np.log(20)))) / 100
-    )
+
     model, n_conv_layers = random_architecture(
         rng, datasets[0][0][0].shape, len(datasets[0].classes)
     )
     optimizer_params = sample_optimizer_params(rng, **kwargs)
     loss = F.nll_loss
-    n_params = len(torch.nn.utils.parameters_to_vector(model.parameters()))
-    target_runtime = 60
-    epoch_cutoff = max(
-        1,
-        int(
-            batch_size
-            / len(datasets[0])
-            * (target_runtime - 0.5)
-            / (0.01 + 0.00035 * batch_size + (0.0000002 * n_params) ** 2)
-        ),
-    )
-    loaders = [[1, 2, 3, 4, 5, 6]]  # TODO!!
-    cutoff = int(len(loaders[0]) * epoch_cutoff)
 
     crash_penalty = np.log(len(datasets[0].classes))
     return (
@@ -125,10 +112,6 @@ def _random_instance(
         optimizer_params,
         loss,
         batch_size,
-        noisy_validation_batch_size,
-        train_validation_ratio,
-        fraction_of_dataset,
-        cutoff,
         crash_penalty,
         n_conv_layers,
     )

@@ -94,17 +94,10 @@ SGD_DEFAULTS = objdict(
         # "optimizer": "rmsprop",
         "loss_function": __default_loss_function,
         "loss_function_kwargs": {},
-        # "val_loss_function": __default_loss_function,
-        # "val_loss_function_kwargs": {},
         "training_batch_size": 64,
-        # "validation_batch_size": 64,
         "fraction_of_dataset": 0.6,
-        "train_validation_ratio": 0.8,
-        # "dataloader_shuffle": True,
+        "train_validation_ratio": 0.8,  # If set to None, random value is used
         "seed": 0,
-        # "cd_paper_reconstruction": False,
-        # "cd_bias_correction": True,
-        # "terminate_on_crash": False,
         "crash_penalty": 100.0,
         "multi_agent": False,
         "instance_set_path": "../instance_sets/sgd/sgd_train_100instances.csv",
@@ -133,7 +126,7 @@ class SGDBenchmark(AbstractBenchmark):
     Benchmark with default configuration & relevant functions for SGD
     """
 
-    def __init__(self, config_path=None, config=None, use_generator=False):
+    def __init__(self, config_path=None, config=None):
         """
         Initialize SGD Benchmark
 
@@ -150,23 +143,7 @@ class SGDBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = SGD_DEFAULTS[key]
 
-        if use_generator:
-            (
-                model,
-                optimizer_params,
-                loss,
-                batch_size,
-                noisy_validation_batch_size,
-                train_validation_ratio,
-                fraction_of_dataset,
-                loaders,
-                cutoff,
-                crash_penalty,
-                n_conv_layers,
-            ) = utils.random_instance(np.random.RandomState(SGD_DEFAULTS("seed")))
-            pass  # Replace generated things
-
-    def get_environment(self):
+    def get_environment(self, use_generator=False):
         """
         Return SGDEnv env with current configuration
 
@@ -188,6 +165,18 @@ class SGDBenchmark(AbstractBenchmark):
         env = SGDEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
+
+        if use_generator:
+            (
+                env.model,
+                env.optimizer_params,
+                env.loss,
+                env.batch_size,
+                env.crash_penalty,
+                env.n_conv_layers,
+            ) = utils.random_instance(
+                np.random.RandomState(self.config.get("seed")), env.datasets
+            )
 
         return env
 
