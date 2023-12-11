@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -165,7 +166,8 @@ def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.aran
         else:
             experiment_name = f"optimal_{s}"
         logger = Logger(
-            experiment_name=experiment_name, output_path=results_path / benchmark_name
+            experiment_name=experiment_name,
+            output_path=os.path.join(results_path, benchmark_name),
         )
 
         env = bench.get_benchmark(seed=s)

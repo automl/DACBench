@@ -1,7 +1,7 @@
 import unittest
 
-import numpy as np
 import gymnasium as gym
+import numpy as np
 
 from dacbench import AbstractEnv
 from dacbench.wrappers import ObservationWrapper

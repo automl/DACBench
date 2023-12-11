@@ -4,9 +4,8 @@ from pathlib import Path
 
 import dacbench
 from dacbench.logger import load_logs, log2dataframe
-from dacbench.run_baselines import (
+from dacbench.run_baselines import (  # run_dynamic_policy,
     main,
-    #    run_dynamic_policy,
     run_optimal,
     run_random,
     run_static,

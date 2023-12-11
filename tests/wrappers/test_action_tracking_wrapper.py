@@ -7,10 +7,7 @@ import numpy as np
 import pandas as pd
 
 from dacbench.agents import StaticAgent
-from dacbench.benchmarks import (
-    CMAESBenchmark,
-    LubyBenchmark,
-)
+from dacbench.benchmarks import CMAESBenchmark, LubyBenchmark
 from dacbench.logger import Logger, load_logs, log2dataframe
 from dacbench.runner import run_benchmark
 from dacbench.wrappers import ActionFrequencyWrapper
