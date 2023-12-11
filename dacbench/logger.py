@@ -310,7 +310,7 @@ class AbstractLogger(metaclass=ABCMeta):
         None
 
         """
-        log_dir.mkdir(parents=True, exist_ok=True)
+        os.mkdir(log_dir, parents=True, exist_ok=True)
         return log_dir
 
     def is_of_valid_type(self, value: Any) -> bool:
