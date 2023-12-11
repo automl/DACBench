@@ -248,9 +248,11 @@ class AbstractLogger(metaclass=ABCMeta):
         """
         self.experiment_name = experiment_name
         self.output_path = output_path
-        self.log_dir = self._init_logging_dir(
-            os.path.join(self.output_path, self.experiment_name)
-        )
+        if isinstance(self.output_path, str):
+            logpath = os.path.join(self.output_path, self.experiment_name)
+            self.log_dir = self._init_logging_dir(Path(logpath))
+        else:
+            self.log_dir = self._init_logging_dir(self.output_path / self.experiment_name)
         self.step_write_frequency = step_write_frequency
         self.episode_write_frequency = episode_write_frequency
         self._additional_info = {}
@@ -310,7 +312,7 @@ class AbstractLogger(metaclass=ABCMeta):
         None
 
         """
-        os.mkdir(log_dir, parents=True, exist_ok=True)
+        log_dir.mkdir(parents=True, exist_ok=True)
         return log_dir
 
     def is_of_valid_type(self, value: Any) -> bool:
@@ -449,7 +451,7 @@ class ModuleLogger(AbstractLogger):
             experiment_name, output_path, step_write_frequency, episode_write_frequency
         )
 
-        self.log_file = open(os.path.join(self.log_dir, f"{module}.jsonl", "w"))
+        self.log_file = open(os.path.join(self.log_dir, f"{module}.jsonl"), "w")
 
         self.step = 0
         self.episode = 0
@@ -799,7 +801,7 @@ class Logger(AbstractLogger):
 
         """
         agent_config = {"type": str(agent.__class__)}
-        with open(os.path.join(self.log_dir, "agent.json", "w")) as f:
+        with open(os.path.join(self.log_dir, "agent.json"), "w") as f:
             json.dump(agent_config, f)
 
     def add_benchmark(self, benchmark: AbstractBenchmark) -> None:
