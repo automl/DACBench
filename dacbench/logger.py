@@ -1,4 +1,5 @@
 import json
+import os
 from abc import ABCMeta, abstractmethod
 from collections import ChainMap, defaultdict
 from datetime import datetime
@@ -247,7 +248,9 @@ class AbstractLogger(metaclass=ABCMeta):
         """
         self.experiment_name = experiment_name
         self.output_path = output_path
-        self.log_dir = self._init_logging_dir(self.output_path / self.experiment_name)
+        self.log_dir = self._init_logging_dir(
+            os.path.join(self.output_path, self.experiment_name)
+        )
         self.step_write_frequency = step_write_frequency
         self.episode_write_frequency = episode_write_frequency
         self._additional_info = {}
@@ -446,7 +449,7 @@ class ModuleLogger(AbstractLogger):
             experiment_name, output_path, step_write_frequency, episode_write_frequency
         )
 
-        self.log_file = open(self.log_dir / f"{module}.jsonl", "w")
+        self.log_file = open(os.path.join(self.log_dir, f"{module}.jsonl", "w"))
 
         self.step = 0
         self.episode = 0
@@ -796,7 +799,7 @@ class Logger(AbstractLogger):
 
         """
         agent_config = {"type": str(agent.__class__)}
-        with open(self.log_dir / "agent.json", "w") as f:
+        with open(os.path.join(self.log_dir, "agent.json", "w")) as f:
             json.dump(agent_config, f)
 
     def add_benchmark(self, benchmark: AbstractBenchmark) -> None:
@@ -809,7 +812,7 @@ class Logger(AbstractLogger):
             the benchmark object to add
 
         """
-        benchmark.save_config(self.log_dir / "benchmark.json")
+        benchmark.save_config(os.path.join(self.log_dir, "benchmark.json"))
 
     def set_additional_info(self, **kwargs):
         """
