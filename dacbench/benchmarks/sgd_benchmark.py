@@ -44,13 +44,6 @@ INFO = {
         "Loss",
         "Validation Loss",
         "Crashed",
-        # "Predictive Change Variance (Discounted Average)",
-        # "Predictive Change Variance (Uncertainty)",
-        # "Loss Variance (Discounted Average)",
-        # "Loss Variance (Uncertainty)",
-        # "Current Learning Rate",
-        # "Training Loss",
-        # "Alignment",
     ],
     "action_description": ["Learning Rate"],
 }
@@ -67,19 +60,6 @@ SGD_DEFAULTS = objdict(
                 "loss": spaces.Box(0, np.inf, shape=(1,)),
                 "validationLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
                 "crashed": spaces.Discrete(1),
-                # "predictiveChangeVarDiscountedAverage": spaces.Box(
-                #     low=-np.inf, high=np.inf, shape=(1,)
-                # ),
-                # "predictiveChangeVarUncertainty": spaces.Box(
-                #     low=0, high=np.inf, shape=(1,)
-                # ),
-                # "lossVarDiscountedAverage": spaces.Box(
-                #     low=-np.inf, high=np.inf, shape=(1,)
-                # ),
-                # "lossVarUncertainty": spaces.Box(low=0, high=np.inf, shape=(1,)),
-                # "currentLR": spaces.Box(low=0, high=1, shape=(1,)),
-                # "trainingLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
-                # "alignment": spaces.Box(low=0, high=1, shape=(1,)),
             }
         ],
         "shuffle_training": True,
@@ -91,7 +71,6 @@ SGD_DEFAULTS = objdict(
             "betas": (0.9994264825468422, 0.9866804882743139),
         },
         "cutoff": 1e2,
-        # "optimizer": "rmsprop",
         "loss_function": __default_loss_function,
         "loss_function_kwargs": {},
         "training_batch_size": 64,
@@ -105,18 +84,6 @@ SGD_DEFAULTS = objdict(
         "multi_agent": False,
         "instance_set_path": "../instance_sets/sgd/sgd_train_100instances.csv",
         "benchmark_info": INFO,
-        # "features": [
-        #     "predictiveChangeVarDiscountedAverage",
-        #     "predictiveChangeVarUncertainty",
-        #     "lossVarDiscountedAverage",
-        #     "lossVarUncertainty",
-        #     "currentLR",
-        #     "trainingLoss",
-        #     "validationLoss",
-        #     "step",
-        #     "alignment",
-        #     "crashed",
-        # ],
     }
 )
 
