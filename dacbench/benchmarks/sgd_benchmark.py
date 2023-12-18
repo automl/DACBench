@@ -9,7 +9,6 @@ from torch import nn
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import SGDEnv
 from dacbench.envs.env_utils import utils
-from dacbench.envs.sgd import Reward
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
 LR = CS.Float(name="learning_rate", bounds=(0.0, 0.05))
@@ -63,7 +62,7 @@ SGD_DEFAULTS = objdict(
             }
         ],
         "shuffle_training": True,
-        "reward_type": Reward.LogDiffTraining,
+        "reward_range": [-(10**9), (10**9)],
         "model": neural_network,
         "optimizer_params": {
             "weight_decay": 10.978902603194243,
@@ -86,9 +85,6 @@ SGD_DEFAULTS = objdict(
         "benchmark_info": INFO,
     }
 )
-
-# Set reward range based on the chosen reward type
-SGD_DEFAULTS.reward_range = SGD_DEFAULTS["reward_type"].func.frange
 
 
 class SGDBenchmark(AbstractBenchmark):
