@@ -97,6 +97,9 @@ SGD_DEFAULTS = objdict(
         "training_batch_size": 64,
         "fraction_of_dataset": 0.6,
         "train_validation_ratio": 0.8,  # If set to None, random value is used
+        "dataset_name": "MNIST",  # If set to None, random data set is chosen; else specific set can be set: e.g. "MNIST"
+        # "reward_function":,    # Can be set, to replace the default function
+        # "state_method":,       # Can be set, to replace the default function
         "seed": 0,
         "crash_penalty": 100.0,
         "multi_agent": False,

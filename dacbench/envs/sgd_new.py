@@ -86,12 +86,23 @@ class SGDEnv(AbstractMADACEnv):
         self.model = config.get("model")
         self.crash_penalty = config.get("crash_penalty")
         self.loss_function = config.loss_function(**config.loss_function_kwargs)
+        self.dataset_name = config.get("dataset_name")
+
+        if "reward_function" in config.keys():
+            self.get_reward = config["reward_function"]
+        else:
+            self.get_reward = self.get_default_reward
+
+        if "state_method" in config.keys():
+            self.get_state = config["state_method"]
+        else:
+            self.get_state = self.get_default_state
 
         # Get loaders for instance
         self.datasets, loaders = random_torchvision_loader(
             config.get("seed"),
             config.get("instance_set_path"),
-            None,  # If set to None, random data set is chosen; else specific set can be set: e.g. "MNIST"
+            self.dataset_name,
             self.batch_size,
             config.get("fraction_of_dataset"),
             config.get("train_validation_ratio"),
@@ -169,13 +180,6 @@ class SGDEnv(AbstractMADACEnv):
         ):
             self.min_validation_loss = self.validation_loss
 
-        state = {
-            "step": self.n_steps,
-            "loss": self.loss,
-            "validation_loss": validation_loss,
-            "done": self._done,
-        }
-
         if self._done:
             val_args = [
                 self.model,
@@ -185,11 +189,11 @@ class SGDEnv(AbstractMADACEnv):
                 1.0,
                 self.device,
             ]
-            test_losses = test(*val_args)
-            reward = -test_losses.sum().item() / len(self.test_loader.dataset)
-        else:
-            reward = 0.0
-        return state, reward, False, truncated, info
+            self.test_losses = test(*val_args)
+
+        reward = self.get_reward(self)
+
+        return self.get_state(self), reward, False, truncated, info
 
     def reset(self, seed=None, options={}):
         """Initialize the neural network, data loaders, etc. for given/random next task. Also perform a single
@@ -199,22 +203,35 @@ class SGDEnv(AbstractMADACEnv):
         self.learning_rate = 0
         self.optimizer_type = torch.optim.AdamW
         self.info = {}
+        self._done = False
+        self.n_steps = 0
 
         self.model.to(self.device)
         self.optimizer: torch.optim.Optimizer = torch.optim.AdamW(
             **self.optimizer_params, params=self.model.parameters()
         )
         self.loss = 0
+        self.test_losses = None
 
         self.validation_loss = None
         self.min_validation_loss = None
 
+        return self.get_state(self), {}
+
+    def get_default_reward(self, _):
+        if self.test_losses is not None:
+            reward = self.test_losses.sum().item() / len(self.test_loader.dataset)
+        else:
+            reward = 0.0
+        return reward
+
+    def get_default_state(self, _):
         return {
-            "step": 0,
+            "step": self.n_steps,
             "loss": self.loss,
-            "validation_loss": 0,
-            "crashed": False,
-        }, {}
+            "validation_loss": self.validation_loss,
+            "done": self._done,
+        }
 
     def render(self, mode="human"):
         if mode == "human":

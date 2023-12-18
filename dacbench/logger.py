@@ -252,7 +252,9 @@ class AbstractLogger(metaclass=ABCMeta):
             logpath = os.path.join(self.output_path, self.experiment_name)
             self.log_dir = self._init_logging_dir(Path(logpath))
         else:
-            self.log_dir = self._init_logging_dir(self.output_path / self.experiment_name)
+            self.log_dir = self._init_logging_dir(
+                self.output_path / self.experiment_name
+            )
         self.step_write_frequency = step_write_frequency
         self.episode_write_frequency = episode_write_frequency
         self._additional_info = {}
