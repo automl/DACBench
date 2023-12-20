@@ -110,7 +110,7 @@ class StateTrackingWrapper(Wrapper):
         else:
             return getattr(self.env, name)
 
-    def reset(self):
+    def reset(self, *args, **kwargs):
         """
         Reset environment and record starting state.
 
@@ -120,7 +120,7 @@ class StateTrackingWrapper(Wrapper):
             state, info
 
         """
-        state, info = self.env.reset()
+        state, info = self.env.reset(*args, **kwargs)
         self.overall_states.append(state)
         if self.state_interval:
             if len(self.current_states) < self.state_interval:
