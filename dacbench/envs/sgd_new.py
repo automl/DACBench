@@ -4,9 +4,14 @@ from dacbench import AbstractMADACEnv
 from dacbench.envs.env_utils.utils import random_torchvision_loader
 
 
-def optimizer_action(optimizer: torch.optim.Optimizer, action: float) -> None:
+def optimizer_action(
+    optimizer: torch.optim.Optimizer, action: float, use_momentum: bool
+) -> None:
     for g in optimizer.param_groups:
         g["lr"] = action[0]
+        if use_momentum:
+            print("Momentum")
+            g["betas"] = (action[1], 0.999)
     return optimizer
 
 
@@ -87,6 +92,7 @@ class SGDEnv(AbstractMADACEnv):
         self.crash_penalty = config.get("crash_penalty")
         self.loss_function = config.loss_function(**config.loss_function_kwargs)
         self.dataset_name = config.get("dataset_name")
+        self.use_momentum = config.get("use_momentum")
 
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
@@ -119,7 +125,7 @@ class SGDEnv(AbstractMADACEnv):
         if isinstance(action, float):
             action = [action]
 
-        self.optimizer = optimizer_action(self.optimizer, action)
+        self.optimizer = optimizer_action(self.optimizer, action, self.use_momentum)
         self.optimizer.step()
         self.optimizer.zero_grad()
 
@@ -138,16 +144,10 @@ class SGDEnv(AbstractMADACEnv):
             ).any()
         )
 
-        state = {
-            "step": self.n_steps,
-            "loss": self.loss,
-            "validation_loss": -self.crash_penalty,
-            "done": True,
-        }
-
         if crashed:
+            self._done = True
             return (
-                state,
+                self.get_state(self),
                 -self.crash_penalty,
                 False,
                 True,

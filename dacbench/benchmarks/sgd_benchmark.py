@@ -12,7 +12,12 @@ from dacbench.envs.env_utils import utils
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
 LR = CS.Float(name="learning_rate", bounds=(0.0, 0.05))
+# Value used for momentum like adaptation, as adam optimizer has no real momentum; "beta1" is changed
+MOMENTUM = CS.Float(
+    name="momentum", bounds=(0.0, 1.0)
+)  # ! Only used, when "use_momentum" var in config true
 DEFAULT_CFG_SPACE.add_hyperparameter(LR)
+DEFAULT_CFG_SPACE.add_hyperparameter(MOMENTUM)
 
 
 def __default_loss_function(**kwargs):
@@ -44,7 +49,7 @@ INFO = {
         "Validation Loss",
         "Crashed",
     ],
-    "action_description": ["Learning Rate"],
+    "action_description": ["Learning Rate", "Momentum"],
 }
 
 
@@ -78,6 +83,7 @@ SGD_DEFAULTS = objdict(
         "dataset_name": "MNIST",  # If set to None, random data set is chosen; else specific set can be set: e.g. "MNIST"
         # "reward_function":,    # Can be set, to replace the default function
         # "state_method":,       # Can be set, to replace the default function
+        "use_momentum": False,
         "seed": 0,
         "crash_penalty": 100.0,
         "multi_agent": False,
