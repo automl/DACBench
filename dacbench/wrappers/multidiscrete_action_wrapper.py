@@ -29,5 +29,8 @@ class MultiDiscreteActionWrapper(Wrapper):
 
     def step(self, action):
         """Maps discrete action value to array."""
+        if isinstance(action, np.ndarray):
+            action = action.item()
         action = self.action_mapper[action]
+        action = np.array(action)
         return self.env.step(action)
