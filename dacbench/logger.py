@@ -638,7 +638,7 @@ class ModuleLogger(AbstractLogger):
             )
             data = dict(ChainMap(*dicts))
         else:
-            raise ValueError("Space does not seem be supported")
+            raise ValueError(f"Space {type(value)} does not seem be supported")
 
         return data
 
