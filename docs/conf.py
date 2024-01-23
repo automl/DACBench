@@ -38,17 +38,17 @@ options = {
         "github_url": "https://github.com/automl/DACBench",
         "twitter_url": "https://twitter.com/automl_org?lang=de",
     },
-    #this is here to exclude the gallery for examples
-    "extensions": ["myst_parser",
-                          "sphinx.ext.autodoc",
-                          "sphinx.ext.viewcode",
-                          "sphinx.ext.napoleon",  # Enables to understand NumPy docstring
-                          # "numpydoc",
-                          "sphinx.ext.autosummary",
-                          "sphinx.ext.autosectionlabel",
-                          "sphinx_autodoc_typehints",
-                          "sphinx.ext.doctest",
-                          ]
-
+    # this is here to exclude the gallery for examples
+    "extensions": [
+        "myst_parser",
+        "sphinx.ext.autodoc",
+        "sphinx.ext.viewcode",
+        "sphinx.ext.napoleon",  # Enables to understand NumPy docstring
+        # "numpydoc",
+        "sphinx.ext.autosummary",
+        "sphinx.ext.autosectionlabel",
+        "sphinx_autodoc_typehints",
+        "sphinx.ext.doctest",
+    ],
 }
 automl_sphinx_theme.set_options(globals(), options)

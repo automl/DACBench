@@ -1,4 +1,5 @@
 import json
+from abc import ABC, abstractmethod
 from functools import partial
 from types import FunctionType
 
@@ -8,7 +9,7 @@ from gymnasium import spaces
 from dacbench import wrappers
 
 
-class AbstractBenchmark:
+class AbstractBenchmark(ABC):
     """Abstract template for benchmark classes."""
 
     def __init__(self, config_path=None, config: "objdict" = None):
@@ -535,6 +536,7 @@ class AbstractBenchmark:
 
         self.load_config(config)
 
+    @abstractmethod
     def get_environment(self):
         """
         Make benchmark environment.

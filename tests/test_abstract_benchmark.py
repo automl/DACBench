@@ -15,18 +15,18 @@ from dacbench.challenge_benchmarks.state_space_challenge.random_states import (
 )
 
 
-class TestAbstractBenchmark(unittest.TestCase):
-    def test_not_implemented_method(self):
-        bench = AbstractBenchmark()
-        with self.assertRaises(NotImplementedError):
-            bench.get_environment()
+class LessAbstractBenchmark(AbstractBenchmark):
+    def get_environment(self):
+        pass
 
+
+class TestAbstractBenchmark(unittest.TestCase):
     def test_setup(self):
-        bench = AbstractBenchmark()
+        bench = LessAbstractBenchmark()
         self.assertTrue(bench.config is None)
 
     def test_config_file_management(self):
-        bench = AbstractBenchmark()
+        bench = LessAbstractBenchmark()
 
         bench.config = objdict({"seed": 0})
         test_config = objdict({"seed": 10})
@@ -46,9 +46,9 @@ class TestAbstractBenchmark(unittest.TestCase):
         os.remove("test_conf2.json")
 
     def test_from_and_to_json(self):
-        bench1 = AbstractBenchmark(config_path="tests/test_config.json")
+        bench1 = LessAbstractBenchmark(config_path="tests/test_config.json")
         json1 = bench1.serialize_config()
-        bench2 = AbstractBenchmark(config=objdict(json1))
+        bench2 = LessAbstractBenchmark(config=objdict(json1))
         json2 = bench2.serialize_config()
 
         print(json1)
@@ -56,14 +56,14 @@ class TestAbstractBenchmark(unittest.TestCase):
         self.assertEqual(json1, json2)
 
     def test_attributes(self):
-        bench = AbstractBenchmark()
+        bench = LessAbstractBenchmark()
         bench.config = objdict({"seed": 0})
         self.assertTrue(bench.config.seed == bench.config["seed"])
         bench.config.seed = 42
         self.assertTrue(bench.config["seed"] == 42)
 
     def test_getters_and_setters(self):
-        bench = AbstractBenchmark()
+        bench = LessAbstractBenchmark()
         bench.config = objdict({"seed": 0})
         config = bench.get_config()
         self.assertTrue(issubclass(type(config), dict))
@@ -81,12 +81,12 @@ class TestAbstractBenchmark(unittest.TestCase):
         self.assertTrue(bench.config.observation_space_type == float)
 
     def test_reading_and_saving_config(self):
-        bench1 = AbstractBenchmark(config_path="tests/test_config.json")
+        bench1 = LessAbstractBenchmark(config_path="tests/test_config.json")
         with tempfile.TemporaryDirectory() as temp_dir:
             config_file = os.path.join(temp_dir, "config.json")
             bench1.save_config(config_file)
 
-            bench2 = AbstractBenchmark()
+            bench2 = LessAbstractBenchmark()
             bench2.read_config_file(config_file)
 
             assert bench1.config["state_method"] == bench2.config["state_method"]
@@ -99,7 +99,7 @@ class TestAbstractBenchmark(unittest.TestCase):
             assert bench1.jsonify_wrappers() == [["RewardNoiseWrapper", []]]
 
     def test_jsonify_wrappers_and_dejson_wrappers(self):
-        bench = AbstractBenchmark()
+        bench = LessAbstractBenchmark()
         empty_warpper_list = bench.jsonify_wrappers()
         assert empty_warpper_list == []
 
@@ -108,7 +108,7 @@ class TestAbstractBenchmark(unittest.TestCase):
             space_restored = bench.list_to_space(bench.space_to_list(space))
             assert space == space_restored
 
-        bench = AbstractBenchmark()
+        bench = LessAbstractBenchmark()
 
         space = Box(
             low=np.array([0, 0]),

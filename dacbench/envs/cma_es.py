@@ -1,257 +1,126 @@
-"""
-CMA-ES environment adapted from CMAWorld in
-"Learning Step-size Adaptation in CMA-ES"
-by G.Shala and A. Biedenkapp and N.Awad and S. Adriaensen and M.Lindauer and F. Hutter.
-Original author: Gresa Shala
-"""
-
-import resource
-import sys
-import threading
+import re
 import warnings
-from collections import deque
+from collections import OrderedDict
 
 import numpy as np
-from cma import bbobbenchmarks as bn
-from cma.evolution_strategy import CMAEvolutionStrategy
+from IOHexperimenter import IOH_function
+from modcma import ModularCMAES, Parameters
 
-from dacbench import AbstractEnv
-
-resource.setrlimit(resource.RLIMIT_STACK, (2**35, -1))
-sys.setrecursionlimit(10**9)
-
-warnings.filterwarnings("ignore")
+from dacbench import AbstractMADACEnv
 
 
-def _norm(x):
-    return np.sqrt(np.sum(np.square(x)))
-
-
-# IDEA: if we ask cma instead of ask_eval, we could make this parallel
-
-
-class CMAESEnv(AbstractEnv):
-    """
-    Environment to control the step size of CMA-ES
-    """
-
+class CMAESEnv(AbstractMADACEnv):
     def __init__(self, config):
-        """
-        Initialize CMA Env
+        super().__init__(config)
 
-        Parameters
-        -------
-        config : objdict
-            Environment configuration
-        """
-        super(CMAESEnv, self).__init__(config)
-        self.b = None
-        self.bounds = [None, None]
-        self.fbest = None
-        self.history_len = config.hist_length
-        self.history = deque(maxlen=self.history_len)
-        self.past_obj_vals = deque(maxlen=self.history_len)
-        self.past_sigma = deque(maxlen=self.history_len)
-        self.solutions = None
-        self.func_values = []
-        self.cur_obj_val = -1
-        # self.chi_N = dim ** 0.5 * (1 - 1.0 / (4.0 * dim) + 1.0 / (21.0 * dim ** 2))
-        self.lock = threading.Lock()
-        self.popsize = config["popsize"]
-        self.cur_ps = self.popsize
+        self.es = None
+        self.budget = config.budget
+        self.total_budget = self.budget
 
-        if "reward_function" in config.keys():
-            self.get_reward = config["reward_function"]
-        else:
-            self.get_reward = self.get_default_reward
+        param = Parameters(
+            10
+        )  # Dummy dim since current parameters don't rely on dimension
 
-        if "state_method" in config.keys():
-            self.get_state = config["state_method"]
-        else:
-            self.get_state = self.get_default_state
-
-    def step(self, action):
-        """
-        Execute environment step
-
-        Parameters
-        ----------
-        action : list
-            action to execute
-
-        Returns
-        -------
-        np.array, float, bool, dict
-            state, reward, done, info
-        """
-        truncated = super(CMAESEnv, self).step_()
-        self.history.append([self.f_difference, self.velocity])
-        terminated = self.es.stop() != {}
-        if not (terminated or truncated):
-            """Moves forward in time one step"""
-            sigma = action
-            self.es.tell(self.solutions, self.func_values)
-            self.es.sigma = np.maximum(sigma, 0.2)
-            self.solutions, self.func_values = self.es.ask_and_eval(self.fcn)
-
-        self.f_difference = np.nan_to_num(
-            np.abs(np.amax(self.func_values) - self.cur_obj_val)
-            / float(self.cur_obj_val)
+        # Get all defaults from modcma as dictionary
+        self.hyperparam_defaults = dict(
+            map(
+                lambda m: (m, getattr(param, m)),
+                param.__modules__,
+            )
         )
-        self.velocity = np.nan_to_num(
-            np.abs(np.amin(self.func_values) - self.cur_obj_val)
-            / float(self.cur_obj_val)
-        )
-        self.fbest = min(self.es.best.f, np.amin(self.func_values))
 
-        self.past_obj_vals.append(self.cur_obj_val)
-        self.past_sigma.append(self.cur_sigma)
-        self.cur_ps = _norm(self.es.adapt_sigma.ps)
-        self.cur_loc = self.es.best.x
-        try:
-            self.cur_sigma = [self.es.sigma[0]]
-        except:
-            self.cur_sigma = [self.es.sigma]
-        self.cur_obj_val = self.es.best.f
+        # Find all set hyperparam_defaults and replace cma defaults
+        if "config_space" in config.keys():
+            for name in config["config_space"].keys():
+                value = self.config.get(name)
+                if value:
+                    self.hyperparam_defaults[self.uniform_name(name)] = value
 
-        return self.get_state(self), self.get_reward(self), terminated, truncated, {}
+        self.get_reward = config.get("reward_function", self.get_default_reward)
+        self.get_state = config.get("state_method", self.get_default_state)
+
+    def uniform_name(self, name):
+        # Convert name of parameters uniformly to lowercase, separated with _ and no numbers
+        pattern = r"^\d+_"
+
+        # Use re.sub to remove the leading number and underscore
+        result = re.sub(pattern, "", name)
+        return result.lower()
 
     def reset(self, seed=None, options={}):
-        """
-        Reset environment
-
-        Returns
-        -------
-        np.array
-            Environment state
-        """
-        super(CMAESEnv, self).reset_(seed)
-        self.history.clear()
-        self.past_obj_vals.clear()
-        self.past_sigma.clear()
-        self.cur_loc = self.instance[3]
-        self.dim = self.instance[1]
-        self.init_sigma = self.instance[2]
-        self.cur_sigma = [self.init_sigma]
-        self.fcn = bn.instantiate(self.instance[0], seed=self.seed)[0]
-
-        self.func_values = []
-        self.f_vals = deque(maxlen=self.popsize)
-        self.es = CMAEvolutionStrategy(
-            self.cur_loc,
-            self.init_sigma,
-            {"popsize": self.popsize, "bounds": self.bounds, "seed": self.initial_seed},
+        super().reset_(seed)
+        self.dim, self.fid, self.iid, self.representation = self.instance
+        self.objective = IOH_function(
+            self.fid, self.dim, self.iid, target_precision=1e-8
         )
-        self.solutions, self.func_values = self.es.ask_and_eval(self.fcn)
-        self.fbest = self.func_values[np.argmin(self.func_values)]
-        self.f_difference = np.abs(
-            np.amax(self.func_values) - self.cur_obj_val
-        ) / float(self.cur_obj_val)
-        self.velocity = np.abs(np.amin(self.func_values) - self.cur_obj_val) / float(
-            self.cur_obj_val
+        self.es = ModularCMAES(
+            self.objective,
+            parameters=Parameters.from_config_array(
+                self.dim, np.array(self.representation).astype(int)
+            ),
         )
-        self.es.mean_old = self.es.mean
-        self.history.append([self.f_difference, self.velocity])
         return self.get_state(self), {}
 
-    def close(self):
-        """
-        No additional cleanup necessary
+    def step(self, action):
+        truncated = super().step_()
 
-        Returns
-        -------
-        bool
-            Cleanup flag
-        """
+        # Get all action values and uniform names
+        complete_action = {}
+        if type(action) is OrderedDict:
+            for hp in action.keys():
+                n_name = self.uniform_name(hp)
+                if n_name == "step_size":
+                    # Step size is set separately
+                    self.es.parameters.sigma = action[hp][0]
+                else:
+                    # Save parameter values from actions
+                    complete_action[n_name] = action[hp]
+
+            # Complete the given action with defaults
+            for default in self.hyperparam_defaults.keys():
+                if default == "step_size":
+                    continue
+                if default not in complete_action:
+                    complete_action[default] = self.hyperparam_defaults[default]
+            complete_action = complete_action.values()
+
+        else:
+            if len(action) < len(Parameters.__modules__):
+                warnings.warn(
+                    "Len of action is not equal to number of hyperparams."
+                    + "As no dict is given, no meaningfull correction can be done"
+                )
+                if isinstance(action, np.ndarray):
+                    action = action.astype(int).tolist()
+                action.extend([0] * (len(Parameters.__modules__) - len(action)))
+            complete_action = action
+
+        new_parameters = Parameters.from_config_array(self.dim, complete_action)
+        self.es.parameters.update(
+            {m: getattr(new_parameters, m) for m in Parameters.__modules__}
+        )
+
+        terminated = not self.es.step()
+        return self.get_state(self), self.get_reward(self), terminated, truncated, {}
+
+    def close(self):
         return True
 
-    def render(self, mode: str = "human"):
-        """
-        Render env in human mode
-
-        Parameters
-        ----------
-        mode : str
-            Execution mode
-        """
-        if mode != "human":
-            raise NotImplementedError
-
-        pass
-
-    def get_default_reward(self, _):
-        """
-        Compute reward
-
-        Returns
-        -------
-        float
-            Reward
-
-        """
-        reward = min(self.reward_range[1], max(self.reward_range[0], -self.fbest))
-        return reward
-
-    def get_default_state(self, _):
-        """
-        Gather state description
-
-        Returns
-        -------
-        dict
-            Environment state
-
-        """
-        past_obj_val_deltas = []
-        for i in range(1, len(self.past_obj_vals)):
-            past_obj_val_deltas.append(
-                (self.past_obj_vals[i] - self.past_obj_vals[i - 1] + 1e-3)
-                / float(self.past_obj_vals[i - 1])
-            )
-        if len(self.past_obj_vals) > 0:
-            past_obj_val_deltas.append(
-                (self.cur_obj_val - self.past_obj_vals[-1] + 1e-3)
-                / float(self.past_obj_vals[-1])
-            )
-        past_obj_val_deltas = np.array(past_obj_val_deltas).reshape(-1)
-
-        history_deltas = []
-        for i in range(len(self.history)):
-            history_deltas.append(self.history[i])
-        history_deltas = np.array(history_deltas).reshape(-1)
-        past_sigma_deltas = []
-        for i in range(len(self.past_sigma)):
-            past_sigma_deltas.append(self.past_sigma[i])
-        past_sigma_deltas = np.array(past_sigma_deltas).reshape(-1)
-        past_obj_val_deltas = np.hstack(
-            (
-                np.zeros((self.history_len - past_obj_val_deltas.shape[0],)),
-                past_obj_val_deltas,
-            )
-        )
-        history_deltas = np.hstack(
-            (
-                np.zeros((self.history_len * 2 - history_deltas.shape[0],)),
-                history_deltas,
-            )
-        )
-        past_sigma_deltas = np.hstack(
-            (
-                np.zeros((self.history_len - past_sigma_deltas.shape[0],)),
-                past_sigma_deltas,
-            )
+    def get_default_reward(self, *_):
+        return max(
+            self.reward_range[0], min(self.reward_range[1], -self.es.parameters.fopt)
         )
 
-        cur_loc = np.array(self.cur_loc)
-        cur_ps = np.array([self.cur_ps])
-        cur_sigma = np.array(self.cur_sigma)
+    def get_default_state(self, *_):
+        return np.array(
+            [
+                self.es.parameters.lambda_,
+                self.es.parameters.sigma,
+                self.budget - self.es.parameters.used_budget,
+                self.fid,
+                self.iid,
+            ]
+        )
 
-        state = {
-            "current_loc": cur_loc,
-            "past_deltas": past_obj_val_deltas,
-            "current_ps": cur_ps,
-            "current_sigma": cur_sigma,
-            "history_deltas": history_deltas,
-            "past_sigma_deltas": past_sigma_deltas,
-        }
-        return state
+    def render(self, mode="human"):
+        raise NotImplementedError("CMA-ES does not support rendering at this point")

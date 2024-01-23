@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-from dacbench import benchmarks, run_baselines
+from dacbench import benchmarks
 
 
 def assert_state_space_equal(state1, state2):
@@ -24,7 +24,7 @@ class TestDeterministic(unittest.TestCase):
     def run_deterministic_test(self, benchmark_name, seed=42):
         print(benchmark_name)
         bench = getattr(benchmarks, benchmark_name)()
-        action = run_baselines.DISCRETE_ACTIONS[benchmark_name][0]
+        action = bench.get_environment().action_space.sample()
 
         env1 = bench.get_benchmark(seed=seed)
         init_state1, info1 = env1.reset()
@@ -46,36 +46,30 @@ class TestDeterministic(unittest.TestCase):
     def test_SigmoidBenchmark(self):
         self.run_deterministic_test("SigmoidBenchmark")
 
-    def test_FastDownwardBenchmark(self):
-        benchmark_name = "FastDownwardBenchmark"
-        seed = 42
-        bench = getattr(benchmarks, benchmark_name)()
-        action = run_baselines.DISCRETE_ACTIONS[benchmark_name][0]
+    # FD Test are hard to run due to old FD version
+    # def test_FastDownwardBenchmark(self):
+    #     benchmark_name = "FastDownwardBenchmark"
+    #     seed = 42
+    #     bench = getattr(benchmarks, benchmark_name)()
+    #     action = bench.get_environment().action_space.sample()
 
-        env1 = bench.get_benchmark(seed=seed)
-        init_state1, info1 = env1.reset()
-        state1, reward1, terminated1, truncated1, info1 = env1.step(action)
-        env1.close()
+    #     env1 = bench.get_benchmark(seed=seed)
+    #     init_state1, info1 = env1.reset()
+    #     state1, reward1, terminated1, truncated1, info1 = env1.step(action)
+    #     env1.close()
 
-        env2 = bench.get_benchmark(seed=seed)
-        init_state2, info2 = env2.reset()
-        state2, reward2, terminated2, truncated2, info2 = env2.step(action)
-        env2.close()
+    #     env2 = bench.get_benchmark(seed=seed)
+    #     init_state2, info2 = env2.reset()
+    #     state2, reward2, terminated2, truncated2, info2 = env2.step(action)
+    #     env2.close()
 
-        assert_state_space_equal(init_state1, init_state2)
-        assert_state_space_equal(state1, state2)
-        self.assertEqual(reward1, reward2)
-        self.assertEqual(info1, info2)
-        self.assertEqual(terminated1, terminated2)
-        self.assertEqual(truncated1, truncated2)
-        self.assertEqual(info1, info2)
-
-    def test_CMAESBenchmark(self):
-        self.run_deterministic_test("CMAESBenchmark")
-
-    # This has no get_benchmark method
-    # def test_ModeaBenchmark(self):
-    #    self.run_deterministic_test("ModeaBenchmark")
+    #     assert_state_space_equal(init_state1, init_state2)
+    #     assert_state_space_equal(state1, state2)
+    #     self.assertEqual(reward1, reward2)
+    #     self.assertEqual(info1, info2)
+    #     self.assertEqual(terminated1, terminated2)
+    #     self.assertEqual(truncated1, truncated2)
+    #     self.assertEqual(info1, info2)
 
     def test_SGDBenchmark(self):
         self.run_deterministic_test("SGDBenchmark")

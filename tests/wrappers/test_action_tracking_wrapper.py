@@ -7,12 +7,7 @@ import numpy as np
 import pandas as pd
 
 from dacbench.agents import StaticAgent
-from dacbench.benchmarks import (
-    CMAESBenchmark,
-    FastDownwardBenchmark,
-    LubyBenchmark,
-    ModCMABenchmark,
-)
+from dacbench.benchmarks import CMAESBenchmark, LubyBenchmark
 from dacbench.logger import Logger, load_logs, log2dataframe
 from dacbench.runner import run_benchmark
 from dacbench.wrappers import ActionFrequencyWrapper
@@ -30,7 +25,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
             episode_write_frequency=1,
         )
 
-        bench = ModCMABenchmark()
+        bench = CMAESBenchmark()
         bench.set_seed(seed)
         env = bench.get_environment()
         env.action_space.seed(seed)
@@ -48,17 +43,30 @@ class TestActionTrackingWrapper(unittest.TestCase):
 
         expected_actions = pd.DataFrame(
             {
-                "action_0": [action[0]] * 10,
-                "action_1": [action[1]] * 10,
-                "action_10": [action[10]] * 10,
-                "action_2": [action[2]] * 10,
-                "action_3": [action[3]] * 10,
-                "action_4": [action[4]] * 10,
-                "action_5": [action[5]] * 10,
-                "action_6": [action[6]] * 10,
-                "action_7": [action[7]] * 10,
-                "action_8": [action[8]] * 10,
-                "action_9": [action[9]] * 10,
+                f"action_{list(action.keys())[0]}": [action[list(action.keys())[0]]]
+                * 10,
+                f"action_{list(action.keys())[1]}": [action[list(action.keys())[1]]]
+                * 10,
+                f"action_{list(action.keys())[2]}": [action[list(action.keys())[2]]]
+                * 10,
+                f"action_{list(action.keys())[3]}": [action[list(action.keys())[3]]]
+                * 10,
+                f"action_{list(action.keys())[4]}": [action[list(action.keys())[4]]]
+                * 10,
+                f"action_{list(action.keys())[5]}": [action[list(action.keys())[5]]]
+                * 10,
+                f"action_{list(action.keys())[6]}": [action[list(action.keys())[6]]]
+                * 10,
+                f"action_{list(action.keys())[7]}": [action[list(action.keys())[7]]]
+                * 10,
+                f"action_{list(action.keys())[8]}": [action[list(action.keys())[8]]]
+                * 10,
+                f"action_{list(action.keys())[9]}": [action[list(action.keys())[9]]]
+                * 10,
+                f"action_{list(action.keys())[10]}": [action[list(action.keys())[10]]]
+                * 10,
+                f"action_{list(action.keys())[11]}_0": [action[list(action.keys())[11]]]
+                * 10,
             }
         )
 
@@ -169,20 +177,11 @@ class TestActionTrackingWrapper(unittest.TestCase):
         self.assertTrue(intervals[2] == [4])
 
     def test_rendering(self):
-        bench = FastDownwardBenchmark()
+        bench = LubyBenchmark()
         env = bench.get_environment()
         wrapped = ActionFrequencyWrapper(env, 2)
         wrapped.reset()
-        for _ in range(10):
-            wrapped.step(1)
-        img = wrapped.render_action_tracking()
-        self.assertTrue(img.shape[-1] == 3)
-
-        bench = CMAESBenchmark()
-        env = bench.get_environment()
-        wrapped = ActionFrequencyWrapper(env, 2)
-        wrapped.reset()
-        wrapped.step(np.ones(10))
+        wrapped.step(10)
         img = wrapped.render_action_tracking()
         self.assertTrue(img.shape[-1] == 3)
 

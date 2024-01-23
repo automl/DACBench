@@ -16,9 +16,8 @@ __all__ = [
     "FastDownwardBenchmark",
 ]
 
-
-cma_spec = importlib.util.find_spec("cma")
-found = cma_spec is not None
+modcma_spec = importlib.util.find_spec("modcma")
+found = modcma_spec is not None
 if found:
     from dacbench.benchmarks.cma_benchmark import CMAESBenchmark
 
@@ -26,17 +25,6 @@ if found:
 else:
     warnings.warn(
         "CMA-ES Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
-    )
-
-modcma_spec = importlib.util.find_spec("modcma")
-found = modcma_spec is not None
-if found:
-    from dacbench.benchmarks.modcma_benchmark import ModCMABenchmark
-
-    __all__.append("ModCMABenchmark")
-else:
-    warnings.warn(
-        "ModCMA Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
     )
 
 sgd_spec = importlib.util.find_spec("backpack")

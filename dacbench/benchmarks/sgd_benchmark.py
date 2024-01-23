@@ -2,112 +2,95 @@ import csv
 import os
 
 import ConfigSpace as CS
-import ConfigSpace.hyperparameters as CSH
 import numpy as np
 from gymnasium import spaces
-from torch.nn import NLLLoss
+from torch import nn
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import SGDEnv
-from dacbench.envs.sgd import Reward
+from dacbench.envs.env_utils import utils
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
-LR = CSH.UniformIntegerHyperparameter(name="learning_rate", lower=0, upper=10)
+LR = CS.Float(name="learning_rate", bounds=(0.0, 0.05))
+# Value used for momentum like adaptation, as adam optimizer has no real momentum; "beta1" is changed
+MOMENTUM = CS.Float(
+    name="momentum", bounds=(0.0, 1.0)
+)  # ! Only used, when "use_momentum" var in config true
 DEFAULT_CFG_SPACE.add_hyperparameter(LR)
+DEFAULT_CFG_SPACE.add_hyperparameter(MOMENTUM)
 
 
 def __default_loss_function(**kwargs):
-    return NLLLoss(reduction="none", **kwargs)
+    return nn.NLLLoss(reduction="none", **kwargs)
 
+
+feature_extractor = nn.Sequential(
+    nn.Identity(),
+    nn.Conv2d(1, 5, kernel_size=(7, 7), stride=(1, 1)),
+    nn.BatchNorm2d(5, eps=1e-05, momentum=0.1),
+    nn.ReLU(),
+)
+
+linear_layers = nn.Sequential(
+    nn.Flatten(),
+    nn.Linear(in_features=2420, out_features=10, bias=True),
+    nn.LogSoftmax(dim=1),
+)
+
+neural_network = nn.Sequential(feature_extractor, linear_layers)  # (n_conv_layers: 5)
 
 INFO = {
     "identifier": "LR",
     "name": "Learning Rate Adaption for Neural Networks",
     "reward": "Negative Log Differential Validation Loss",
     "state_description": [
-        "Predictive Change Variance (Discounted Average)",
-        "Predictive Change Variance (Uncertainty)",
-        "Loss Variance (Discounted Average)",
-        "Loss Variance (Uncertainty)",
-        "Current Learning Rate",
-        "Training Loss",
-        "Validation Loss",
         "Step",
-        "Alignment",
+        "Loss",
+        "Validation Loss",
         "Crashed",
     ],
+    "action_description": ["Learning Rate", "Momentum"],
 }
 
 
 SGD_DEFAULTS = objdict(
     {
         "config_space": DEFAULT_CFG_SPACE,
-        "action_space_class": "Box",
-        "action_space_args": [np.array([0]), np.array([10])],
         "observation_space_class": "Dict",
         "observation_space_type": None,
         "observation_space_args": [
             {
-                "predictiveChangeVarDiscountedAverage": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=(1,)
-                ),
-                "predictiveChangeVarUncertainty": spaces.Box(
-                    low=0, high=np.inf, shape=(1,)
-                ),
-                "lossVarDiscountedAverage": spaces.Box(
-                    low=-np.inf, high=np.inf, shape=(1,)
-                ),
-                "lossVarUncertainty": spaces.Box(low=0, high=np.inf, shape=(1,)),
-                "currentLR": spaces.Box(low=0, high=1, shape=(1,)),
-                "trainingLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
-                "validationLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
                 "step": spaces.Box(low=0, high=np.inf, shape=(1,)),
-                "alignment": spaces.Box(low=0, high=1, shape=(1,)),
-                "crashed": spaces.Discrete(2),
+                "loss": spaces.Box(0, np.inf, shape=(1,)),
+                "validationLoss": spaces.Box(low=0, high=np.inf, shape=(1,)),
+                "crashed": spaces.Discrete(1),
             }
         ],
-        "reward_type": Reward.LogDiffTraining,
-        "cutoff": 1e3,
-        "lr": 1e-3,
-        "discount_factor": 0.9,
-        "optimizer": "rmsprop",
+        "shuffle_training": True,
+        "reward_range": [-(10**9), (10**9)],
+        "model": neural_network,
+        "optimizer_params": {
+            "weight_decay": 10.978902603194243,
+            "eps": 1.2346464628039852e-10,
+            "betas": (0.9994264825468422, 0.9866804882743139),
+        },
+        "cutoff": 1e2,
         "loss_function": __default_loss_function,
         "loss_function_kwargs": {},
-        "val_loss_function": __default_loss_function,
-        "val_loss_function_kwargs": {},
         "training_batch_size": 64,
-        "validation_batch_size": 64,
-        "train_validation_ratio": 0.8,
-        "dataloader_shuffle": True,
-        "no_cuda": False,
-        "beta1": 0.9,
-        "beta2": 0.9,
-        "epsilon": 1.0e-06,
-        "clip_grad": (-1.0, 1.0),
+        "fraction_of_dataset": 0.6,
+        "train_validation_ratio": 0.8,  # If set to None, random value is used
+        "dataset_name": "MNIST",  # If set to None, random data set is chosen; else specific set can be set: e.g. "MNIST"
+        # "reward_function":,    # Can be set, to replace the default function
+        # "state_method":,       # Can be set, to replace the default function
+        "use_momentum": False,
         "seed": 0,
-        "cd_paper_reconstruction": False,
-        "cd_bias_correction": True,
-        "terminate_on_crash": False,
-        "crash_penalty": 0.0,
+        "crash_penalty": 100.0,
+        "multi_agent": False,
         "instance_set_path": "../instance_sets/sgd/sgd_train_100instances.csv",
         "benchmark_info": INFO,
-        "features": [
-            "predictiveChangeVarDiscountedAverage",
-            "predictiveChangeVarUncertainty",
-            "lossVarDiscountedAverage",
-            "lossVarUncertainty",
-            "currentLR",
-            "trainingLoss",
-            "validationLoss",
-            "step",
-            "alignment",
-            "crashed",
-        ],
     }
 )
-
-# Set reward range based on the chosen reward type
-SGD_DEFAULTS.reward_range = SGD_DEFAULTS["reward_type"].func.frange
 
 
 class SGDBenchmark(AbstractBenchmark):
@@ -132,7 +115,7 @@ class SGDBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = SGD_DEFAULTS[key]
 
-    def get_environment(self):
+    def get_environment(self, use_generator=False):
         """
         Return SGDEnv env with current configuration
 
@@ -154,6 +137,18 @@ class SGDBenchmark(AbstractBenchmark):
         env = SGDEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
+
+        if use_generator:
+            (
+                env.model,
+                env.optimizer_params,
+                env.loss,
+                env.batch_size,
+                env.crash_penalty,
+                env.n_conv_layers,
+            ) = utils.random_instance(
+                np.random.RandomState(self.config.get("seed")), env.datasets
+            )
 
         return env
 

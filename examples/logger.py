@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 
 # Run an experiment and log the results
 if __name__ == "__main__":
-
     # Make benchmark
     bench = SigmoidBenchmark()
 
@@ -30,7 +29,6 @@ if __name__ == "__main__":
     performance_logger = logger.add_module(PerformanceTrackingWrapper)
 
     for s in seeds:
-
         # Make & wrap benchmark environment
         env = bench.get_benchmark(seed=s)
         env = PerformanceTrackingWrapper(env, logger=performance_logger)

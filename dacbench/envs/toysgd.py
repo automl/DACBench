@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -61,10 +61,11 @@ class ToySGDEnv(AbstractMADACEnv):
     def __init__(self, config):
         """Init env."""
         super(ToySGDEnv, self).__init__(config)
-        self.n_steps_max = config.get("cutoff", 1000)
 
+        if config["batch_size"]:
+            self.batch_size = config["batch_size"]
         self.velocity = 0
-        self.gradient = 0
+        self.gradient = np.zeros(self.batch_size)
         self.history = []
         self.n_dim = None  # type: Optional[int]
         self.objective_function = None
@@ -75,7 +76,6 @@ class ToySGDEnv(AbstractMADACEnv):
         self.f_cur = None
         self.momentum = 0  # type: Optional[float]
         self.learning_rate = None  # type: Optional[float]
-        self.n_steps = 0  # type: Optional[int]
 
     def build_objective_function(self):
         """Make base function."""
@@ -98,15 +98,15 @@ class ToySGDEnv(AbstractMADACEnv):
             )  # add small epsilon to avoid numerical instabilities
             self.f_min = self.objective_function(self.x_min)
 
-            self.x_cur = self.get_initial_position()
+            self.x_cur = self.get_initial_positions()
         else:
             raise NotImplementedError(
                 "No other function families than polynomial are currently supported."
             )
 
-    def get_initial_position(self):
-        """Get initial position."""
-        return 0  # np.random.uniform(-5, 5, size=self.n_dim-1)
+    def get_initial_positions(self):
+        """Get number of batch_size initial positions."""
+        return np.random.uniform(-5, 5, size=self.batch_size)
 
     def step(
         self, action: Union[float, Tuple[float, float]]
@@ -153,7 +153,7 @@ class ToySGDEnv(AbstractMADACEnv):
         self.gradient = self.objective_function_deriv(self.x_cur)
 
         # State
-        remaining_budget = self.n_steps_max - self.n_steps
+        remaining_budget = self.n_steps - self.c_step
         state = {
             "remaining_budget": remaining_budget,
             "gradient": self.gradient,
@@ -166,12 +166,9 @@ class ToySGDEnv(AbstractMADACEnv):
         self.f_cur = self.objective_function(self.x_cur)
         # log regret
         log_regret = np.log10(np.abs(self.f_min - self.f_cur))
-        reward = -log_regret
+        reward = -np.mean(log_regret)
 
         self.history.append(self.x_cur)
-
-        # Stop criterion
-        self.n_steps += 1
 
         return state, reward, False, truncated, info
 
@@ -197,7 +194,7 @@ class ToySGDEnv(AbstractMADACEnv):
         super(ToySGDEnv, self).reset_(seed)
 
         self.velocity = 0
-        self.gradient = 0
+        self.gradient = np.zeros(self.batch_size)
         self.history = []
         self.objective_function = None
         self.objective_function_deriv = None
@@ -207,10 +204,11 @@ class ToySGDEnv(AbstractMADACEnv):
         self.f_cur = None
         self.momentum = 0
         self.learning_rate = 0
-        self.n_steps = 0
+        # self.n_steps = 0
         self.build_objective_function()
+        remaining_budget = self.n_steps - self.c_step
         return {
-            "remaining_budget": self.n_steps_max,
+            "remaining_budget": remaining_budget,
             "gradient": self.gradient,
             "learning_rate": self.learning_rate,
             "momentum": self.momentum,

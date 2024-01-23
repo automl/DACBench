@@ -3,8 +3,6 @@ import argparse
 import numpy as np
 from collections import defaultdict, namedtuple
 
-from dacbench.logger import Logger
-
 
 class DummyEnv(gym.Env):
     def __init__(self):
@@ -143,9 +141,13 @@ def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
             evaluation_action = np.random.choice(
                 list(range(this_environment.action_space.n)), p=greedy(evaluation_state)
             )
-            s_, evaluation_reward, eval_done, evaluation_done, _ = this_environment.step(
-                evaluation_action
-            )
+            (
+                s_,
+                evaluation_reward,
+                eval_done,
+                evaluation_done,
+                _,
+            ) = this_environment.step(evaluation_action)
             cummulative_reward += evaluation_reward
             episode_length += 1
             if evaluation_done or eval_done:
