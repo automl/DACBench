@@ -1,5 +1,4 @@
 import re
-import warnings
 from collections import OrderedDict
 
 import numpy as np
@@ -83,17 +82,8 @@ class CMAESEnv(AbstractMADACEnv):
                 if default not in complete_action:
                     complete_action[default] = self.hyperparam_defaults[default]
             complete_action = complete_action.values()
-
         else:
-            if len(action) < len(Parameters.__modules__):
-                warnings.warn(
-                    "Len of action is not equal to number of hyperparams."
-                    + "As no dict is given, no meaningfull correction can be done"
-                )
-                if isinstance(action, np.ndarray):
-                    action = action.astype(int).tolist()
-                action.extend([0] * (len(Parameters.__modules__) - len(action)))
-            complete_action = action
+            raise ValueError("Action must be an OrderedDict")
 
         new_parameters = Parameters.from_config_array(self.dim, complete_action)
         self.es.parameters.update(
