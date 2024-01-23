@@ -4,11 +4,12 @@ from dacbench.abstract_agent import AbstractDACBenchAgent
 
 
 class RandomAgent(AbstractDACBenchAgent):
-    def __init__(self, env):
+    def __init__(self, env, no_shortbox: bool = False):
         self.sample_action = env.action_space.sample
         self.shortbox = isinstance(env.action_space, spaces.Box)
         if self.shortbox:
             self.shortbox = self.shortbox and len(env.action_space.low) == 1
+        self.shortbox = self.shortbox if not no_shortbox else False
 
     def act(self, state, reward):
         if self.shortbox:
