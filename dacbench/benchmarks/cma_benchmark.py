@@ -131,6 +131,11 @@ class CMAESBenchmark(AbstractBenchmark):
             keyword = "instance_set"
 
         self.config[keyword] = dict()
+        path = (
+            os.path.dirname(os.path.abspath(__file__))
+            + "/"
+            + path
+        )
         with open(path, "r") as fh:
             for line in itertools.islice(fh, 1, None):
                 _id, dim, fid, iid, *representation = line.strip().split(",")
