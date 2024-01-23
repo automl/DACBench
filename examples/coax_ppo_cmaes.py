@@ -4,18 +4,29 @@ import coax
 import haiku as hk
 from numpy import prod
 import optax
+import gymnasium as gym
+import ConfigSpace as CS
 
 from dacbench.benchmarks import CMAESBenchmark
-from dacbench.wrappers import ObservationWrapper
 
 
 # the name of this script
 name = "ppo"
 
-# the Pendulum MDP
+
+class WrapDictAction(gym.Wrapper):
+    def step(self, action):
+        action = {"step_size": action}
+        return self.env.step(action)
+
+
+cfg_space = CS.ConfigurationSpace()
+STEP_SIZE = CS.Float(name="92_step_size", bounds=(0.0, 10.0))
+cfg_space.add_hyperparameter(STEP_SIZE)
 bench = CMAESBenchmark()
+bench.config.config_space = cfg_space
 env = bench.get_environment()
-env = ObservationWrapper(env)
+env = WrapDictAction(env)
 env = coax.wrappers.TrainMonitor(
     env, name=name, tensorboard_dir=f"./data/tensorboard/{name}"
 )

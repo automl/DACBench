@@ -1,5 +1,4 @@
 import re
-from collections import OrderedDict
 
 import numpy as np
 from IOHexperimenter import IOH_function
@@ -16,24 +15,12 @@ class CMAESEnv(AbstractMADACEnv):
         self.budget = config.budget
         self.total_budget = self.budget
 
-        param = Parameters(
-            10
-        )  # Dummy dim since current parameters don't rely on dimension
-
-        # Get all defaults from modcma as dictionary
-        self.hyperparam_defaults = dict(
-            map(
-                lambda m: (m, getattr(param, m)),
-                param.__modules__,
-            )
-        )
-
         # Find all set hyperparam_defaults and replace cma defaults
         if "config_space" in config.keys():
             for name in config["config_space"].keys():
                 value = self.config.get(name)
                 if value:
-                    self.hyperparam_defaults[self.uniform_name(name)] = value
+                    self.representation_dict[self.uniform_name(name)] = value
 
         self.get_reward = config.get("reward_function", self.get_default_reward)
         self.get_state = config.get("state_method", self.get_default_state)
@@ -49,6 +36,19 @@ class CMAESEnv(AbstractMADACEnv):
     def reset(self, seed=None, options={}):
         super().reset_(seed)
         self.dim, self.fid, self.iid, self.representation = self.instance
+        self.representation_dict = {
+            "active": self.representation[0],
+            "elitist": self.representation[1],
+            "orthogonal": self.representation[2],
+            "sequential": self.representation[3],
+            "threshold_convergence": self.representation[4],
+            "step_size_adaptation": self.representation[5],
+            "mirrored": self.representation[6],
+            "base_sampler": self.representation[7],
+            "weights_option": self.representation[8],
+            "local_restart": self.representation[9],
+            "bound_correction": self.representation[10],
+        }
         self.objective = IOH_function(
             self.fid, self.dim, self.iid, target_precision=1e-8
         )
@@ -65,7 +65,7 @@ class CMAESEnv(AbstractMADACEnv):
 
         # Get all action values and uniform names
         complete_action = {}
-        if type(action) is OrderedDict:
+        if isinstance(action, dict):
             for hp in action.keys():
                 n_name = self.uniform_name(hp)
                 if n_name == "step_size":
@@ -76,14 +76,14 @@ class CMAESEnv(AbstractMADACEnv):
                     complete_action[n_name] = action[hp]
 
             # Complete the given action with defaults
-            for default in self.hyperparam_defaults.keys():
+            for default in self.representation_dict.keys():
                 if default == "step_size":
                     continue
                 if default not in complete_action:
-                    complete_action[default] = self.hyperparam_defaults[default]
+                    complete_action[default] = self.representation_dict[default]
             complete_action = complete_action.values()
         else:
-            raise ValueError("Action must be an OrderedDict")
+            raise ValueError("Action must be a Dict")
 
         new_parameters = Parameters.from_config_array(self.dim, complete_action)
         self.es.parameters.update(
