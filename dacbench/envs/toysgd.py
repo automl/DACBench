@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -38,6 +38,29 @@ def sample_coefficients(order: int = 2, low: float = -10, high: float = 10):
     coeffs[0] = np.random.uniform(0, high, size=1)
     coeffs[1:] = np.random.uniform(low, high, size=n_coeffs - 1)
     return coeffs
+
+
+def create_noisy_quadratic_instance_set(
+    out_fname: str,
+    n_samples: int = 100,
+    low: float = -10,
+    high: float = 10,
+):
+    """Make instance set."""
+    instances = []
+    for i in range(n_samples):
+        h = np.random.uniform(0, high)
+        c = np.random.uniform(low, high)
+        instance = {
+            "ID": i,
+            "family": "noisy_quadratic",
+            "h": h,
+            "c": c,
+        }
+        instances.append(instance)
+    df = pd.DataFrame(instances)
+    df.to_csv(out_fname, sep=";", index=False)
+    return df
 
 
 class ToySGDEnv(AbstractMADACEnv):
@@ -99,9 +122,17 @@ class ToySGDEnv(AbstractMADACEnv):
             self.f_min = self.objective_function(self.x_min)
 
             self.x_cur = self.get_initial_positions()
+        elif self.instance["family"] == "noisy_quadratic":
+            h = self.instance["h"]
+            c = self.instance["c"]
+            self.objective_function = lambda theta: 0.5 * np.sum(h * (theta - c) ** 2)
+            self.objective_function_deriv = lambda theta: np.sum(h * (theta - c))
+            self.x_min = np.sum(h * c) / np.sum(h)
+            self.f_min = self.objective_function(self.x_min)
+            self.x_cur = self.get_initial_positions()
         else:
             raise NotImplementedError(
-                "No other function families than polynomial are currently supported."
+                "No other function families than polynomial and noisy_quadratic are currently supported."
             )
 
     def get_initial_positions(self):
@@ -204,7 +235,6 @@ class ToySGDEnv(AbstractMADACEnv):
         self.f_cur = None
         self.momentum = 0
         self.learning_rate = 0
-        # self.n_steps = 0
         self.build_objective_function()
         remaining_budget = self.n_steps - self.c_step
         return {

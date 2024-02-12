@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from gymnasium import spaces
 
+# from dacbench.envs.toysgd import create_noisy_quadratic_instance_set
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
 from dacbench.envs import ToySGDEnv
 
@@ -47,7 +48,11 @@ DEFAULTS = objdict(
         "seed": 0,
         "multi_agent": False,
         "batch_size": 16,
-        "instance_set_path": "../instance_sets/toysgd/toysgd_default.csv",
+        # Create and use generated instance set
+        # "instance_set_": create_noisy_quadratic_instance_set("noisy_test_set.csv"),
+        # "instance_set_path": "../../noisy_test_set.csv",
+        "instance_set_path": "../instance_sets/toysgd/toysgd_noisy_quadratic.csv",
+        # "instance_set_path": "../instance_sets/toysgd/toysgd_default.csv",
         "benchmark_info": INFO,
     }
 )
