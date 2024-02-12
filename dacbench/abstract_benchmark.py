@@ -80,11 +80,11 @@ class AbstractBenchmark(ABC):
             if isinstance(self.config[k], np.ndarray) or isinstance(
                 self.config[k], list
             ):
-                if type(self.config[k][0]) == np.ndarray:
+                if isinstance(self.config[k][0], np.ndarray):
                     conf[k] = list(map(list, conf[k]))
                     for i in range(len(conf[k])):
                         if (
-                            not type(conf[k][i][0]) == float
+                            not isinstance(conf[k][i][0], float)
                             and np.inf not in conf[k][i]
                             and -np.inf not in conf[k][i]
                         ):
@@ -483,7 +483,7 @@ class AbstractBenchmark(ABC):
         self.config = config
         if "observation_space_type" in self.config:
             # Types have to be numpy dtype (for gym spaces)s
-            if type(self.config["observation_space_type"]) == str:
+            if isinstance(self.config["observation_space_type"], str):
                 if self.config["observation_space_type"] == "None":
                     self.config["observation_space_type"] = None
                 else:
@@ -516,8 +516,8 @@ class AbstractBenchmark(ABC):
         self.config = AbstractBenchmark.__decorate_config_with_functions(self.config)
 
         for k in self.config.keys():
-            if type(self.config[k]) == list:
-                if type(self.config[k][0]) == list:
+            if isinstance(self.config[k], list):
+                if isinstance(self.config[k][0], list):
                     map(np.array, self.config[k])
                 self.config[k] = np.array(self.config[k])
 
@@ -611,7 +611,7 @@ class AbstractBenchmark(ABC):
 
     def __eq__(self, other):
         """Check for equality."""
-        return type(self) == type(other) and self.config == other.config
+        return isinstance(self, type(other)) and self.config == other.config
 
 
 # This code is taken from https://goodcode.io/articles/python-dict-object/

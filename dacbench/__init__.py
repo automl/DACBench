@@ -1,4 +1,5 @@
 """DACBench: a benchmark library for Dynamic Algorithm Configuration"""
+
 __version__ = "0.2.1"
 __contact__ = "automl.org"
 

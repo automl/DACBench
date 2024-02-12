@@ -69,7 +69,7 @@ class TestGeometricEnv(unittest.TestCase):
         self.assertFalse(env.np_random is None)
         self.assertTrue(env.n_steps == 10)
         self.assertTrue(env.n_actions == len(env.action_vals))
-        self.assertTrue(type(env.action_interval_mapping) == dict)
+        self.assertTrue(isinstance(env.action_interval_mapping, dict))
 
     def test_reset(self):
         env = self.make_env(DEFAULTS_STATIC)
@@ -77,8 +77,8 @@ class TestGeometricEnv(unittest.TestCase):
         self.assertTrue(state[0] == DEFAULTS_STATIC["cutoff"])
         self.assertTrue(issubclass(type(info), dict))
         self.assertFalse(env._prev_state)
-        self.assertTrue(type(env.action_trajectory) == list)
-        self.assertTrue(type(env.action_trajectory_set) == dict)
+        self.assertTrue(isinstance(env.action_trajectory, list))
+        self.assertTrue(isinstance(env.action_trajectory_set, dict))
 
     def test_step(self):
         env = self.make_env(DEFAULTS_STATIC)
@@ -87,7 +87,7 @@ class TestGeometricEnv(unittest.TestCase):
         self.assertTrue(reward >= env.reward_range[0])
         self.assertTrue(reward <= env.reward_range[1])
         self.assertTrue(state[0] == 9)
-        self.assertTrue(type(state) == np.ndarray)
+        self.assertTrue(isinstance(state, np.ndarray))
         self.assertTrue(len(state) == 2 + 2 * env.n_actions)
         self.assertFalse(terminated)
         self.assertFalse(truncated)

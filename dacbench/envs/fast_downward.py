@@ -110,25 +110,22 @@ class FastDownwardEnv(AbstractEnv):
         if self.__state_type == StateType.DIFF:
             self._transformation_func = lambda x, y, z, skip: x - y if not skip else x
         elif self.__state_type == StateType.ABSDIFF:
-            self._transformation_func = (
-                lambda x, y, z, skip: abs(x - y) if not skip else x
+            self._transformation_func = lambda x, y, z, skip: (
+                abs(x - y) if not skip else x
             )
         elif self.__state_type == StateType.NORMAL:
-            self._transformation_func = (
-                lambda x, y, z, skip: FastDownwardEnv._save_div(x, z) if not skip else x
+            self._transformation_func = lambda x, y, z, skip: (
+                FastDownwardEnv._save_div(x, z) if not skip else x
             )
         elif self.__state_type == StateType.NORMDIFF:
-            self._transformation_func = (
-                lambda x, y, z, skip: FastDownwardEnv._save_div(x, z)
-                - FastDownwardEnv._save_div(y, z)
+            self._transformation_func = lambda x, y, z, skip: (
+                FastDownwardEnv._save_div(x, z) - FastDownwardEnv._save_div(y, z)
                 if not skip
                 else x
             )
         elif self.__state_type == StateType.NORMABSDIFF:
-            self._transformation_func = (
-                lambda x, y, z, skip: abs(
-                    FastDownwardEnv._save_div(x, z) - FastDownwardEnv._save_div(y, z)
-                )
+            self._transformation_func = lambda x, y, z, skip: (
+                abs(FastDownwardEnv._save_div(x, z) - FastDownwardEnv._save_div(y, z))
                 if not skip
                 else x
             )

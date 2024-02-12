@@ -115,9 +115,8 @@ class GeometricBenchmark(AbstractBenchmark):
         self.set_action_values()
         self.set_action_description()
 
-        if (
-            self.config.correlation_active
-            and not type(self.config.correlation_table) == np.ndarray
+        if self.config.correlation_active and not isinstance(
+            self.config.correlation_table, np.ndarray
         ):
             self.create_correlation_table()
 
@@ -189,9 +188,8 @@ class GeometricBenchmark(AbstractBenchmark):
         self.set_action_values()
         self.set_action_description()
 
-        if (
-            self.config.correlation_active
-            and not type(self.config.correlation_table) == np.ndarray
+        if self.config.correlation_active and not isinstance(
+            self.config.correlation_table, np.ndarray
         ):
             self.create_correlation_table()
 

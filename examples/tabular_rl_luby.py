@@ -4,6 +4,7 @@ Code adapted from
 by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
 Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 """
+
 import sys
 
 import numpy as np

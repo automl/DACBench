@@ -2,6 +2,7 @@
 Geometric environment.
 Original environment authors: Rasmus von Glahn
 """
+
 import bisect
 import math
 import os

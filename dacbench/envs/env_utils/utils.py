@@ -176,9 +176,7 @@ def random_architecture(
             modules.append(nn.MaxPool2d(2))
         conv = int(
             np.exp(
-                rng.uniform(
-                    low=np.log(2**layer_exp), high=np.log(2 ** (layer_exp + 2))
-                )
+                rng.uniform(low=np.log(2**layer_exp), high=np.log(2 ** (layer_exp + 2)))
             )
         )
         kernel_size = rng.choice(kernel_sizes)

@@ -91,9 +91,11 @@ def add_multi_level_ticks(
         ticks = ax.get_xticks()
         sub_set = plot_index[plot_index[x_column].isin(ticks)]
         new_labels = (
-            sub_set.loc[tick][x_label_columns].tolist()
-            if tick in sub_set.index
-            else (None, None)
+            (
+                sub_set.loc[tick][x_label_columns].tolist()
+                if tick in sub_set.index
+                else (None, None)
+            )
             for tick in ticks
         )
         new_labels = [

@@ -7,7 +7,7 @@ from dacbench import benchmarks
 
 
 def assert_state_space_equal(state1, state2):
-    assert type(state1) == type(state2)
+    assert isinstance(state1, type(state2))
 
     if isinstance(state1, np.ndarray):
         assert_almost_equal(state1, state2)
