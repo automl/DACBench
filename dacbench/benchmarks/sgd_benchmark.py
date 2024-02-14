@@ -69,6 +69,7 @@ SGD_DEFAULTS = objdict(
         "shuffle_training": True,
         "reward_range": [-(10**9), (10**9)],
         "model": neural_network,
+        "device": "cpu",
         "optimizer_params": {
             "weight_decay": 10.978902603194243,
             "eps": 1.2346464628039852e-10,

@@ -94,11 +94,13 @@ class SGDEnv(AbstractMADACEnv):
         self.dataset_name = config.get("dataset_name")
         self.use_momentum = config.get("use_momentum")
 
+        # Use default reward function, if no specific function is given
         if "reward_function" in config.keys():
             self.get_reward = config["reward_function"]
         else:
             self.get_reward = self.get_default_reward
 
+        # Use default state function, if no specific function is given
         if "state_method" in config.keys():
             self.get_state = config["state_method"]
         else:
@@ -148,7 +150,7 @@ class SGDEnv(AbstractMADACEnv):
             self._done = True
             return (
                 self.get_state(self),
-                -self.crash_penalty,
+                self.crash_penalty,
                 False,
                 True,
                 info,
@@ -200,11 +202,10 @@ class SGDEnv(AbstractMADACEnv):
         forward/backward pass, not yet updating the neural network parameters."""
         super(SGDEnv, self).reset_(seed)
 
-        self.learning_rate = 0
+        self.learning_rate = None
         self.optimizer_type = torch.optim.AdamW
         self.info = {}
         self._done = False
-        self.n_steps = 0
 
         self.model.to(self.device)
         self.optimizer: torch.optim.Optimizer = torch.optim.AdamW(
@@ -213,7 +214,7 @@ class SGDEnv(AbstractMADACEnv):
         self.loss = 0
         self.test_losses = None
 
-        self.validation_loss = 0
+        self.validation_loss = None
         self.min_validation_loss = None
 
         return self.get_state(self), {}
@@ -227,7 +228,7 @@ class SGDEnv(AbstractMADACEnv):
 
     def get_default_state(self, _):
         return {
-            "step": self.n_steps,
+            "step": self.c_step,
             "loss": self.loss,
             "validation_loss": self.validation_loss,
             "done": self._done,
@@ -235,14 +236,14 @@ class SGDEnv(AbstractMADACEnv):
 
     def render(self, mode="human"):
         if mode == "human":
-            epoch = 1 + self.n_steps // len(self.train_loader)
-            epoch_cutoff = self.cutoff // len(self.train_loader)
-            batch = 1 + self.n_steps % len(self.train_loader)
+            epoch = 1 + self.c_step // len(self.train_loader)
+            epoch_cutoff = self.n_steps // len(self.train_loader)
+            batch = 1 + self.c_step % len(self.train_loader)
             print(
                 f"prev_lr {self.optimizer.param_groups[0]['lr'] if self.n_steps > 0 else None}, "
                 f"epoch {epoch}/{epoch_cutoff}, "
                 f"batch {batch}/{len(self.train_loader)}, "
-                f"batch_loss {self.loss.mean()}, "
+                f"batch_loss {self.loss}, "
                 f"val_loss {self.validation_loss}"
             )
         else:
