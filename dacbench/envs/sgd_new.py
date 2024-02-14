@@ -214,7 +214,7 @@ class SGDEnv(AbstractMADACEnv):
         self.loss = 0
         self.test_losses = None
 
-        self.validation_loss = None
+        self.validation_loss = 0
         self.min_validation_loss = None
 
         return self.get_state(self), {}
