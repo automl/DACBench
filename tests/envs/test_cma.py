@@ -63,7 +63,8 @@ class TestCMAEnv(unittest.TestCase):
         self.assertTrue(len(meta.keys()) == 0)
         self.assertTrue(len(state) == 5)
         while not (terminated or truncated):
-            _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+            rand_dict = {key: 1 for key in param_keys}
+            _, _, terminated, truncated, _ = env.step(rand_dict)
 
     def test_close(self):
         env = self.make_env()
