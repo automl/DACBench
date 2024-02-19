@@ -1,8 +1,7 @@
-from __future__ import generators
+from __future__ import annotations
 
 import os
 import random
-from typing import Dict
 
 import numpy as np
 
@@ -34,10 +33,9 @@ SAMPLE_SIZE = 100
 
 
 def save_geometric_instances(
-    filename: str, config: Dict = FUNCTION_CONFIG, path: str = ""
+    filename: str, config: dict = FUNCTION_CONFIG, path: str = ""
 ):
-    """
-    First delete old isntance_set.
+    """First delete old isntance_set.
 
     Create new instances based on config.
 
@@ -75,8 +73,7 @@ def save_geometric_instances(
 
 
 def _create_csv_string(index, func_name: str) -> str:
-    """
-    Create comma separated string with function name and parameter values. Set 0 for irrelevant params.
+    """Create comma separated string with function name and parameter values. Set 0 for irrelevant params.
 
     Parameters
     ----------
@@ -85,7 +82,7 @@ def _create_csv_string(index, func_name: str) -> str:
     func_name : str
         name of function
 
-    Returns
+    Returns:
     -------
     str
         comma separated string
@@ -98,7 +95,7 @@ def _create_csv_string(index, func_name: str) -> str:
 
     if func_name == "sigmoid":
         value_generator = sample_sigmoid_value()
-    elif func_name == "cubic" or func_name == "parabel":
+    elif func_name in ("cubic", "parabel"):
         value_generator = sample_parabel_cubic_value()
 
     for i in range(max_count):
@@ -107,9 +104,7 @@ def _create_csv_string(index, func_name: str) -> str:
                 value = np.round(sample_sinus_value(), 1)
             elif func_name == "sigmoid":
                 value = np.round(next(value_generator), 1)
-            elif func_name == "cubic":
-                value = next(value_generator)
-            elif func_name == "parabel":
+            elif func_name in ("cubic", "parabel"):
                 value = next(value_generator)
             else:
                 value = np.round(np.random.uniform(low=-10.0, high=10.0), 1)

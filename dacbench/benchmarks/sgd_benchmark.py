@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import csv
 import os
 
@@ -95,20 +97,17 @@ SGD_DEFAULTS = objdict(
 
 
 class SGDBenchmark(AbstractBenchmark):
-    """
-    Benchmark with default configuration & relevant functions for SGD
-    """
+    """Benchmark with default configuration & relevant functions for SGD."""
 
     def __init__(self, config_path=None, config=None):
-        """
-        Initialize SGD Benchmark
+        """Initialize SGD Benchmark.
 
         Parameters
         -------
         config_path : str
             Path to config file (optional)
         """
-        super(SGDBenchmark, self).__init__(config_path, config)
+        super().__init__(config_path, config)
         if not self.config:
             self.config = objdict(SGD_DEFAULTS.copy())
 
@@ -117,21 +116,20 @@ class SGDBenchmark(AbstractBenchmark):
                 self.config[key] = SGD_DEFAULTS[key]
 
     def get_environment(self, use_generator=False):
-        """
-        Return SGDEnv env with current configuration
+        """Return SGDEnv env with current configuration.
 
-        Returns
+        Returns:
         -------
         SGDEnv
             SGD environment
         """
-        if "instance_set" not in self.config.keys():
+        if "instance_set" not in self.config:
             self.read_instance_set()
 
         # Read test set if path is specified
         if (
-            "test_set" not in self.config.keys()
-            and "test_set_path" in self.config.keys()
+            "test_set" not in self.config
+            and "test_set_path" in self.config
         ):
             self.read_instance_set(test=True)
 
@@ -154,10 +152,7 @@ class SGDBenchmark(AbstractBenchmark):
         return env
 
     def read_instance_set(self, test=False):
-        """
-        Read path of instances from config into list
-        """
-
+        """Read path of instances from config into list."""
         if test:
             path = (
                 os.path.dirname(os.path.abspath(__file__))
@@ -173,7 +168,7 @@ class SGDBenchmark(AbstractBenchmark):
             )
             keyword = "instance_set"
         self.config[keyword] = {}
-        with open(path, "r") as fh:
+        with open(path) as fh:
             reader = csv.DictReader(fh, delimiter=";")
             for row in reader:
                 if "_" in row["dataset"]:
@@ -193,15 +188,14 @@ class SGDBenchmark(AbstractBenchmark):
                 self.config[keyword][int(row["ID"])] = instance
 
     def get_benchmark(self, instance_set_path=None, seed=0):
-        """
-        Get benchmark from the LTO paper
+        """Get benchmark from the LTO paper.
 
         Parameters
         -------
         seed : int
             Environment seed
 
-        Returns
+        Returns:
         -------
         env : SGDEnv
             SGD environment

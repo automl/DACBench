@@ -1,16 +1,14 @@
-"""
-Sigmoid environment from:
+"""Sigmoid environment from:
 
 "Dynamic Algorithm Configuration:Foundation of a New Meta-Algorithmic Framework"
 by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
 Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 """
+from __future__ import annotations
 
-from typing import List
-
-import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import cm
 
 from dacbench import AbstractMADACEnv
 
@@ -19,12 +17,11 @@ class SigmoidEnv(AbstractMADACEnv):
     """Environment for tracing sigmoid curves."""
 
     def _sig(self, x, scaling, inflection):
-        """Simple sigmoid function"""
+        """Simple sigmoid function."""
         return 1 / (1 + np.exp(-scaling * (x - inflection)))
 
     def __init__(self, config) -> None:
-        """
-        Initialize Sigmoid Env.
+        """Initialize Sigmoid Env.
 
         Parameters
         ----------
@@ -32,7 +29,7 @@ class SigmoidEnv(AbstractMADACEnv):
             Environment configuration
 
         """
-        super(SigmoidEnv, self).__init__(config)
+        super().__init__(config)
 
         self.shifts = [self.n_steps / 2 for _ in config["action_values"]]
         self.slopes = [-1 for _ in config["action_values"]]
@@ -41,48 +38,42 @@ class SigmoidEnv(AbstractMADACEnv):
         self._prev_state = None
         self.last_action = None
 
-        if "reward_function" in config.keys():
-            self.get_reward = config["reward_function"]
-        else:
-            self.get_reward = self.get_default_reward
+        self.get_reward = config.get("reward_function", self.get_default_reward)
 
-        if "state_method" in config.keys():
-            self.get_state = config["state_method"]
-        else:
-            self.get_state = self.get_default_state
+        self.get_state = config.get("state_method", self.get_default_state)
 
     def step(self, action: int):
-        """
-        Execute environment step.
+        """Execute environment step.
 
         Parameters
         ----------
         action : int
             action to execute
 
-        Returns
+        Returns:
         -------
         np.array, float, bool, bool, dict
             state, reward, terminated, truncated, info
 
         """
-        self.done = super(SigmoidEnv, self).step_()
+        self.done = super().step_()
         self.last_action = action
         next_state = self.get_state(self)
         self._prev_state = next_state
         return next_state, self.get_reward(self), False, self.done, {}
 
-    def reset(self, seed=None, options={}) -> List[int]:
-        """
-        Resets env.
+    def reset(self, seed=None, options=None) -> list[int]:
+        """Resets env.
 
-        Returns
+        Returns:
         -------
         numpy.array
             Environment state
 
         """
-        super(SigmoidEnv, self).reset_(seed)
+        if options is None:
+            options = {}
+        super().reset_(seed)
         self.shifts = self.instance[: self.n_actions]
         self.slopes = self.instance[self.n_actions :]
         self._prev_state = None
@@ -93,18 +84,17 @@ class SigmoidEnv(AbstractMADACEnv):
         r = [
             1 - np.abs(self._sig(self.c_step, slope, shift) - (act / (max_act - 1)))
             for slope, shift, act, max_act in zip(
-                self.slopes, self.shifts, self.last_action, self.action_space.nvec
+                self.slopes, self.shifts, self.last_action, self.action_space.nvec, strict=False
             )
         ]
         r = np.prod(r)
-        r = max(self.reward_range[0], min(self.reward_range[1], r))
-        return r
+        return max(self.reward_range[0], min(self.reward_range[1], r))
 
     def get_default_state(self, _):
         """Get default state representation."""
         remaining_budget = self.n_steps - self.c_step
         next_state = [remaining_budget]
-        for shift, slope in zip(self.shifts, self.slopes):
+        for shift, slope in zip(self.shifts, self.slopes, strict=False):
             next_state.append(shift)
             next_state.append(slope)
         if self.c_step == 0:
@@ -114,10 +104,9 @@ class SigmoidEnv(AbstractMADACEnv):
         return np.array(next_state)
 
     def close(self) -> bool:
-        """
-        Close Env.
+        """Close Env.
 
-        Returns
+        Returns:
         -------
         bool
             Closing confirmation
@@ -126,8 +115,7 @@ class SigmoidEnv(AbstractMADACEnv):
         return True
 
     def render(self, mode: str) -> None:
-        """
-        Render env in human mode.
+        """Render env in human mode.
 
         Parameters
         ----------
@@ -161,8 +149,7 @@ class ContinuousStateSigmoidEnv(SigmoidEnv):
     """Environment for tracing sigmoid curves with a continuous state on the x-axis."""
 
     def __init__(self, config) -> None:
-        """
-        Initialize Sigmoid Env.
+        """Initialize Sigmoid Env.
 
         Parameters
         ----------
@@ -173,15 +160,14 @@ class ContinuousStateSigmoidEnv(SigmoidEnv):
         super().__init__(config)
 
     def step(self, action: int):
-        """
-        Execute environment step.
+        """Execute environment step.
 
         Parameters
         ----------
         action : int
             action to execute
 
-        Returns
+        Returns:
         -------
         np.array, float, bool, dict
             state, reward, done, info
@@ -211,8 +197,7 @@ class ContinuousSigmoidEnv(SigmoidEnv):
     """Environment for tracing sigmoid curves with a continuous state on the x-axis."""
 
     def __init__(self, config) -> None:
-        """
-        Initialize Sigmoid Env.
+        """Initialize Sigmoid Env.
 
         Parameters
         ----------
@@ -223,15 +208,14 @@ class ContinuousSigmoidEnv(SigmoidEnv):
         super().__init__(config)
 
     def step(self, action: np.ndarray):
-        """
-        Execute environment step. !!NOTE!! The action here is a list of floats and not a single number !!NOTE!!
+        """Execute environment step. !!NOTE!! The action here is a list of floats and not a single number !!NOTE!!
 
         Parameters
         ----------
         action : list of floats
             action(s) to execute
 
-        Returns
+        Returns:
         -------
         np.array, float, bool, dict
             state, reward, done, info

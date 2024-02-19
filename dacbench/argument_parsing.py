@@ -1,17 +1,17 @@
+from __future__ import annotations
+
 from argparse import ArgumentTypeError as err
 from pathlib import Path
 
 
-class PathType(object):
-    """
-    Custom argument type for path validation.
+class PathType:
+    """Custom argument type for path validation.
 
     Adapted from: https://stackoverflow.com/questions/11415570/directory-path-types-with-argparse
     """
 
     def __init__(self, exists=True, type="file", dash_ok=True):
-        """
-        Initialize Path.
+        """Initialize Path.
 
         Parameters
         ----------
@@ -27,17 +27,14 @@ class PathType(object):
 
         """
         assert exists in (True, False, None)
-        assert type in ("file", "dir", "symlink", "socket", None) or hasattr(
-            type, "__call__"
-        )
+        assert type in ("file", "dir", "symlink", "socket", None) or callable(type)
 
         self._exists = exists
         self._type = type
         self._dash_ok = dash_ok
 
     def __call__(self, string: str):
-        """
-        Call Path.
+        """Call Path.
 
         Parameters
         ----------
@@ -59,7 +56,7 @@ class PathType(object):
         # existence
         if self._exists is None:
             pass
-        elif not self._exists == path.exists():
+        elif self._exists != path.exists():
             negate = "" if self._exists else "not"
             positive = "" if not self._exists else "not"
             raise err(

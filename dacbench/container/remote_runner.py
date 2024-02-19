@@ -1,4 +1,5 @@
-"""This is strongly guided and partially copy from:https://github.com/automl/HPOBench/blob/master/hpobench/container/client_abstract_benchmark.py"""
+"""This is strongly guided and partially copy from:https://github.com/automl/HPOBench/blob/master/hpobench/container/client_abstract_benchmark.py."""
+from __future__ import annotations
 
 import argparse
 import logging
@@ -6,13 +7,12 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional, Tuple, Union
+from typing import TYPE_CHECKING
 from uuid import uuid1
 
 import Pyro4
 import Pyro4.naming
 
-from dacbench.abstract_agent import AbstractDACBenchAgent
 from dacbench.abstract_benchmark import AbstractBenchmark
 from dacbench.argument_parsing import PathType
 from dacbench.container.container_utils import wait_for_unixsocket
@@ -20,6 +20,9 @@ from dacbench.container.remote_env import (
     RemoteEnvironmentClient,
     RemoteEnvironmentServer,
 )
+
+if TYPE_CHECKING:
+    from dacbench.abstract_agent import AbstractDACBenchAgent
 
 # Needed in order to combine event loops of name_server and daemon
 Pyro4.config.SERVERTYPE = "multiplex"
@@ -56,7 +59,7 @@ class RemoteRunnerServer:
         self.benchmark = None
         self.pyro_demon = pyro_demon
 
-    def start(self, config: str, benchmark: Tuple[str, str]):
+    def start(self, config: str, benchmark: tuple[str, str]):
         """Start server."""
         benchmark = AbstractBenchmark.import_from(*benchmark)
 
@@ -69,8 +72,7 @@ class RemoteRunnerServer:
         # set up logger and stuff
 
         self.env = RemoteEnvironmentServer(env)
-        uri = self.pyro_demon.register(self.env)
-        return uri
+        return self.pyro_demon.register(self.env)
 
 
 class RemoteRunner:
@@ -81,16 +83,15 @@ class RemoteRunner:
     def __init__(
         self,
         benchmark: AbstractBenchmark,
-        container_name: str = None,
-        container_source: Optional[str] = None,
+        container_name: str | None = None,
+        container_source: str | None = None,
         container_tag: str = "latest",
-        env_str: Optional[str] = "",
-        bind_str: Optional[str] = "",
-        gpu: Optional[bool] = False,
+        env_str: str | None = "",
+        bind_str: str | None = "",
+        gpu: bool | None = False,
         socket_id=None,
     ):
-        """
-        Runner for containers.
+        """Runner for containers.
 
         Parameters
         ----------
@@ -165,8 +166,7 @@ class RemoteRunner:
         return Path(SOCKET_PATH) / f"{socket_id}.unixsock"
 
     def __start_server(self, env_str, bind_str, gpu):
-        """
-        Starts container and the pyro server.
+        """Starts container and the pyro server.
 
         Parameters
         ----------
@@ -253,7 +253,7 @@ class RemoteRunner:
         self,
         benchmark: AbstractBenchmark,
         container_name: str,
-        container_source: Union[str, Path],
+        container_source: str | Path,
         container_tag: str,
     ):
         """Load benchmark from recipe."""
@@ -281,8 +281,7 @@ class RemoteRunnerServerFactory:
     def create(self):
         """Get server."""
         remote_runner_server = RemoteRunnerServer(pyro_demon=self.pyro_demon)
-        remote_runner_server_uri = daemon.register(remote_runner_server)
-        return remote_runner_server_uri
+        return daemon.register(remote_runner_server)
 
     def __call__(self):
         """Make."""

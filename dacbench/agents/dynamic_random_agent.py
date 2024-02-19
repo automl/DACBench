@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from gymnasium import spaces
 
 from dacbench.abstract_agent import AbstractDACBenchAgent

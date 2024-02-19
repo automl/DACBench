@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb
@@ -9,15 +11,13 @@ current_palette = list(sb.color_palette())
 
 
 class StateTrackingWrapper(Wrapper):
-    """
-    Wrapper to track state changed over time.
+    """Wrapper to track state changed over time.
 
     Includes interval mode that returns states in lists of len(interval) instead of one long list.
     """
 
     def __init__(self, env, state_interval=None, logger=None):
-        """
-        Initialize wrapper.
+        """Initialize wrapper.
 
         Parameters
         ----------
@@ -29,7 +29,7 @@ class StateTrackingWrapper(Wrapper):
             logger to write to
 
         """
-        super(StateTrackingWrapper, self).__init__(env)
+        super().__init__(env)
         self.state_interval = state_interval
         self.overall_states = []
         if self.state_interval:
@@ -47,8 +47,7 @@ class StateTrackingWrapper(Wrapper):
             )
 
     def __setattr__(self, name, value):
-        """
-        Set attribute in wrapper if available and in env if not.
+        """Set attribute in wrapper if available and in env if not.
 
         Parameters
         ----------
@@ -77,15 +76,14 @@ class StateTrackingWrapper(Wrapper):
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
-        """
-        Get attribute value of wrapper if available and of env if not.
+        """Get attribute value of wrapper if available and of env if not.
 
         Parameters
         ----------
         name : str
             Attribute to get
 
-        Returns
+        Returns:
         -------
         value
             Value of given name
@@ -111,10 +109,9 @@ class StateTrackingWrapper(Wrapper):
             return getattr(self.env, name)
 
     def reset(self):
-        """
-        Reset environment and record starting state.
+        """Reset environment and record starting state.
 
-        Returns
+        Returns:
         -------
         np.array, {}
             state, info
@@ -131,15 +128,14 @@ class StateTrackingWrapper(Wrapper):
         return state, info
 
     def step(self, action):
-        """
-        Execute environment step and record state.
+        """Execute environment step and record state.
 
         Parameters
         ----------
         action : int
             action to execute
 
-        Returns
+        Returns:
         -------
         np.array, float, bool, dict
             state, reward, done, metainfo
@@ -158,27 +154,25 @@ class StateTrackingWrapper(Wrapper):
         return state, reward, terminated, truncated, info
 
     def get_states(self):
-        """
-        Get state progression.
+        """Get state progression.
 
-        Returns
+        Returns:
         -------
         np.array or np.array, np.array
             all states or all states and interval sorted states
 
         """
         if self.state_interval:
-            complete_intervals = self.state_intervals + [self.current_states]
+            complete_intervals = [*self.state_intervals, self.current_states]
             return self.overall_states, complete_intervals
 
         else:
             return self.overall_states
 
     def render_state_tracking(self):
-        """
-        Render state progression.
+        """Render state progression.
 
-        Returns
+        Returns:
         -------
         np.array
             RBG data of state tracking
@@ -247,16 +241,11 @@ class StateTrackingWrapper(Wrapper):
             canvas = FigureCanvas(figure)
             p, p2 = plot_single()
             canvas.draw()
-        elif self.state_type == spaces.Dict:
-            raise NotImplementedError
-
-        elif self.state_type == spaces.Tuple:
+        elif self.state_type in (spaces.Dict, spaces.Tuple):
             raise NotImplementedError
 
         elif (
-            self.state_type == spaces.MultiDiscrete
-            or self.state_type == spaces.MultiBinary
-            or self.state_type == spaces.Box
+            self.state_type in (spaces.MultiDiscrete, spaces.MultiBinary, spaces.Box)
         ):
             if self.state_type == spaces.MultiDiscrete:
                 state_length = len(self.env.observation_space.nvec)
@@ -292,7 +281,6 @@ class StateTrackingWrapper(Wrapper):
         else:
             raise ValueError("Unknown state type")
         width, height = figure.get_size_inches() * figure.get_dpi()
-        img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
+        return np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
             int(height), int(width), 3
         )
-        return img

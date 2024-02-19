@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import itertools
 import os
 
@@ -70,14 +72,9 @@ CMAES_DEFAULTS = objdict(
         "config_space": DEFAULT_CFG_SPACE,
         "action_space_class": "MultiDiscrete",
         "action_space_args": [
-            list(
-                map(
-                    lambda m: len(
+            [len(
                         getattr(getattr(Parameters, m), "options", [False, True])
-                    ),
-                    Parameters.__modules__,
-                )
-            )
+                    ) for m in Parameters.__modules__]
         ],
         "observation_space_class": "Box",
         "observation_space_args": [-np.inf * np.ones(5), np.inf * np.ones(5)],
@@ -101,9 +98,9 @@ CMAES_DEFAULTS = objdict(
 
 
 class CMAESBenchmark(AbstractBenchmark):
-    def __init__(self, config_path: str = None, config=None):
+    def __init__(self, config_path: str | None = None, config=None):
         super().__init__(config_path, config)
-        self.config = objdict(CMAES_DEFAULTS.copy(), **(self.config or dict()))
+        self.config = objdict(CMAES_DEFAULTS.copy(), **(self.config or {}))
 
     def get_environment(self):
         if "instance_set" not in self.config:
@@ -111,8 +108,8 @@ class CMAESBenchmark(AbstractBenchmark):
 
         # Read test set if path is specified
         if (
-            "test_set" not in self.config.keys()
-            and "test_set_path" in self.config.keys()
+            "test_set" not in self.config
+            and "test_set_path" in self.config
         ):
             self.read_instance_set(test=True)
 
@@ -130,8 +127,8 @@ class CMAESBenchmark(AbstractBenchmark):
             path = self.config.instance_set_path
             keyword = "instance_set"
 
-        self.config[keyword] = dict()
-        with open(path, "r") as fh:
+        self.config[keyword] = {}
+        with open(path) as fh:
             for line in itertools.islice(fh, 1, None):
                 _id, dim, fid, iid, *representation = line.strip().split(",")
                 self.config[keyword][int(_id)] = [

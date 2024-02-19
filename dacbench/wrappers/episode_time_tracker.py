@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import time
 
 import matplotlib.pyplot as plt
@@ -11,15 +13,13 @@ current_palette = list(sb.color_palette())
 
 
 class EpisodeTimeWrapper(Wrapper):
-    """
-    Wrapper to track time spent per episode.
+    """Wrapper to track time spent per episode.
 
     Includes interval mode that returns times in lists of len(interval) instead of one long list.
     """
 
     def __init__(self, env, time_interval=None, logger=None):
-        """
-        Initialize wrapper.
+        """Initialize wrapper.
 
         Parameters
         ----------
@@ -31,7 +31,7 @@ class EpisodeTimeWrapper(Wrapper):
             logger to write to
 
         """
-        super(EpisodeTimeWrapper, self).__init__(env)
+        super().__init__(env)
         self.time_interval = time_interval
         self.all_steps = []
         if self.time_interval:
@@ -46,8 +46,7 @@ class EpisodeTimeWrapper(Wrapper):
         self.logger = logger
 
     def __setattr__(self, name, value):
-        """
-        Set attribute in wrapper if available and in env if not.
+        """Set attribute in wrapper if available and in env if not.
 
         Parameters
         ----------
@@ -79,15 +78,14 @@ class EpisodeTimeWrapper(Wrapper):
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
-        """
-        Get attribute value of wrapper if available and of env if not.
+        """Get attribute value of wrapper if available and of env if not.
 
         Parameters
         ----------
         name : str
             Attribute to get
 
-        Returns
+        Returns:
         -------
         value
             Value of given name
@@ -116,15 +114,14 @@ class EpisodeTimeWrapper(Wrapper):
             return getattr(self.env, name)
 
     def step(self, action):
-        """
-        Execute environment step and record time.
+        """Execute environment step and record time.
 
         Parameters
         ----------
         action : int
             action to execute
 
-        Returns
+        Returns:
         -------
         np.array, float, bool, bool, dict
             state, reward, terminated, truncated, metainfo
@@ -161,18 +158,17 @@ class EpisodeTimeWrapper(Wrapper):
         return state, reward, terminated, truncated, info
 
     def get_times(self):
-        """
-        Get times.
+        """Get times.
 
-        Returns
+        Returns:
         -------
         np.array or np.array, np.array
             all times or all times and interval sorted times
 
         """
         if self.time_interval:
-            complete_intervals = self.time_intervals + [self.current_times]
-            complete_step_intervals = self.step_intervals + [self.current_step_interval]
+            complete_intervals = [*self.time_intervals, self.current_times]
+            complete_step_intervals = [*self.step_intervals, self.current_step_interval]
             return (
                 self.overall_times,
                 self.all_steps,
@@ -200,18 +196,17 @@ class EpisodeTimeWrapper(Wrapper):
             ]
             plt.plot(
                 np.arange(len(self.step_intervals) + 2) * self.time_interval,
-                [interval_means[0]] + interval_means,
+                [interval_means[0], *interval_means],
                 label="Mean interval time",
                 color="orange",
             )
         plt.legend(loc="upper right")
         canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
-        img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
+        return np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
             int(height), int(width), 3
         )
         # plt.close(figure)
-        return img
 
     def render_episode_time(self):
         """Render episode times."""
@@ -237,14 +232,13 @@ class EpisodeTimeWrapper(Wrapper):
             interval_sums += [np.mean([sum(episode) for episode in self.current_times])]
             plt.plot(
                 np.arange(len(self.time_intervals) + 2) * self.time_interval,
-                [interval_sums[0]] + interval_sums,
+                [interval_sums[0], *interval_sums],
                 label="Mean interval time",
                 color="orange",
             )
         plt.legend(loc="upper right")
         canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
-        img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
+        return np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
             int(height), int(width), 3
         )
-        return img

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
@@ -10,8 +12,7 @@ current_palette = list(sb.color_palette())
 
 
 class PerformanceTrackingWrapper(Wrapper):
-    """
-    Wrapper to track episode performance.
+    """Wrapper to track episode performance.
 
     Includes interval mode that returns performance in lists of len(interval) instead of one long list.
     """
@@ -23,8 +24,7 @@ class PerformanceTrackingWrapper(Wrapper):
         track_instance_performance=True,
         logger=None,
     ):
-        """
-        Initialize wrapper.
+        """Initialize wrapper.
 
         Parameters
         ----------
@@ -38,7 +38,7 @@ class PerformanceTrackingWrapper(Wrapper):
             logger to write to
 
         """
-        super(PerformanceTrackingWrapper, self).__init__(env)
+        super().__init__(env)
         self.performance_interval = performance_interval
         self.overall_performance = []
         self.episode_performance = 0
@@ -47,13 +47,12 @@ class PerformanceTrackingWrapper(Wrapper):
             self.current_performance = []
         self.track_instances = track_instance_performance
         if self.track_instances:
-            self.instance_performances = defaultdict(lambda: [])
+            self.instance_performances = defaultdict(list)
 
         self.logger = logger
 
     def __setattr__(self, name, value):
-        """
-        Set attribute in wrapper if available and in env if not.
+        """Set attribute in wrapper if available and in env if not.
 
         Parameters
         ----------
@@ -83,15 +82,14 @@ class PerformanceTrackingWrapper(Wrapper):
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
-        """
-        Get attribute value of wrapper if available and of env if not.
+        """Get attribute value of wrapper if available and of env if not.
 
         Parameters
         ----------
         name : str
             Attribute to get
 
-        Returns
+        Returns:
         -------
         value
             Value of given name
@@ -118,15 +116,14 @@ class PerformanceTrackingWrapper(Wrapper):
             return getattr(self.env, name)
 
     def step(self, action):
-        """
-        Execute environment step and record performance.
+        """Execute environment step and record performance.
 
         Parameters
         ----------
         action : int
             action to execute
 
-        Returns
+        Returns:
         -------
         np.array, float, bool, dict
             state, reward, done, metainfo
@@ -156,17 +153,16 @@ class PerformanceTrackingWrapper(Wrapper):
         return state, reward, terminated, truncated, info
 
     def get_performance(self):
-        """
-        Get state performance.
+        """Get state performance.
 
-        Returns
+        Returns:
         -------
         np.array or np.array, np.array or np.array, dict or np.array, np.arry, dict
             all states or all states and interval sorted states
 
         """
         if self.performance_interval and self.track_instances:
-            complete_intervals = self.performance_intervals + [self.current_performance]
+            complete_intervals = [*self.performance_intervals, self.current_performance]
             return (
                 self.overall_performance,
                 complete_intervals,
@@ -174,7 +170,7 @@ class PerformanceTrackingWrapper(Wrapper):
             )
 
         elif self.performance_interval:
-            complete_intervals = self.performance_intervals + [self.current_performance]
+            complete_intervals = [*self.performance_intervals, self.current_performance]
             return self.overall_performance, complete_intervals
 
         elif self.track_instances:
@@ -204,7 +200,7 @@ class PerformanceTrackingWrapper(Wrapper):
         ax = plt.subplot(111)
         for k, i in zip(
             self.instance_performances.keys(),
-            np.arange(len(self.instance_performances.keys())),
+            np.arange(len(self.instance_performances.keys())), strict=False,
         ):
             ax.bar(str(i), np.mean(self.instance_performances[k]))
         plt.show()

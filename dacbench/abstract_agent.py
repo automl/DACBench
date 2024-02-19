@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 
 
@@ -6,8 +8,7 @@ class AbstractDACBenchAgent(ABC):
 
     @abstractmethod
     def __init__(self, env):
-        """
-        Initialize agent.
+        """Initialize agent.
 
         Parameters
         ----------
@@ -15,12 +16,10 @@ class AbstractDACBenchAgent(ABC):
             Environment to train on
 
         """
-        pass
 
     @abstractmethod
     def act(self, state, reward):
-        """
-        Compute and return environment action.
+        """Compute and return environment action.
 
         Parameters
         ----------
@@ -29,7 +28,7 @@ class AbstractDACBenchAgent(ABC):
         reward
             Environment reward
 
-        Returns
+        Returns:
         -------
         action
             Action to take
@@ -39,8 +38,7 @@ class AbstractDACBenchAgent(ABC):
 
     @abstractmethod
     def train(self, next_state, reward):
-        """
-        Train during episode if needed (pass if not).
+        """Train during episode if needed (pass if not).
 
         Parameters
         ----------
@@ -54,8 +52,7 @@ class AbstractDACBenchAgent(ABC):
 
     @abstractmethod
     def end_episode(self, state, reward):
-        """
-        End of episode training if needed (pass if not).
+        """End of episode training if needed (pass if not).
 
         Parameters
         ----------

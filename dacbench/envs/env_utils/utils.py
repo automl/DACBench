@@ -1,4 +1,4 @@
-from typing import Tuple
+from __future__ import annotations
 
 import numpy as np
 import torch
@@ -43,7 +43,7 @@ def random_torchvision_loader(
     fraction_of_dataset: float,
     train_validation_ratio: float | None,
     **kwargs,
-) -> Tuple[DataLoader, DataLoader, DataLoader]:
+) -> tuple[DataLoader, DataLoader, DataLoader]:
     """Create train, validation, test loaders for `name` dataset."""
     rng = np.random.RandomState(seed)
 
@@ -81,7 +81,7 @@ def random_torchvision_loader(
 
 
 def random_instance(rng: np.random.RandomState, datasets):
-    """Samples a random Instance"""
+    """Samples a random Instance."""
     default_rng_state = torch.get_rng_state()
     seed = rng.randint(1, 4294967295, dtype=np.int64)
     torch.manual_seed(seed)
@@ -120,7 +120,7 @@ def _random_instance(
 def sample_optimizer_params(rng, **kwargs):
     """Samples optimizer parameters according to below rules.
     - With 0.8 probability keep default of all parameters
-    - For each hyperparameter, with 0.5 probability sample a new value else keep default
+    - For each hyperparameter, with 0.5 probability sample a new value else keep default.
     """
     modify = rng.rand()
 
@@ -157,10 +157,10 @@ def sample_optimizer_params(rng, **kwargs):
 
 def random_architecture(
     rng: np.random.RandomState,
-    input_shape: Tuple[int, int, int],
+    input_shape: tuple[int, int, int],
     n_classes: int,
     **kwargs,
-) -> Tuple[nn.Module, int]:
+) -> tuple[nn.Module, int]:
     """Samples random architecture with `rng` for given `input_shape` and `n_classes`."""
     modules = [nn.Identity()]
     max_n_conv_layers = 3
@@ -200,7 +200,7 @@ def random_architecture(
         ).item()
     )
     for layer_idx in range(n_mlp_layers):
-        l = 2 ** (
+        l = 2 ** (  # noqa: E741
             2 ** (max_n_mlp_layers + 1 - layer_idx)
             - int(
                 np.exp(

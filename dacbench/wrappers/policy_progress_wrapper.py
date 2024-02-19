@@ -1,18 +1,18 @@
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
 import numpy as np
 from gymnasium import Wrapper
 
 
 class PolicyProgressWrapper(Wrapper):
-    """
-    Wrapper to track progress towards optimal policy.
+    """Wrapper to track progress towards optimal policy.
 
     Can only be used if a way to obtain the optimal policy given an instance can be obtained.
     """
 
     def __init__(self, env, compute_optimal):
-        """
-        Initialize wrapper.
+        """Initialize wrapper.
 
         Parameters
         ----------
@@ -22,14 +22,13 @@ class PolicyProgressWrapper(Wrapper):
             Function to compute optimal policy
 
         """
-        super(PolicyProgressWrapper, self).__init__(env)
+        super().__init__(env)
         self.compute_optimal = compute_optimal
         self.episode = []
         self.policy_progress = []
 
     def __setattr__(self, name, value):
-        """
-        Set attribute in wrapper if available and in env if not.
+        """Set attribute in wrapper if available and in env if not.
 
         Parameters
         ----------
@@ -51,15 +50,14 @@ class PolicyProgressWrapper(Wrapper):
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
-        """
-        Get attribute value of wrapper if available and of env if not.
+        """Get attribute value of wrapper if available and of env if not.
 
         Parameters
         ----------
         name : str
             Attribute to get
 
-        Returns
+        Returns:
         -------
         value
             Value of given name
@@ -78,15 +76,14 @@ class PolicyProgressWrapper(Wrapper):
             return getattr(self.env, name)
 
     def step(self, action):
-        """
-        Execute environment step and record distance.
+        """Execute environment step and record distance.
 
         Parameters
         ----------
         action : int
             action to execute
 
-        Returns
+        Returns:
         -------
         np.array, float, bool, bool, dict
             state, reward, terminated, truncated, metainfo

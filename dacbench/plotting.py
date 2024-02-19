@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from __future__ import annotations
 
 import numpy as np
 import pandas as pd
@@ -8,15 +8,14 @@ sns.set_style("darkgrid")
 
 
 def space_sep_upper(column_name: str) -> str:
-    """
-    Separates strings at underscores into headings. Used to generate labels from logging names.
+    """Separates strings at underscores into headings. Used to generate labels from logging names.
 
     Parameters
     ----------
     column_name : str
         Name to generate label for
 
-    Returns
+    Returns:
     -------
     str
 
@@ -30,9 +29,8 @@ def generate_global_step(
     data: pd.DataFrame,
     x_column: str = "global_step",
     x_label_columns: str = ["episode", "step"],
-) -> Tuple[pd.DataFrame, str, List[str]]:
-    """
-    Add a global_step column which enumerate all step over all episodes.
+) -> tuple[pd.DataFrame, str, list[str]]:
+    """Add a global_step column which enumerate all step over all episodes.
 
     Returns the altered data, a data frame containing mapping between global_step, x_column and x_label_columns.
 
@@ -47,7 +45,7 @@ def generate_global_step(
     x_label_columns: [str, ...]
         the name and hierarchical order of the columns (default ['episode', 'step']
 
-    Returns
+    Returns:
     -------
     (data, plot_index, x_column, x_label_columns)
 
@@ -67,8 +65,7 @@ def generate_global_step(
 def add_multi_level_ticks(
     grid: sns.FacetGrid, plot_index: pd.DataFrame, x_column: str, x_label_columns: str
 ) -> None:
-    """
-    Expects a FacedGrid with global_step (x_column) as x-axis and replaces the tick labels to match format episode:step.
+    """Expects a FacedGrid with global_step (x_column) as x-axis and replaces the tick labels to match format episode:step.
 
     E.g. Run with 3 episodes, each of 10 steps. This results in 30 global steps.
     The resulting tick labels could be ['0', '4', '9', '14', '19', '24', '29'].
@@ -107,13 +104,12 @@ def add_multi_level_ticks(
 def plot(
     plot_function,
     settings: dict,
-    title: str = None,
-    x_label: str = None,
-    y_label: str = None,
+    title: str | None = None,
+    x_label: str | None = None,
+    y_label: str | None = None,
     **kwargs,
 ) -> sns.FacetGrid:
-    """
-    Helper function that creates a FacetGrid.
+    """Helper function that creates a FacetGrid.
 
     1. Updates settings with kwargs (overwrites values)
     2. Plots using plot_function(**settings)
@@ -135,7 +131,7 @@ def plot(
     kwargs:
         Keyword arguments to overwrite default settings.
 
-    Returns
+    Returns:
     -------
     sns.FacedGrid
 
@@ -161,8 +157,7 @@ def plot(
 def plot_performance(
     data, title=None, x_label=None, y_label=None, **kwargs
 ) -> sns.FacetGrid:
-    """
-    Create a line plot of the performance over episodes.
+    """Create a line plot of the performance over episodes.
 
     Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
     this specify a property to map those attributes to e.g hue='seed' or/and col='instance'.
@@ -183,7 +178,7 @@ def plot_performance(
     kwargs:
         Keyword arguments to overwrite default settings.
 
-    Returns
+    Returns:
     -------
     sns.FacedGrid
 
@@ -194,16 +189,14 @@ def plot_performance(
         "y": "overall_performance",
         "kind": "line",
     }
-    grid = plot(sns.relplot, settings, title, x_label, y_label, **kwargs)
+    return plot(sns.relplot, settings, title, x_label, y_label, **kwargs)
 
-    return grid
 
 
 def plot_performance_per_instance(
     data, title=None, x_label=None, y_label=None, **args
 ) -> sns.FacetGrid:
-    """
-    Create a bar plot of the mean performance per instance ordered by the performance.
+    """Create a bar plot of the mean performance per instance ordered by the performance.
 
     Per default the mean performance seeds is shown if you want to change
     this specify a property to map seed to e.g. col='seed'.
@@ -224,7 +217,7 @@ def plot_performance_per_instance(
     kwargs:
         Keyword arguments to overwrite default settings.
 
-    Returns
+    Returns:
     -------
     sns.FacedGrid
 
@@ -253,8 +246,7 @@ def plot_step_time(
     y_label=None,
     **args,
 ) -> sns.FacetGrid:
-    """
-    Create a line plot showing the measured time per step.
+    """Create a line plot showing the measured time per step.
 
     Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
     this specify a property to map those attributes to e.g hue='seed' or/and col='instance'.
@@ -279,7 +271,7 @@ def plot_step_time(
     kwargs:
         Keyword arguments to overwrite default settings.
 
-    Returns
+    Returns:
     -------
     sns.FacedGrid
 
@@ -312,8 +304,7 @@ def plot_step_time(
 def plot_episode_time(
     data, title=None, x_label=None, y_label=None, **kargs
 ) -> sns.FacetGrid:
-    """
-    Create a line plot showing the measured time per episode.
+    """Create a line plot showing the measured time per episode.
 
     Per default the mean performance and and one stddev over all instances and seeds is shown if you want to change
     this specify a property to map those attributes to e.g hue='seed' or/and col='instance'.
@@ -334,7 +325,7 @@ def plot_episode_time(
     kwargs:
         Keyword arguments to overwrite default settings.
 
-    Returns
+    Returns:
     -------
     sns.FacedGrid
 
@@ -346,9 +337,8 @@ def plot_episode_time(
         "kind": "line",
     }
 
-    grid = plot(sns.relplot, settings, title, x_label, y_label, **kargs)
+    return plot(sns.relplot, settings, title, x_label, y_label, **kargs)
 
-    return grid
 
 
 def plot_action(
@@ -360,8 +350,7 @@ def plot_action(
     y_label=None,
     **kargs,
 ):
-    """
-    Create a line plot showing actions over time.
+    """Create a line plot showing actions over time.
 
     Please be aware that action spaces can be quite large and the plots can become quite messy (and take some time)
     if you try plot all dimensions at once. It is therefore recommended to select a subset of columns before running the
@@ -390,7 +379,7 @@ def plot_action(
     kwargs:
         Keyword arguments to overwrite default settings.
 
-    Returns
+    Returns:
     -------
     sns.FacedGrid
 
@@ -409,8 +398,7 @@ def plot_state(
     y_label=None,
     **kargs,
 ):
-    """
-    Create a line plot showing state over time.
+    """Create a line plot showing state over time.
 
     Please be aware that state can be quite large and the plots can become quite messy (and take some time)
     if you try plot all dimensions at once. It is therefore recommended to select a subset of columns before running the
@@ -439,7 +427,7 @@ def plot_state(
     kwargs:
         Keyword arguments to overwrite default settings.
 
-    Returns
+    Returns:
     -------
     sns.FacedGrid
 
@@ -459,8 +447,7 @@ def plot_space(
     y_label=None,
     **args,
 ) -> sns.FacetGrid:
-    """
-    Create a line plot showing space over time.
+    """Create a line plot showing space over time.
 
     Please be aware that spaces can be quite large and the plots can become quite messy (and take some time)
     if you try plot all dimensions at once. It is therefore recommended to select a subset of columns before running the
@@ -494,7 +481,7 @@ def plot_space(
     kwargs:
         Keyword arguments to overwrite default settings.
 
-    Returns
+    Returns:
     -------
     sns.FacedGrid
 
@@ -528,7 +515,7 @@ def plot_space(
     if interval > 1:
         data["interval"] = data[x_column] // interval
         group_columns = list(
-            data.columns.drop(x_label_columns + [x_column, space_column_name])
+            data.columns.drop([*x_label_columns, x_column, space_column_name])
         )
         data = data.groupby(group_columns).agg(
             {x_column: "min", space_column_name: "mean"}

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import math
 
 from dacbench.abstract_agent import AbstractDACBenchAgent
@@ -10,7 +12,7 @@ class CosineAnnealingAgent(AbstractDACBenchAgent):
         self.base_lr = base_lr
         self.current_lr = base_lr
         self.last_epoch = -1
-        super(CosineAnnealingAgent, self).__init__(env)
+        super().__init__(env)
 
     def act(self, state=None, reward=None):
         self.last_epoch += 1

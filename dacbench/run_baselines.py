@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import os
 import sys
@@ -14,8 +16,7 @@ from dacbench.wrappers import PerformanceTrackingWrapper
 
 
 def run_random(results_path, benchmark_name, num_episodes, seeds, fixed):
-    """
-    Run random policy.
+    """Run random policy.
 
     Parameters
     ----------
@@ -33,10 +34,7 @@ def run_random(results_path, benchmark_name, num_episodes, seeds, fixed):
     """
     bench = getattr(benchmarks, benchmark_name)()
     for s in seeds:
-        if fixed > 1:
-            experiment_name = f"random_fixed{fixed}_{s}"
-        else:
-            experiment_name = f"random_{s}"
+        experiment_name = f"random_fixed{fixed}_{s}" if fixed > 1 else f"random_{s}"
         logger = Logger(
             experiment_name=experiment_name, output_path=results_path / benchmark_name
         )
@@ -56,8 +54,7 @@ def run_random(results_path, benchmark_name, num_episodes, seeds, fixed):
 
 
 def run_static(results_path, benchmark_name, action, num_episodes, seeds=np.arange(10)):
-    """
-    Run static policy.
+    """Run static policy.
 
     Parameters
     ----------
@@ -96,8 +93,7 @@ def run_static(results_path, benchmark_name, action, num_episodes, seeds=np.aran
 
 
 def run_optimal(results_path, benchmark_name, num_episodes, seeds):
-    """
-    Run optimal policy.
+    """Run optimal policy.
 
     Parameters
     ----------
@@ -119,8 +115,7 @@ def run_optimal(results_path, benchmark_name, num_episodes, seeds):
 
 
 def run_dynamic_policy(results_path, benchmark_name, num_episodes, seeds=np.arange(10)):
-    """
-    Run dynamic baseline policy.
+    """Run dynamic baseline policy.
 
     Parameters
     ----------
@@ -141,8 +136,7 @@ def run_dynamic_policy(results_path, benchmark_name, num_episodes, seeds=np.aran
 
 
 def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.arange(10)):
-    """
-    Run generic policy.
+    """Run generic policy.
 
     Parameters
     ----------
@@ -177,7 +171,7 @@ def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.aran
 
         try:
             agent = policy(env)
-        except:
+        except:  # noqa: E722
             agent = GenericAgent(env, policy)
 
         logger.add_agent(agent)
@@ -250,10 +244,7 @@ def main(args):
     )
     args = parser.parse_args(args)
 
-    if args.benchmarks is None:
-        benchs = benchmarks.__all__
-    else:
-        benchs = args.benchmarks
+    benchs = benchmarks.__all__ if args.benchmarks is None else args.benchmarks
 
     args.outdir = Path(args.outdir)
 

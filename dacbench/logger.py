@@ -1,24 +1,27 @@
+from __future__ import annotations
+
 import json
 import os
 from abc import ABCMeta, abstractmethod
 from collections import ChainMap, defaultdict
+from collections.abc import Callable, Iterable
 from datetime import datetime
 from functools import reduce
 from itertools import chain
 from numbers import Number
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Tuple, Union
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
 
-from dacbench import AbstractBenchmark, AbstractEnv
-from dacbench.abstract_agent import AbstractDACBenchAgent
+if TYPE_CHECKING:
+    from dacbench import AbstractBenchmark, AbstractEnv
+    from dacbench.abstract_agent import AbstractDACBenchAgent
 
 
-def load_logs(log_file: Path) -> List[Dict]:
-    """
-    Loads the logs from a jsonl written by any logger.
+def load_logs(log_file: Path) -> list[dict]:
+    """Loads the logs from a jsonl written by any logger.
 
     The result is the list of dicts in the format:
     {
@@ -37,20 +40,18 @@ def load_logs(log_file: Path) -> List[Dict]:
     log_file: pathlib.Path
         The path to the log file
 
-    Returns
+    Returns:
     -------
     [Dict, ...]
 
     """
-    with open(log_file, "r") as log_file:
-        logs = list(map(json.loads, log_file))
-
-    return logs
+    with open(log_file) as log_file:
+        return list(map(json.loads, log_file))
 
 
-def split(predicate: Callable, iterable: Iterable) -> Tuple[List, List]:
-    """
-    Splits the iterable into two list depending on the result of predicate.
+
+def split(predicate: Callable, iterable: Iterable) -> tuple[list, list]:
+    """Splits the iterable into two list depending on the result of predicate.
 
     Parameters
     ----------
@@ -59,7 +60,7 @@ def split(predicate: Callable, iterable: Iterable) -> Tuple[List, List]:
     iterable: Iterable
         the iterable to split
 
-    Returns
+    Returns:
     -------
     (positives, negatives)
 
@@ -72,9 +73,8 @@ def split(predicate: Callable, iterable: Iterable) -> Tuple[List, List]:
     return positives, negatives
 
 
-def flatten_log_entry(log_entry: Dict) -> List[Dict]:
-    """
-    Transforms a log entry.
+def flatten_log_entry(log_entry: dict) -> list[dict]:
+    """Transforms a log entry.
 
     From:
     {
@@ -104,10 +104,9 @@ def flatten_log_entry(log_entry: Dict) -> List[Dict]:
     for value_name, value_dict in dict_entries:
         current_rows = (
             dict(
-                top_level_entries
-                + [("value", value), ("time", time), ("name", value_name)]
+                [*top_level_entries, ("value", value), ("time", time), ("name", value_name)]
             )
-            for value, time in zip(value_dict["values"], value_dict["times"])
+            for value, time in zip(value_dict["values"], value_dict["times"], strict=False)
         )
 
         rows.extend(map(dict, current_rows))
@@ -115,16 +114,15 @@ def flatten_log_entry(log_entry: Dict) -> List[Dict]:
     return rows
 
 
-def list_to_tuple(list_: List) -> Tuple:
-    """
-    Recursively transforms a list of lists into tuples of tuples.
+def list_to_tuple(list_: list) -> tuple:
+    """Recursively transforms a list of lists into tuples of tuples.
 
     Parameters
     ----------
     list_:
         (nested) list
 
-    Returns
+    Returns:
     -------
     (nested) tuple
 
@@ -135,10 +133,9 @@ def list_to_tuple(list_: List) -> Tuple:
 
 
 def log2dataframe(
-    logs: List[dict], wide: bool = False, drop_columns: List[str] = ["time"]
+    logs: list[dict], wide: bool = False, drop_columns: list[str] | None = None
 ) -> pd.DataFrame:
-    """
-    Converts a list of log entries to a pandas dataframe.
+    """Converts a list of log entries to a pandas dataframe.
 
     Usually used in combination with load_dataframe.
 
@@ -154,11 +151,13 @@ def log2dataframe(
         List of column names to be dropped (before reshaping the long dataframe) mostly used in combination
         with wide=True to reduce NaN values
 
-    Returns
+    Returns:
     -------
     dataframe
 
     """
+    if drop_columns is None:
+        drop_columns = ["time"]
     flat_logs = map(flatten_log_entry, logs)
     rows = reduce(lambda l1, l2: l1 + l2, flat_logs)
 
@@ -182,12 +181,12 @@ def log2dataframe(
         field_id_column = "name"
         additional_columns = list(
             set(dataframe.columns)
-            - set(primary_index_columns + ["time", "value", field_id_column])
+            - {*primary_index_columns, "time", "value", field_id_column}
         )
         index_columns = primary_index_columns + additional_columns + [field_id_column]
         dataframe = dataframe.set_index(index_columns)
         dataframe = dataframe.unstack()
-        dataframe.reset_index(inplace=True)
+        dataframe = dataframe.reset_index()
         dataframe.columns = [a if b == "" else b for a, b in dataframe.columns]
 
     return dataframe.infer_objects()
@@ -208,8 +207,7 @@ def instance_mapper(self):
 
 
 class AbstractLogger(metaclass=ABCMeta):
-    """
-    Logger interface.
+    """Logger interface.
 
     The logger classes provide a way of writing structured logs as jsonl files and also help to track information like
     current episode, step, time ...
@@ -226,11 +224,10 @@ class AbstractLogger(metaclass=ABCMeta):
         self,
         experiment_name: str,
         output_path: Path,
-        step_write_frequency: int = None,
+        step_write_frequency: int | None = None,
         episode_write_frequency: int = 1,
     ):
-        """
-        Initializes Logger.
+        """Initializes Logger.
 
         Parameters
         ----------
@@ -279,8 +276,7 @@ class AbstractLogger(metaclass=ABCMeta):
         return additional_info
 
     def set_env(self, env: AbstractEnv) -> None:
-        """
-        Needed to infer automatically logged information like the instance id.
+        """Needed to infer automatically logged information like the instance id.
 
         Parameters
         ----------
@@ -297,19 +293,18 @@ class AbstractLogger(metaclass=ABCMeta):
             AbstractLogger.valid_types["recursive"],
             AbstractLogger.valid_types["primitive"],
         )
-        return ", ".join(map(lambda type_: type_.__name__, valid_types))
+        return ", ".join(type_.__name__ for type_ in valid_types)
 
     @staticmethod
     def _init_logging_dir(log_dir: Path) -> None:
-        """
-        Prepares the logging directory.
+        """Prepares the logging directory.
 
         Parameters
         ----------
         log_dir: pathlib.Path
             dir to prepare for logging
 
-        Returns
+        Returns:
         -------
         None
 
@@ -318,15 +313,14 @@ class AbstractLogger(metaclass=ABCMeta):
         return log_dir
 
     def is_of_valid_type(self, value: Any) -> bool:
-        """
-        Checks if the value of any type in the logger's valid types.
+        """Checks if the value of any type in the logger's valid types.
 
         Parameters
         ----------
         value
             value to check
 
-        Returns
+        Returns:
         -------
         bool
 
@@ -344,27 +338,22 @@ class AbstractLogger(metaclass=ABCMeta):
     @abstractmethod
     def close(self) -> None:
         """Makes sure, that all remaining entries in the are written to file and the file is closed."""
-        pass
 
     @abstractmethod
     def next_step(self) -> None:
         """Call at the end of the step. Updates the internal state and dumps the information of the last step into a json."""
-        pass
 
     @abstractmethod
     def next_episode(self) -> None:
         """Call at the end of episode. See next_step."""
-        pass
 
     @abstractmethod
     def write(self) -> None:
         """Writes buffered logs to file. Invoke manually if you want to load logs during a run."""
-        pass
 
     @abstractmethod
     def log(self, key: str, value) -> None:
-        """
-        Writes value to list of values and save the current time for key.
+        """Writes value to list of values and save the current time for key.
 
         Parameters
         ----------
@@ -375,12 +364,10 @@ class AbstractLogger(metaclass=ABCMeta):
             Currently only {str, int, float, bool, np.number} and recursive types of those are supported.
 
         """
-        pass
 
     @abstractmethod
     def log_dict(self, data):
-        """
-        Alternative to log if more the one value should be logged at once.
+        """Alternative to log if more the one value should be logged at once.
 
         Parameters
         ----------
@@ -388,12 +375,10 @@ class AbstractLogger(metaclass=ABCMeta):
             a dict with key-value so that each value is a valid value for log
 
         """
-        pass
 
     @abstractmethod
-    def log_space(self, key: str, value: Union[np.ndarray, Dict], space_info=None):
-        """
-        Special for logging gym.spaces.
+    def log_space(self, key: str, value: np.ndarray | dict, space_info=None):
+        """Special for logging gym.spaces.
 
         Currently three types are supported:
         * Numbers: e.g. samples from Discrete
@@ -410,12 +395,10 @@ class AbstractLogger(metaclass=ABCMeta):
             a list of column names. The length of this list must equal the resulting number of columns.
 
         """
-        pass
 
 
 class ModuleLogger(AbstractLogger):
-    """
-    A logger for handling logging of one module. e.g. a wrapper or toplevel general logging.
+    """A logger for handling logging of one module. e.g. a wrapper or toplevel general logging.
 
     Don't create manually use Logger to manage ModuleLoggers
     """
@@ -425,11 +408,10 @@ class ModuleLogger(AbstractLogger):
         output_path: Path,
         experiment_name: str,
         module: str,
-        step_write_frequency: int = None,
+        step_write_frequency: int | None = None,
         episode_write_frequency: int = 1,
     ) -> None:
-        """
-        All results are placed under 'output_path / experiment_name'.
+        """All results are placed under 'output_path / experiment_name'.
 
         Parameters
         ----------
@@ -449,7 +431,7 @@ class ModuleLogger(AbstractLogger):
             The path where logged information should be stored
 
         """
-        super(ModuleLogger, self).__init__(
+        super().__init__(
             experiment_name, output_path, step_write_frequency, episode_write_frequency
         )
 
@@ -461,10 +443,9 @@ class ModuleLogger(AbstractLogger):
         self.current_step = self.__init_dict()
 
     def get_logfile(self) -> Path:
-        """
-        Get logfile name.
+        """Get logfile name.
 
-        Returns
+        Returns:
         -------
         pathlib.Path
             the path to the log file of this logger
@@ -485,8 +466,7 @@ class ModuleLogger(AbstractLogger):
 
     @staticmethod
     def __json_default(object):
-        """
-        Add supoort for dumping numpy arrays and numbers to json.
+        """Add supoort for dumping numpy arrays and numbers to json.
 
         Parameters
         ----------
@@ -558,8 +538,7 @@ class ModuleLogger(AbstractLogger):
             self.log_file.flush()
 
     def set_additional_info(self, **kwargs):
-        """
-        Can be used to log additional information for each step e.g. for seed and instance id.
+        """Can be used to log additional information for each step e.g. for seed and instance id.
 
         Parameters
         ----------
@@ -570,10 +549,9 @@ class ModuleLogger(AbstractLogger):
         self._additional_info.update(kwargs)
 
     def log(
-        self, key: str, value: Union[Dict, List, Tuple, str, int, float, bool]
+        self, key: str, value: dict | list | tuple | str | int | float | bool
     ) -> None:
-        """
-        Writes value to list of values and save the current time for key.
+        """Writes value to list of values and save the current time for key.
 
         Parameters
         ----------
@@ -595,9 +573,8 @@ class ModuleLogger(AbstractLogger):
         self.current_step[key]["times"].append(time)
         self.current_step[key]["values"].append(value)
 
-    def log_dict(self, data: Dict) -> None:
-        """
-        Alternative to log if more the one value should be logged at once.
+    def log_dict(self, data: dict) -> None:
+        """Alternative to log if more the one value should be logged at once.
 
         Parameters
         ----------
@@ -631,13 +608,13 @@ class ModuleLogger(AbstractLogger):
                     f"Space info must match length (expect {len(value)} != got{len(space_info)}"
                 )
             key_suffix = (
-                enumerate(value) if space_info is None else zip(space_info, value)
+                enumerate(value) if space_info is None else zip(space_info, value, strict=False)
             )
             data = {f"{key}_{suffix}": x for suffix, x in key_suffix}
 
         elif isinstance(value, dict):
             key_suffix = (
-                value.items() if space_info is None else zip(space_info, value.values())
+                value.items() if space_info is None else zip(space_info, value.values(), strict=False)
             )
             dicts = (
                 ModuleLogger.__space_dict(f"{key}_{sub_key}", sub_value, None)
@@ -650,8 +627,7 @@ class ModuleLogger(AbstractLogger):
         return data
 
     def log_space(self, key, value, space_info=None):
-        """
-        Special for logging gym.spaces.
+        """Special for logging gym.spaces.
 
         Currently three types are supported:
         * Numbers: e.g. samples from Discrete
@@ -673,8 +649,7 @@ class ModuleLogger(AbstractLogger):
 
 
 class Logger(AbstractLogger):
-    """
-    A logger that manages the creation of the module loggers.
+    """A logger that manages the creation of the module loggers.
 
     To get a ModuleLogger for you module (e.g. wrapper) call module_logger = Logger(...).add_module("my_wrapper").
     From now on  module_logger.log(...) or logger.log(..., module="my_wrapper") can be used to log.
@@ -687,11 +662,10 @@ class Logger(AbstractLogger):
         self,
         experiment_name: str,
         output_path: Path,
-        step_write_frequency: int = None,
+        step_write_frequency: int | None = None,
         episode_write_frequency: int = 1,
     ) -> None:
-        """
-        Create Logger.
+        """Create Logger.
 
         Parameters
         ----------
@@ -707,15 +681,14 @@ class Logger(AbstractLogger):
             see step_write_frequency
 
         """
-        super(Logger, self).__init__(
+        super().__init__(
             experiment_name, output_path, step_write_frequency, episode_write_frequency
         )
         self.env: AbstractEnv = None
-        self.module_logger: Dict[str, ModuleLogger] = dict()
+        self.module_logger: dict[str, ModuleLogger] = {}
 
     def set_env(self, env: AbstractEnv) -> None:
-        """
-        Writes information about the environment.
+        """Writes information about the environment.
 
         Parameters
         ----------
@@ -756,16 +729,15 @@ class Logger(AbstractLogger):
         for _, module_logger in self.module_logger.items():
             module_logger.write()
 
-    def add_module(self, module: Union[str, type]) -> ModuleLogger:
-        """
-        Creates a sub-logger. For more details see class level documentation.
+    def add_module(self, module: str | type) -> ModuleLogger:
+        """Creates a sub-logger. For more details see class level documentation.
 
         Parameters
         ----------
         module: str or type
             The module name or Wrapper-Type to create a sub-logger for
 
-        Returns
+        Returns:
         -------
         ModuleLogger
 
@@ -793,8 +765,7 @@ class Logger(AbstractLogger):
         return self.module_logger[module]
 
     def add_agent(self, agent: AbstractDACBenchAgent):
-        """
-        Writes information about the agent.
+        """Writes information about the agent.
 
         Parameters
         ----------
@@ -807,8 +778,7 @@ class Logger(AbstractLogger):
             json.dump(agent_config, f)
 
     def add_benchmark(self, benchmark: AbstractBenchmark) -> None:
-        """
-        Add benchmark to logger.
+        """Add benchmark to logger.
 
         Parameters
         ----------
@@ -819,8 +789,7 @@ class Logger(AbstractLogger):
         benchmark.save_config(os.path.join(self.log_dir, "benchmark.json"))
 
     def set_additional_info(self, **kwargs):
-        """
-        Add additional info.
+        """Add additional info.
 
         Parameters
         ----------
@@ -832,8 +801,7 @@ class Logger(AbstractLogger):
             module_logger.set_additional_info(**kwargs)
 
     def log(self, key, value, module):
-        """
-        Log a key-value pair to module.
+        """Log a key-value pair to module.
 
         Parameters
         ----------
@@ -850,8 +818,7 @@ class Logger(AbstractLogger):
         self.module_logger.log(key, value)
 
     def log_space(self, key, value, module, space_info=None):
-        """
-        Log a key-value pair to module with optional info.
+        """Log a key-value pair to module with optional info.
 
         Parameters
         ----------
@@ -870,8 +837,7 @@ class Logger(AbstractLogger):
         self.module_logger.log_space(key, value, space_info)
 
     def log_dict(self, data, module):
-        """
-        Log a data dict to module.
+        """Log a data dict to module.
 
         Parameters
         ----------

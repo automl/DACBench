@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import csv
 import os
 
@@ -54,20 +56,17 @@ LUBY_DEFAULTS = objdict(
 
 
 class LubyBenchmark(AbstractBenchmark):
-    """
-    Benchmark with default configuration & relevant functions for Sigmoid
-    """
+    """Benchmark with default configuration & relevant functions for Sigmoid."""
 
     def __init__(self, config_path=None, config=None):
-        """
-        Initialize Luby Benchmark
+        """Initialize Luby Benchmark.
 
         Parameters
         -------
         config_path : str
             Path to config file (optional)
         """
-        super(LubyBenchmark, self).__init__(config_path, config)
+        super().__init__(config_path, config)
         if not self.config:
             self.config = objdict(LUBY_DEFAULTS.copy())
 
@@ -76,21 +75,20 @@ class LubyBenchmark(AbstractBenchmark):
                 self.config[key] = LUBY_DEFAULTS[key]
 
     def get_environment(self):
-        """
-        Return Luby env with current configuration
+        """Return Luby env with current configuration.
 
-        Returns
+        Returns:
         -------
         LubyEnv
             Luby environment
         """
-        if "instance_set" not in self.config.keys():
+        if "instance_set" not in self.config:
             self.read_instance_set()
 
         # Read test set if path is specified
         if (
-            "test_set" not in self.config.keys()
-            and "test_set_path" in self.config.keys()
+            "test_set" not in self.config
+            and "test_set_path" in self.config
         ):
             self.read_instance_set(test=True)
 
@@ -101,8 +99,7 @@ class LubyBenchmark(AbstractBenchmark):
         return env
 
     def set_cutoff(self, steps):
-        """
-        Set cutoff and adapt dependencies
+        """Set cutoff and adapt dependencies.
 
         Parameters
         -------
@@ -123,8 +120,7 @@ class LubyBenchmark(AbstractBenchmark):
         ]
 
     def set_history_length(self, length):
-        """
-        Set history length and adapt dependencies
+        """Set history length and adapt dependencies.
 
         Parameters
         -------
@@ -138,7 +134,7 @@ class LubyBenchmark(AbstractBenchmark):
         ]
 
     def read_instance_set(self, test=False):
-        """Read instance set from file"""
+        """Read instance set from file."""
         if test:
             path = (
                 os.path.dirname(os.path.abspath(__file__))
@@ -155,7 +151,7 @@ class LubyBenchmark(AbstractBenchmark):
             keyword = "instance_set"
 
         self.config[keyword] = {}
-        with open(path, "r") as fh:
+        with open(path) as fh:
             reader = csv.DictReader(fh)
             for row in reader:
                 self.config[keyword][int(row["ID"])] = [
@@ -163,8 +159,7 @@ class LubyBenchmark(AbstractBenchmark):
                 ] + [float(slope) for slope in row["sticky"].split(",")]
 
     def get_benchmark(self, L=8, fuzziness=1.5, seed=0):
-        """
-        Get Benchmark from DAC paper
+        """Get Benchmark from DAC paper.
 
         Parameters
         -------
@@ -175,7 +170,7 @@ class LubyBenchmark(AbstractBenchmark):
         seed : int
             Environment seed
 
-        Returns
+        Returns:
         -------
         env : LubyEnv
             Luby environment
@@ -191,5 +186,4 @@ class LubyBenchmark(AbstractBenchmark):
         def fuzz():
             return rng.normal(-1, fuzziness)
 
-        fuzzy_env = RewardNoiseWrapper(env, noise_function=fuzz)
-        return fuzzy_env
+        return RewardNoiseWrapper(env, noise_function=fuzz)

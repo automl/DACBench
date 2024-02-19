@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import itertools
 
 import numpy as np
@@ -8,8 +10,7 @@ class MultiDiscreteActionWrapper(Wrapper):
     """Wrapper to cast MultiDiscrete action spaces to Discrete. This should improve usability with standard RL libraries."""
 
     def __init__(self, env):
-        """
-        Initialize wrapper.
+        """Initialize wrapper.
 
         Parameters
         ----------
@@ -23,7 +24,7 @@ class MultiDiscreteActionWrapper(Wrapper):
         self.action_mapper = {}
         for idx, prod_idx in zip(
             range(np.prod(self.env.action_space.nvec)),
-            itertools.product(*[np.arange(val) for val in self.env.action_space.nvec]),
+            itertools.product(*[np.arange(val) for val in self.env.action_space.nvec]), strict=False,
         ):
             self.action_mapper[idx] = prod_idx
 

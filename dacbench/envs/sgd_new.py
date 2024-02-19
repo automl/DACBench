@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import torch
 
 from dacbench import AbstractMADACEnv
@@ -43,8 +45,7 @@ def test(
             i += 1
             if i >= nmb_sets:
                 break
-    test_losses = torch.cat(test_losses)
-    return test_losses
+    return torch.cat(test_losses)
 
 
 def forward_backward(model, loss_function, loader, device="cpu"):
@@ -63,8 +64,7 @@ def forward_backward(model, loss_function, loader, device="cpu"):
 
 
 class SGDEnv(AbstractMADACEnv):
-    """
-    The SGD DAC Environment implements the problem of dynamically configuring the learning rate hyperparameter of a
+    """The SGD DAC Environment implements the problem of dynamically configuring the learning rate hyperparameter of a
     neural network optimizer (more specifically, torch.optim.AdamW) for a supervised learning task. While training,
     the model is evaluated after every epoch.
 
@@ -81,7 +81,7 @@ class SGDEnv(AbstractMADACEnv):
 
     def __init__(self, config):
         """Init env."""
-        super(SGDEnv, self).__init__(config)
+        super().__init__(config)
         self.device = config.get("device")
 
         self.learning_rate = None
@@ -95,16 +95,10 @@ class SGDEnv(AbstractMADACEnv):
         self.use_momentum = config.get("use_momentum")
 
         # Use default reward function, if no specific function is given
-        if "reward_function" in config.keys():
-            self.get_reward = config["reward_function"]
-        else:
-            self.get_reward = self.get_default_reward
+        self.get_reward = config.get("reward_function", self.get_default_reward)
 
         # Use default state function, if no specific function is given
-        if "state_method" in config.keys():
-            self.get_state = config["state_method"]
-        else:
-            self.get_state = self.get_default_state
+        self.get_state = config.get("state_method", self.get_default_state)
 
         # Get loaders for instance
         self.datasets, loaders = random_torchvision_loader(
@@ -118,11 +112,11 @@ class SGDEnv(AbstractMADACEnv):
         self.train_loader, self.validation_loader, self.test_loader = loaders
 
     def step(self, action: float):
-        """
-        Update the parameters of the neural network using the given learning rate lr,
+        """Update the parameters of the neural network using the given learning rate lr,
         in the direction specified by AdamW, and if not done (crashed/cutoff reached),
-        performs another forward/backward pass (update only in the next step)."""
-        truncated = super(SGDEnv, self).step_()
+        performs another forward/backward pass (update only in the next step).
+        """
+        truncated = super().step_()
         info = {}
         if isinstance(action, float):
             action = [action]
@@ -197,10 +191,13 @@ class SGDEnv(AbstractMADACEnv):
 
         return self.get_state(self), reward, False, truncated, info
 
-    def reset(self, seed=None, options={}):
+    def reset(self, seed=None, options=None):
         """Initialize the neural network, data loaders, etc. for given/random next task. Also perform a single
-        forward/backward pass, not yet updating the neural network parameters."""
-        super(SGDEnv, self).reset_(seed)
+        forward/backward pass, not yet updating the neural network parameters.
+        """
+        if options is None:
+            options = {}
+        super().reset_(seed)
 
         self.learning_rate = None
         self.optimizer_type = torch.optim.AdamW

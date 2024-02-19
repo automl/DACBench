@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 def csa(env, state):
     u = env.es.sigma
     hsig = env.es.adapt_sigma.hsig(env.es)

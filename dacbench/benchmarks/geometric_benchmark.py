@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import csv
 import os
 
@@ -75,20 +77,17 @@ GEOMETRIC_DEFAULTS = objdict(
 
 
 class GeometricBenchmark(AbstractBenchmark):
-    """
-    Benchmark with default configuration & relevant functions for Geometric
-    """
+    """Benchmark with default configuration & relevant functions for Geometric."""
 
     def __init__(self, config_path=None):
-        """
-        Initialize Geometric Benchmark
+        """Initialize Geometric Benchmark.
 
         Parameters
         -------
         config_path : str
             Path to config file (optional)
         """
-        super(GeometricBenchmark, self).__init__(config_path)
+        super().__init__(config_path)
         if not self.config:
             self.config = objdict(GEOMETRIC_DEFAULTS.copy())
 
@@ -100,16 +99,15 @@ class GeometricBenchmark(AbstractBenchmark):
             self.config["observation_space_type"] = np.float32
 
     def get_environment(self):
-        """
-        Return Geometric env with current configuration
+        """Return Geometric env with current configuration.
 
-        Returns
+        Returns:
         -------
         GeometricEnv
             Geometric environment
 
         """
-        if "instance_set" not in self.config.keys():
+        if "instance_set" not in self.config:
             self.read_instance_set()
 
         self.set_action_values()
@@ -128,14 +126,13 @@ class GeometricBenchmark(AbstractBenchmark):
         return env
 
     def read_instance_set(self):
-        """
-        Read instance set from file
+        """Read instance set from file
         Creates a nested List for every Intance.
         The List contains all functions with their respective values.
         """
         path = os.path.join(FILE_PATH, self.config.instance_set_path)
         self.config["instance_set"] = {}
-        with open(path, "r") as fh:
+        with open(path) as fh:
             known_ids = []
             reader = csv.DictReader(fh)
 
@@ -159,8 +156,7 @@ class GeometricBenchmark(AbstractBenchmark):
                 self.config.instance_set[id].append(function_list)
 
     def get_benchmark(self, dimension=None, seed=0):
-        """
-        [summary]
+        """[summary].
 
         Parameters
         ----------
@@ -169,7 +165,7 @@ class GeometricBenchmark(AbstractBenchmark):
         seed : int, optional
             [description], by default 0
 
-        Returns
+        Returns:
         -------
         [type]
             [description]
@@ -182,7 +178,7 @@ class GeometricBenchmark(AbstractBenchmark):
         ]
 
         self.config.seed = seed
-        if "instance_set" not in self.config.keys():
+        if "instance_set" not in self.config:
             self.read_instance_set()
 
         self.set_action_values()
@@ -193,16 +189,13 @@ class GeometricBenchmark(AbstractBenchmark):
         ):
             self.create_correlation_table()
 
-        env = GeometricEnv(self.config)
-        return env
+        return GeometricEnv(self.config)
 
     def set_action_values(self):
-        """
-        Adapt action values and update dependencies
+        """Adapt action values and update dependencies
         Number of actions can differ between functions if configured in DefaultDict
         Set observation space args.
         """
-
         map_action_number = {}
         if self.config.action_values_variable:
             map_action_number = self.config.action_value_mapping
@@ -250,9 +243,7 @@ class GeometricBenchmark(AbstractBenchmark):
         ]
 
     def set_action_description(self):
-        """
-        Add Information about Derivative and Coordinate to Description.
-        """
+        """Add Information about Derivative and Coordinate to Description."""
         if "Coordinate" in self.config.benchmark_info["state_description"]:
             return
 
@@ -263,9 +254,7 @@ class GeometricBenchmark(AbstractBenchmark):
             self.config.benchmark_info["state_description"].append(f"Coordinate{index}")
 
     def create_correlation_table(self):
-        """
-        Create correlation table from Config infos
-        """
+        """Create correlation table from Config infos."""
         n_dimensions = len(self.config.instance_set[0])
         corr_table = np.zeros((n_dimensions, n_dimensions))
 
