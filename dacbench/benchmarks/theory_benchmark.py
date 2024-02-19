@@ -115,7 +115,7 @@ class TheoryBenchmark(AbstractBenchmark):
         low = []
         high = []
         for var_name in obs_var_names:
-            l, h = env_class.get_obs_domain_from_name(var_name)
+            l, h = env_class.get_obs_domain_from_name(var_name)  # noqa: E741
             low.append(l)
             high.append(h)
         obs_space = gym.spaces.Box(low=np.array(low), high=np.array(high))

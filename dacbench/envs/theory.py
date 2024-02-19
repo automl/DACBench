@@ -134,14 +134,14 @@ class BinaryProblem:
         if p == 0:
             return self, self.fitness, 0
 
-        l = 0
-        while l == 0:
-            l = rng.binomial(self.n, p)
+        length = 0
+        while length == 0:
+            length = rng.binomial(self.n, p)
 
         best_obj = -1
         best_locs = None
         for i in range(n_childs):
-            locs = rng.choice(self.n, size=l, replace=False)
+            locs = rng.choice(self.n, size=length, replace=False)
             obj = self.get_fitness_after_flipping(locs)
             if obj > best_obj:
                 best_locs = locs
@@ -151,7 +151,7 @@ class BinaryProblem:
 
         return best_child, best_child.fitness, n_childs
 
-    def mutate_rls(self, l, rng=np.random.default_rng()):
+    def mutate_rls(self, length, rng=np.random.default_rng()):
         """
         Generate a child by flipping exactly l bits.
 
@@ -160,12 +160,12 @@ class BinaryProblem:
             child, its fitness
 
         """
-        assert l >= 0
+        assert length >= 0
 
-        if l == 0:
+        if length == 0:
             return self, self.fitness, 0
 
-        locs = rng.choice(self.n, size=l, replace=False)
+        locs = rng.choice(self.n, size=length, replace=False)
         child = self.flip(locs)
 
         return child, child.fitness, 1
@@ -216,7 +216,7 @@ class BinaryProblem:
 
         n_evals = 0
         ls = rng.binomial(self.n, p, size=n_childs)
-        for l in ls:
+        for l in ls:  # noqa: E741
             locs_xprime = rng.choice(self.n, l, replace=False)
             locs_x = np.full(self.n, True)
             locs_x[locs_xprime] = False

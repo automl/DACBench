@@ -5,10 +5,36 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
-[tool.pydocstyle]
-inherit = false
-ignore = 'D100,D212,D401,D203,D404,D104,D400,D415'
-match = 'dacbench/.*\.py'
+[tool.ruff]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+    "*/envs/downward/*"
+]
 
 [tool.pytest.ini_options]
 filterwarnings = [

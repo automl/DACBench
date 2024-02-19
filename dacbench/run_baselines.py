@@ -177,7 +177,7 @@ def run_policy(results_path, benchmark_name, num_episodes, policy, seeds=np.aran
 
         try:
             agent = policy(env)
-        except:
+        except:  # noqa: E722
             agent = GenericAgent(env, policy)
 
         logger.add_agent(agent)

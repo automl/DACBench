@@ -101,7 +101,7 @@ class AbstractEnv(ABC, gym.Env):
                     if len(action_types) == 1:
                         try:
                             n = actions[0].upper - actions[0].lower
-                        except:
+                        except:  # noqa: E722
                             n = len(actions[0].choices)
                         self.action_space = gym.spaces.Discrete(n)
                     else:
@@ -109,7 +109,7 @@ class AbstractEnv(ABC, gym.Env):
                         for a in actions:
                             try:
                                 ns.append(a.upper - a.lower)
-                            except:
+                            except:  # noqa: E722
                                 ns.append(len(a.choices))
                         self.action_space = gym.spaces.MultiDiscrete(np.array(ns))
                 else:
@@ -127,7 +127,7 @@ class AbstractEnv(ABC, gym.Env):
                     elif "Integer" in t or "Categorical" in t:
                         try:
                             n = a.upper - a.lower
-                        except:
+                        except:  # noqa: E722
                             n = len(a.choices)
                         subspaces[a.name] = gym.spaces.Discrete(n)
                     else:

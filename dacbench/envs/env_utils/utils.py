@@ -200,7 +200,7 @@ def random_architecture(
         ).item()
     )
     for layer_idx in range(n_mlp_layers):
-        l = 2 ** (
+        l = 2 ** (  # noqa: E741
             2 ** (max_n_mlp_layers + 1 - layer_idx)
             - int(
                 np.exp(

@@ -79,7 +79,7 @@ def run_dacbench(results_path, agent_method, num_episodes, bench=None, seeds=Non
             bench = b()
             try:
                 env = bench.get_benchmark(seed=i)
-            except:
+            except:  # noqa: E722
                 continue
 
             logger = Logger(
