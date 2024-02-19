@@ -1,11 +1,9 @@
-"""
-Luby environment from
+"""Luby environment from
 "Dynamic Algorithm Configuration:Foundation of a New Meta-Algorithmic Framework"
 by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
-Original environment authors: André Biedenkapp, H. Furkan Bozkurt
+Original environment authors: André Biedenkapp, H. Furkan Bozkurt.
 """
-
-from typing import List
+from __future__ import annotations
 
 import numpy as np
 
@@ -16,13 +14,10 @@ from dacbench import AbstractEnv
 
 
 class LubyEnv(AbstractEnv):
-    """
-    Environment to learn Luby Sequence
-    """
+    """Environment to learn Luby Sequence."""
 
     def __init__(self, config) -> None:
-        """
-        Initialize Luby Env
+        """Initialize Luby Env.
 
         Parameters
         -------
@@ -52,31 +47,24 @@ class LubyEnv(AbstractEnv):
         self.done = None
         self.action = None
 
-        if "reward_function" in config.keys():
-            self.get_reward = config["reward_function"]
-        else:
-            self.get_reward = self.get_default_reward
+        self.get_reward = config.get("reward_function", self.get_default_reward)
 
-        if "state_method" in config.keys():
-            self.get_state = config["state_method"]
-        else:
-            self.get_state = self.get_default_state
+        self.get_state = config.get("state_method", self.get_default_state)
 
     def step(self, action: int):
-        """
-        Execute environment step
+        """Execute environment step.
 
         Parameters
         ----------
         action : int
             action to execute
 
-        Returns
+        Returns:
         -------
         np.array, float, bool, bool, dict
             state, reward, terminated, truncated, info
         """
-        self.done = super(LubyEnv, self).step_()
+        self.done = super().step_()
         self.prev_state = self._state.copy()
         self.action = action
         reward = self.get_reward(self)
@@ -97,16 +85,17 @@ class LubyEnv(AbstractEnv):
         self._next_goal = self._seq[luby_t - 1]
         return self.get_state(self), reward, False, self.done, {}
 
-    def reset(self, seed=None, options={}) -> List[int]:
-        """
-        Resets env
+    def reset(self, seed=None, options=None) -> list[int]:
+        """Resets env.
 
-        Returns
+        Returns:
         -------
         numpy.array
             Environment state
         """
-        super(LubyEnv, self).reset_(seed)
+        if options is None:
+            options = {}
+        super().reset_(seed)
         self._start_shift = self.instance[0]
         self._sticky_shif = self.instance[1]
         self._r = 0
@@ -137,14 +126,12 @@ class LubyEnv(AbstractEnv):
                 self._state[:-2] = self._state[1:-1]
                 self._state[-2] = self.action
             self._state[-1] = self.c_step - 1
-        next_state = np.array(self._state if not self.done else self.prev_state)
-        return next_state
+        return np.array(self._state if not self.done else self.prev_state)
 
     def close(self) -> bool:
-        """
-        Close Env
+        """Close Env.
 
-        Returns
+        Returns:
         -------
         bool
             Closing confirmation
@@ -154,8 +141,7 @@ class LubyEnv(AbstractEnv):
     # TODO: this should render!
 
     def render(self, mode: str = "human") -> None:
-        """
-        Render env in human mode
+        """Render env in human mode.
 
         Parameters
         ----------
@@ -165,16 +151,14 @@ class LubyEnv(AbstractEnv):
         if mode != "human":
             raise NotImplementedError
 
-        pass
 
 
 def luby_gen(i):
-    """Generator for the Luby Sequence"""
+    """Generator for the Luby Sequence."""
     for k in range(1, 33):
         if i == ((1 << k) - 1):
             yield 1 << (k - 1)
 
     for k in range(1, 9999):
         if 1 << (k - 1) <= i < (1 << k) - 1:
-            for x in luby_gen(i - (1 << (k - 1)) + 1):
-                yield x
+            yield from luby_gen(i - (1 << (k - 1)) + 1)

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb
@@ -9,15 +11,13 @@ current_palette = list(sb.color_palette())
 
 
 class ActionFrequencyWrapper(Wrapper):
-    """
-    Wrapper to action frequency.
+    """Wrapper to action frequency.
 
     Includes interval mode that returns frequencies in lists of len(interval) instead of one long list.
     """
 
     def __init__(self, env, action_interval=None, logger=None):
-        """
-        Initialize wrapper.
+        """Initialize wrapper.
 
         Parameters
         ----------
@@ -29,7 +29,7 @@ class ActionFrequencyWrapper(Wrapper):
             logger to write to
 
         """
-        super(ActionFrequencyWrapper, self).__init__(env)
+        super().__init__(env)
         self.action_interval = action_interval
         self.overall_actions = []
         if self.action_interval:
@@ -39,8 +39,7 @@ class ActionFrequencyWrapper(Wrapper):
         self.logger = logger
 
     def __setattr__(self, name, value):
-        """
-        Set attribute in wrapper if available and in env if not.
+        """Set attribute in wrapper if available and in env if not.
 
         Parameters
         ----------
@@ -66,15 +65,14 @@ class ActionFrequencyWrapper(Wrapper):
             setattr(self.env, name, value)
 
     def __getattribute__(self, name):
-        """
-        Get attribute value of wrapper if available and of env if not.
+        """Get attribute value of wrapper if available and of env if not.
 
         Parameters
         ----------
         name : str
             Attribute to get
 
-        Returns
+        Returns:
         -------
         value
             Value of given name
@@ -97,15 +95,14 @@ class ActionFrequencyWrapper(Wrapper):
             return getattr(self.env, name)
 
     def step(self, action):
-        """
-        Execute environment step and record state.
+        """Execute environment step and record state.
 
         Parameters
         ----------
         action : int
             action to execute
 
-        Returns
+        Returns:
         -------
         np.array, float, bool, dict
             state, reward, done, metainfo
@@ -125,27 +122,25 @@ class ActionFrequencyWrapper(Wrapper):
         return state, reward, terminated, truncated, info
 
     def get_actions(self):
-        """
-        Get state progression.
+        """Get state progression.
 
-        Returns
+        Returns:
         -------
         np.array or np.array, np.array
             all states or all states and interval sorted states
 
         """
         if self.action_interval:
-            complete_intervals = self.action_intervals + [self.current_actions]
+            complete_intervals = [*self.action_intervals, self.current_actions]
             return self.overall_actions, complete_intervals
 
         else:
             return self.overall_actions
 
     def render_action_tracking(self):
-        """
-        Render action progression.
+        """Render action progression.
 
-        Returns
+        Returns:
         -------
         np.array
             RBG data of action tracking
@@ -214,16 +209,11 @@ class ActionFrequencyWrapper(Wrapper):
             canvas = FigureCanvas(figure)
             p, p2 = plot_single()
             canvas.draw()
-        elif self.action_space_type == spaces.Dict:
-            raise NotImplementedError
-
-        elif self.action_space_type == spaces.Tuple:
+        elif self.action_space_type in (spaces.Dict, spaces.Tuple):
             raise NotImplementedError
 
         elif (
-            self.action_space_type == spaces.MultiDiscrete
-            or self.action_space_type == spaces.MultiBinary
-            or self.action_space_type == spaces.Box
+            self.action_space_type in (spaces.MultiDiscrete, spaces.MultiBinary, spaces.Box)
         ):
             if self.action_space_type == spaces.MultiDiscrete:
                 action_size = len(self.env.action_space.nvec)
@@ -258,7 +248,6 @@ class ActionFrequencyWrapper(Wrapper):
                     p, p2 = plot_single(axarr[i % dim, i // dim], i, x=x, y=y)
             canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
-        img = np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
+        return np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
             int(height), int(width), 3
         )
-        return img

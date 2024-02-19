@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 
 import ConfigSpace as CS
@@ -60,15 +62,14 @@ DEFAULTS = objdict(
 
 class ToySGDBenchmark(AbstractBenchmark):
     def __init__(self, config_path=None, config=None):
-        """
-        Initialize SGD Benchmark
+        """Initialize SGD Benchmark.
 
         Parameters
         -------
         config_path : str
             Path to config file (optional)
         """
-        super(ToySGDBenchmark, self).__init__(config_path, config)
+        super().__init__(config_path, config)
         if not self.config:
             self.config = objdict(DEFAULTS.copy())
 
@@ -77,21 +78,20 @@ class ToySGDBenchmark(AbstractBenchmark):
                 self.config[key] = DEFAULTS[key]
 
     def get_environment(self):
-        """
-        Return SGDEnv env with current configuration
+        """Return SGDEnv env with current configuration.
 
-        Returns
+        Returns:
         -------
         SGDEnv
             SGD environment
         """
-        if "instance_set" not in self.config.keys():
+        if "instance_set" not in self.config:
             self.read_instance_set()
 
         # Read test set if path is specified
         if (
-            "test_set" not in self.config.keys()
-            and "test_set_path" in self.config.keys()
+            "test_set" not in self.config
+            and "test_set_path" in self.config
         ):
             self.read_instance_set(test=True)
 
@@ -102,9 +102,7 @@ class ToySGDBenchmark(AbstractBenchmark):
         return env
 
     def read_instance_set(self, test=False):
-        """
-        Read path of instances from config into list
-        """
+        """Read path of instances from config into list."""
         if test:
             path = (
                 os.path.dirname(os.path.abspath(__file__))
@@ -121,8 +119,8 @@ class ToySGDBenchmark(AbstractBenchmark):
             keyword = "instance_set"
 
         self.config[keyword] = {}
-        with open(path, "r") as fh:
+        with open(path) as fh:
             # reader = csv.DictReader(fh, delimiter=";")
             df = pd.read_csv(fh, sep=";")
-            for index, instance in df.iterrows():
+            for _index, instance in df.iterrows():
                 self.config[keyword][int(instance["ID"])] = instance

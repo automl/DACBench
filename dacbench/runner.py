@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 import seaborn as sb
@@ -11,8 +13,7 @@ current_palette = list(sb.color_palette())
 
 
 def run_benchmark(env, agent, num_episodes, logger=None):
-    """
-    Run single benchmark env for a given number of episodes with a given agent.
+    """Run single benchmark env for a given number of episodes with a given agent.
 
     Parameters
     ----------
@@ -49,8 +50,7 @@ def run_benchmark(env, agent, num_episodes, logger=None):
 
 
 def run_dacbench(results_path, agent_method, num_episodes, bench=None, seeds=None):
-    """
-    Run all benchmarks for 10 seeds for a given number of episodes with a given agent and save result.
+    """Run all benchmarks for 10 seeds for a given number of episodes with a given agent and save result.
 
     Parameters
     ----------

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import random
 from abc import ABC, abstractmethod
 
@@ -10,8 +12,7 @@ class AbstractEnv(ABC, gym.Env):
     """Abstract template for environments."""
 
     def __init__(self, config):
-        """
-        Initialize environment.
+        """Initialize environment.
 
         Parameters
         ----------
@@ -20,22 +21,19 @@ class AbstractEnv(ABC, gym.Env):
             If to seed the action space as well
 
         """
-        super(AbstractEnv, self).__init__()
+        super().__init__()
         self.config = config
-        if "instance_update_func" in self.config.keys():
-            self.instance_updates = self.config["instance_update_func"]
-        else:
-            self.instance_updates = "round_robin"
+        self.instance_updates = self.config.get("instance_update_func", "round_robin")
         self.instance_set = config["instance_set"]
-        self.instance_id_list = sorted(list(self.instance_set.keys()))
+        self.instance_id_list = sorted(self.instance_set.keys())
         self.instance_index = 0
         self.inst_id = self.instance_id_list[self.instance_index]
         self.instance = self.instance_set[self.inst_id]
 
         self.test = False
-        if "test_set" in self.config.keys():
+        if "test_set" in self.config:
             self.test_set = config["test_set"]
-            self.test_instance_id_list = sorted(list(self.test_set.keys()))
+            self.test_instance_id_list = sorted(self.test_set.keys())
             self.test_instance_index = 0
             self.test_inst_id = self.test_instance_id_list[self.test_instance_index]
             self.test_instance = self.test_set[self.test_inst_id]
@@ -56,38 +54,37 @@ class AbstractEnv(ABC, gym.Env):
 
         self.reward_range = config["reward_range"]
 
-        if "observation_space" in config.keys():
+        if "observation_space" in config:
             self.observation_space = config["observation_space"]
-        else:
-            if not config["observation_space_class"] == "Dict":
-                try:
-                    self.observation_space = getattr(
-                        gym.spaces, config["observation_space_class"]
-                    )(
-                        *config["observation_space_args"],
-                        dtype=config["observation_space_type"],
-                    )
-                except KeyError:
-                    print(
-                        "Either submit a predefined gym.space 'observation_space' or an 'observation_space_class' as well as a list of 'observation_space_args' and the 'observation_space_type' in the configuration."
-                    )
-                    print("Tuple observation_spaces are currently not supported.")
-                    raise KeyError
+        elif config["observation_space_class"] != "Dict":
+            try:
+                self.observation_space = getattr(
+                    gym.spaces, config["observation_space_class"]
+                )(
+                    *config["observation_space_args"],
+                    dtype=config["observation_space_type"],
+                )
+            except KeyError:
+                print(
+                    "Either submit a predefined gym.space 'observation_space' or an 'observation_space_class' as well as a list of 'observation_space_args' and the 'observation_space_type' in the configuration."
+                )
+                print("Tuple observation_spaces are currently not supported.")
+                raise KeyError
 
-            else:
-                try:
-                    self.observation_space = getattr(
-                        gym.spaces, config["observation_space_class"]
-                    )(*config["observation_space_args"])
-                except AssertionError:
-                    print(
-                        "To use a Dict observation space, the 'observation_space_args' in the configuration should be a list containing a Dict of gym.Spaces"
-                    )
-                    raise TypeError
+        else:
+            try:
+                self.observation_space = getattr(
+                    gym.spaces, config["observation_space_class"]
+                )(*config["observation_space_args"])
+            except AssertionError:
+                print(
+                    "To use a Dict observation space, the 'observation_space_args' in the configuration should be a list containing a Dict of gym.Spaces"
+                )
+                raise TypeError
 
         # TODO: use dicts by default for actions and observations
         # The config could change this for RL purposes
-        if "config_space" in config.keys():
+        if "config_space" in config:
             actions = config["config_space"].get_hyperparameters()
             action_types = [type(a).__name__ for a in actions]
 
@@ -119,7 +116,7 @@ class AbstractEnv(ABC, gym.Env):
             # Mixed action space
             else:
                 subspaces = {}
-                for t, a in zip(action_types, actions):
+                for t, a in zip(action_types, actions, strict=False):
                     if "Float" in t:
                         subspaces[a.name] = gym.spaces.Box(
                             low=a.lower, high=a.upper, dtype=np.float32
@@ -135,7 +132,7 @@ class AbstractEnv(ABC, gym.Env):
                             "Only float, integer and categorical hyperparameters are supported as of now"
                         )
                 self.action_space = gym.spaces.Dict(subspaces)
-        elif "action_space" in config.keys():
+        elif "action_space" in config:
             self.action_space = config["action_space"]
         else:
             try:
@@ -156,10 +153,9 @@ class AbstractEnv(ABC, gym.Env):
         self.seed(config.get("seed", None), config.get("seed_action_space", False))
 
     def step_(self):
-        """
-        Pre-step function for step count and cutoff.
+        """Pre-step function for step count and cutoff.
 
-        Returns
+        Returns:
         -------
         bool
             End of episode
@@ -171,28 +167,27 @@ class AbstractEnv(ABC, gym.Env):
             truncated = True
         return truncated
 
-    def reset_(self, seed=0, options={}, instance=None, instance_id=None, scheme=None):
+    def reset_(self, seed=0, options=None, instance=None, instance_id=None, scheme=None):
         """Pre-reset function for progressing through the instance set. Will either use round robin, random or no progression scheme."""
+        if options is None:
+            options = {}
         if seed is not None:
             self.seed(seed, self.config.get("seed_action_space", False))
         self.c_step = 0
         if scheme is None:
             scheme = (
-                self.instance_updates
-                if "scheme" not in options.keys()
-                else options["scheme"]
+                options.get("scheme", self.instance_updates)
             )
         if instance is None:
-            instance = None if "instance" not in options.keys() else options["instance"]
+            instance = options.get("instance", None)
         if instance_id is None:
             instance_id = (
-                None if "instance_id" not in options.keys() else options["instance_id"]
+                options.get("instance_id", None)
             )
         self.use_next_instance(instance, instance_id, scheme=scheme)
 
     def use_next_instance(self, instance=None, instance_id=None, scheme=None):
-        """
-        Changes instance according to chosen instance progession.
+        """Changes instance according to chosen instance progession.
 
         Parameters
         ----------
@@ -219,15 +214,14 @@ class AbstractEnv(ABC, gym.Env):
 
     @abstractmethod
     def step(self, action):
-        """
-        Execute environment step.
+        """Execute environment step.
 
         Parameters
         ----------
         action
             Action to take
 
-        Returns
+        Returns:
         -------
         state
             Environment state
@@ -244,16 +238,15 @@ class AbstractEnv(ABC, gym.Env):
         raise NotImplementedError
 
     @abstractmethod
-    def reset(self, seed: int = None):
-        """
-        Reset environment.
+    def reset(self, seed: int | None = None):
+        """Reset environment.
 
         Parameters
         ----------
         seed
             Seed for the environment
 
-        Returns
+        Returns:
         -------
         state
             Environment state
@@ -264,10 +257,9 @@ class AbstractEnv(ABC, gym.Env):
         raise NotImplementedError
 
     def get_inst_id(self):
-        """
-        Return instance ID.
+        """Return instance ID.
 
-        Returns
+        Returns:
         -------
         int
             ID of current instance
@@ -276,10 +268,9 @@ class AbstractEnv(ABC, gym.Env):
         return self.inst_id
 
     def get_instance_set(self):
-        """
-        Return instance set.
+        """Return instance set.
 
-        Returns
+        Returns:
         -------
         list
             List of instances
@@ -288,10 +279,9 @@ class AbstractEnv(ABC, gym.Env):
         return self.instance_set
 
     def get_instance(self):
-        """
-        Return current instance.
+        """Return current instance.
 
-        Returns
+        Returns:
         -------
         type flexible
             Currently used instance
@@ -300,8 +290,7 @@ class AbstractEnv(ABC, gym.Env):
         return self.instance
 
     def set_inst_id(self, inst_id):
-        """
-        Change current instance ID.
+        """Change current instance ID.
 
         Parameters
         ----------
@@ -313,8 +302,7 @@ class AbstractEnv(ABC, gym.Env):
         self.instance_index = self.instance_id_list.index(self.inst_id)
 
     def set_instance_set(self, inst_set):
-        """
-        Change instance set.
+        """Change instance set.
 
         Parameters
         ----------
@@ -323,11 +311,10 @@ class AbstractEnv(ABC, gym.Env):
 
         """
         self.instance_set = inst_set
-        self.instance_id_list = sorted(list(self.instance_set.keys()))
+        self.instance_id_list = sorted(self.instance_set.keys())
 
     def set_instance(self, instance):
-        """
-        Change currently used instance.
+        """Change currently used instance.
 
         Parameters
         ----------
@@ -338,8 +325,7 @@ class AbstractEnv(ABC, gym.Env):
         self.instance = instance
 
     def seed(self, seed=None, seed_action_space=False):
-        """
-        Set rng seed.
+        """Set rng seed.
 
         Parameters
         ----------
@@ -399,8 +385,7 @@ class AbstractMADACEnv(AbstractEnv):
     """Multi-Agent version of DAC environment."""
 
     def __init__(self, config):
-        """
-        Initialize environment.
+        """Initialize environment.
 
         Parameters
         ----------
@@ -409,9 +394,9 @@ class AbstractMADACEnv(AbstractEnv):
             If to seed the action space as well
 
         """
-        super(AbstractMADACEnv, self).__init__(config)
+        super().__init__(config)
         self.multi_agent = False
-        if "multi_agent" in config.keys():
+        if "multi_agent" in config:
             self.multi_agent = config.multi_agent
 
         if self.multi_agent:
@@ -427,7 +412,7 @@ class AbstractMADACEnv(AbstractEnv):
                 raise TypeError
             self.possible_agents = np.arange(num_hps)
             self.hp_names = []
-            if "config_space" in self.config.keys():
+            if "config_space" in self.config:
                 self.hp_names = self.config["config_space"].get_hyperparameter_names()
             self.max_num_agent = len(self.possible_agents)
             self.env_step = self.step
@@ -443,7 +428,7 @@ class AbstractMADACEnv(AbstractEnv):
             self.info = None
             # TODO: this should be set to a reasonable default, ideally
             # Else playing with less than the full number of agents will be really hard
-            if "default_action" in self.config.keys():
+            if "default_action" in self.config:
                 self.action = self.config.default_action
             else:
                 self.action = self.action_space.sample()
@@ -457,7 +442,7 @@ class AbstractMADACEnv(AbstractEnv):
                 lowers = self.action_space.low
                 uppers = self.action_space.high
             else:
-                num_options = [n for n in self.action_space.nvec]
+                num_options = list(self.action_space.nvec)
             self.action_spaces = {}
             for a in self.possible_agents:
                 if space_class == gym.spaces.Box:
@@ -468,9 +453,8 @@ class AbstractMADACEnv(AbstractEnv):
                     subspace = gym.spaces.Discrete(num_options[a])
                 self.action_spaces[a] = subspace
 
-    def multi_agent_reset(self, seed: int = None):
-        """
-        Reset env, but don't return observations.
+    def multi_agent_reset(self, seed: int | None = None):
+        """Reset env, but don't return observations.
 
         Parameters
         ----------
@@ -481,10 +465,9 @@ class AbstractMADACEnv(AbstractEnv):
         self.observation, self.info = self.env_reset(seed)
 
     def last(self):
-        """
-        Get current step data.
+        """Get current step data.
 
-        Returns
+        Returns:
         -------
         np.array, float, bool, bool, dict
 
@@ -498,8 +481,7 @@ class AbstractMADACEnv(AbstractEnv):
         )
 
     def multi_agent_step(self, action):
-        """
-        Step for a single hyperparameter.
+        """Step for a single hyperparameter.
 
         Parameters
         ----------
@@ -520,8 +502,7 @@ class AbstractMADACEnv(AbstractEnv):
             self.current_agent = self.agents[0]
 
     def register_agent(self, agent_id):
-        """
-        Add agent.
+        """Add agent.
 
         Parameters
         ----------
@@ -542,8 +523,7 @@ class AbstractMADACEnv(AbstractEnv):
             self.current_agent = agent_id
 
     def remove_agent(self, agent_id):
-        """
-        Remove agent.
+        """Remove agent.
 
         Parameters
         ----------

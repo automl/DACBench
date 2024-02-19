@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 
 import numpy as np
@@ -16,8 +18,8 @@ class CMAESEnv(AbstractMADACEnv):
         self.total_budget = self.budget
 
         # Find all set hyperparam_defaults and replace cma defaults
-        if "config_space" in config.keys():
-            for name in config["config_space"].keys():
+        if "config_space" in config:
+            for name in config["config_space"]:
                 value = self.config.get(name)
                 if value:
                     self.representation_dict[self.uniform_name(name)] = value
@@ -33,7 +35,9 @@ class CMAESEnv(AbstractMADACEnv):
         result = re.sub(pattern, "", name)
         return result.lower()
 
-    def reset(self, seed=None, options={}):
+    def reset(self, seed=None, options=None):
+        if options is None:
+            options = {}
         super().reset_(seed)
         self.dim, self.fid, self.iid, self.representation = self.instance
         self.representation_dict = {
@@ -66,7 +70,7 @@ class CMAESEnv(AbstractMADACEnv):
         # Get all action values and uniform names
         complete_action = {}
         if isinstance(action, dict):
-            for hp in action.keys():
+            for hp in action:
                 n_name = self.uniform_name(hp)
                 if n_name == "step_size":
                     # Step size is set separately
@@ -76,7 +80,7 @@ class CMAESEnv(AbstractMADACEnv):
                     complete_action[n_name] = action[hp]
 
             # Complete the given action with defaults
-            for default in self.representation_dict.keys():
+            for default in self.representation_dict:
                 if default == "step_size":
                     continue
                 if default not in complete_action:

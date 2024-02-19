@@ -1,12 +1,11 @@
+"""Geometric environment.
+Original environment authors: Rasmus von Glahn.
 """
-Geometric environment.
-Original environment authors: Rasmus von Glahn
-"""
+from __future__ import annotations
 
 import bisect
 import math
 import os
-from typing import Dict, List, Tuple
 
 import numpy as np
 import seaborn as sns
@@ -19,23 +18,21 @@ sns.set_theme(style="darkgrid")
 
 
 class GeometricEnv(AbstractEnv):
-    """
-    Environment for tracing different curves that are orthogonal to each other
+    """Environment for tracing different curves that are orthogonal to each other
     Use product approach: f(t,x,y,z) = X(t,x) * Y(t,y) * Z(t,z)
     Normalize Function Value on a Scale between 0 and 1
-        - min and max value for normalization over all timesteps
+        - min and max value for normalization over all timesteps.
     """
 
     def __init__(self, config) -> None:
-        """
-        Initialize Geometric Env
+        """Initialize Geometric Env.
 
         Parameters
         -------
         config : objdict
             Environment configuration
         """
-        super(GeometricEnv, self).__init__(config)
+        super().__init__(config)
 
         self.action_vals = config["action_values"]
         self.action_interval_mapping = config["action_interval_mapping"]
@@ -72,21 +69,14 @@ class GeometricEnv(AbstractEnv):
         self.derivative = []
         self.derivative_set = {}
 
-        if "reward_function" in config.keys():
-            self.get_reward = config["reward_function"]
-        else:
-            self.get_reward = self.get_default_reward
+        self.get_reward = config.get("reward_function", self.get_default_reward)
 
-        if "state_method" in config.keys():
-            self.get_state = config["state_method"]
-        else:
-            self.get_state = self.get_default_state
+        self.get_state = config.get("state_method", self.get_default_state)
 
     def get_optimal_policy(
-        self, instance: List = None, vector_action: bool = True
-    ) -> List[np.array]:
-        """
-        Calculates the optimal policy for an instance
+        self, instance: list | None = None, vector_action: bool = True
+    ) -> list[np.array]:
+        """Calculates the optimal policy for an instance.
 
         Parameters
         ----------
@@ -95,7 +85,7 @@ class GeometricEnv(AbstractEnv):
         vector_action : bool, optional
             if True return multidim actions else return onedimensional action, by default True
 
-        Returns
+        Returns:
         -------
         List[np.array]
             List with entry for each timestep that holds all optimal values in an array or as int
@@ -104,35 +94,33 @@ class GeometricEnv(AbstractEnv):
             instance = self.instance
 
         optimal_policy_coords = self.functions.get_coordinates(instance).transpose()
-        optimal_policy = np.zeros(((self.n_steps, self.n_actions)))
+        optimal_policy = np.zeros((self.n_steps, self.n_actions))
 
         for step in range(self.n_steps):
             for dimension in range(self.n_actions):
                 step_size = 2 / self.action_vals[dimension]
-                interval = [step for step in np.arange(-1, 1, step_size)][1:]
+                interval = list(np.arange(-1, 1, step_size))[1:]
 
                 optimal_policy[step, dimension] = bisect.bisect_left(
                     interval, optimal_policy_coords[step, dimension]
                 )
 
-        optimal_policy = optimal_policy.astype(int)
-        return optimal_policy
+        return optimal_policy.astype(int)
 
     def step(self, action: int):
-        """
-        Execute environment step
+        """Execute environment step.
 
         Parameters
         ----------
         action : int
             action to execute
 
-        Returns
+        Returns:
         -------
         np.array, float, bool, bool, dict
             state, reward, terminated, truncated, info
         """
-        self.done = super(GeometricEnv, self).step_()
+        self.done = super().step_()
         self.action = action
 
         coords = self.functions.get_coordinates_at_time_step(self.c_step)
@@ -165,18 +153,19 @@ class GeometricEnv(AbstractEnv):
 
         return next_state, reward, False, self.done, {}
 
-    def reset(self, seed=None, options={}) -> List[int]:
-        """
-        Resets env
+    def reset(self, seed=None, options=None) -> list[int]:
+        """Resets env.
 
-        Returns
+        Returns:
         -------
         numpy.array
             Environment state
         dict
             Meta-info
         """
-        super(GeometricEnv, self).reset_(seed)
+        if options is None:
+            options = {}
+        super().reset_(seed)
         self.functions.set_instance(self.instance, self.instance_index)
 
         if self.c_step:
@@ -194,15 +183,14 @@ class GeometricEnv(AbstractEnv):
         return self.get_state(self), {}
 
     def get_default_reward(self, _) -> float:
-        """
-        Calculate euclidean distance between action vector and real position of Curve.
+        """Calculate euclidean distance between action vector and real position of Curve.
 
         Parameters
         ----------
         _ : self
             ignore
 
-        Returns
+        Returns:
         -------
         float
             Euclidean distance
@@ -216,15 +204,14 @@ class GeometricEnv(AbstractEnv):
         return abs(reward)
 
     def get_default_state(self, _) -> np.array:
-        """
-        Gather state information.
+        """Gather state information.
 
         Parameters
         ----------
         _ :
             ignore param
 
-        Returns
+        Returns:
         -------
         np.array
             numpy array with state information
@@ -244,19 +231,17 @@ class GeometricEnv(AbstractEnv):
         return np.array(next_state, dtype="float32")
 
     def close(self) -> bool:
-        """
-        Close Env
+        """Close Env.
 
-        Returns
+        Returns:
         -------
         bool
             Closing confirmation
         """
         return True
 
-    def render(self, dimensions: List, absolute_path: str):
-        """
-        Multiplot for specific dimensions of benchmark with policy actions.
+    def render(self, dimensions: list, absolute_path: str):
+        """Multiplot for specific dimensions of benchmark with policy actions.
 
         Parameters
         ----------
@@ -273,11 +258,11 @@ class GeometricEnv(AbstractEnv):
         plt.xlim(-0.1, self.n_steps - 0.9)
         plt.xticks(np.arange(0, self.n_steps, 1), fontsize=24.0)
 
-        for idx, dim in zip(range(len(dimensions)), dimensions):
+        for idx, dim in zip(range(len(dimensions)), dimensions, strict=False):
             function_info = self.instance[dim]
             title = function_info[1] + " - Dimension " + str(dim)
             axes[idx].tick_params(axis="both", which="major", labelsize=24)
-            axes[idx].set_yticks((np.arange(-1, 1.1, 2 / self.action_vals[dim])))
+            axes[idx].set_yticks(np.arange(-1, 1.1, 2 / self.action_vals[dim]))
             axes[idx].set_title(title, size=32)
             axes[idx].plot(coordinates[dim], label="Function", marker="o", linewidth=3)[
                 0
@@ -299,9 +284,8 @@ class GeometricEnv(AbstractEnv):
         fig_title = f"GeoBench-Dimensions{len(dimensions)}"
         fig.savefig(os.path.join(absolute_path, fig_title + ".jpg"))
 
-    def render_3d_dimensions(self, dimensions: List, absolute_path: str):
-        """
-        Plot 2 Dimensions in 3D space
+    def render_3d_dimensions(self, dimensions: list, absolute_path: str):
+        """Plot 2 Dimensions in 3D space.
 
         Parameters
         ----------
@@ -331,11 +315,10 @@ class GeometricEnv(AbstractEnv):
         ax.view_init(elev=0, azim=-90)
         fig.savefig(os.path.join(absolute_path, "3D-90side.jpg"))
 
-    def _pre_reward(self) -> Tuple[np.ndarray, List]:
-        """
-        Prepare actions and coordinates for reward calculation.
+    def _pre_reward(self) -> tuple[np.ndarray, list]:
+        """Prepare actions and coordinates for reward calculation.
 
-        Returns
+        Returns:
         -------
         Tuple[np.ndarray, List]
             [description]
@@ -382,14 +365,13 @@ class Functions:
         self.n_actions = n_actions
         self.derivative_interval = derivative_interval
 
-    def set_instance(self, instance: List, instance_index):
-        """update instance"""
+    def set_instance(self, instance: list, instance_index):
+        """Update instance."""
         self.instance = instance
         self.instance_idx = instance_index
 
-    def get_coordinates(self, instance: List = None) -> List[np.array]:
-        """
-        Calculates coordinates for instance over all time_steps.
+    def get_coordinates(self, instance: list | None = None) -> list[np.array]:
+        """Calculates coordinates for instance over all time_steps.
         The values will change if correlation is applied and not optimal actions are taken.
 
         Parameters
@@ -397,7 +379,7 @@ class Functions:
         instance : List, optional
             Instance that holds information about functions, by default None
 
-        Returns
+        Returns:
         -------
         List[np.array]
             Index of List refers to time step
@@ -422,8 +404,7 @@ class Functions:
         return optimal_coords
 
     def get_coordinates_at_time_step(self, time_step: int) -> np.array:
-        """
-        Calculate coordiantes at time_step.
+        """Calculate coordiantes at time_step.
         Apply correlation.
 
         Parameters
@@ -433,7 +414,7 @@ class Functions:
         time_step : int
             Time step of functions
 
-        Returns
+        Returns:
         -------
         np.array
             array of function values at timestep
@@ -452,9 +433,8 @@ class Functions:
 
         return value_array
 
-    def calculate_derivative(self, trajectory: List, c_step: int) -> np.array:
-        """
-        Calculate derivatives of each dimension, based on trajectories.
+    def calculate_derivative(self, trajectory: list, c_step: int) -> np.array:
+        """Calculate derivatives of each dimension, based on trajectories.
 
         Parameters
         ----------
@@ -463,7 +443,7 @@ class Functions:
         c_step: int
             current timestep
 
-        Returns
+        Returns:
         -------
         np.array
             derivatives for each dimension
@@ -493,10 +473,8 @@ class Functions:
 
         return derrivative
 
-    def calculate_norm_values(self, instance_set: Dict):
-        """
-        Norm Functions to Intervall between -1 and 1
-        """
+    def calculate_norm_values(self, instance_set: dict):
+        """Norm Functions to Intervall between -1 and 1."""
         for key, instance in instance_set.items():
             self.set_instance(instance, key)
             instance_values = self.get_coordinates()
@@ -512,10 +490,9 @@ class Functions:
         self.norm_calculated = True
 
     def _calculate_function_value(
-        self, time_step: int, function_infos: List, func_idx: int
+        self, time_step: int, function_infos: list, func_idx: int
     ) -> float:
-        """
-        Call different functions with their speicifc parameters and norm them.
+        """Call different functions with their speicifc parameters and norm them.
 
         Parameters
         ----------
@@ -526,7 +503,7 @@ class Functions:
         calculate_norm : bool, optional
             True if norm gets calculated, by default False
 
-        Returns
+        Returns:
         -------
         float
             coordinate in dimension of function
@@ -544,16 +521,16 @@ class Functions:
 
         function_value = 0
 
-        if "sigmoid" == function_name:
+        if function_name == "sigmoid":
             function_value = self._sigmoid(time_step, coefficients[0], coefficients[1])
 
-        elif "linear" == function_name:
+        elif function_name == "linear":
             function_value = self._linear(time_step, coefficients[0], coefficients[1])
 
-        elif "constant" == function_name:
+        elif function_name == "constant":
             function_value = self._constant(coefficients[0])
 
-        elif "logarithmic" == function_name:
+        elif function_name == "logarithmic":
             function_value = self._logarithmic(time_step, coefficients[0])
 
         elif "cubic" in function_name:
@@ -576,10 +553,9 @@ class Functions:
         return function_value
 
     def _add_correlation(self, value_array: np.ndarray, time_step: int):
-        """
-        Adds correlation between dimensions but clips at -1 and 1.
+        """Adds correlation between dimensions but clips at -1 and 1.
         Correlation table holds numbers between -1 and 1.
-        e.g. correlation_table[0][2] = 0.5 if dimension 1 changes dimension 3 changes about 50% of dimension one
+        e.g. correlation_table[0][2] = 0.5 if dimension 1 changes dimension 3 changes about 50% of dimension one.
 
         Parameters
         ----------
@@ -600,8 +576,7 @@ class Functions:
         return clipped_values
 
     def _apply_correlation_update(self, idx: int, diff: float, depth):
-        """
-        Recursive function for correlation updates
+        """Recursive function for correlation updates
         Call function recursively till depth is 0 or diff is too small.
         """
         if not depth or diff < 0.001:
@@ -613,32 +588,32 @@ class Functions:
             self._apply_correlation_update(coeff_idx, change, depth - 1)
 
     def _sigmoid(self, t: float, scaling: float, inflection: float):
-        """Simple sigmoid function"""
+        """Simple sigmoid function."""
         return 1 / (1 + np.exp(-scaling * (t - inflection)))
 
     def _linear(self, t: float, a: float, b: float):
-        """Linear function"""
+        """Linear function."""
         return a * t + b
 
     def _parabel(self, t: float, sig: int, x_int: int, y_int: int):
-        """Parabel function"""
+        """Parabel function."""
         return sig * (t - x_int) ** 2 + y_int
 
     def _cubic(self, t: float, sig: int, x_int: int, y_int: int):
-        """cubic function"""
+        """Cubic function."""
         return sig * (t - x_int) ** 3 + y_int
 
     def _logarithmic(self, t: float, a: float):
-        """Logarithmic function"""
+        """Logarithmic function."""
         if t != 0:
             return a * np.log(t)
         else:
             return 1000
 
     def _constant(self, c: float):
-        """Constant function"""
+        """Constant function."""
         return c
 
     def _sinus(self, t: float, scale: float):
-        """Sinus function"""
+        """Sinus function."""
         return np.sin(scale * t)

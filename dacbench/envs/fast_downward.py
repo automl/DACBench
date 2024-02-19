@@ -1,15 +1,14 @@
-"""
-Planning environment from
+"""Planning environment from
 "Learning Heuristic Selection with Dynamic Algorithm Configuration"
 by David Speck, André Biedenkapp, Frank Hutter, Robert Mattmüller und Marius Lindauer.
-Original environment authors: David Speck, André Biedenkapp
+Original environment authors: David Speck, André Biedenkapp.
 """
+from __future__ import annotations
 
 import os
 import socket
 import subprocess
 import time
-import typing
 from copy import deepcopy
 from enum import Enum
 from os import remove
@@ -21,7 +20,7 @@ from dacbench import AbstractEnv
 
 
 class StateType(Enum):
-    """Class to define numbers for state types"""
+    """Class to define numbers for state types."""
 
     RAW = 1
     DIFF = 2
@@ -32,20 +31,17 @@ class StateType(Enum):
 
 
 class FastDownwardEnv(AbstractEnv):
-    """
-    Environment to control Solver Heuristics of FastDownward
-    """
+    """Environment to control Solver Heuristics of FastDownward."""
 
     def __init__(self, config):
-        """
-        Initialize FD Env
+        """Initialize FD Env.
 
         Parameters
         -------
         config : objdict
             Environment configuration
         """
-        super(FastDownwardEnv, self).__init__(config)
+        super().__init__(config)
         self._heuristic_state_features = [
             "Average Value",  # 'Dead Ends Reliable',
             "Max Value",
@@ -91,7 +87,7 @@ class FastDownwardEnv(AbstractEnv):
             self.logpath_err = os.path.join(config.fd_logs, "fderr.txt")
         self.fd_path = config.fd_path
         self.fd = None
-        if "domain_file" in config.keys():
+        if "domain_file" in config:
             self.domain_file = config["domain_file"]
 
         self.socket = None
@@ -157,8 +153,7 @@ class FastDownwardEnv(AbstractEnv):
 
     @staticmethod
     def _save_div(a, b):
-        """
-        Helper method for safe division
+        """Helper method for safe division.
 
         Parameters
         ----------
@@ -167,7 +162,7 @@ class FastDownwardEnv(AbstractEnv):
         b : list or np.array
             values to divide by
 
-        Returns
+        Returns:
         -------
         np.array
             Division result
@@ -175,8 +170,7 @@ class FastDownwardEnv(AbstractEnv):
         return np.divide(a, b, out=np.zeros_like(a), where=b != 0)
 
     def send_msg(self, msg: bytes):
-        """
-        Send message and prepend the message size
+        """Send message and prepend the message size.
 
         Based on comment from SO see [1]
         [1] https://stackoverflow.com/a/17668009
@@ -187,15 +181,14 @@ class FastDownwardEnv(AbstractEnv):
             The message as byte
         """
         # Prefix each message with a 4-byte length (network byte order)
-        msg = str.encode("{:>04d}".format(len(msg))) + msg
+        msg = str.encode(f"{len(msg):>04d}") + msg
         self.conn.sendall(msg)
 
     def recv_msg(self):
-        """
-        Recieve a whole message. The message has to be prepended with its total size
-        Based on comment from SO see [1]
+        """Recieve a whole message. The message has to be prepended with its total size
+        Based on comment from SO see [1].
 
-        Returns
+        Returns:
         ----------
         bytes
             The message as byte
@@ -209,16 +202,15 @@ class FastDownwardEnv(AbstractEnv):
         return self.recvall(msglen)
 
     def recvall(self, n: int):
-        """
-        Given we know the size we want to recieve, we can recieve that amount of bytes.
-        Based on comment from SO see [1]
+        """Given we know the size we want to recieve, we can recieve that amount of bytes.
+        Based on comment from SO see [1].
 
         Parameters
         ---------
         n: int
             Number of bytes to expect in the data
 
-        Returns
+        Returns:
         ----------
         bytes
             The message as byte
@@ -233,10 +225,9 @@ class FastDownwardEnv(AbstractEnv):
         return data
 
     def _process_data(self):
-        """
-        Split received json into state reward and done
+        """Split received json into state reward and done.
 
-        Returns
+        Returns:
         ----------
         np.array, float, bool
             state, reward, done
@@ -282,21 +273,20 @@ class FastDownwardEnv(AbstractEnv):
             self._prev_state = tmp_state
         return np.array(state), r, done
 
-    def step(self, action: typing.Union[int, typing.List[int]]):
-        """
-        Environment step
+    def step(self, action: int | list[int]):
+        """Environment step.
 
         Parameters
         ---------
         action: typing.Union[int, List[int]]
             Parameter(s) to apply
 
-        Returns
+        Returns:
         ----------
         np.array, float, bool, bool, dict
             state, reward, terminated, truncated, info
         """
-        self.done = super(FastDownwardEnv, self).step_()
+        self.done = super().step_()
         if not np.issubdtype(
             type(action), np.integer
         ):  # check for core int and any numpy-int
@@ -322,18 +312,19 @@ class FastDownwardEnv(AbstractEnv):
             self.kill_connection()
         return s, r, terminated, self.done, info
 
-    def reset(self, seed=None, options={}):
-        """
-        Reset environment
+    def reset(self, seed=None, options=None):
+        """Reset environment.
 
-        Returns
+        Returns:
         ----------
         np.array
             State after reset
         dict
             Meta-info
         """
-        super(FastDownwardEnv, self).reset_(seed)
+        if options is None:
+            options = {}
+        super().reset_(seed)
         self._prev_state = None
         self.__start_time = time.time()
         if not self.done:  # This means we interrupt FD before a plan was found
@@ -377,7 +368,7 @@ class FastDownwardEnv(AbstractEnv):
 
         # write down port such that FD can potentially read where to connect to
         if self._port_file_id:
-            fp = joinpath(self._config_dir, "port_{:d}.txt".format(self._port_file_id))
+            fp = joinpath(self._config_dir, f"port_{self._port_file_id:d}.txt")
         else:
             fp = joinpath(self._config_dir, f"port_{self.port}.txt")
         with open(fp, "w") as portfh:
@@ -386,7 +377,7 @@ class FastDownwardEnv(AbstractEnv):
         self.socket.listen()
         try:
             self.conn, address = self.socket.accept()
-        except socket.timeout:
+        except TimeoutError:
             raise OSError(
                 "Fast downward subprocess not reachable (time out). "
                 "Possible solutions:\n"
@@ -411,7 +402,7 @@ class FastDownwardEnv(AbstractEnv):
         return s, {}
 
     def kill_connection(self):
-        """Kill the connection"""
+        """Kill the connection."""
         if self.conn:
             self.conn.shutdown(2)
             self.conn.close()
@@ -422,10 +413,9 @@ class FastDownwardEnv(AbstractEnv):
             self.socket = None
 
     def close(self):
-        """
-        Close Env
+        """Close Env.
 
-        Returns
+        Returns:
         -------
         bool
             Closing confirmation
@@ -440,12 +430,10 @@ class FastDownwardEnv(AbstractEnv):
         return True
 
     def render(self, mode: str = "human") -> None:
-        """
-        Required by gym.Env but not implemented
+        """Required by gym.Env but not implemented.
 
         Parameters
         -------
         mode : str
             Rendering mode
         """
-        pass

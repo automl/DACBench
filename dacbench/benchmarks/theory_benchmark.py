@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 
 import ConfigSpace as CS
@@ -34,13 +36,10 @@ THEORY_DEFAULTS = {
 
 
 class TheoryBenchmark(AbstractBenchmark):
-    """
-    Benchmark with various settings for (1+(lbd, lbd))-GA and RLS
-    """
+    """Benchmark with various settings for (1+(lbd, lbd))-GA and RLS."""
 
     def __init__(self, config=None):
-        """
-        Initialize a theory benchmark
+        """Initialize a theory benchmark.
 
         Parameters
         -------
@@ -51,7 +50,7 @@ class TheoryBenchmark(AbstractBenchmark):
             a dictionary, all options specified in this argument will override the one in base_config_name
 
         """
-        super(TheoryBenchmark, self).__init__()
+        super().__init__()
 
         self.config = objdict(THEORY_DEFAULTS)
 
@@ -95,7 +94,7 @@ class TheoryBenchmark(AbstractBenchmark):
 
         # create observation space
         self.env_class = globals()[self.config.env_class]
-        assert self.env_class == TheoryEnv or self.env_class == TheoryEnvDiscrete
+        assert self.env_class in (TheoryEnv, TheoryEnvDiscrete)
 
         self.config[
             "observation_space"
@@ -106,10 +105,9 @@ class TheoryBenchmark(AbstractBenchmark):
     def create_observation_space_from_description(
         self, obs_description, env_class=TheoryEnvDiscrete
     ):
-        """
-        Create a gym observation space (Box only) based on a string containing observation variable names, e.g. "n, f(x), k, k_{t-1}"
+        """Create a gym observation space (Box only) based on a string containing observation variable names, e.g. "n, f(x), k, k_{t-1}"
         Return:
-            A gym.spaces.Box observation space
+            A gym.spaces.Box observation space.
         """
         obs_var_names = [s.strip() for s in obs_description.split(",")]
         low = []
@@ -118,12 +116,10 @@ class TheoryBenchmark(AbstractBenchmark):
             l, h = env_class.get_obs_domain_from_name(var_name)  # noqa: E741
             low.append(l)
             high.append(h)
-        obs_space = gym.spaces.Box(low=np.array(low), high=np.array(high))
-        return obs_space
+        return gym.spaces.Box(low=np.array(low), high=np.array(high))
 
     def get_environment(self, test_env=False):
-        """
-        Return an environment with current configuration
+        """Return an environment with current configuration.
 
         Parameters:
             test_env:   whether the enviroment is used for train an agent or for testing.
@@ -132,7 +128,6 @@ class TheoryBenchmark(AbstractBenchmark):
                             if an action is out of range, stop the episode immediately and return a large negative reward (see envs/theory.py for more details)
                         otherwise: benchmark's original cutoff time is used, and out-of-range action will be clipped to nearest valid value and the episode will continue.
         """
-
         env = self.env_class(self.config, test_env)
 
         for func in self.wrap_funcs:
@@ -141,9 +136,8 @@ class TheoryBenchmark(AbstractBenchmark):
         return env
 
     def read_instance_set(self):
-        """
-        Read instance set from file
-            we look at the current directory first, if the file doesn't exist, we look in <DACBench>/dacbench/instance_sets/theory/
+        """Read instance set from file
+        we look at the current directory first, if the file doesn't exist, we look in <DACBench>/dacbench/instance_sets/theory/.
         """
         assert self.config.instance_set_path
         if os.path.isfile(self.config.instance_set_path):
@@ -159,10 +153,10 @@ class TheoryBenchmark(AbstractBenchmark):
 
         assert len(self.config["instance_set"].items()) > 0, "ERROR: empty instance set"
         assert (
-            "initObj" in self.config["instance_set"][0].keys()
+            "initObj" in self.config["instance_set"][0]
         ), "ERROR: initial solution (initObj) must be specified in instance set"
         assert (
-            "size" in self.config["instance_set"][0].keys()
+            "size" in self.config["instance_set"][0]
         ), "ERROR: problem size must be specified in instance set"
 
         for key, val in self.config["instance_set"].items():

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import csv
 import os
 
@@ -56,20 +58,17 @@ SIGMOID_DEFAULTS = objdict(
 
 
 class SigmoidBenchmark(AbstractBenchmark):
-    """
-    Benchmark with default configuration & relevant functions for Sigmoid
-    """
+    """Benchmark with default configuration & relevant functions for Sigmoid."""
 
     def __init__(self, config_path=None, config=None):
-        """
-        Initialize Sigmoid Benchmark
+        """Initialize Sigmoid Benchmark.
 
         Parameters
         -------
         config_path : str
             Path to config file (optional)
         """
-        super(SigmoidBenchmark, self).__init__(config_path, config)
+        super().__init__(config_path, config)
         if not self.config:
             self.config = objdict(SIGMOID_DEFAULTS.copy())
 
@@ -78,22 +77,21 @@ class SigmoidBenchmark(AbstractBenchmark):
                 self.config[key] = SIGMOID_DEFAULTS[key]
 
     def get_environment(self):
-        """
-        Return Sigmoid env with current configuration
+        """Return Sigmoid env with current configuration.
 
-        Returns
+        Returns:
         -------
         SigmoidEnv
             Sigmoid environment
 
         """
-        if "instance_set" not in self.config.keys():
+        if "instance_set" not in self.config:
             self.read_instance_set()
 
         # Read test set if path is specified
         if (
-            "test_set" not in self.config.keys()
-            and "test_set_path" in self.config.keys()
+            "test_set" not in self.config
+            and "test_set_path" in self.config
         ):
             self.read_instance_set(test=True)
 
@@ -128,8 +126,7 @@ class SigmoidBenchmark(AbstractBenchmark):
         return env
 
     def set_action_values(self, values):
-        """
-        Adapt action values and update dependencies
+        """Adapt action values and update dependencies.
 
         Parameters
         ----------
@@ -144,7 +141,7 @@ class SigmoidBenchmark(AbstractBenchmark):
         ]
 
     def read_instance_set(self, test=False):
-        """Read instance set from file"""
+        """Read instance set from file."""
         if test:
             path = (
                 os.path.dirname(os.path.abspath(__file__))
@@ -161,7 +158,7 @@ class SigmoidBenchmark(AbstractBenchmark):
             keyword = "instance_set"
 
         self.config[keyword] = {}
-        with open(path, "r") as f:
+        with open(path) as f:
             reader = csv.reader(f)
             for row in reader:
                 f = []
@@ -178,12 +175,11 @@ class SigmoidBenchmark(AbstractBenchmark):
                         except Exception:
                             continue
 
-                if not len(f) == 0:
+                if len(f) != 0:
                     self.config[keyword][inst_id] = f
 
     def get_benchmark(self, dimension=None, seed=0):
-        """
-        Get Benchmark from DAC paper
+        """Get Benchmark from DAC paper.
 
         Parameters
         -------
@@ -192,7 +188,7 @@ class SigmoidBenchmark(AbstractBenchmark):
         seed : int
             Environment seed
 
-        Returns
+        Returns:
         -------
         env : SigmoidEnv
             Sigmoid environment
@@ -257,5 +253,4 @@ class SigmoidBenchmark(AbstractBenchmark):
         self.config.seed = seed
         self.read_instance_set()
         self.read_instance_set(test=True)
-        env = SigmoidEnv(self.config)
-        return env
+        return SigmoidEnv(self.config)

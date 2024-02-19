@@ -1,40 +1,44 @@
+from __future__ import annotations
+
 import json
 from numbers import Number
-from typing import Dict, List, Tuple, Union
+from typing import TYPE_CHECKING, Union
 
 import numpy as np
 import Pyro4
 
-from dacbench.abstract_env import AbstractEnv
 from dacbench.container.container_utils import Decoder, Encoder
+
+if TYPE_CHECKING:
+    from dacbench.abstract_env import AbstractEnv
 
 NumpyTypes = Union[np.ndarray, np.int32, np.float32, np.random.RandomState]
 DefaultJsonable = Union[
     bool,
     None,
-    Dict[str, "DefaultJsonable"],
-    List["DefaultJsonable"],
-    Tuple["DefaultJsonable"],
+    dict[str, "DefaultJsonable"],
+    list["DefaultJsonable"],
+    tuple["DefaultJsonable"],
     str,
     float,
     int,
 ]
 Jsonable = Union[
-    List["Jsonable"],
-    Dict[str, "Jsonable"],
-    Tuple["Jsonable"],
+    list["Jsonable"],
+    dict[str, "Jsonable"],
+    tuple["Jsonable"],
     DefaultJsonable,
     NumpyTypes,
 ]
 
 
 def json_encode(obj: Jsonable) -> str:
-    """Encode object"""
+    """Encode object."""
     return json.dumps(obj, indent=None, cls=Encoder)
 
 
 def json_decode(json_str: str) -> Jsonable:
-    """Decode object"""
+    """Decode object."""
     return json.loads(json_str, cls=Decoder)
 
 
@@ -46,22 +50,19 @@ class RemoteEnvironmentServer:
         """Make env server."""
         self.__env: AbstractEnv = env
 
-    def step(self, action: Union[Dict[str, List[Number]], List[Number]]):
+    def step(self, action: dict[str, list[Number]] | list[Number]):
         """Env step."""
         action = json_decode(action)
-        json_str = json_encode(self.__env.step(action))
-        return json_str
+        return json_encode(self.__env.step(action))
 
     def reset(self):
         """Reset env."""
         state = self.__env.reset()
-        state = json_encode(state)
-        return state
+        return json_encode(state)
 
     def render(self, mode="human"):
         """Render, does nothing."""
         # ever used?
-        pass
 
     def close(self):
         """Close."""
@@ -81,8 +82,8 @@ class RemoteEnvironmentClient:
         self.__env = env
 
     def step(
-        self, action: Union[Dict[str, np.ndarray], np.ndarray]
-    ) -> Tuple[Union[Dict[str, np.ndarray], np.ndarray], Number, bool, dict]:
+        self, action: dict[str, np.ndarray] | np.ndarray
+    ) -> tuple[dict[str, np.ndarray] | np.ndarray, Number, bool, dict]:
         """Remote step."""
         action = json_encode(action)
 
@@ -92,11 +93,10 @@ class RemoteEnvironmentClient:
 
         return state, reward, done, info
 
-    def reset(self) -> Union[Dict[str, np.ndarray], np.ndarray]:
+    def reset(self) -> dict[str, np.ndarray] | np.ndarray:
         """Remote reset."""
         state = self.__env.reset()
-        state = json_decode(state)
-        return state
+        return json_decode(state)
 
     def close(self):
         """Close."""

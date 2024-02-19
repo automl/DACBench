@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import numpy as np
 
 
 def small_random_luby_state(self):
     core_state = self.get_default_state(None)
     num_random_elements = 20 - len(core_state)
-    for i in range(num_random_elements):
+    for _i in range(num_random_elements):
         core_state.append(np.random.normal(3, 2.5))
     return core_state
 
@@ -12,7 +14,7 @@ def small_random_luby_state(self):
 def random_luby_state(self):
     core_state = self.get_default_state(None)
     num_random_elements = 250 - len(core_state)
-    for i in range(num_random_elements):
+    for _i in range(num_random_elements):
         core_state.append(np.random.normal(3, 2.5))
     return core_state
 
@@ -21,7 +23,7 @@ def small_random_sigmoid_state(self):
     core_state = self.get_default_state(None)
     num_random_elements = 50 - len(core_state)
     state = []
-    for i in range(50):
+    for _i in range(50):
         if num_random_elements > 0 and len(core_state) > 0:
             append_random = np.random.choice([0, 1])
             if append_random:
@@ -42,7 +44,7 @@ def random_sigmoid_state(self):
     core_state = self.get_default_state(None)
     num_random_elements = 500 - len(core_state)
     state = []
-    for i in range(500):
+    for _i in range(500):
         if num_random_elements > 0 and len(core_state) > 0:
             append_random = np.random.choice([0, 1])
             if append_random:

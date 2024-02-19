@@ -1,17 +1,18 @@
+from __future__ import annotations
+
 import enum
 import json
 import os
 import socket
 import time
-from typing import Any, Dict, Union
+from typing import Any
 
 import gymnasium as gym
 import numpy as np
 
 
 class Encoder(json.JSONEncoder):
-    """
-    Json Encoder to save tuple and or numpy arrays | numpy floats / integer.
+    """Json Encoder to save tuple and or numpy arrays | numpy floats / integer.
 
     Adapted from: https://github.com/automl/HPOBench/blob/master/hpobench/util/container_utils.py
     Serializing tuple/numpy array may not work. We need to annotate those types, to reconstruct them correctly.
@@ -46,7 +47,7 @@ class Encoder(json.JSONEncoder):
     # pylint: disable=arguments-differ
     def encode(self, obj):
         """Generic encode."""
-        return super(Encoder, self).encode(Encoder.hint(obj))
+        return super().encode(Encoder.hint(obj))
 
     @staticmethod
     def encode_space(space_obj: gym.Space):
@@ -62,12 +63,7 @@ class Encoder(json.JSONEncoder):
 
         if isinstance(
             space_obj,
-            (
-                gym.spaces.Box,
-                gym.spaces.Discrete,
-                gym.spaces.MultiDiscrete,
-                gym.spaces.MultiBinary,
-            ),
+            gym.spaces.Box | gym.spaces.Discrete | gym.spaces.MultiDiscrete | gym.spaces.MultiBinary,
         ):
             # by default assume all constrcutor arguments are stored under the same name
             #  for box we need to drop shape, since either shape or a array for low and height  is required
@@ -108,7 +104,7 @@ class Encoder(json.JSONEncoder):
 
 
 class Decoder(json.JSONDecoder):
-    """Adapted from: https://github.com/automl/HPOBench/blob/master/hpobench/util/container_utils.py"""
+    """Adapted from: https://github.com/automl/HPOBench/blob/master/hpobench/util/container_utils.py."""
 
     def __init__(self, *args, **kwargs):
         """Init decoder."""
@@ -116,7 +112,7 @@ class Decoder(json.JSONDecoder):
 
     def object_hook(
         self, obj: Any
-    ) -> Union[Union[tuple, np.ndarray, float, float, int], Any]:
+    ) -> tuple | np.ndarray | float | float | int | Any:
         """Encode different types of objects."""
         if "__type__" in obj:
             __type = obj["__type__"]
@@ -125,7 +121,7 @@ class Decoder(json.JSONDecoder):
             if __type == "np.ndarray":
                 return np.array(obj["__items__"])
             if __type == "np.float":
-                return np.float(obj["__items__"])
+                return float(obj["__items__"])
             if __type == "np.int32":
                 return np.int32(obj["__items__"])
             if __type == "np.dtype":
@@ -134,7 +130,7 @@ class Decoder(json.JSONDecoder):
                 return self.decode_space(obj)
         return obj
 
-    def decode_space(self, space_dict: Dict) -> gym.Space:
+    def decode_space(self, space_dict: dict) -> gym.Space:
         """Dict to gym space."""
         __type = space_dict["__type__"]
         __class = getattr(gym.spaces, __type.split(".")[-1])
@@ -146,14 +142,14 @@ class Decoder(json.JSONDecoder):
         }
 
         # temporally remove subspace since constructor reseeds them
-        if issubclass(__class, (gym.spaces.Tuple, gym.spaces.Dict)):
+        if issubclass(__class, gym.spaces.Tuple | gym.spaces.Dict):
             spaces = args["spaces"]
             args["spaces"] = type(args["spaces"])()
 
         space_object = __class(**args)
 
         # re-insert afterwards
-        if issubclass(__class, (gym.spaces.Tuple, gym.spaces.Dict)):
+        if issubclass(__class, gym.spaces.Tuple | gym.spaces.Dict):
             space_object.spaces = spaces
 
         if isinstance(space_object, gym.spaces.Tuple):
@@ -164,8 +160,7 @@ class Decoder(json.JSONDecoder):
 
 
 def wait_for_unixsocket(path: str, timeout: float = 10.0) -> None:
-    """
-    Wait for a UNIX socket to be created.
+    """Wait for a UNIX socket to be created.
 
     :param path: path to the socket
     :param timeout: timeout in seconds
@@ -182,8 +177,7 @@ def wait_for_unixsocket(path: str, timeout: float = 10.0) -> None:
 
 
 def wait_for_port(port, host="localhost", timeout=5.0):
-    """
-    Taken from https://gist.github.com/butla/2d9a4c0f35ea47b7452156c96a4e7b12 - Wait until a port starts accepting TCP connections.
+    """Taken from https://gist.github.com/butla/2d9a4c0f35ea47b7452156c96a4e7b12 - Wait until a port starts accepting TCP connections.
 
     Parameters
     ----------
@@ -194,7 +188,7 @@ def wait_for_port(port, host="localhost", timeout=5.0):
     timeout : float
         Timeout in seconds.
 
-    Raises
+    Raises:
     ------
     TimeoutError: The port isn't accepting connection after time specified in `timeout`.
 

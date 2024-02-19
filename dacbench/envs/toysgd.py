@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Union
+from __future__ import annotations
 
 import numpy as np
 import pandas as pd
@@ -64,8 +64,7 @@ def create_noisy_quadratic_instance_set(
 
 
 class ToySGDEnv(AbstractMADACEnv):
-    """
-    Optimize toy functions with SGD + Momentum.
+    """Optimize toy functions with SGD + Momentum.
 
     Action: [log_learning_rate, log_momentum] (log base 10)
     State: Dict with entries remaining_budget, gradient, learning_rate, momentum
@@ -83,7 +82,7 @@ class ToySGDEnv(AbstractMADACEnv):
 
     def __init__(self, config):
         """Init env."""
-        super(ToySGDEnv, self).__init__(config)
+        super().__init__(config)
 
         if config["batch_size"]:
             self.batch_size = config["batch_size"]
@@ -140,10 +139,9 @@ class ToySGDEnv(AbstractMADACEnv):
         return np.random.uniform(-5, 5, size=self.batch_size)
 
     def step(
-        self, action: Union[float, Tuple[float, float]]
-    ) -> Tuple[Dict[str, float], float, bool, Dict]:
-        """
-        Take one step with SGD.
+        self, action: float | tuple[float, float]
+    ) -> tuple[dict[str, float], float, bool, dict]:
+        """Take one step with SGD.
 
         Parameters
         ----------
@@ -151,7 +149,7 @@ class ToySGDEnv(AbstractMADACEnv):
             If scalar, action = (log_learning_rate)
             If tuple, action = (log_learning_rate, log_momentum)
 
-        Returns
+        Returns:
         -------
         Tuple[Dict[str, float], float, bool, Dict]
 
@@ -163,7 +161,7 @@ class ToySGDEnv(AbstractMADACEnv):
             - info : Dict
 
         """
-        truncated = super(ToySGDEnv, self).step_()
+        truncated = super().step_()
         info = {}
 
         # parse action
@@ -203,9 +201,8 @@ class ToySGDEnv(AbstractMADACEnv):
 
         return state, reward, False, truncated, info
 
-    def reset(self, seed=None, options={}):
-        """
-        Reset environment.
+    def reset(self, seed=None, options=None):
+        """Reset environment.
 
         Parameters
         ----------
@@ -214,7 +211,7 @@ class ToySGDEnv(AbstractMADACEnv):
         options : dict
             options dict (not used)
 
-        Returns
+        Returns:
         -------
         np.array
             Environment state
@@ -222,7 +219,9 @@ class ToySGDEnv(AbstractMADACEnv):
             Meta-info
 
         """
-        super(ToySGDEnv, self).reset_(seed)
+        if options is None:
+            options = {}
+        super().reset_(seed)
 
         self.velocity = 0
         self.gradient = np.zeros(self.batch_size)
@@ -276,4 +275,3 @@ class ToySGDEnv(AbstractMADACEnv):
 
     def close(self):
         """Close env."""
-        pass
