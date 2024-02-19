@@ -67,8 +67,8 @@ class TheoryBenchmark(AbstractBenchmark):
             assert (
                 "action_choices" in self.config
             ), "ERROR: action_choices must be specified"
-            assert ("min_action" not in self.config) and (
-                "max_action" not in self.config
+            assert (
+                ("min_action" not in self.config) and ("max_action" not in self.config)
             ), "ERROR: min_action and max_action should not be used for discrete action space"
             assert (
                 "max_action" not in self.config
@@ -97,10 +97,10 @@ class TheoryBenchmark(AbstractBenchmark):
         self.env_class = globals()[self.config.env_class]
         assert self.env_class == TheoryEnv or self.env_class == TheoryEnvDiscrete
 
-        self.config["observation_space"] = (
-            self.create_observation_space_from_description(
-                self.config["observation_description"], self.env_class
-            )
+        self.config[
+            "observation_space"
+        ] = self.create_observation_space_from_description(
+            self.config["observation_description"], self.env_class
         )
 
     def create_observation_space_from_description(

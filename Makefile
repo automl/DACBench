@@ -24,11 +24,8 @@ PYTEST ?= python -m pytest
 CTAGS ?= ctags
 PIP ?= python -m pip
 MAKE ?= make
-BLACK ?= python -m black
-ISORT ?= python -m isort --profile black
-PYDOCSTYLE ?= python -m pydocstyle
+RUFF ?= python -m ruff
 PRECOMMIT ?= pre-commit
-FLAKE8 ?= python -m flake8
 
 DIR := ${CURDIR}
 DIST := ${CURDIR}/dist
@@ -39,32 +36,16 @@ install-dev:
 	$(PIP) install -e ".[dev, docs, all, examples]"
 	pre-commit install
 
-check-black:
-	$(BLACK)  dacbench tests --check || :
-
-check-isort:
-	$(ISORT) dacbench tests --check || :
-
-check-pydocstyle:
-	$(PYDOCSTYLE) dacbench || :
-
-check-flake8:
-	$(FLAKE8) dacbench || :
-	$(FLAKE8) tests || :
-
 # pydocstyle does not have easy ignore rules, instead, we include as they are covered
-check: check-black check-isort check-flake8 check-pydocstyle
+check:
+	$(RUFF) check --fix dacbench 
+	$(RUFF) check dacbench
 
 pre-commit:
 	$(PRECOMMIT) run --all-files
 
-format-black:
-	$(BLACK) dacbench tests
-
-format-isort:
-	$(ISORT) dacbench tests
-
-format: format-black format-isort
+format: 
+	$(RUFF) format dacbench
 
 test:
 	$(PYTEST) tests
