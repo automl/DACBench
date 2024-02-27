@@ -1,3 +1,4 @@
+"""Example for running the dacbench."""
 from dacbench.agents import RandomAgent
 from dacbench.runner import run_dacbench
 

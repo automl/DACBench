@@ -1,3 +1,4 @@
+"""Example for instance handling."""
 import numpy as np
 from dacbench.benchmarks import SigmoidBenchmark
 from dacbench.wrappers import InstanceSamplingWrapper

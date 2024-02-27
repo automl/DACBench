@@ -1,10 +1,13 @@
-# docs and experiment results can be found at https://docs.cleanrl.dev/rl-algorithms/ppo/#ppo_continuous_actionpy
+"""Cleanrl ppo on dacbench example.
+docs and experiment results can be found at https://docs.cleanrl.dev/rl-algorithms/ppo/#ppo_continuous_actionpy
+"""
+
 import argparse
-import os
 import random
 import time
 from collections.abc import Callable
 from distutils.util import strtobool
+from pathlib import Path
 
 import gymnasium as gym
 import numpy as np
@@ -20,11 +23,13 @@ def evaluate(
     make_env: Callable,
     benchmark_name: str,
     eval_episodes: int,
-    Model: torch.nn.Module,
-    device: torch.device = torch.device("cpu"),
+    model: torch.nn.Module,
+    device: torch.device = None,
 ):
+    if device is None:
+        device = torch.device("cpu")
     envs = gym.vector.SyncVectorEnv([make_env(benchmark_name, None)])
-    agent = Model(envs).to(device)
+    agent = model(envs).to(device)
     agent.load_state_dict(torch.load(model_path, map_location=device))
     agent.eval()
 
@@ -49,7 +54,7 @@ def evaluate(
 def parse_args():
     # fmt: off
     parser = argparse.ArgumentParser()
-    parser.add_argument("--exp-name", type=str, default=os.path.basename(__file__).rstrip(".py"),
+    parser.add_argument("--exp-name", type=str, default=Path.name(__file__).rstrip(".py"),
         help="the name of this experiment")
     parser.add_argument("--seed", type=int, default=1,
         help="seed of the experiment")
@@ -118,7 +123,9 @@ def make_env(benchmark_name, config=None):
     return thunk
 
 
-def layer_init(layer, std=np.sqrt(2), bias_const=0.0):
+def layer_init(layer, std=None, bias_const=0.0):
+    if std is None:
+        std = np.sqrt(2)
     torch.nn.init.orthogonal_(layer.weight, std)
     torch.nn.init.constant_(layer.bias, bias_const)
     return layer
@@ -126,6 +133,7 @@ def layer_init(layer, std=np.sqrt(2), bias_const=0.0):
 
 class Agent(nn.Module):
     def __init__(self, envs):
+        """Init the Agent."""
         super().__init__()
         print(envs.observation_space)
         print(envs.observation_space.shape)
@@ -148,9 +156,11 @@ class Agent(nn.Module):
         )
 
     def get_value(self, x):
+        """Get critic value."""
         return self.critic(x)
 
     def get_action_and_value(self, x, action=None):
+        """Get action and critic value."""
         action_mean = self.actor_mean(x)
         action_logstd = self.actor_logstd.expand_as(action_mean)
         action_std = torch.exp(action_logstd)
@@ -179,7 +189,7 @@ if __name__ == "__main__":
 
     # TRY NOT TO MODIFY: seeding
     random.seed(args.seed)
-    np.random.seed(args.seed)
+    np.random.seed(args.seed)  # noqa: NPY002
     torch.manual_seed(args.seed)
     torch.backends.cudnn.deterministic = args.torch_deterministic
 
@@ -297,7 +307,7 @@ if __name__ == "__main__":
         b_inds = np.arange(args.batch_size)
         clipfracs = []
         for _epoch in range(args.update_epochs):
-            np.random.shuffle(b_inds)
+            np.random.shuffle(b_inds)  # noqa: NPY002
             for start in range(0, args.batch_size, args.minibatch_size):
                 end = start + args.minibatch_size
                 mb_inds = b_inds[start:end]

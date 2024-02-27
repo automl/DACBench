@@ -1,3 +1,4 @@
+"""Example for plotting of states."""
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -6,7 +7,7 @@ from dacbench.logger import load_logs, log2dataframe
 from dacbench.plotting import plot_state
 
 
-def plot_state_CMAES():
+def plot_state_CMAES():  # noqa: N802
     """Plot state information of CMA-ES run over time"""
     # Since converting the json logs to a data frame takes a couple of minutes
     # we we cache the logs for tuning the plot settings in a picked datafarme object

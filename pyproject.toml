@@ -126,7 +126,6 @@ exclude = [
   "*envs/downward/*",
   "tests",
   "dacbench/challenge_benchmarks",
-  "examples"
 ]
 
 # Exclude a variety of commonly ignored directories.

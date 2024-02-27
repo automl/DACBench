@@ -1,22 +1,28 @@
+"""Example utils."""
 import argparse
 from collections import defaultdict, namedtuple
 
-import gym
+import gymnasium as gym
 import numpy as np
+
+rng = np.random.default_rng()
 
 
 class DummyEnv(gym.Env):
     def __init__(self):
+        """Initialise the environment."""
         self.c_step = None
         self.action_space = gym.spaces.Discrete(2)
         self.observation_space = gym.spaces.Discrete(1)
         self.reward_range = (-10, 10)
 
     def step(self, action):
+        """Make a step."""
         self.c_step += 1
         return np.array([0]), 0, False, self.c_step > 9, {}
 
     def reset(self):
+        """Reset the environment."""
         self.c_step = 0
         return np.array([1]), {}
 
@@ -60,10 +66,11 @@ class QTable(dict):
         return tuple(item) in self.__table
 
     def keys(self):
+        """Return the keys of the table."""
         return self.__table.keys()
 
 
-def make_tabular_policy(Q: QTable, epsilon: float, nA: int) -> callable:
+def make_tabular_policy(Q: QTable, epsilon: float, nA: int) -> callable:  # noqa: N803
     """Creates an epsilon-greedy policy based on a given Q-function and epsilon.
     I.e. create weight vector from which actions get sampled.
     :param Q: tabular state-action lookup function
@@ -73,7 +80,7 @@ def make_tabular_policy(Q: QTable, epsilon: float, nA: int) -> callable:
 
     def policy_fn(observation):
         policy = np.ones(nA) * epsilon / nA
-        best_action = np.random.choice(
+        best_action = rng.choice(
             np.argwhere(  # random choice for tie-breaking only
                 Q[observation] == np.amax(Q[observation])
             ).flatten()
@@ -97,7 +104,7 @@ def get_decay_schedule(
     if type_ == "const":
         return np.array([start_val for _ in range(num_episodes)])
 
-    elif type_ == "log":
+    if type_ == "log":
         return np.hstack(
             [
                 [start_val for _ in range(decay_start)],
@@ -109,7 +116,7 @@ def get_decay_schedule(
             ]
         )
 
-    elif type_ == "linear":
+    if type_ == "linear":
         return np.hstack(
             [
                 [start_val for _ in range(decay_start)],
@@ -117,11 +124,10 @@ def get_decay_schedule(
             ]
         )
 
-    else:
-        raise NotImplementedError
+    raise NotImplementedError
 
 
-def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
+def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):  # noqa: N802, N803
     """Evaluate Q function greediely with epsilon=0
     :returns
         average cumulative reward,
@@ -135,7 +141,7 @@ def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
         expected_reward = np.max(Q[evaluation_state])
         greedy = make_tabular_policy(Q, 0, this_environment.action_space.n)
         while True:  # roll out episode
-            evaluation_action = np.random.choice(
+            evaluation_action = rng.choice(
                 list(range(this_environment.action_space.n)), p=greedy(evaluation_state)
             )
             (
@@ -156,7 +162,11 @@ def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
 
 
 def update(
-    Q: QTable, environment, policy: callable, alpha: float, discount_factor: float
+    Q: QTable,  # noqa: N803
+    environment,
+    policy: callable,
+    alpha: float,
+    discount_factor: float,
 ):
     """Q update
     :param Q: state-action value look-up table
@@ -171,7 +181,7 @@ def update(
     expected_reward = np.max(Q[policy_state])
     terminated, truncated = False, False
     while not (terminated or truncated):  # roll out episode
-        policy_action = np.random.choice(
+        policy_action = rng.choice(
             list(range(environment.action_space.n)), p=policy(policy_state)
         )
         s_, policy_reward, terminated, truncated, _ = environment.step(policy_action)
@@ -195,7 +205,7 @@ EpisodeStats = namedtuple(
 )
 
 
-def zeroOne(stringput):
+def zeroOne(stringput):  # noqa: N802
     """Helper to keep input arguments in [0, 1]"""
     val = float(stringput)
     if val < 0 or val > 1.0:

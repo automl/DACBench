@@ -1,3 +1,4 @@
+"""Example for the action tracking wrapper showing on modcma."""
 from pathlib import Path
 
 from dacbench.agents import RandomAgent

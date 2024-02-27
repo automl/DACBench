@@ -1,3 +1,4 @@
+"""Example for using the reward noise wrapper."""
 from chainerrl import wrappers
 from dacbench.wrappers import RewardNoiseWrapper
 from examples.example_utils import DummyEnv, make_chainer_dqn, train_chainer

@@ -1,3 +1,4 @@
+"""Example for plotting of action."""
 from pathlib import Path
 
 import matplotlib.pyplot as plt

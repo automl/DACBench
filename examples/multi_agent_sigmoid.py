@@ -1,3 +1,4 @@
+"""Example for the multi agent with sigmoid."""
 from dacbench.benchmarks import SigmoidBenchmark
 
 bench = SigmoidBenchmark()

@@ -1,5 +1,6 @@
+"""Coax ppo cmaes example."""
 import coax
-import ConfigSpace as CS
+import ConfigSpace as CS  # noqa: N817
 import gymnasium as gym
 import haiku as hk
 import jax
@@ -14,6 +15,7 @@ name = "ppo"
 
 class WrapDictAction(gym.Wrapper):
     def step(self, action):
+        """Wrap step action."""
         action = {"step_size": action}
         return self.env.step(action)
 
@@ -30,7 +32,7 @@ env = coax.wrappers.TrainMonitor(
 )
 
 
-def func_pi(S, is_training):
+def func_pi(s, is_training):
     shared = hk.Sequential(
         (
             hk.Linear(8),
@@ -57,10 +59,10 @@ def func_pi(S, is_training):
             hk.Reshape(env.action_space.shape),
         )
     )
-    return {"mu": mu(S), "logvar": logvar(S)}
+    return {"mu": mu(s), "logvar": logvar(s)}
 
 
-def func_v(S, is_training):
+def func_v(s, is_training):
     seq = hk.Sequential(
         (
             hk.Linear(8),
@@ -73,7 +75,7 @@ def func_v(S, is_training):
             jnp.ravel,
         )
     )
-    return seq(S)
+    return seq(s)
 
 
 # define function approximators

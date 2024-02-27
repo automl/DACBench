@@ -1,3 +1,4 @@
+"""Example for the state tracking using CMAES."""
 from pathlib import Path
 
 from dacbench.agents import RandomAgent

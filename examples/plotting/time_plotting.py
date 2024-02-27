@@ -1,3 +1,4 @@
+"""Example for plotting of needed average time."""
 from pathlib import Path
 
 import matplotlib.pyplot as plt

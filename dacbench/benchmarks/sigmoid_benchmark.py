@@ -111,7 +111,7 @@ class SigmoidBenchmark(AbstractBenchmark):
                 else:
                     raise Exception(
                         f'The given environment type "{self.config["env_type"]}" does'
-                        f' not support the chosen action_space'
+                        f" not support the chosen action_space"
                         f' {self.config["action_space"]}.'
                         f' The action space has to be either of type "Box"'
                         f' for continuous actions or "Discrete".'

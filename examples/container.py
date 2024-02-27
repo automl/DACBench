@@ -1,3 +1,4 @@
+"""Container Example."""
 from pathlib import Path
 
 # in order to run this we need to build the container first by running
