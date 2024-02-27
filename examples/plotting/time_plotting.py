@@ -1,20 +1,19 @@
 from pathlib import Path
+
+import matplotlib.pyplot as plt
 import pandas as pd
 from dacbench.logger import load_logs, log2dataframe
-from dacbench.plotting import plot_step_time, plot_episode_time
-import matplotlib.pyplot as plt
+from dacbench.plotting import plot_episode_time, plot_step_time
 
 
 def step_time_example(data):
-    """
-    Plot time spent per step on average and split by seed
+    """Plot time spent per step on average and split by seed
 
     Parameters
     ----------
     data : pd.DataFrame
         The non-wide data frame resulting from loading the logging results from EpisodeTimeTracker
     """
-
     grid = plot_step_time(data, y_label="Step Duration [s]")
     grid.savefig("output/sigmoid_step_duration.pdf")
     plt.show()
@@ -25,8 +24,7 @@ def step_time_example(data):
 
 
 def episode_time_example(data):
-    """
-    Plot time spent per episode
+    """Plot time spent per episode
 
     Parameters
     ----------
@@ -42,8 +40,7 @@ def episode_time_example(data):
 
 
 def step_time_interval_example(data: pd.DataFrame, interval: int = 10):
-    """
-    Plot mean time spent on steps in a given interval
+    """Plot mean time spent on steps in a given interval
 
     Parameters
     ----------
@@ -52,7 +49,6 @@ def step_time_interval_example(data: pd.DataFrame, interval: int = 10):
     interval : int
         Number of steps to average over
     """
-
     grid = plot_step_time(data, interval, title="Mean Step Duration")
     grid.savefig("output/sigmoid_step_duration.pdf")
     plt.show()

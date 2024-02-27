@@ -1,4 +1,4 @@
-"""Sigmoid environment from:
+"""Sigmoid environment from following paper.
 
 "Dynamic Algorithm Configuration:Foundation of a New Meta-Algorithmic Framework"
 by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
@@ -84,7 +84,11 @@ class SigmoidEnv(AbstractMADACEnv):
         r = [
             1 - np.abs(self._sig(self.c_step, slope, shift) - (act / (max_act - 1)))
             for slope, shift, act, max_act in zip(
-                self.slopes, self.shifts, self.last_action, self.action_space.nvec, strict=False
+                self.slopes,
+                self.shifts,
+                self.last_action,
+                self.action_space.nvec,
+                strict=False,
             )
         ]
         r = np.prod(r)
@@ -174,8 +178,8 @@ class ContinuousStateSigmoidEnv(SigmoidEnv):
 
         """
         self.last_action = action
-        # The reward measures how wrong the choice was so we can take this error to determine how far we travel along
-        # the x-axis instead of always advancing + 1
+        # The reward measures how wrong the choice was so we can take this error to
+        # determine how far we travel along the x-axis instead of always advancing + 1
         r = self.get_reward(self)
 
         # magic constants but such that the max step is ~1 and the min step is ~0.25
@@ -186,8 +190,8 @@ class ContinuousStateSigmoidEnv(SigmoidEnv):
         else:
             self.done = False
 
-        # self.c_step is used in get_next_state to show how much distance along the x-axis is left to cover
-        # Thus we get a continuous state this way.
+        # self.c_step is used in get_next_state to show how much distance along
+        # the x-axis is left to cover. Thus we get a continuous state this way.
         next_state = self.get_state(self)
         self._prev_state = next_state
         return next_state, r, self.done, {}
@@ -208,7 +212,8 @@ class ContinuousSigmoidEnv(SigmoidEnv):
         super().__init__(config)
 
     def step(self, action: np.ndarray):
-        """Execute environment step. !!NOTE!! The action here is a list of floats and not a single number !!NOTE!!
+        """Execute environment step.
+        !!NOTE!! The action here is a list of floats and not a single number !!NOTE!!
 
         Parameters
         ----------
@@ -222,7 +227,8 @@ class ContinuousSigmoidEnv(SigmoidEnv):
 
         """
         self.last_action = action
-        # The reward measures how wrong the choice was so we can take this error to determine how far we travel along
+        # The reward measures how wrong the choice was so we can take this error
+        # to determine how far we travel along
         # the x-axis instead of always advancing + 1
         r = self.get_reward(self)
 
@@ -234,8 +240,8 @@ class ContinuousSigmoidEnv(SigmoidEnv):
         else:
             self.done = False
 
-        # self.c_step is used in get_next_state to show how much distance along the x-axis is left to cover
-        # Thus we get a continuous state this way.
+        # self.c_step is used in get_next_state to show how much distance along
+        # the x-axis is left to cover. Thus we get a continuous state this way.
         next_state = self.get_state(self)
         self._prev_state = next_state
         return next_state, r, self.done, {}

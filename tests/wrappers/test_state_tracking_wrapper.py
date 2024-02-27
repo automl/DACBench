@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import tempfile
 import unittest
 from pathlib import Path
 
 import gymnasium as gym
 import numpy as np
-
+import pytest
 from dacbench.agents import StaticAgent
 from dacbench.benchmarks import LubyBenchmark
 from dacbench.logger import Logger, load_logs, log2dataframe
@@ -49,8 +51,8 @@ class TestStateTrackingWrapper(unittest.TestCase):
         ]
 
         for state_column in sate_columns:
-            self.assertTrue(state_column in dataframe.columns)
-            self.assertTrue((~dataframe[state_column].isna()).all())
+            assert state_column in dataframe.columns
+            assert (~dataframe[state_column].isna()).all()
 
         temp_dir.cleanup()
 
@@ -58,16 +60,16 @@ class TestStateTrackingWrapper(unittest.TestCase):
         bench = LubyBenchmark()
         env = bench.get_environment()
         wrapped = StateTrackingWrapper(env)
-        self.assertTrue(len(wrapped.overall_states) == 0)
-        self.assertTrue(wrapped.state_interval is None)
+        assert len(wrapped.overall_states) == 0
+        assert wrapped.state_interval is None
         wrapped.instance = [0]
-        self.assertTrue(wrapped.instance[0] == 0)
+        assert wrapped.instance[0] == 0
 
         wrapped2 = StateTrackingWrapper(env, 10)
-        self.assertTrue(len(wrapped2.overall_states) == 0)
-        self.assertTrue(wrapped2.state_interval == 10)
-        self.assertTrue(len(wrapped2.state_intervals) == 0)
-        self.assertTrue(len(wrapped2.current_states) == 0)
+        assert len(wrapped2.overall_states) == 0
+        assert wrapped2.state_interval == 10
+        assert len(wrapped2.state_intervals) == 0
+        assert len(wrapped2.current_states) == 0
 
     def test_step_reset(self):
         bench = LubyBenchmark()
@@ -75,24 +77,24 @@ class TestStateTrackingWrapper(unittest.TestCase):
         wrapped = StateTrackingWrapper(env, 2)
 
         state, info = wrapped.reset()
-        self.assertTrue(issubclass(type(info), dict))
-        self.assertTrue(len(state) > 1)
-        self.assertTrue(len(wrapped.overall_states) == 1)
+        assert issubclass(type(info), dict)
+        assert len(state) > 1
+        assert len(wrapped.overall_states) == 1
 
         state, reward, terminated, truncated, _ = wrapped.step(1)
-        self.assertTrue(len(state) > 1)
-        self.assertTrue(reward <= 0)
-        self.assertFalse(terminated)
-        self.assertFalse(truncated)
+        assert len(state) > 1
+        assert reward <= 0
+        assert not terminated
+        assert not truncated
 
-        self.assertTrue(len(wrapped.overall_states) == 2)
-        self.assertTrue(len(wrapped.current_states) == 2)
-        self.assertTrue(len(wrapped.state_intervals) == 0)
+        assert len(wrapped.overall_states) == 2
+        assert len(wrapped.current_states) == 2
+        assert len(wrapped.state_intervals) == 0
 
         state, _ = wrapped.reset()
-        self.assertTrue(len(wrapped.overall_states) == 3)
-        self.assertTrue(len(wrapped.current_states) == 1)
-        self.assertTrue(len(wrapped.state_intervals) == 1)
+        assert len(wrapped.overall_states) == 3
+        assert len(wrapped.current_states) == 1
+        assert len(wrapped.state_intervals) == 1
 
     def test_get_states(self):
         bench = LubyBenchmark()
@@ -108,14 +110,14 @@ class TestStateTrackingWrapper(unittest.TestCase):
 
         overall_states_only = wrapped.get_states()
         overall_states, intervals = wrapped2.get_states()
-        self.assertTrue(np.array_equal(overall_states, overall_states_only))
-        self.assertTrue(len(overall_states_only) == 5)
-        self.assertTrue(len(overall_states_only[4]) == 6)
+        assert np.array_equal(overall_states, overall_states_only)
+        assert len(overall_states_only) == 5
+        assert len(overall_states_only[4]) == 6
 
-        self.assertTrue(len(intervals) == 3)
-        self.assertTrue(len(intervals[0]) == 2)
-        self.assertTrue(len(intervals[1]) == 2)
-        self.assertTrue(len(intervals[2]) == 1)
+        assert len(intervals) == 3
+        assert len(intervals[0]) == 2
+        assert len(intervals[1]) == 2
+        assert len(intervals[2]) == 1
 
     def test_rendering(self):
         bench = LubyBenchmark()
@@ -133,7 +135,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
         env = bench.get_environment()
         wrapped = StateTrackingWrapper(env)
         wrapped.reset()
-        with self.assertRaises(NotImplementedError):
+        with pytest.raises(NotImplementedError):
             wrapped.render_state_tracking()
 
         def dummy2(_):
@@ -149,7 +151,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
         wrapped.step(1)
         wrapped.step(1)
         img = wrapped.render_state_tracking()
-        self.assertTrue(img.shape[-1] == 3)
+        assert img.shape[-1] == 3
 
         bench = LubyBenchmark()
         env = bench.get_environment()
@@ -158,7 +160,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
         wrapped.step(1)
         wrapped.step(1)
         img = wrapped.render_state_tracking()
-        self.assertTrue(img.shape[-1] == 3)
+        assert img.shape[-1] == 3
 
         class discrete_obs_env:
             def __init__(self):
@@ -178,7 +180,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
         wrapped.reset()
         wrapped.step(1)
         img = wrapped.render_state_tracking()
-        self.assertTrue(img.shape[-1] == 3)
+        assert img.shape[-1] == 3
 
         class multi_discrete_obs_env:
             def __init__(self):
@@ -198,7 +200,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
         wrapped.reset()
         wrapped.step(1)
         img = wrapped.render_state_tracking()
-        self.assertTrue(img.shape[-1] == 3)
+        assert img.shape[-1] == 3
 
         class multi_binary_obs_env:
             def __init__(self):
@@ -218,4 +220,4 @@ class TestStateTrackingWrapper(unittest.TestCase):
         wrapped.reset()
         wrapped.step(1)
         img = wrapped.render_state_tracking()
-        self.assertTrue(img.shape[-1] == 3)
+        assert img.shape[-1] == 3

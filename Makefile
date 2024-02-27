@@ -38,7 +38,7 @@ install-dev:
 
 # pydocstyle does not have easy ignore rules, instead, we include as they are covered
 check:
-	$(RUFF) check --fix dacbench 
+	$(RUFF) check --fix dacbench
 	$(RUFF) check dacbench || :
 
 pre-commit:

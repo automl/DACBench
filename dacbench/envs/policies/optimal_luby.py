@@ -1,3 +1,4 @@
+"""Optimal policy for luby."""
 from __future__ import annotations
 
 
@@ -13,4 +14,5 @@ def luby_gen(i):
 
 
 def get_optimum(env, state):
+    """Get the optimal action."""
     return env._next_goal

@@ -1,11 +1,12 @@
 """Geometric environment.
 Original environment authors: Rasmus von Glahn.
 """
+
 from __future__ import annotations
 
 import bisect
 import math
-import os
+from pathlib import Path
 
 import numpy as np
 import seaborn as sns
@@ -83,12 +84,14 @@ class GeometricEnv(AbstractEnv):
         instance : List, optional
             instance with information about function config.
         vector_action : bool, optional
-            if True return multidim actions else return onedimensional action, by default True
+            if True return multidim actions else return onedimensional action,
+            by default True
 
         Returns:
         -------
         List[np.array]
-            List with entry for each timestep that holds all optimal values in an array or as int
+            List with entry for each timestep that holds all optimal values in an array
+            or as int
         """
         if not instance:
             instance = self.instance
@@ -183,7 +186,8 @@ class GeometricEnv(AbstractEnv):
         return self.get_state(self), {}
 
     def get_default_reward(self, _) -> float:
-        """Calculate euclidean distance between action vector and real position of Curve.
+        """Calculate euclidean distance between action vector and
+        real position of Curve.
 
         Parameters
         ----------
@@ -264,7 +268,7 @@ class GeometricEnv(AbstractEnv):
             axes[idx].tick_params(axis="both", which="major", labelsize=24)
             axes[idx].set_yticks(np.arange(-1, 1.1, 2 / self.action_vals[dim]))
             axes[idx].set_title(title, size=32)
-            axes[idx].plot(coordinates[dim], label="Function", marker="o", linewidth=3)[
+            axes[idx].plot(coordinates[dim], label="Function", marker="o", linewidth=3)[  # noqa: B018
                 0
             ].axes
             axes[idx].xaxis.grid(False)
@@ -282,7 +286,7 @@ class GeometricEnv(AbstractEnv):
             """
 
         fig_title = f"GeoBench-Dimensions{len(dimensions)}"
-        fig.savefig(os.path.join(absolute_path, fig_title + ".jpg"))
+        fig.savefig(Path(absolute_path) / fig_title + ".jpg")
 
     def render_3d_dimensions(self, dimensions: list, absolute_path: str):
         """Plot 2 Dimensions in 3D space.
@@ -308,12 +312,12 @@ class GeometricEnv(AbstractEnv):
 
         ax.plot3D(x, y, z, "blue")
         ax.view_init()
-        fig.savefig(os.path.join(absolute_path, "3D.jpg"))
+        fig.savefig(Path(absolute_path) / "3D.jpg")
 
         ax.set_yticklabels([])
         ax.set_yticks([])
         ax.view_init(elev=0, azim=-90)
-        fig.savefig(os.path.join(absolute_path, "3D-90side.jpg"))
+        fig.savefig(Path(absolute_path) / "3D-90side.jpg")
 
     def _pre_reward(self) -> tuple[np.ndarray, list]:
         """Prepare actions and coordinates for reward calculation.
@@ -338,6 +342,8 @@ class GeometricEnv(AbstractEnv):
 
 
 class Functions:
+    """Functions class."""
+
     def __init__(
         self,
         n_steps: int,
@@ -348,6 +354,7 @@ class Functions:
         correlation_depth: int,
         derivative_interval: int,
     ) -> None:
+        """Init the class."""
         self.instance = None
         self.instance_idx = None
 
@@ -372,7 +379,8 @@ class Functions:
 
     def get_coordinates(self, instance: list | None = None) -> list[np.array]:
         """Calculates coordinates for instance over all time_steps.
-        The values will change if correlation is applied and not optimal actions are taken.
+        The values will change if correlation is applied and not optimal
+        actions are taken.
 
         Parameters
         ----------
@@ -555,7 +563,8 @@ class Functions:
     def _add_correlation(self, value_array: np.ndarray, time_step: int):
         """Adds correlation between dimensions but clips at -1 and 1.
         Correlation table holds numbers between -1 and 1.
-        e.g. correlation_table[0][2] = 0.5 if dimension 1 changes dimension 3 changes about 50% of dimension one.
+        e.g. correlation_table[0][2] = 0.5 if dimension 1 changes dimension 3 changes
+        about 50% of dimension one.
 
         Parameters
         ----------
@@ -607,8 +616,7 @@ class Functions:
         """Logarithmic function."""
         if t != 0:
             return a * np.log(t)
-        else:
-            return 1000
+        return 1000
 
     def _constant(self, c: float):
         """Constant function."""

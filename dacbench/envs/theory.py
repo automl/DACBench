@@ -1,3 +1,5 @@
+"""Theory Environment."""
+
 from __future__ import annotations
 
 import logging
@@ -14,14 +16,18 @@ from dacbench import AbstractEnv
 class BinaryProblem:
     """An abstract class for an individual in binary representation."""
 
-    def __init__(self, n, rng=np.random.default_rng()):
+    def __init__(self, n, rng=None):
         """Init problem."""
+        if rng is None:
+            rng = np.random.default_rng()
         self.data = rng.choice([True, False], size=n)
         self.n = n
         self.fitness = self.eval()
 
-    def initialise_with_fixed_number_of_bits(self, k, rng=np.random.default_rng()):
+    def initialise_with_fixed_number_of_bits(self, k, rng=None):
         """Init with given number of bits."""
+        if rng is None:
+            rng = np.random.default_rng()
         nbits = self.data.sum()
         if nbits < k:
             ids = rng.choice(
@@ -92,7 +98,8 @@ class BinaryProblem:
         return child
 
     def combine(self, xprime, locs_xprime):
-        """Combine (crossover) self and xprime by taking xprime's bits at locs_xprime and self's bits at other positions.
+        """Combine (crossover) self and xprime by taking xprime's bits at locs_xprime
+        and self's bits at other positions.
 
         Parameters
         ----------
@@ -113,7 +120,7 @@ class BinaryProblem:
         child.eval()
         return child
 
-    def mutate(self, p, n_childs, rng=np.random.default_rng()):
+    def mutate(self, p, n_childs, rng=None):
         """Draw l ~ binomial(n, p), l>0.
 
         Generate n_childs children by flipping exactly l bits
@@ -123,6 +130,8 @@ class BinaryProblem:
             the best child (maximum fitness), its fitness and number of evaluations used
 
         """
+        if rng is None:
+            rng = np.random.default_rng()
         assert p >= 0
 
         if p == 0:
@@ -145,7 +154,7 @@ class BinaryProblem:
 
         return best_child, best_child.fitness, n_childs
 
-    def mutate_rls(self, length, rng=np.random.default_rng()):
+    def mutate_rls(self, length, rng=None):
         """Generate a child by flipping exactly l bits.
 
         Returns:
@@ -153,6 +162,8 @@ class BinaryProblem:
             child, its fitness
 
         """
+        if rng is None:
+            rng = np.random.default_rng()
         assert length >= 0
 
         if length == 0:
@@ -170,11 +181,12 @@ class BinaryProblem:
         n_childs,
         include_xprime=True,
         count_different_inds_only=True,
-        rng=np.random.default_rng(),
+        rng=None,
     ):
         """Crossover operation in population.
 
-        Crossover operator: for each bit, taking value from x with probability p and from self with probability 1-p
+        Crossover operator: for each bit, taking value from x with probability p
+        and from self with probability 1-p
 
         Parameters
         ----------
@@ -192,13 +204,14 @@ class BinaryProblem:
             random number generator
 
         """
+        if rng is None:
+            rng = np.random.default_rng()
         assert p <= 1
 
         if p == 0:
             if include_xprime:
                 return xprime, xprime.fitness, 0
-            else:
-                return self, self.fitness, 0
+            return self, self.fitness, 0
 
         best_obj = xprime.fitness if include_xprime else -1
         best_locs = None
@@ -211,9 +224,13 @@ class BinaryProblem:
             locs_x[locs_xprime] = False
             obj = self.get_fitness_after_crossover(xprime, locs_x, locs_xprime)
 
-            if obj not in (self.fitness, xprime.fitness) or (
-                not np.array_equal(xprime.data[locs_xprime], self.data[locs_xprime])
-            ) and (not np.array_equal(self.data[locs_x], xprime.data[locs_x])):
+            if (
+                obj not in (self.fitness, xprime.fitness)
+                or (
+                    not np.array_equal(xprime.data[locs_xprime], self.data[locs_xprime])
+                )
+                and (not np.array_equal(self.data[locs_x], xprime.data[locs_x]))
+            ):
                 n_evals += 1
 
             if obj > best_obj:
@@ -234,14 +251,16 @@ class LeadingOne(BinaryProblem):
     The aim is to maximise the number of leading (and consecutive) 1 bits in the string
     """
 
-    def __init__(self, n, rng=np.random.default_rng(), initObj=None):
+    def __init__(self, n, rng=None, initobj=None):
         """Make individual."""
-        if initObj is None:
+        if rng is None:
+            rng = np.random.default_rng()
+        if initobj is None:
             super().__init__(n=n, rng=rng)
         else:
             self.data = rng.choice([True, False], size=n)
-            self.data[: int(initObj)] = True
-            self.data[int(initObj)] = False
+            self.data[: int(initobj)] = True
+            self.data[int(initobj)] = False
             self.n = n
             self.fitness = self.eval()
 
@@ -267,15 +286,14 @@ class LeadingOne(BinaryProblem):
         min_loc = locs.min()
         if min_loc < self.fitness:
             return min_loc
-        elif min_loc > self.fitness:
+        if min_loc > self.fitness:
             return self.fitness
-        else:
-            old_fitness = self.fitness
-            self.data[locs] = ~self.data[locs]
-            new_fitness = self.eval()
-            self.data[locs] = ~self.data[locs]
-            self.fitness = old_fitness
-            return new_fitness
+        old_fitness = self.fitness
+        self.data[locs] = ~self.data[locs]
+        new_fitness = self.eval()
+        self.data[locs] = ~self.data[locs]
+        self.fitness = old_fitness
+        return new_fitness
 
     def get_fitness_after_crossover(self, xprime, locs_x, locs_xprime):
         """Return fitness after crossover."""
@@ -291,7 +309,8 @@ HISTORY_LENGTH = 5
 class TheoryEnv(AbstractEnv):
     """Environment for RLS with step size.
 
-    Current assumption: we only consider (1+1)-RLS, so there's only one parameter to tune (r)
+    Current assumption: we only consider (1+1)-RLS,
+    so there's only one parameter to tune (r)
     """
 
     def __init__(self, config, test_env=False) -> None:
@@ -346,14 +365,16 @@ class TheoryEnv(AbstractEnv):
                 )
             elif (
                 "_{t-" in var_name
-            ):  # TODO: this implementation only allow accessing history of r, but not delta_f(x), optimal_k, etc
+            ):  # TODO: this implementation only allow accessing history of r,
+                # but not delta_f(x), optimal_k, etc
                 k = int(
                     var_name.split("_{t-")[1][:-1]
                 )  # get the number in _{t-<number>}
                 name = var_name.split("_{t-")[0]  # get the variable name (r, f(x), etc)
                 self.state_functions.append(
-                    lambda his="history_" + name: vars(self)[his][-(k + 1)]
-                )  # the last element is the value at the current time step, so we have to go one step back to access the history
+                    lambda k=k, his="history_" + name: vars(self)[his][-(k + 1)]
+                )  # the last element is the value at the current time step,
+                # so we have to go one step back to access the history
             elif var_name == "f(x)":
                 self.state_functions.append(lambda: self.history_fx[-1])
             elif var_name == "delta_f(x)":
@@ -378,7 +399,7 @@ class TheoryEnv(AbstractEnv):
         if "outdir" in config:
             self.outdir = config.outdir + "/" + str(uuid.uuid4())
 
-    def get_obs_domain_from_name(var_name):
+    def get_obs_domain_from_name(self, var_name):
         """Get default lower and upperbound of a observation variable based on its name.
 
         The observation space will then be created
@@ -474,7 +495,8 @@ class TheoryEnv(AbstractEnv):
         if r < 1 or r > self.n:
             self.logger.info(f"WARNING: r={r} is out of bound")
 
-            # if we're in the training phase, we return a large negative reward and stop the episode
+            # if we're in the training phase, we return a large negative reward
+            # and stop the episode
             if self.test_env is False:
                 terminated = True
                 n_evals = 0
@@ -529,19 +551,19 @@ class TheoryEnv(AbstractEnv):
         if terminated or truncated:
             msg = "Env " + self.env_type + ". " if hasattr(self, "env_type") else ""
             msg += (
-                "Episode done: n=%d; obj=%d; init_obj=%d; evals=%d; max_evals=%d; steps=%d; r_min=%.1f; r_max=%.1f; r_mean=%.1f; R=%.4f"
-                % (
-                    self.n,
-                    self.x.fitness,
-                    self.init_obj,
-                    self.total_evals,
-                    self.max_evals,
-                    self.c_step,
-                    min(self.log_r),
-                    max(self.log_r),
-                    sum(self.log_r) / len(self.log_r),
-                    sum(self.log_reward),
-                )
+                "Episode done: n=%d; obj=%d; init_obj=%d; evals=%d; max_evals=%d; "
+                "steps=%d; r_min=%.1f; r_max=%.1f; r_mean=%.1f; R=%.4f"
+            ) % (
+                self.n,
+                self.x.fitness,
+                self.init_obj,
+                self.total_evals,
+                self.max_evals,
+                self.c_step,
+                min(self.log_r),
+                max(self.log_r),
+                sum(self.log_r) / len(self.log_r),
+                sum(self.log_reward),
             )
             # self.logger.info(msg)
             returned_info["msg"] = msg
@@ -590,9 +612,9 @@ class TheoryEnvDiscrete(TheoryEnv):
             self.action_space, gym.spaces.Discrete
         ), "Error: action space must be discrete"
         assert self.action_space.n == len(config["action_choices"]), (
-            "Error: action space's size (%d) must be equal to the len(action_choices) (%d)"
-            % (self.action_space.n, len(config["action_choices"]))
-        )
+            "Error: action space's size (%d) must be equal "
+            "to the len(action_choices) (%d)"
+        ) % (self.action_space.n, len(config["action_choices"]))
         self.action_choices = config["action_choices"]
 
     def step(self, action):

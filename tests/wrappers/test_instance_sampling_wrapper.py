@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import unittest
 
 import numpy as np
-from sklearn.metrics import mutual_info_score
-
+import pytest
 from dacbench.benchmarks import LubyBenchmark
 from dacbench.wrappers import InstanceSamplingWrapper
+from sklearn.metrics import mutual_info_score
 
 
 class TestInstanceSamplingWrapper(unittest.TestCase):
@@ -13,14 +15,14 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
         bench.config.instance_update_func = "none"
         env = bench.get_environment()
 
-        with self.assertRaises(Exception):
+        with pytest.raises(Exception):
             wrapped = InstanceSamplingWrapper(env)
 
         def sample():
             return [0, 0]
 
         wrapped = InstanceSamplingWrapper(env, sampling_function=sample)
-        self.assertFalse(wrapped.sampling_function is None)
+        assert wrapped.sampling_function is not None
 
     def test_reset(self):
         bench = LubyBenchmark()
@@ -32,13 +34,11 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
 
         wrapped = InstanceSamplingWrapper(env, sampling_function=sample)
 
-        self.assertFalse(np.array_equal(wrapped.instance, sample()))
-        self.assertFalse(
-            np.array_equal(list(wrapped.instance_set.values())[0], sample())
-        )
+        assert not np.array_equal(wrapped.instance, sample())
+        assert not np.array_equal(next(iter(wrapped.instance_set.values())), sample())
 
         wrapped.reset()
-        self.assertTrue(np.array_equal(wrapped.instance, sample()))
+        assert np.array_equal(wrapped.instance, sample())
 
     def test_fit(self):
         bench = LubyBenchmark()
@@ -59,7 +59,7 @@ class TestInstanceSamplingWrapper(unittest.TestCase):
             np.array(list(instances.values()))[:, 1], np.array(samples)[:, 1]
         )
 
-        self.assertTrue(mi1 > 0.99)
-        self.assertTrue(mi1 != 1)
-        self.assertTrue(mi2 > 0.99)
-        self.assertTrue(mi2 != 1)
+        assert mi1 > 0.99
+        assert mi1 != 1
+        assert mi2 > 0.99
+        assert mi2 != 1

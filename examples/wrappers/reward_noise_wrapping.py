@@ -1,6 +1,6 @@
 from chainerrl import wrappers
-from examples.example_utils import DummyEnv, train_chainer, make_chainer_dqn
 from dacbench.wrappers import RewardNoiseWrapper
+from examples.example_utils import DummyEnv, make_chainer_dqn, train_chainer
 
 # We use a dummy env with constant reward of 1 to demontrate the different noise values
 env = DummyEnv()
@@ -27,7 +27,7 @@ for noise_dist in ["standard_normal", "standard_exponential"]:
 print("Other distributions with added arguments")
 print("\n")
 for noise_dist, args in zip(
-    ["normal", "uniform", "logistic"], [[0, 0.1], [-1, 1], [0, 2]]
+    ["normal", "uniform", "logistic"], [[0, 0.1], [-1, 1], [0, 2]], strict=False
 ):
     print(f"Current noise distribution: {noise_dist}")
     print("Base reward is 0")

@@ -1,5 +1,4 @@
-"""
-Code adapted from
+"""Code adapted from
 "Dynamic Algorithm Configuration:Foundation of a New Meta-Algorithmic Framework"
 by A. Biedenkapp and H. F. Bozkurt and T. Eimer and F. Hutter and M. Lindauer.
 Original environment authors: André Biedenkapp, H. Furkan Bozkurt
@@ -8,13 +7,12 @@ Original environment authors: André Biedenkapp, H. Furkan Bozkurt
 import sys
 
 import numpy as np
-
 from dacbench.benchmarks import LubyBenchmark
 
 # Make Luby environment
 from examples.example_utils import (
-    QTable,
     EpisodeStats,
+    QTable,
     get_decay_schedule,
     make_tabular_policy,
     update,
@@ -35,9 +33,7 @@ def q_learning(
     number_of_evaluations: int = 1,
     test_environment=None,
 ):
-    """
-    Q-Learning algorithm
-    """
+    """Q-Learning algorithm"""
     assert 0 <= discount_factor <= 1, "Lambda should be in [0, 1]"
     assert 0 <= epsilon <= 1, "epsilon has to be in [0, 1]"
     assert alpha > 0, "Learning rate has to be positive"
@@ -69,18 +65,16 @@ def q_learning(
         # Print out which episode we're on, useful for debugging.
         if (i_episode + 1) % 100 == 0:
             if verbose:
-                print("\rEpisode {:>5d}/{}.".format(i_episode + 1, num_episodes))
+                print(f"\rEpisode {i_episode + 1:>5d}/{num_episodes}.")
             else:
-                print(
-                    "\rEpisode {:>5d}/{}.".format(i_episode + 1, num_episodes), end=""
-                )
+                print(f"\rEpisode {i_episode + 1:>5d}/{num_episodes}.", end="")
                 sys.stdout.flush()
         Q, rs, exp_rew, ep_len = update(Q, environment, policy, alpha, discount_factor)
         train_stats.episode_rewards[i_episode] = rs
         train_stats.expected_rewards[i_episode] = exp_rew
         train_stats.episode_lengths[i_episode] = ep_len
     if not verbose:
-        print("\rEpisode {:>5d}/{}.".format(i_episode + 1, num_episodes))
+        print(f"\rEpisode {i_episode + 1:>5d}/{num_episodes}.")
 
     return Q, (test_stats, train_stats)
 

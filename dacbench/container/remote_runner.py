@@ -47,7 +47,7 @@ sys.excepthook = Pyro4.util.excepthook
 # Number of tries to connect to server
 MAX_TRIES = 5
 
-SOCKET_PATH = Path("/tmp/dacbench/sockets")
+SOCKET_PATH = Path("/tmp/dacbench/sockets")  # noqa: S108
 
 
 @Pyro4.expose
@@ -100,19 +100,23 @@ class RemoteRunner:
         container_name : str
             name for container
         container_source : Optional[str]
-            Path to the container. Either local path or url to a hosting platform, e.g. singularity hub.
+            Path to the container. Either local path or url to a hosting platform,
+            e.g. singularity hub.
         container_tag : str
-            Singularity containers are specified by an address as well as a container tag. We use the tag as a version
-            number. By default the tag is set to `latest`, which then pulls the latest container from the container
-            source. The tag-versioning allows the users to rerun an experiment, which was performed with an older
-            container version. Take a look in the container_source to find the right tag to use.
+            Singularity containers are specified by an address as well as a
+            container tag. We use the tag as a version number. By default the tag is
+            set to `latest`, which then pulls the latest container from the container
+            source. The tag-versioning allows the users to rerun an experiment, which
+            was performed with an older container version. Take a look in the
+            container_source to find the right tag to use.
         bind_str : Optional[str]
             Defaults to ''. You can bind further directories into the container.
             This string have the form src[:dest[:opts]].
             For more information, see https://sylabs.io/guides/3.5/user-guide/bind_paths_and_mounts.html
         env_str : Optional[str]
-            Defaults to ''. Sometimes you want to pass a parameter to your container. You can do this by setting some
-            environmental variables. The list should follow the form VAR1=VALUE1,VAR2=VALUE2,..
+            Defaults to ''. Sometimes you want to pass a parameter to your container.
+            You can do this by setting some environmental variables.
+            The list should follow the form VAR1=VALUE1,VAR2=VALUE2,..
             For more information, see
             https://sylabs.io/guides/3.5/user-guide/environment_and_metadata.html#environment-overview
         gpu : bool
@@ -122,16 +126,18 @@ class RemoteRunner:
             1) Start the benchmark on a random generated socket id.
             2) Create a proxy connection to the container via this socket id.
 
-            When no `socket_id` is given, a new container is started. The `socket_id` (address) of this containers is
+            When no `socket_id` is given, a new container is started.
+            The `socket_id` (address) of this containers is
             stored in the class attribute Benchmark.socket_id
 
-            When a `socket_id` is given, instead of creating a new container, connect only to the container that is
-            reachable at `socket_id`. Make sure that a container is already running with the address `socket_id`.
+            When a `socket_id` is given, instead of creating a new container,
+            connect only to the container that is reachable at `socket_id`.
+            Make sure that a container is already running with the address `socket_id`.
 
         """
         logger.info(f"Logging level: {logger.level}")
-        # connect to already running server if a socket_id is given. In this case, skip the init of
-        # the benchmark
+        # connect to already running server if a socket_id is given.
+        # In this case, skip the init of the benchmark
         self.__proxy_only = socket_id is not None
         self.__socket_path = SOCKET_PATH
 
@@ -183,7 +189,7 @@ class RemoteRunner:
 
         # todo add mechanism to to retry if failing
         self.daemon_process = subprocess.Popen(
-            [
+            [  # noqa: S603, S607
                 "singularity",
                 "run",
                 "-e",
@@ -257,7 +263,8 @@ class RemoteRunner:
         container_tag: str,
     ):
         """Load benchmark from recipe."""
-        # see for implementation guideline hpobench  hpobench/container/client_abstract_benchmark.py
+        # see for implementation guideline hpobench
+        # hpobench/container/client_abstract_benchmark.py
         # in the end self.container_source should contain the path to the file to run
 
         logger.warning("Only container source is used")
@@ -301,7 +308,10 @@ if __name__ == "__main__":
         required=False,
         default=None,
         dest="socket",
-        help="The path to a exiting socket to run the name server on. If none a new socket unixsocket is created.",
+        help=(
+            "The path to a exiting socket to run the name server on. "
+            "If none a new socket unixsocket is created."
+        ),
     )
 
     args = parser.parse_args()

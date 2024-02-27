@@ -1,3 +1,4 @@
+"""Wrapper for action frequency."""
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
@@ -13,7 +14,8 @@ current_palette = list(sb.color_palette())
 class ActionFrequencyWrapper(Wrapper):
     """Wrapper to action frequency.
 
-    Includes interval mode that returns frequencies in lists of len(interval) instead of one long list.
+    Includes interval mode that returns frequencies in lists of len(interval)
+    instead of one long list.
     """
 
     def __init__(self, env, action_interval=None, logger=None):
@@ -91,8 +93,7 @@ class ActionFrequencyWrapper(Wrapper):
         ]:
             return object.__getattribute__(self, name)
 
-        else:
-            return getattr(self.env, name)
+        return getattr(self.env, name)
 
     def step(self, action):
         """Execute environment step and record state.
@@ -134,8 +135,7 @@ class ActionFrequencyWrapper(Wrapper):
             complete_intervals = [*self.action_intervals, self.current_actions]
             return self.overall_actions, complete_intervals
 
-        else:
-            return self.overall_actions
+        return self.overall_actions
 
     def render_action_tracking(self):
         """Render action progression.
@@ -147,7 +147,7 @@ class ActionFrequencyWrapper(Wrapper):
 
         """
 
-        def plot_single(ax=None, index=None, title=None, x=False, y=False):
+        def plot_single(ax=None, index=None, x=False, y=False):
             if ax is None:
                 plt.xlabel("Step")
                 plt.ylabel("Action value")
@@ -204,6 +204,7 @@ class ActionFrequencyWrapper(Wrapper):
                     ax.legend(loc="upper left")
             return p, p2
 
+        action_size_border = 5
         if self.action_space_type == spaces.Discrete:
             figure = plt.figure(figsize=(12, 6))
             canvas = FigureCanvas(figure)
@@ -212,8 +213,10 @@ class ActionFrequencyWrapper(Wrapper):
         elif self.action_space_type in (spaces.Dict, spaces.Tuple):
             raise NotImplementedError
 
-        elif (
-            self.action_space_type in (spaces.MultiDiscrete, spaces.MultiBinary, spaces.Box)
+        elif self.action_space_type in (
+            spaces.MultiDiscrete,
+            spaces.MultiBinary,
+            spaces.Box,
         ):
             if self.action_space_type == spaces.MultiDiscrete:
                 action_size = len(self.env.action_space.nvec)
@@ -226,7 +229,7 @@ class ActionFrequencyWrapper(Wrapper):
                 figure = plt.figure(figsize=(12, 6))
                 canvas = FigureCanvas(figure)
                 p, p2 = plot_single()
-            elif action_size < 5:
+            elif action_size < action_size_border:
                 dim = 1
                 figure, axarr = plt.subplots(action_size)
             else:
@@ -241,7 +244,7 @@ class ActionFrequencyWrapper(Wrapper):
                 x = False
                 if i % dim == dim - 1:
                     x = True
-                if action_size < 5:
+                if action_size < action_size_border:
                     p, p2 = plot_single(axarr[i], i, y=True, x=x)
                 else:
                     y = i % action_size // dim == 0

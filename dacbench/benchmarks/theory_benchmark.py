@@ -1,8 +1,10 @@
+"""Theory Benchmark."""
+
 from __future__ import annotations
 
-import os
+from pathlib import Path
 
-import ConfigSpace as CS
+import ConfigSpace as CS  # noqa: N817
 import ConfigSpace.hyperparameters as CSH
 import gymnasium as gym
 import numpy as np
@@ -19,15 +21,22 @@ INFO = {
 }
 
 THEORY_DEFAULTS = {
-    "observation_description": "n, f(x)",  # examples: n, f(x), delta_f(x), optimal_k, k, k_{t-0..4}, f(x)_{t-1}, f(x)_{t-0..4}
+    "observation_description": "n, f(x)",  # examples: n, f(x), delta_f(x), optimal_k,
+    # k, k_{t-0..4}, f(x)_{t-1}, f(x)_{t-0..4}
     "reward_range": [-np.inf, np.inf],  # the true reward range is instance dependent
-    "reward_choice": "imp_minus_evals",  # possible values: see envs/theory.py for more details
-    "cutoff": 1e6,  # if using as a "train" environment, a cutoff of 0.8*n^2 where n is problem size will be used (for more details, please see https://arxiv.org/abs/2202.03259)
-    # see get_environment function of TheoryBenchmark on how to specify a train/test environment
+    "reward_choice": "imp_minus_evals",  # see envs/theory.py for more details
+    "cutoff": 1e6,  # if using as a "train" environment, a cutoff of 0.8*n^2 where n
+    # is problem size will be used (for more details, please see https://arxiv.org/abs/2202.03259)
+    # see get_environment function of TheoryBenchmark on how to specify
+    # a train/test environment
     "seed": 0,
-    "seed_action_space": False,  # set this one to True for reproducibility when random action is sampled in the action space with gym.action_space.sample()
+    "seed_action_space": False,  # set this one to True for reproducibility when random
+    # action is sampled in the action space with gym.action_space.sample()
     "problem": "LeadingOne",  # possible values: "LeadingOne"
-    "instance_set_path": "lo_rls_50.csv",  # if the instance list file cannot be found in the running directory, it will be looked up in <DACBench>/dacbench/instance_sets/theory/
+    "instance_set_path": "lo_rls_50.csv",  # if the instance list file cannot be found
+    # in the running directory, it will be
+    # looked up in
+    # <DACBench>/dacbench/instance_sets/theory/
     "discrete_action": True,  # action space is discrete
     "action_choices": [1, 2, 4, 8, 16],  # portfolio of k values
     "benchmark_info": INFO,
@@ -47,7 +56,8 @@ class TheoryBenchmark(AbstractBenchmark):
             OneLL's config name
             possible values: see ../additional_configs/onell/configs.py
         config : str
-            a dictionary, all options specified in this argument will override the one in base_config_name
+            a dictionary, all options specified in this argument will override the one
+            in base_config_name
 
         """
         super().__init__()
@@ -66,9 +76,12 @@ class TheoryBenchmark(AbstractBenchmark):
             assert (
                 "action_choices" in self.config
             ), "ERROR: action_choices must be specified"
-            assert (
-                ("min_action" not in self.config) and ("max_action" not in self.config)
-            ), "ERROR: min_action and max_action should not be used for discrete action space"
+            assert ("min_action" not in self.config) and (  # noqa: PT018
+                "max_action" not in self.config
+            ), (
+                "ERROR: min_action and max_action should not be used for "
+                "discrete action space"
+            )
             assert (
                 "max_action" not in self.config
             ), "ERROR: max_action should not be used for discrete action space"
@@ -79,7 +92,7 @@ class TheoryBenchmark(AbstractBenchmark):
             assert (
                 "action_chocies" not in self.config
             ), "ERROR: action_choices is only used for discrete action space"
-            assert ("min_action" in self.config) and (
+            assert ("min_action" in self.config) and (  # noqa: PT018
                 "max_action" in self.config
             ), "ERROR: min_action and max_action must be specified"
             self.config.env_class = "TheoryEnv"
@@ -105,7 +118,9 @@ class TheoryBenchmark(AbstractBenchmark):
     def create_observation_space_from_description(
         self, obs_description, env_class=TheoryEnvDiscrete
     ):
-        """Create a gym observation space (Box only) based on a string containing observation variable names, e.g. "n, f(x), k, k_{t-1}"
+        """Create a gym observation space (Box only) based on a string containing
+        observation variable names, e.g. "n, f(x), k, k_{t-1}".
+
         Return:
             A gym.spaces.Box observation space.
         """
@@ -122,11 +137,16 @@ class TheoryBenchmark(AbstractBenchmark):
         """Return an environment with current configuration.
 
         Parameters:
-            test_env:   whether the enviroment is used for train an agent or for testing.
+            test_env:   whether the enviroment is used for train an agent or for testing
                         if test_env=False:
-                            cutoff time for an episode is set to 0.8*n^2 (n: problem size)
-                            if an action is out of range, stop the episode immediately and return a large negative reward (see envs/theory.py for more details)
-                        otherwise: benchmark's original cutoff time is used, and out-of-range action will be clipped to nearest valid value and the episode will continue.
+                            cutoff time for an episode is set to 0.8*n^2
+                            (n: problem size)
+                            if an action is out of range, stop the episode immediately
+                            and return a large negative reward (see envs/theory.py for
+                            more details)
+                        otherwise: benchmark's original cutoff time is used,
+                            and out-of-range action will be clipped to nearest valid
+                            value and the episode will continue.
         """
         env = self.env_class(self.config, test_env)
 
@@ -137,16 +157,17 @@ class TheoryBenchmark(AbstractBenchmark):
 
     def read_instance_set(self):
         """Read instance set from file
-        we look at the current directory first, if the file doesn't exist, we look in <DACBench>/dacbench/instance_sets/theory/.
+        we look at the current directory first,
+        if the file doesn't exist, we look in <DACBench>/dacbench/instance_sets/theory/.
         """
         assert self.config.instance_set_path
-        if os.path.isfile(self.config.instance_set_path):
+        if Path.isfile(self.config.instance_set_path):
             path = self.config.instance_set_path
         else:
             path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/../instance_sets/theory/"
-                + self.config.instance_set_path
+                Path(__file__).resolve().parent
+                / "/../instance_sets/theory/"
+                / self.config.instance_set_path
             )
 
         self.config["instance_set"] = pd.read_csv(path, index_col=0).to_dict("id")

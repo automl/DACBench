@@ -11,8 +11,7 @@ import subprocess
 import time
 from copy import deepcopy
 from enum import Enum
-from os import remove
-from os.path import join as joinpath
+from pathlib import Path
 
 import numpy as np
 
@@ -49,7 +48,8 @@ class FastDownwardEnv(AbstractEnv):
             "Open List Entries",
             "Varianz",
         ]
-        self._general_state_features = [  # 'evaluated_states', 'evaluations', 'expanded_states',
+        self._general_state_features = [
+            # 'evaluated_states', 'evaluations', 'expanded_states',
             # 'generated_ops',
             # 'generated_states', 'num_variables',
             # 'registered_states', 'reopened_states',
@@ -83,8 +83,8 @@ class FastDownwardEnv(AbstractEnv):
             self.logpath_out = os.devnull
             self.logpath_err = os.devnull
         else:
-            self.logpath_out = os.path.join(config.fd_logs, "fdout.txt")
-            self.logpath_err = os.path.join(config.fd_logs, "fderr.txt")
+            self.logpath_out = Path(config.fd_logs) / "fdout.txt"
+            self.logpath_err = Path(config.fd_logs) / "fderr.txt"
         self.fd_path = config.fd_path
         self.fd = None
         if "domain_file" in config:
@@ -102,7 +102,8 @@ class FastDownwardEnv(AbstractEnv):
         self._port_file_id = config.port_file_id
 
         self._transformation_func = None
-        # create state transformation function with inputs (current state, previous state, normalization values)
+        # create state transformation function with inputs
+        # (current state, previous state, normalization values)
         if self.__state_type == StateType.DIFF:
             self._transformation_func = lambda x, y, z, skip: x - y if not skip else x
         elif self.__state_type == StateType.ABSDIFF:
@@ -128,10 +129,12 @@ class FastDownwardEnv(AbstractEnv):
 
         self.max_rand_steps = config.max_rand_steps
         self.__start_time = None
-        self.done = True  # Starts as true as the expected behavior is that before normal resets an episode was done.
+        self.done = True  # Starts as true as the expected behavior is that
+        # before normal resets an episode was done.
 
     @property
     def port(self):
+        """Port function."""
         if self._port == 0:
             if self.socket is None:
                 raise ValueError(
@@ -147,9 +150,12 @@ class FastDownwardEnv(AbstractEnv):
         self._port = port
 
     @property
-    def argstring(self):
+    def _argstring(self):
         # if a socket is bound to 0 it will automatically choose a free port
-        return f"rl_eager(rl([{''.join(f'{h},' for h in self.heuristics)[:-1]}],random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})"
+        return (
+            f"rl_eager(rl([{''.join(f'{h},' for h in self.heuristics)[:-1]}],"
+            f"random_seed={self.fd_seed}),rl_control_interval={self.control_interval},rl_client_port={self.port})"
+        )
 
     @staticmethod
     def _save_div(a, b):
@@ -202,7 +208,8 @@ class FastDownwardEnv(AbstractEnv):
         return self.recvall(msglen)
 
     def recvall(self, n: int):
-        """Given we know the size we want to recieve, we can recieve that amount of bytes.
+        """Given we know the size we want to recieve,
+        we can recieve that amount of bytes.
         Based on comment from SO see [1].
 
         Parameters
@@ -239,7 +246,7 @@ class FastDownwardEnv(AbstractEnv):
         msg = msg.replace("-inf", "0")
         msg = msg.replace("inf", "0")
         # print(msg)
-        data = eval(msg)
+        data = eval(msg)  # noqa: S307
         r = data["reward"]
         done = data["done"]
         del data["reward"]
@@ -351,7 +358,7 @@ class FastDownwardEnv(AbstractEnv):
                 self.domain_file,
                 self.instance,
                 "--search",
-                self.argstring,
+                self._argstring,
             ]
         else:
             command = [
@@ -359,18 +366,18 @@ class FastDownwardEnv(AbstractEnv):
                 f"{self.fd_path}",
                 self.instance,
                 "--search",
-                self.argstring,
+                self._argstring,
             ]
 
         with open(self.logpath_out, "a+") as fout, open(self.logpath_err, "a+") as ferr:
             err_output = subprocess.STDOUT if self.logpath_err == "/dev/null" else ferr
-            self.fd = subprocess.Popen(command, stdout=fout, stderr=err_output)
+            self.fd = subprocess.Popen(command, stdout=fout, stderr=err_output)  # noqa: S603
 
         # write down port such that FD can potentially read where to connect to
         if self._port_file_id:
-            fp = joinpath(self._config_dir, f"port_{self._port_file_id:d}.txt")
+            fp = Path(self._config_dir) / f"port_{self._port_file_id:d}.txt"
         else:
-            fp = joinpath(self._config_dir, f"port_{self.port}.txt")
+            fp = Path(self._config_dir) / f"port_{self.port}.txt"
         with open(fp, "w") as portfh:
             portfh.write(str(self.port))
 
@@ -378,7 +385,7 @@ class FastDownwardEnv(AbstractEnv):
         try:
             self.conn, address = self.socket.accept()
         except TimeoutError:
-            raise OSError(
+            raise OSError(  # noqa: B904
                 "Fast downward subprocess not reachable (time out). "
                 "Possible solutions:\n"
                 " (1) Did you run './dacbench/envs/rl-plan/fast-downward/build.py' "
@@ -396,7 +403,7 @@ class FastDownwardEnv(AbstractEnv):
         else:
             s, _, _, _, _ = self.step(0)  # hard coded to zero as initial step
 
-        remove(
+        Path.unlink(
             fp
         )  # remove the port file such that there is no chance of loading the old port
         return s, {}
@@ -422,9 +429,9 @@ class FastDownwardEnv(AbstractEnv):
         """
         if self.socket is None:
             return True
-        fp = joinpath(self._config_dir, f"port_{self.port}.txt")
-        if os.path.exists(fp):
-            remove(fp)
+        fp = Path(self._config_dir) / f"port_{self.port}.txt"
+        if Path.exists(fp):
+            Path.unlink(fp)
 
         self.kill_connection()
         return True

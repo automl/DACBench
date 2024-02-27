@@ -22,7 +22,7 @@ def sample_instance(n):
 # Helper method to print current instance set
 def print_instance_set(instance_set):
     c = 1
-    for i in instance_set.keys():
+    for i in instance_set:
         print(f"Instance {c}: {instance_set[i][0]}, {instance_set[i][1]}")
         c += 1
 

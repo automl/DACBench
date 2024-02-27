@@ -1,7 +1,8 @@
-import gym
 import argparse
-import numpy as np
 from collections import defaultdict, namedtuple
+
+import gym
+import numpy as np
 
 
 class DummyEnv(gym.Env):
@@ -22,8 +23,7 @@ class DummyEnv(gym.Env):
 
 class QTable(dict):
     def __init__(self, n_actions, float_to_int=False, **kwargs):
-        """
-        Look up table for state-action values.
+        """Look up table for state-action values.
         :param n_actions: action space size
         :param float_to_int:
             flag to determine if state values need to be rounded to the closest integer
@@ -57,15 +57,14 @@ class QTable(dict):
             self.__table[tuple(key)] = value
 
     def __contains__(self, item):
-        return tuple(item) in self.__table.keys()
+        return tuple(item) in self.__table
 
     def keys(self):
         return self.__table.keys()
 
 
 def make_tabular_policy(Q: QTable, epsilon: float, nA: int) -> callable:
-    """
-    Creates an epsilon-greedy policy based on a given Q-function and epsilon.
+    """Creates an epsilon-greedy policy based on a given Q-function and epsilon.
     I.e. create weight vector from which actions get sampled.
     :param Q: tabular state-action lookup function
     :param epsilon: exploration factor
@@ -88,8 +87,7 @@ def make_tabular_policy(Q: QTable, epsilon: float, nA: int) -> callable:
 def get_decay_schedule(
     start_val: float, decay_start: int, num_episodes: int, type_: str
 ):
-    """
-    Create epsilon decay schedule
+    """Create epsilon decay schedule
     :param start_val: Start decay from this value (i.e. 1)
     :param decay_start: number of iterations to start epsilon decay after
     :param num_episodes: Total number of episodes to decay over
@@ -124,8 +122,7 @@ def get_decay_schedule(
 
 
 def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
-    """
-    Evaluate Q function greediely with epsilon=0
+    """Evaluate Q function greediely with epsilon=0
     :returns
         average cumulative reward,
         the expected reward after resetting the environment,
@@ -161,8 +158,7 @@ def greedy_eval_Q(Q: QTable, this_environment, nevaluations: int = 1):
 def update(
     Q: QTable, environment, policy: callable, alpha: float, discount_factor: float
 ):
-    """
-    Q update
+    """Q update
     :param Q: state-action value look-up table
     :param environment: environment to use
     :param policy: the current policy
@@ -200,9 +196,7 @@ EpisodeStats = namedtuple(
 
 
 def zeroOne(stringput):
-    """
-    Helper to keep input arguments in [0, 1]
-    """
+    """Helper to keep input arguments in [0, 1]"""
     val = float(stringput)
     if val < 0 or val > 1.0:
         raise argparse.ArgumentTypeError("%r is not in [0, 1]", stringput)

@@ -1,10 +1,11 @@
+"""Container utils."""
 from __future__ import annotations
 
 import enum
 import json
-import os
 import socket
 import time
+from pathlib import Path
 from typing import Any
 
 import gymnasium as gym
@@ -15,7 +16,8 @@ class Encoder(json.JSONEncoder):
     """Json Encoder to save tuple and or numpy arrays | numpy floats / integer.
 
     Adapted from: https://github.com/automl/HPOBench/blob/master/hpobench/util/container_utils.py
-    Serializing tuple/numpy array may not work. We need to annotate those types, to reconstruct them correctly.
+    Serializing tuple/numpy array may not work. We need to annotate those types,
+    to reconstruct them correctly.
     """
 
     @staticmethod
@@ -63,14 +65,18 @@ class Encoder(json.JSONEncoder):
 
         if isinstance(
             space_obj,
-            gym.spaces.Box | gym.spaces.Discrete | gym.spaces.MultiDiscrete | gym.spaces.MultiBinary,
+            gym.spaces.Box
+            | gym.spaces.Discrete
+            | gym.spaces.MultiDiscrete
+            | gym.spaces.MultiBinary,
         ):
             # by default assume all constrcutor arguments are stored under the same name
-            #  for box we need to drop shape, since either shape or a array for low and height  is required
+            # for box we need to drop shape, since either shape or a array for low and
+            # height  is required
             __init__ = space_obj.__init__.__func__.__code__
             local_vars = __init__.co_varnames
 
-            # drop self and non-args (self, arg1, arg2, ..., local_var1, local_var2, ...)
+            # drop self and non-args (self, arg1, arg2, ..., local_var1, local_var2,...)
             arguments = local_vars[1 : __init__.co_argcount]
             attributes_to_serialize = list(
                 filter(lambda att: att not in ["shape", "seed"], arguments)
@@ -108,11 +114,9 @@ class Decoder(json.JSONDecoder):
 
     def __init__(self, *args, **kwargs):
         """Init decoder."""
-        json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+        json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)  # noqa: B026
 
-    def object_hook(
-        self, obj: Any
-    ) -> tuple | np.ndarray | float | float | int | Any:
+    def object_hook(self, obj: Any) -> tuple | np.ndarray | float | float | int | Any:
         """Encode different types of objects."""
         if "__type__" in obj:
             __type = obj["__type__"]
@@ -168,7 +172,7 @@ def wait_for_unixsocket(path: str, timeout: float = 10.0) -> None:
 
     """
     start = time.time()
-    while not os.path.exists(path):
+    while not Path.exists(path):
         if time.time() - start > timeout:
             raise TimeoutError(
                 f"Timeout ({timeout}s) waiting for UNIX socket {path} to be created"
@@ -177,7 +181,8 @@ def wait_for_unixsocket(path: str, timeout: float = 10.0) -> None:
 
 
 def wait_for_port(port, host="localhost", timeout=5.0):
-    """Taken from https://gist.github.com/butla/2d9a4c0f35ea47b7452156c96a4e7b12 - Wait until a port starts accepting TCP connections.
+    """Taken from https://gist.github.com/butla/2d9a4c0f35ea47b7452156c96a4e7b12 -
+    Wait until a port starts accepting TCP connections.
 
     Parameters
     ----------

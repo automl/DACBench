@@ -1,14 +1,12 @@
+import coax
+import ConfigSpace as CS
+import gymnasium as gym
+import haiku as hk
 import jax
 import jax.numpy as jnp
-import coax
-import haiku as hk
-from numpy import prod
 import optax
-import gymnasium as gym
-import ConfigSpace as CS
-
 from dacbench.benchmarks import CMAESBenchmark
-
+from numpy import prod
 
 # the name of this script
 name = "ppo"

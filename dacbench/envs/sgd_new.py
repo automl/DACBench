@@ -1,12 +1,15 @@
+"""SGD environment."""
 from __future__ import annotations
 
+import numpy as np
 import torch
 
 from dacbench import AbstractMADACEnv
+from dacbench.envs.env_utils import utils
 from dacbench.envs.env_utils.utils import random_torchvision_loader
 
 
-def optimizer_action(
+def _optimizer_action(
     optimizer: torch.optim.Optimizer, action: float, use_momentum: bool
 ) -> None:
     for g in optimizer.param_groups:
@@ -27,7 +30,8 @@ def test(
 ):
     """Evaluate given `model` on `loss_function`.
 
-    Percentage defines how much percentage of the data shall be used. If nothing given the whole data is used.
+    Percentage defines how much percentage of the data shall be used.
+    If nothing given the whole data is used.
 
     Returns:
         test_losses: Batch validation loss per data point
@@ -39,9 +43,9 @@ def test(
 
     with torch.no_grad():
         for data, target in loader:
-            data, target = data.to(device), target.to(device)
-            output = model(data)
-            test_losses.append(loss_function(output, target))
+            d_data, d_target = data.to(device), target.to(device)
+            output = model(d_data)
+            test_losses.append(loss_function(output, d_target))
             i += 1
             if i >= nmb_sets:
                 break
@@ -64,9 +68,10 @@ def forward_backward(model, loss_function, loader, device="cpu"):
 
 
 class SGDEnv(AbstractMADACEnv):
-    """The SGD DAC Environment implements the problem of dynamically configuring the learning rate hyperparameter of a
-    neural network optimizer (more specifically, torch.optim.AdamW) for a supervised learning task. While training,
-    the model is evaluated after every epoch.
+    """The SGD DAC Environment implements the problem of dynamically configuring
+    the learning rate hyperparameter of a neural network optimizer
+    (more specifically, torch.optim.AdamW) for a supervised learning task.
+    While training, the model is evaluated after every epoch.
 
     Actions correspond to learning rate values in [0,+inf[
     For observation space check `observation_space` method docstring.
@@ -77,7 +82,7 @@ class SGDEnv(AbstractMADACEnv):
         0                                                           otherwise
     """
 
-    metadata = {"render_modes": ["human"]}
+    metadata = {"render_modes": ["human"]}  # noqa: RUF012
 
     def __init__(self, config):
         """Init env."""
@@ -93,6 +98,7 @@ class SGDEnv(AbstractMADACEnv):
         self.loss_function = config.loss_function(**config.loss_function_kwargs)
         self.dataset_name = config.get("dataset_name")
         self.use_momentum = config.get("use_momentum")
+        self.use_generator = config.get("use_generator")
 
         # Use default reward function, if no specific function is given
         self.get_reward = config.get("reward_function", self.get_default_reward)
@@ -121,7 +127,7 @@ class SGDEnv(AbstractMADACEnv):
         if isinstance(action, float):
             action = [action]
 
-        self.optimizer = optimizer_action(self.optimizer, action, self.use_momentum)
+        self.optimizer = _optimizer_action(self.optimizer, action, self.use_momentum)
         self.optimizer.step()
         self.optimizer.zero_grad()
 
@@ -192,12 +198,28 @@ class SGDEnv(AbstractMADACEnv):
         return self.get_state(self), reward, False, truncated, info
 
     def reset(self, seed=None, options=None):
-        """Initialize the neural network, data loaders, etc. for given/random next task. Also perform a single
-        forward/backward pass, not yet updating the neural network parameters.
+        """Initialize the neural network, data loaders, etc. for given/random next task.
+        Also perform a single forward/backward pass,
+        not yet updating the neural network parameters.
         """
         if options is None:
             options = {}
         super().reset_(seed)
+
+        # Use generator
+        rng = np.random.RandomState(self.initial_seed)
+        if self.use_generator:
+            (
+                self.model,
+                self.optimizer_params,
+                self.batch_size,
+                self.crash_penalty,
+            ) = utils.random_instance(rng, self.datasets)
+        else:
+            # Load model from config file
+            self.model = utils.create_model(
+                self.config.get("layer_specification"), len(self.datasets[0].classes)
+            )
 
         self.learning_rate = None
         self.optimizer_type = torch.optim.AdamW
@@ -216,14 +238,30 @@ class SGDEnv(AbstractMADACEnv):
 
         return self.get_state(self), {}
 
-    def get_default_reward(self, _):
+    def get_default_reward(self, _) -> float:
+        """The default reward function.
+
+        Args:
+            _ (_type_): Empty parameter, which can be used when overriding
+
+        Returns:
+            float: The calculated reward
+        """
         if self.test_losses is not None:
             reward = self.test_losses.sum().item() / len(self.test_loader.dataset)
         else:
             reward = 0.0
         return reward
 
-    def get_default_state(self, _):
+    def get_default_state(self, _) -> dict:
+        """Default state function.
+
+        Args:
+            _ (_type_): Empty parameter, which can be used when overriding
+
+        Returns:
+            dict: The current state
+        """
         return {
             "step": self.c_step,
             "loss": self.loss,
@@ -232,12 +270,13 @@ class SGDEnv(AbstractMADACEnv):
         }
 
     def render(self, mode="human"):
+        """Render progress."""
         if mode == "human":
             epoch = 1 + self.c_step // len(self.train_loader)
             epoch_cutoff = self.n_steps // len(self.train_loader)
             batch = 1 + self.c_step % len(self.train_loader)
             print(
-                f"prev_lr {self.optimizer.param_groups[0]['lr'] if self.n_steps > 0 else None}, "
+                f"prev_lr {self.optimizer.param_groups[0]['lr'] if self.n_steps > 0 else None}, "  # noqa: E501
                 f"epoch {epoch}/{epoch_cutoff}, "
                 f"batch {batch}/{len(self.train_loader)}, "
                 f"batch_loss {self.loss}, "

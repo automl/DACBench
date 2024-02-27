@@ -1,3 +1,4 @@
+"""Abstract Environment."""
 from __future__ import annotations
 
 import random
@@ -64,23 +65,27 @@ class AbstractEnv(ABC, gym.Env):
                     *config["observation_space_args"],
                     dtype=config["observation_space_type"],
                 )
-            except KeyError:
+            except KeyError as err:
                 print(
-                    "Either submit a predefined gym.space 'observation_space' or an 'observation_space_class' as well as a list of 'observation_space_args' and the 'observation_space_type' in the configuration."
+                    "Either submit a predefined gym.space 'observation_space' or an "
+                    "'observation_space_class' as well as a list of "
+                    "'observation_space_args' and the 'observation_space_type' "
+                    "in the configuration."
                 )
                 print("Tuple observation_spaces are currently not supported.")
-                raise KeyError
+                raise KeyError from err
 
         else:
             try:
                 self.observation_space = getattr(
                     gym.spaces, config["observation_space_class"]
                 )(*config["observation_space_args"])
-            except AssertionError:
+            except AssertionError as err:
                 print(
-                    "To use a Dict observation space, the 'observation_space_args' in the configuration should be a list containing a Dict of gym.Spaces"
+                    "To use a Dict observation space, the 'observation_space_args' in "
+                    "the configuration should be a list containing a Dict of gym.Spaces"
                 )
-                raise TypeError
+                raise TypeError from err
 
         # TODO: use dicts by default for actions and observations
         # The config could change this for RL purposes
@@ -111,7 +116,8 @@ class AbstractEnv(ABC, gym.Env):
                         self.action_space = gym.spaces.MultiDiscrete(np.array(ns))
                 else:
                     raise ValueError(
-                        "Only float, integer and categorical hyperparameters are supported as of now"
+                        "Only float, integer and categorical hyperparameters "
+                        "are supported as of now"
                     )
             # Mixed action space
             else:
@@ -129,7 +135,8 @@ class AbstractEnv(ABC, gym.Env):
                         subspaces[a.name] = gym.spaces.Discrete(n)
                     else:
                         raise ValueError(
-                            "Only float, integer and categorical hyperparameters are supported as of now"
+                            "Only float, integer and categorical hyperparameters "
+                            "are supported as of now"
                         )
                 self.action_space = gym.spaces.Dict(subspaces)
         elif "action_space" in config:
@@ -139,15 +146,17 @@ class AbstractEnv(ABC, gym.Env):
                 self.action_space = getattr(gym.spaces, config["action_space_class"])(
                     *config["action_space_args"]
                 )
-            except KeyError:
+            except KeyError as err:
                 print(
-                    "Either submit a predefined gym.space 'action_space' or an 'action_space_class' as well as a list of 'action_space_args' in the configuration"
+                    "Either submit a predefined gym.space 'action_space' or an "
+                    "'action_space_class' as well as a list of 'action_space_args'"
+                    " in the configuration"
                 )
-                raise KeyError
+                raise KeyError from err
 
-            except TypeError:
+            except TypeError as err:
                 print("Tuple and Dict action spaces are currently not supported")
-                raise TypeError
+                raise TypeError from err
 
         # seeding the environment after initialising action space
         self.seed(config.get("seed", None), config.get("seed_action_space", False))
@@ -167,23 +176,23 @@ class AbstractEnv(ABC, gym.Env):
             truncated = True
         return truncated
 
-    def reset_(self, seed=0, options=None, instance=None, instance_id=None, scheme=None):
-        """Pre-reset function for progressing through the instance set. Will either use round robin, random or no progression scheme."""
+    def reset_(
+        self, seed=0, options=None, instance=None, instance_id=None, scheme=None
+    ):
+        """Pre-reset function for progressing through the instance set.
+        Will either use round robin, random or no progression scheme.
+        """
         if options is None:
             options = {}
         if seed is not None:
             self.seed(seed, self.config.get("seed_action_space", False))
         self.c_step = 0
         if scheme is None:
-            scheme = (
-                options.get("scheme", self.instance_updates)
-            )
+            scheme = options.get("scheme", self.instance_updates)
         if instance is None:
             instance = options.get("instance", None)
         if instance_id is None:
-            instance_id = (
-                options.get("instance_id", None)
-            )
+            instance_id = options.get("instance_id", None)
         self.use_next_instance(instance, instance_id, scheme=scheme)
 
     def use_next_instance(self, instance=None, instance_id=None, scheme=None):
@@ -196,7 +205,8 @@ class AbstractEnv(ABC, gym.Env):
         instance_id
             ID of the instance to switch to
         scheme
-            Update scheme for this progression step (either round robin, random or no progression)
+            Update scheme for this progression step
+            (either round robin, random or no progression)
 
         """
         if instance is not None:
@@ -209,7 +219,8 @@ class AbstractEnv(ABC, gym.Env):
             self.inst_id = self.instance_id_list[self.instance_index]
             self.instance = self.instance_set[self.inst_id]
         elif scheme == "random":
-            self.inst_id = np.random.choice(self.instance_id_list)
+            rng = np.random.default_rng()
+            self.inst_id = rng.choice(self.instance_id_list)
             self.instance = self.instance_set[self.inst_id]
 
     @abstractmethod
@@ -336,13 +347,17 @@ class AbstractEnv(ABC, gym.Env):
 
         """
         if seed is None:
-            seed = np.random.randint(2**32 - 1)
+            rng = np.random.default_rng()
+            seed = rng.randint(2**32 - 1)
         self.initial_seed = seed
-        # maybe one should use the seed generated by seeding.np_random(seed) but it can be to large see issue https://github.com/openai/gym/issues/2210
+        # maybe one should use the seed generated by seeding.np_random(seed)
+        # but it can be to large see issue https://github.com/openai/gym/issues/2210
+        rng = np.random.default_rng(seed)
         random.seed(seed)
-        np.random.seed(seed)
+        rng.seed(seed)
         self.np_random, seed = seeding.np_random(int(seed))
-        # uses the uncorrelated seed from seeding but makes sure that no randomness is introduces.
+        # uses the uncorrelated seed from seeding but makes sure that no
+        # randomness is introduced.
 
         if seed_action_space:
             self.action_space.seed(seed)
@@ -407,7 +422,8 @@ class AbstractMADACEnv(AbstractEnv):
                 num_hps = len(self.action_space.nvec)
             else:
                 print(
-                    "The MultiAgent environment currently only supports action spaces of types Box and MultiDiscrete"
+                    "The MultiAgent environment currently only supports "
+                    "action spaces of types Box and MultiDiscrete"
                 )
                 raise TypeError
             self.possible_agents = np.arange(num_hps)

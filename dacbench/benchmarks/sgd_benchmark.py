@@ -1,9 +1,10 @@
+"""Benchmark for SGD."""
 from __future__ import annotations
 
 import csv
-import os
+from pathlib import Path
 
-import ConfigSpace as CS
+import ConfigSpace as CS  # noqa: N817
 import numpy as np
 from gymnasium import spaces
 from torch import nn
@@ -14,7 +15,8 @@ from dacbench.envs.env_utils import utils
 
 DEFAULT_CFG_SPACE = CS.ConfigurationSpace()
 LR = CS.Float(name="learning_rate", bounds=(0.0, 0.05))
-# Value used for momentum like adaptation, as adam optimizer has no real momentum; "beta1" is changed
+# Value used for momentum like adaptation, as adam optimizer has no real momentum;
+# "beta1" is changed
 MOMENTUM = CS.Float(
     name="momentum", bounds=(0.0, 1.0)
 )  # ! Only used, when "use_momentum" var in config true
@@ -25,21 +27,6 @@ DEFAULT_CFG_SPACE.add_hyperparameter(MOMENTUM)
 def __default_loss_function(**kwargs):
     return nn.NLLLoss(reduction="none", **kwargs)
 
-
-feature_extractor = nn.Sequential(
-    nn.Identity(),
-    nn.Conv2d(1, 5, kernel_size=(7, 7), stride=(1, 1)),
-    nn.BatchNorm2d(5, eps=1e-05, momentum=0.1),
-    nn.ReLU(),
-)
-
-linear_layers = nn.Sequential(
-    nn.Flatten(),
-    nn.Linear(in_features=2420, out_features=10, bias=True),
-    nn.LogSoftmax(dim=1),
-)
-
-neural_network = nn.Sequential(feature_extractor, linear_layers)  # (n_conv_layers: 5)
 
 INFO = {
     "identifier": "LR",
@@ -68,10 +55,24 @@ SGD_DEFAULTS = objdict(
                 "crashed": spaces.Discrete(1),
             }
         ],
-        "shuffle_training": True,
         "reward_range": [-(10**9), (10**9)],
-        "model": neural_network,
         "device": "cpu",
+        "use_generator": False,  # If true, generates:
+        # random model, optimizer_params, batch_size, crash_penalty
+        "layer_specification": [
+            (
+                utils.LayerType.CONV2D,
+                {"in_channels": 1, "out_channels": 16, "kernel_size": 3},
+            ),
+            (utils.LayerType.POOLING, {"kernel_size": 2}),
+            (utils.LayerType.FLATTEN, {}),
+            (
+                utils.LayerType.LINEAR,
+                {"in_features": 16 * 13 * 13, "out_features": 128},
+            ),
+            (utils.LayerType.LINEAR, {"in_features": 128, "out_features": 10}),
+            (utils.LayerType.LINEAR, {"in_features": 10, "out_features": 5}),
+        ],
         "optimizer_params": {
             "weight_decay": 10.978902603194243,
             "eps": 1.2346464628039852e-10,
@@ -83,7 +84,8 @@ SGD_DEFAULTS = objdict(
         "training_batch_size": 64,
         "fraction_of_dataset": 0.6,
         "train_validation_ratio": 0.8,  # If set to None, random value is used
-        "dataset_name": "MNIST",  # If set to None, random data set is chosen; else specific set can be set: e.g. "MNIST"
+        "dataset_name": "MNIST",  # If set to None, random data set is chosen;
+        # else specific set can be set: e.g. "MNIST"
         # "reward_function":,    # Can be set, to replace the default function
         # "state_method":,       # Can be set, to replace the default function
         "use_momentum": False,
@@ -115,7 +117,7 @@ class SGDBenchmark(AbstractBenchmark):
             if key not in self.config:
                 self.config[key] = SGD_DEFAULTS[key]
 
-    def get_environment(self, use_generator=False):
+    def get_environment(self):
         """Return SGDEnv env with current configuration.
 
         Returns:
@@ -127,45 +129,22 @@ class SGDBenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         # Read test set if path is specified
-        if (
-            "test_set" not in self.config
-            and "test_set_path" in self.config
-        ):
+        if "test_set" not in self.config and "test_set_path" in self.config:
             self.read_instance_set(test=True)
 
         env = SGDEnv(self.config)
         for func in self.wrap_funcs:
             env = func(env)
 
-        if use_generator:
-            (
-                env.model,
-                env.optimizer_params,
-                env.loss,
-                env.batch_size,
-                env.crash_penalty,
-                env.n_conv_layers,
-            ) = utils.random_instance(
-                np.random.RandomState(self.config.get("seed")), env.datasets
-            )
-
         return env
 
     def read_instance_set(self, test=False):
         """Read path of instances from config into list."""
         if test:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.test_set_path
-            )
+            path = Path(__file__).resolve().parent / self.config.test_set_path
             keyword = "test_set"
         else:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.instance_set_path
-            )
+            path = Path(__file__).resolve().parent / self.config.instance_set_path
             keyword = "instance_set"
         self.config[keyword] = {}
         with open(path) as fh:

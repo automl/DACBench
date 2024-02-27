@@ -1,3 +1,4 @@
+"""Runner."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -20,7 +21,8 @@ def run_benchmark(env, agent, num_episodes, logger=None):
     env : gym.Env
         Benchmark environment
     agent
-        Any agent implementing the methods act, train and end_episode (see AbstractDACBenchAgent below)
+        Any agent implementing the methods act, train and end_episode
+        (see AbstractDACBenchAgent below)
     num_episodes : int
         Number of episodes to run
     logger : dacbench.logger.Logger
@@ -50,7 +52,8 @@ def run_benchmark(env, agent, num_episodes, logger=None):
 
 
 def run_dacbench(results_path, agent_method, num_episodes, bench=None, seeds=None):
-    """Run all benchmarks for 10 seeds for a given number of episodes with a given agent and save result.
+    """Run all benchmarks for 10 seeds for a given number of episodes
+    with a given agent and save result.
 
     Parameters
     ----------
@@ -63,7 +66,8 @@ def run_dacbench(results_path, agent_method, num_episodes, bench=None, seeds=Non
     bench: AbstractBenchmark
         benchmark to run. If none is given, run all.
     seeds : list[int]
-        List of seeds to runs all benchmarks for. If None (default) seeds [1, ..., 10] are used.
+        List of seeds to runs all benchmarks for.
+        If None (default) seeds [1, ..., 10] are used.
 
     """
     if bench is None:
@@ -79,7 +83,7 @@ def run_dacbench(results_path, agent_method, num_episodes, bench=None, seeds=Non
             bench = b()
             try:
                 env = bench.get_benchmark(seed=i)
-            except:  # noqa: E722
+            except:  # noqa: E722, S112
                 continue
 
             logger = Logger(

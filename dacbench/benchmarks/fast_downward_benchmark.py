@@ -1,8 +1,11 @@
+"""Fast Downward Benchmark."""
+
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
-import ConfigSpace as CS
+import ConfigSpace as CS  # noqa: N817
 import ConfigSpace.hyperparameters as CSH
 import numpy as np
 
@@ -61,7 +64,7 @@ FD_DEFAULTS = objdict(
         "max_rand_steps": 0,
         "instance_set_path": "../instance_sets/fast_downward/train",
         "test_set_path": "../instance_sets/fast_downward/test",
-        "fd_path": os.path.dirname(os.path.abspath(__file__))
+        "fd_path": Path(__file__).resolve().parent
         + "/../envs/rl-plan/fast-downward/fast-downward.py",
         "parallel": True,
         "fd_logs": None,
@@ -101,10 +104,7 @@ class FastDownwardBenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         # Read test set if path is specified
-        if (
-            "test_set" not in self.config
-            and "test_set_path" in self.config
-        ):
+        if "test_set" not in self.config and "test_set_path" in self.config:
             self.read_instance_set(test=True)
 
         env = FastDownwardEnv(self.config)
@@ -117,27 +117,18 @@ class FastDownwardBenchmark(AbstractBenchmark):
         """Read paths of instances from config into list."""
         instances = {}
         if test:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.test_set_path
-            )
+            path = Path(__file__).resolve().parent / self.config.test_set_path
             keyword = "test_set"
         else:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.instance_set_path
-            )
+            path = Path(__file__).resolve().parent / self.config.instance_set_path
             keyword = "instance_set"
+
         import re
 
         for root, _dirs, files in os.walk(path):
             for f in files:
-                if (f.endswith((".pddl", ".sas"))) and not f.startswith(
-                    "domain"
-                ):
-                    p = os.path.join(root, f)
+                if (f.endswith((".pddl", ".sas"))) and not f.startswith("domain"):
+                    p = Path(root) / f
                     if f.endswith(".pddl"):
                         index = p.split("/")[-1].split(".")[0]
                     else:
@@ -146,11 +137,9 @@ class FastDownwardBenchmark(AbstractBenchmark):
                     instances[index] = p
         if len(instances) == 0:
             for f in os.listdir(path):
-                f = f.strip()
-                if (f.endswith((".pddl", ".sas"))) and not f.startswith(
-                    "domain"
-                ):
-                    p = os.path.join(path, f)
+                f = f.strip()  # noqa: PLW2901
+                if (f.endswith((".pddl", ".sas"))) and not f.startswith("domain"):
+                    p = Path(path) / f
                     if f.endswith(".pddl"):
                         index = p.split("/")[-1].split(".")[0]
                     else:
@@ -160,9 +149,10 @@ class FastDownwardBenchmark(AbstractBenchmark):
         self.config[keyword] = instances
 
         if instances[next(iter(instances.keys()))].endswith(".pddl"):
-            self.config.domain_file = os.path.join(path + "/domain.pddl")
+            self.config.domain_file = Path(path) / "/domain.pddl"
 
     def set_heuristics(self, heuristics):
+        """Function to set the heuristic."""
         self.config.heuristics = heuristics
         self.config.action_space_args = [len(heuristics)]
         self.config.observation_space_args = [

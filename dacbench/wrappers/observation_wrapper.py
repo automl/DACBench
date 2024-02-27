@@ -1,3 +1,4 @@
+"""Wrapper that converts observation spaces to spaces.Box."""
 from __future__ import annotations
 
 import numpy as np
@@ -5,7 +6,7 @@ from gymnasium import Wrapper, spaces
 
 
 class ObservationWrapper(Wrapper):
-    """Wrapper covert observations spaces to spaces.Box for convenience.
+    """Wrapper convert observations spaces to spaces.Box for convenience.
 
     Currently only supports Dict -> Box
     """
@@ -60,8 +61,7 @@ class ObservationWrapper(Wrapper):
         """
         if name in ["observation_space", "step", "env", "flatten", "reset"]:
             return object.__getattribute__(self, name)
-        else:
-            return getattr(self.env, name)
+        return getattr(self.env, name)
 
     def step(self, action):
         """Execute environment step and record distance.

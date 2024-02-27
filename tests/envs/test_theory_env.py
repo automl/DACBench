@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import unittest
 
 import gymnasium as gym
-
 from dacbench.benchmarks import TheoryBenchmark
 
 
@@ -30,7 +31,7 @@ class TestTheoryEnv(unittest.TestCase):
         assert env.max_evals == int(0.8 * env.n * env.n)
 
         # check initial solution for various instances
-        for i in range(len(env.instance_set)):
+        for _i in range(len(env.instance_set)):
             if env.instance.initObj != "random":
                 assert int(env.x.fitness) == int(env.instance.initObj)
             env.reset()
@@ -59,7 +60,7 @@ class TestTheoryEnv(unittest.TestCase):
         assert env.max_evals == int(0.8 * env.n * env.n)
 
         # check initial solution for various instances
-        for i in range(len(env.instance_set)):
+        for _i in range(len(env.instance_set)):
             if env.instance.initObj != "random":
                 assert int(env.x.fitness) == int(env.instance.initObj)
             env.reset()

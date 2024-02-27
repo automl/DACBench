@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import json
 import unittest
 
-from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
-
 from dacbench.container.container_utils import Decoder, Encoder
+from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
 
 
 class TestEncoder(unittest.TestCase):
@@ -18,7 +19,7 @@ class TestEncoder(unittest.TestCase):
             with self.subTest(msg=str(type(space)), space=space):
                 serialized = json.dumps(space, cls=Encoder)
                 restored_space = json.loads(serialized, cls=Decoder)
-                self.assertEqual(space, restored_space)
+                assert space == restored_space
 
     def test_recursive_spaces(self):
         tuple_space = Tuple(
@@ -40,4 +41,4 @@ class TestEncoder(unittest.TestCase):
             with self.subTest(msg=str(type(space)), space=space):
                 serialized = json.dumps(space, cls=Encoder)
                 restored_space = json.loads(serialized, cls=Decoder)
-                self.assertEqual(space, restored_space)
+                assert space == restored_space

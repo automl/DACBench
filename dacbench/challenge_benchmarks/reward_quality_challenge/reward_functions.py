@@ -88,8 +88,13 @@ def quadratic_euclidean_distance_reward_geometric(self):
 def multiply_reward_geometric(self):
     coords, action_coords, highest_coords, lowest_actions = self._pre_reward()
 
-    single_dists = [abs(val1 - val2) for val1, val2 in zip(coords, action_coords, strict=False)]
-    max_dists = [abs(val1 - val2) for val1, val2 in zip(lowest_actions, highest_coords, strict=False)]
+    single_dists = [
+        abs(val1 - val2) for val1, val2 in zip(coords, action_coords, strict=False)
+    ]
+    max_dists = [
+        abs(val1 - val2)
+        for val1, val2 in zip(lowest_actions, highest_coords, strict=False)
+    ]
 
     rewards = []
     for dist, max_dist in zip(single_dists, max_dists, strict=False):

@@ -1,3 +1,4 @@
+"""Wrapper for reward noise."""
 from __future__ import annotations
 
 import numpy as np
@@ -7,7 +8,8 @@ from gymnasium import Wrapper
 class RewardNoiseWrapper(Wrapper):
     """Wrapper to add noise to the reward signal.
 
-    Noise can be sampled from a custom distribution or any distribution in numpy's random module.
+    Noise can be sampled from a custom distribution
+    or any distribution in numpy's random module.
     """
 
     def __init__(
@@ -71,8 +73,7 @@ class RewardNoiseWrapper(Wrapper):
         if name in ["noise_function", "env", "add_noise", "step"]:
             return object.__getattribute__(self, name)
 
-        else:
-            return getattr(self.env, name)
+        return getattr(self.env, name)
 
     def step(self, action):
         """Execute environment step and add noise.
@@ -116,7 +117,6 @@ class RewardNoiseWrapper(Wrapper):
             if args:
                 return function(*args)
 
-            else:
-                return function()
+            return function()
 
         return sample_noise

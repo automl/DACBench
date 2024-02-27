@@ -1,12 +1,13 @@
+from __future__ import annotations
+
 import unittest
 from collections import OrderedDict
 
 import numpy as np
-from gymnasium import spaces
-
 from dacbench import AbstractEnv
 from dacbench.abstract_benchmark import objdict
 from dacbench.envs import CMAESEnv
+from gymnasium import spaces
 
 
 class TestCMAEnv(unittest.TestCase):
@@ -23,18 +24,17 @@ class TestCMAEnv(unittest.TestCase):
             low=-np.inf * np.ones(5), high=np.inf * np.ones(5)
         )
         config.reward_range = (-(10**12), 0)
-        env = CMAESEnv(config)
-        return env
+        return CMAESEnv(config)
 
     def test_setup(self):
         env = self.make_env()
-        self.assertTrue(issubclass(type(env), AbstractEnv))
+        assert issubclass(type(env), AbstractEnv)
 
     def test_reset(self):
         env = self.make_env()
         state, info = env.reset()
-        self.assertTrue(issubclass(type(info), dict))
-        self.assertTrue(state is not None)
+        assert issubclass(type(info), dict)
+        assert state is not None
 
     def test_step(self):
         env = self.make_env()
@@ -56,16 +56,16 @@ class TestCMAEnv(unittest.TestCase):
         state, reward, terminated, truncated, meta = env.step(
             OrderedDict(rand_dict)
         )  # env.step(np.ones(12, dtype=int))
-        self.assertTrue(reward >= env.reward_range[0])
-        self.assertTrue(reward <= env.reward_range[1])
-        self.assertFalse(terminated)
-        self.assertFalse(truncated)
-        self.assertTrue(len(meta.keys()) == 0)
-        self.assertTrue(len(state) == 5)
+        assert reward >= env.reward_range[0]
+        assert reward <= env.reward_range[1]
+        assert not terminated
+        assert not truncated
+        assert len(meta.keys()) == 0
+        assert len(state) == 5
         while not (terminated or truncated):
             rand_dict = {key: 1 for key in param_keys}
             _, _, terminated, truncated, _ = env.step(rand_dict)
 
     def test_close(self):
         env = self.make_env()
-        self.assertTrue(env.close())
+        assert env.close()

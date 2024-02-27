@@ -23,8 +23,9 @@ if found:
 
     __all__.append("CMAESBenchmark")
 else:
-    warnings.warn(
-        "CMA-ES Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
+    warnings.warn(  # noqa: B028
+        "CMA-ES Benchmark not installed. If you want to use this benchmark, "
+        "please follow the installation guide."
     )
 
 sgd_spec = importlib.util.find_spec("backpack")
@@ -34,8 +35,9 @@ if found:
 
     __all__.append("SGDBenchmark")
 else:
-    warnings.warn(
-        "SGD Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
+    warnings.warn(  # noqa: B028
+        "SGD Benchmark not installed. If you want to use this benchmark, "
+        "please follow the installation guide."
     )
 
 theory_spec = importlib.util.find_spec("uuid")
@@ -45,6 +47,7 @@ if found:
 
     __all__.append("TheoryBenchmark")
 else:
-    warnings.warn(
-        "Theory Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
+    warnings.warn(  # noqa: B028
+        "Theory Benchmark not installed. If you want to use this benchmark, "
+        "please follow the installation guide."
     )

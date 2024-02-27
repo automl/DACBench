@@ -24,5 +24,6 @@ try:
         )
 except:  # noqa: E722
     print(
-        "DACBench Gym registration failed - make sure you have all dependencies installed and their instance sets in the right path!"
+        "DACBench Gym registration failed - make sure you have all dependencies "
+        "installed and their instance sets in the right path!"
     )

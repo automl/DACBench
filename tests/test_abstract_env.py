@@ -1,13 +1,15 @@
+from __future__ import annotations
+
 import unittest
 
 import numpy as np
-from gymnasium import spaces
-
+import pytest
 from dacbench.abstract_env import AbstractEnv
+from gymnasium import spaces
 
 
 class LessAbstractEnv(AbstractEnv):
-    def reset(self, seed: int = None):
+    def reset(self, seed: int | None = None):
         pass
 
     def step(self, action):
@@ -30,7 +32,7 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": {0: 1, 1: 1},
             "benchmark_info": None,
         }
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             LessAbstractEnv(config)
 
         config = {
@@ -43,7 +45,7 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
             "instance_set": {0: 1, 1: 1},
         }
-        with self.assertRaises(KeyError):
+        with pytest.raises(KeyError):
             LessAbstractEnv(config)
 
         config = {
@@ -59,7 +61,7 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
             "instance_set": {0: 1, 1: 1},
         }
-        with self.assertRaises(KeyError):
+        with pytest.raises(KeyError):
             LessAbstractEnv(config)
 
         config = {
@@ -76,7 +78,7 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
             "instance_set": {0: 1, 1: 1},
         }
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             LessAbstractEnv(config)
 
         config = {
@@ -92,7 +94,7 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
             "instance_set": {0: 1, 1: 1},
         }
-        with self.assertRaises(KeyError):
+        with pytest.raises(KeyError):
             LessAbstractEnv(config)
 
     def make_env(self):
@@ -110,16 +112,15 @@ class TestAbstractEnv(unittest.TestCase):
             "benchmark_info": None,
             "instance_set": {0: 1, 1: 1},
         }
-        env = LessAbstractEnv(config)
-        return env
+        return LessAbstractEnv(config)
 
     def test_setup(self):
         env = self.make_env()
-        self.assertTrue(len(env.instance_set) >= 1)
-        self.assertTrue(env.n_steps > 0)
-        self.assertTrue(type(env.reward_range) is tuple)
-        self.assertTrue(issubclass(type(env.observation_space), spaces.Space))
-        self.assertTrue(issubclass(type(env.action_space), spaces.Space))
+        assert len(env.instance_set) >= 1
+        assert env.n_steps > 0
+        assert type(env.reward_range) is tuple
+        assert issubclass(type(env.observation_space), spaces.Space)
+        assert issubclass(type(env.action_space), spaces.Space)
 
         config = {
             "action_space": spaces.Discrete(2),
@@ -130,50 +131,46 @@ class TestAbstractEnv(unittest.TestCase):
             "instance_set": {0: 1, 1: 1},
         }
         env = LessAbstractEnv(config)
-        self.assertTrue(len(env.instance_set) >= 1)
-        self.assertTrue(env.n_steps > 0)
-        self.assertTrue(type(env.reward_range) is tuple)
-        self.assertTrue(issubclass(type(env.observation_space), spaces.Space))
-        self.assertTrue(issubclass(type(env.action_space), spaces.Space))
+        assert len(env.instance_set) >= 1
+        assert env.n_steps > 0
+        assert type(env.reward_range) is tuple
+        assert issubclass(type(env.observation_space), spaces.Space)
+        assert issubclass(type(env.action_space), spaces.Space)
 
     def test_pre_step_and_reset(self):
         env = self.make_env()
 
         env.n_steps = 10
-        self.assertFalse(env.step_())
+        assert not env.step_()
         env.n_steps = 1
-        self.assertTrue(env.step_())
+        assert env.step_()
 
         env.inst_id = 0
         env.reset_()
-        self.assertTrue(env.inst_id == 1)
-        self.assertTrue(env.c_step == 0)
+        assert env.inst_id == 1
+        assert env.c_step == 0
 
     def test_getters_and_setters(self):
         env = self.make_env()
 
-        self.assertTrue(env.inst_id == env.get_inst_id())
+        assert env.inst_id == env.get_inst_id()
         env.set_inst_id(1)
-        self.assertTrue(1 == env.get_inst_id())
+        assert env.get_inst_id() == 1
 
-        self.assertTrue(env.instance == env.get_instance())
+        assert env.instance == env.get_instance()
         env.set_instance(100)
-        self.assertTrue(100 == env.get_instance())
+        assert env.get_instance() == 100
 
-        self.assertTrue(
-            all(
-                [
-                    env.instance_set[k] == env.get_instance_set()[k]
-                    for k in range(len(env.instance_set))
-                ]
-            )
+        assert all(
+            env.instance_set[k] == env.get_instance_set()[k]
+            for k in range(len(env.instance_set))
         )
         env.set_instance_set({0: 100})
-        self.assertTrue(100 == env.get_instance_set()[0])
+        assert env.get_instance_set()[0] == 100
 
     def test_seed(self):
         env = self.make_env()
         seeds = []
         for _ in range(10):
             seeds.append(env.seed()[0])
-        self.assertFalse(len(set(seeds)) < 8)
+        assert not len(set(seeds)) < 8

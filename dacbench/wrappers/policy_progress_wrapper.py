@@ -1,3 +1,4 @@
+"""Wrapper for process tracking."""
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
@@ -8,7 +9,8 @@ from gymnasium import Wrapper
 class PolicyProgressWrapper(Wrapper):
     """Wrapper to track progress towards optimal policy.
 
-    Can only be used if a way to obtain the optimal policy given an instance can be obtained.
+    Can only be used if a way to obtain the optimal policy
+    given an instance can be obtained.
     """
 
     def __init__(self, env, compute_optimal):
@@ -72,8 +74,7 @@ class PolicyProgressWrapper(Wrapper):
             "render_policy_progress",
         ]:
             return object.__getattribute__(self, name)
-        else:
-            return getattr(self.env, name)
+        return getattr(self.env, name)
 
     def step(self, action):
         """Execute environment step and record distance.

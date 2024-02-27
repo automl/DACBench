@@ -1,3 +1,4 @@
+"""Abstract Benchmark."""
 from __future__ import annotations
 
 import json
@@ -91,14 +92,17 @@ class AbstractBenchmark(ABC):
 
         conf["wrappers"] = self.jsonify_wrappers()
 
-        # can be recovered from instance_set_path, and could contain function that are not serializable
+        # can be recovered from instance_set_path, and could contain function that
+        # are not serializable
         if "instance_set" in conf:
             del conf["instance_set"]
 
         return conf
 
     def process_configspace(self, configuration_space):
-        """This is largely the builting cs.json.write method, but doesn't save the result directly. If this is ever implemented in cs, we can replace this method."""
+        """This is largely the builting cs.json.write method, but doesn't save the
+        result directly. If this is ever implemented in cs, we can replace this method.
+        """
         from ConfigSpace.configuration_space import ConfigurationSpace
         from ConfigSpace.hyperparameters import (
             CategoricalHyperparameter,
@@ -331,7 +335,8 @@ class AbstractBenchmark(ABC):
 
     @staticmethod
     def __stringify_functions(conf: dict) -> dict:
-        """Replaced all callables in the config with a triple ('function', module_name, function_name).
+        """Replaced all callables in the config with a triple
+        ('function', module_name, function_name).
 
         Parameters
         ----------
@@ -416,7 +421,8 @@ class AbstractBenchmark(ABC):
             value = dict_space[k]
             if not isinstance(value, spaces.Box | spaces.Discrete):
                 raise ValueError(
-                    f"Only Dict spaces made up of Box spaces or discrete spaces are supported but got {type(value)}"
+                    f"Only Dict spaces made up of Box spaces or discrete spaces are "
+                    f"supported but got {type(value)}"
                 )
 
             if isinstance(value, spaces.Box):
@@ -442,15 +448,16 @@ class AbstractBenchmark(ABC):
         """
         dict_space = {}
         keys, types, args = dict_list
-        for k, type, args_ in zip(keys, types, args, strict=False):
-            if type == "box":
+        for k, space_type, args_ in zip(keys, types, args, strict=False):
+            if space_type == "box":
                 prepared_args = map(np.array, args_)
                 dict_space[k] = spaces.Box(*prepared_args, dtype=np.float32)
-            elif type == "discrete":
+            elif space_type == "discrete":
                 dict_space[k] = spaces.Discrete(*args_)
             else:
                 raise TypeError(
-                    f"Currently only Discrete and Box spaces are allowed in Dict spaces, got {type}"
+                    f"Currently only Discrete and Box spaces are allowed in Dict "
+                    f"spaces, got {space_type}"
                 )
         return dict_space
 
@@ -464,7 +471,7 @@ class AbstractBenchmark(ABC):
 
         """
         self.config = config
-        if "observation_space_type" in self.config:
+        if "observation_space_type" in self.config:  # noqa: SIM102
             # Types have to be numpy dtype (for gym spaces)s
             if isinstance(self.config["observation_space_type"], str):
                 if self.config["observation_space_type"] == "None":
@@ -481,7 +488,7 @@ class AbstractBenchmark(ABC):
                 self.config["observation_space"]
             )
 
-        elif "observation_space_class" in config:
+        elif "observation_space_class" in config:  # noqa: SIM102
             if config.observation_space_class == "Dict":
                 self.config["observation_space_args"] = [
                     self.dictify_json(self.config["observation_space_args"])
@@ -592,15 +599,14 @@ class AbstractBenchmark(ABC):
 
 
 # This code is taken from https://goodcode.io/articles/python-dict-object/
-class objdict(dict):
+class objdict(dict):  # noqa: N801
     """Modified dict to make config changes more flexible."""
 
     def __getattr__(self, name):
         """Get attribute."""
         if name in self:
             return self[name]
-        else:
-            raise AttributeError("No such attribute: " + name)
+        raise AttributeError("No such attribute: " + name)
 
     def __setattr__(self, name, value):
         """Set attribute."""

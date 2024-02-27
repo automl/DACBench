@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import unittest
 
 import numpy as np
-from numpy.testing import assert_almost_equal
-
 from dacbench import benchmarks
+from numpy.testing import assert_almost_equal
 
 
 def assert_state_space_equal(state1, state2):
@@ -13,7 +14,7 @@ def assert_state_space_equal(state1, state2):
         assert_almost_equal(state1, state2)
     elif isinstance(state1, dict):
         assert state1.keys() == state2.keys()
-        for key in state1.keys():
+        for key in state1:
             if "history" not in key:
                 assert_almost_equal(state1[key], state2[key])
     else:
@@ -35,10 +36,10 @@ class TestDeterministic(unittest.TestCase):
         _, reward2, terminated2, truncated2, info2 = env2.step(action)
 
         assert_state_space_equal(init_state1, init_state2)
-        self.assertEqual(info1, info2)
-        self.assertEqual(terminated1, terminated2)
-        self.assertEqual(truncated1, truncated2)
-        self.assertEqual(info1, info2)
+        assert info1 == info2
+        assert terminated1 == terminated2
+        assert truncated1 == truncated2
+        assert info1 == info2
 
     def test_LubyBenchmark(self):
         self.run_deterministic_test("LubyBenchmark")

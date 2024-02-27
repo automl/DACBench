@@ -1,8 +1,9 @@
+"""Benchmark for Toysgd."""
 from __future__ import annotations
 
-import os
+from pathlib import Path
 
-import ConfigSpace as CS
+import ConfigSpace as CS  # noqa: N817
 import ConfigSpace.hyperparameters as CSH
 import numpy as np
 import pandas as pd
@@ -61,6 +62,8 @@ DEFAULTS = objdict(
 
 
 class ToySGDBenchmark(AbstractBenchmark):
+    """SGD Benchmark with toy functions."""
+
     def __init__(self, config_path=None, config=None):
         """Initialize SGD Benchmark.
 
@@ -89,10 +92,7 @@ class ToySGDBenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         # Read test set if path is specified
-        if (
-            "test_set" not in self.config
-            and "test_set_path" in self.config
-        ):
+        if "test_set" not in self.config and "test_set_path" in self.config:
             self.read_instance_set(test=True)
 
         env = ToySGDEnv(self.config)
@@ -104,23 +104,15 @@ class ToySGDBenchmark(AbstractBenchmark):
     def read_instance_set(self, test=False):
         """Read path of instances from config into list."""
         if test:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.test_set_path
-            )
+            path = Path(__file__).resolve().parent / self.config.test_set_path
             keyword = "test_set"
         else:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.instance_set_path
-            )
+            path = Path(__file__).resolve().parent / self.config.instance_set_path
             keyword = "instance_set"
 
         self.config[keyword] = {}
         with open(path) as fh:
             # reader = csv.DictReader(fh, delimiter=";")
-            df = pd.read_csv(fh, sep=";")
-            for _index, instance in df.iterrows():
+            instance_df = pd.read_csv(fh, sep=";")
+            for _index, instance in instance_df.iterrows():
                 self.config[keyword][int(instance["ID"])] = instance

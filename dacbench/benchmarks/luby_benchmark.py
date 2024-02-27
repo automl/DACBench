@@ -1,9 +1,10 @@
+"""Luby Benchmark."""
 from __future__ import annotations
 
 import csv
-import os
+from pathlib import Path
 
-import ConfigSpace as CS
+import ConfigSpace as CS  # noqa: N817
 import ConfigSpace.hyperparameters as CSH
 import numpy as np
 
@@ -86,10 +87,7 @@ class LubyBenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         # Read test set if path is specified
-        if (
-            "test_set" not in self.config
-            and "test_set_path" in self.config
-        ):
+        if "test_set" not in self.config and "test_set_path" in self.config:
             self.read_instance_set(test=True)
 
         env = LubyEnv(self.config)
@@ -136,18 +134,10 @@ class LubyBenchmark(AbstractBenchmark):
     def read_instance_set(self, test=False):
         """Read instance set from file."""
         if test:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.test_set_path
-            )
+            path = Path(__file__).resolve().parent / self.config.test_set_path
             keyword = "test_set"
         else:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.instance_set_path
-            )
+            path = Path(__file__).resolve().parent / self.config.instance_set_path
             keyword = "instance_set"
 
         self.config[keyword] = {}
@@ -158,12 +148,12 @@ class LubyBenchmark(AbstractBenchmark):
                     float(shift) for shift in row["start"].split(",")
                 ] + [float(slope) for slope in row["sticky"].split(",")]
 
-    def get_benchmark(self, L=8, fuzziness=1.5, seed=0):
+    def get_benchmark(self, min_l=8, fuzziness=1.5, seed=0):
         """Get Benchmark from DAC paper.
 
         Parameters
         -------
-        L : int
+        min_l : int
             Minimum sequence lenght, was 8, 16 or 32 in the paper
         fuzziness : float
             Amount of noise applied. Was 1.5 for most of the experiments
@@ -176,7 +166,7 @@ class LubyBenchmark(AbstractBenchmark):
             Luby environment
         """
         self.config = objdict(LUBY_DEFAULTS.copy())
-        self.config.min_steps = L
+        self.config.min_steps = min_l
         self.config.seed = seed
         self.config.instance_set = {0: [0, 0]}
         self.config.reward_range = (-10, 10)

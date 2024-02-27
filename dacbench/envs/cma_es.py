@@ -1,3 +1,4 @@
+"""CMA ES Environment."""
 from __future__ import annotations
 
 import re
@@ -10,7 +11,10 @@ from dacbench import AbstractMADACEnv
 
 
 class CMAESEnv(AbstractMADACEnv):
+    """The CMA ES environment controlles the step size on BBOB functions."""
+
     def __init__(self, config):
+        """Initialize the environment."""
         super().__init__(config)
 
         self.es = None
@@ -22,13 +26,14 @@ class CMAESEnv(AbstractMADACEnv):
             for name in config["config_space"]:
                 value = self.config.get(name)
                 if value:
-                    self.representation_dict[self.uniform_name(name)] = value
+                    self.representation_dict[self._uniform_name(name)] = value
 
         self.get_reward = config.get("reward_function", self.get_default_reward)
         self.get_state = config.get("state_method", self.get_default_state)
 
-    def uniform_name(self, name):
-        # Convert name of parameters uniformly to lowercase, separated with _ and no numbers
+    def _uniform_name(self, name):
+        # Convert name of parameters uniformly to lowercase,
+        # separated with _ and no numbers
         pattern = r"^\d+_"
 
         # Use re.sub to remove the leading number and underscore
@@ -36,6 +41,7 @@ class CMAESEnv(AbstractMADACEnv):
         return result.lower()
 
     def reset(self, seed=None, options=None):
+        """Reset the environment."""
         if options is None:
             options = {}
         super().reset_(seed)
@@ -65,13 +71,14 @@ class CMAESEnv(AbstractMADACEnv):
         return self.get_state(self), {}
 
     def step(self, action):
+        """Make one step of the environment."""
         truncated = super().step_()
 
         # Get all action values and uniform names
         complete_action = {}
         if isinstance(action, dict):
             for hp in action:
-                n_name = self.uniform_name(hp)
+                n_name = self._uniform_name(hp)
                 if n_name == "step_size":
                     # Step size is set separately
                     self.es.parameters.sigma = action[hp][0]
@@ -98,14 +105,31 @@ class CMAESEnv(AbstractMADACEnv):
         return self.get_state(self), self.get_reward(self), terminated, truncated, {}
 
     def close(self):
+        """Closes the environment."""
         return True
 
     def get_default_reward(self, *_):
+        """The default reward function.
+
+        Args:
+            _ (_type_): Empty parameter, which can be used when overriding
+
+        Returns:
+            float: The calculated reward
+        """
         return max(
             self.reward_range[0], min(self.reward_range[1], -self.es.parameters.fopt)
         )
 
     def get_default_state(self, *_):
+        """Default state function.
+
+        Args:
+            _ (_type_): Empty parameter, which can be used when overriding
+
+        Returns:
+            dict: The current state
+        """
         return np.array(
             [
                 self.es.parameters.lambda_,
@@ -117,4 +141,5 @@ class CMAESEnv(AbstractMADACEnv):
         )
 
     def render(self, mode="human"):
+        """Render progress."""
         raise NotImplementedError("CMA-ES does not support rendering at this point")

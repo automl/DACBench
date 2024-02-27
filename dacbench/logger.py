@@ -1,7 +1,7 @@
+"""Logger helper."""
 from __future__ import annotations
 
 import json
-import os
 from abc import ABCMeta, abstractmethod
 from collections import ChainMap, defaultdict
 from collections.abc import Callable, Iterable
@@ -47,7 +47,6 @@ def load_logs(log_file: Path) -> list[dict]:
     """
     with open(log_file) as log_file:
         return list(map(json.loads, log_file))
-
 
 
 def split(predicate: Callable, iterable: Iterable) -> tuple[list, list]:
@@ -104,9 +103,16 @@ def flatten_log_entry(log_entry: dict) -> list[dict]:
     for value_name, value_dict in dict_entries:
         current_rows = (
             dict(
-                [*top_level_entries, ("value", value), ("time", time), ("name", value_name)]
+                [
+                    *top_level_entries,
+                    ("value", value),
+                    ("time", time),
+                    ("name", value_name),
+                ]
             )
-            for value, time in zip(value_dict["values"], value_dict["times"], strict=False)
+            for value, time in zip(
+                value_dict["values"], value_dict["times"], strict=False
+            )
         )
 
         rows.extend(map(dict, current_rows))
@@ -144,12 +150,14 @@ def log2dataframe(
     logs: List
         List of log entries
     wide: bool
-        wide=False (default) produces a dataframe with columns (episode, step, time, name, value)
-        wide=True returns a dataframe (episode, step, time, name_1, name_2, ...) if the variable name_n has not been logged
+        wide=False (default) produces a dataframe with columns
+        (episode, step, time, name, value)
+        wide=True returns a dataframe (episode, step, time, name_1, name_2, ...)
+        if the variable name_n has not been logged
         at (episode, step, time) name_n is NaN.
     drop_columns: List[str]
-        List of column names to be dropped (before reshaping the long dataframe) mostly used in combination
-        with wide=True to reduce NaN values
+        List of column names to be dropped (before reshaping the long dataframe) mostly
+        used in combination with wide=True to reduce NaN values
 
     Returns:
     -------
@@ -185,7 +193,7 @@ def log2dataframe(
         )
         index_columns = primary_index_columns + additional_columns + [field_id_column]
         dataframe = dataframe.set_index(index_columns)
-        dataframe = dataframe.unstack()
+        dataframe = dataframe.pivot_table()
         dataframe = dataframe.reset_index()
         dataframe.columns = [a if b == "" else b for a, b in dataframe.columns]
 
@@ -209,13 +217,13 @@ def instance_mapper(self):
 class AbstractLogger(metaclass=ABCMeta):
     """Logger interface.
 
-    The logger classes provide a way of writing structured logs as jsonl files and also help to track information like
-    current episode, step, time ...
+    The logger classes provide a way of writing structured logs as jsonl files and also
+    help to track information like current episode, step, time ...
 
     In the jsonl log file each row corresponds to a step.
     """
 
-    valid_types = {
+    valid_types = {  # noqa: RUF012
         "recursive": [dict, list, tuple, np.ndarray],
         "primitive": [str, int, float, bool, np.number],
     }
@@ -237,7 +245,8 @@ class AbstractLogger(metaclass=ABCMeta):
             Path under which the experiment folder is created
         step_write_frequency: int
             number of steps after which the loggers writes to file.
-            If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
+            If None only the data is only written to file if  write is called,
+            if triggered by episode_write_frequency
             or on close
         episode_write_frequency: int
             see step_write_frequency
@@ -246,7 +255,7 @@ class AbstractLogger(metaclass=ABCMeta):
         self.experiment_name = experiment_name
         self.output_path = output_path
         if isinstance(self.output_path, str):
-            logpath = os.path.join(self.output_path, self.experiment_name)
+            logpath = Path(self.output_path) / self.experiment_name
             self.log_dir = self._init_logging_dir(Path(logpath))
         else:
             self.log_dir = self._init_logging_dir(
@@ -288,7 +297,9 @@ class AbstractLogger(metaclass=ABCMeta):
 
     @staticmethod
     def _pretty_valid_types() -> str:
-        """Returns a string pretty string representation of the types that can be logged as values."""
+        """Returns a string pretty string representation of the types
+        that can be logged as values.
+        """
         valid_types = chain(
             AbstractLogger.valid_types["recursive"],
             AbstractLogger.valid_types["primitive"],
@@ -325,23 +336,26 @@ class AbstractLogger(metaclass=ABCMeta):
         bool
 
         """
-        if any(isinstance(value, type) for type in self.valid_types["primitive"]):
+        if any(isinstance(value, v_type) for v_type in self.valid_types["primitive"]):
             return True
 
-        elif any(isinstance(value, type) for type in self.valid_types["recursive"]):
+        if any(isinstance(value, v_type) for v_type in self.valid_types["recursive"]):
             value = value.vlaues() if isinstance(value, dict) else value
             return all(self.is_of_valid_type(sub_value) for sub_value in value)
 
-        else:
-            return False
+        return False
 
     @abstractmethod
     def close(self) -> None:
-        """Makes sure, that all remaining entries in the are written to file and the file is closed."""
+        """Makes sure, that all remaining entries in the are written
+        to file and the file is closed.
+        """
 
     @abstractmethod
     def next_step(self) -> None:
-        """Call at the end of the step. Updates the internal state and dumps the information of the last step into a json."""
+        """Call at the end of the step. Updates the internal state and
+        dumps the information of the last step into a json.
+        """
 
     @abstractmethod
     def next_episode(self) -> None:
@@ -349,7 +363,9 @@ class AbstractLogger(metaclass=ABCMeta):
 
     @abstractmethod
     def write(self) -> None:
-        """Writes buffered logs to file. Invoke manually if you want to load logs during a run."""
+        """Writes buffered logs to file.
+        Invoke manually if you want to load logs during a run.
+        """
 
     @abstractmethod
     def log(self, key: str, value) -> None:
@@ -361,7 +377,8 @@ class AbstractLogger(metaclass=ABCMeta):
             key to log
         value:
             the value must of of a type that is json serializable.
-            Currently only {str, int, float, bool, np.number} and recursive types of those are supported.
+            Currently only {str, int, float, bool, np.number} and
+            recursive types of those are supported.
 
         """
 
@@ -392,13 +409,15 @@ class AbstractLogger(metaclass=ABCMeta):
         value:
             see log
         space_info:
-            a list of column names. The length of this list must equal the resulting number of columns.
+            a list of column names.
+            The length of this list must equal the resulting number of columns.
 
         """
 
 
 class ModuleLogger(AbstractLogger):
-    """A logger for handling logging of one module. e.g. a wrapper or toplevel general logging.
+    """A logger for handling logging of one module.
+    e.g. a wrapper or toplevel general logging.
 
     Don't create manually use Logger to manage ModuleLoggers
     """
@@ -423,7 +442,8 @@ class ModuleLogger(AbstractLogger):
             the module (mostly name of the wrapper), each wrapper gets its own file
         step_write_frequency: int
             number of steps after which the loggers writes to file.
-            If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
+            If None only the data is only written to file if  write is called,
+            if triggered by episode_write_frequency
             or on close
         episode_write_frequency: int
             see step_write_frequency
@@ -435,7 +455,7 @@ class ModuleLogger(AbstractLogger):
             experiment_name, output_path, step_write_frequency, episode_write_frequency
         )
 
-        self.log_file = open(os.path.join(self.log_dir, f"{module}.jsonl"), "w")
+        self.log_file = open(Path(self.log_dir) / f"{module}.jsonl", "w")
 
         self.step = 0
         self.episode = 0
@@ -454,18 +474,22 @@ class ModuleLogger(AbstractLogger):
         return Path(self.log_file.name)
 
     def close(self):
-        """Makes sure, that all remaining entries in the are written to file and the file is closed."""
+        """Makes sure, that all remaining entries in the are written to file
+        and the file is closed.
+        """
         if not self.log_file.closed:
             self.write()
             self.log_file.close()
 
     def __del__(self):
-        """Makes sure, that all remaining entries in the are written to file and the file is closed."""
+        """Makes sure, that all remaining entries in the are written to file
+        and the file is closed.
+        """
         if not self.log_file.closed:
             self.close()
 
     @staticmethod
-    def __json_default(object):
+    def __json_default(obj):
         """Add supoort for dumping numpy arrays and numbers to json.
 
         Parameters
@@ -474,12 +498,11 @@ class ModuleLogger(AbstractLogger):
             numpy object to jsonify
 
         """
-        if isinstance(object, np.ndarray):
-            return object.tolist()
-        elif isinstance(object, np.number):
-            return object.item()
-        else:
-            raise ValueError(f"Type {type(object)} not supported")
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if isinstance(obj, np.number):
+            return obj.item()
+        raise ValueError(f"Type {type(obj)} not supported")
 
     def __end_step(self):
         if self.current_step:
@@ -496,7 +519,9 @@ class ModuleLogger(AbstractLogger):
         return defaultdict(lambda: {"times": [], "values": []})
 
     def reset_episode(self) -> None:
-        """Resets the episode and step. Be aware that this can lead to ambitious keys if no instance or seed or other identifying additional info is set."""
+        """Resets the episode and step. Be aware that this can lead to ambitious keys
+        if no instance or seed or other identifying additional info is set.
+        """
         self.__end_step()
         self.episode = 0
         self.step = 0
@@ -506,7 +531,9 @@ class ModuleLogger(AbstractLogger):
         self.step = 0
 
     def next_step(self):
-        """Call at the end of the step. Updates the internal state and dumps the information of the last step into a json."""
+        """Call at the end of the step. Updates the internal state and dumps
+        the information of the last step into a json.
+        """
         self.__end_step()
         if (
             self.step_write_frequency is not None
@@ -516,7 +543,9 @@ class ModuleLogger(AbstractLogger):
         self.step += 1
 
     def next_episode(self):
-        """Writes buffered logs to file. Invoke manually if you want to load logs during a run."""
+        """Writes buffered logs to file. Invoke manually if you want to load logs
+        during a run.
+        """
         self.__reset_step()
         if (
             self.episode_write_frequency is not None
@@ -526,7 +555,9 @@ class ModuleLogger(AbstractLogger):
         self.episode += 1
 
     def write(self):
-        """Writes buffered logs to file. Invoke manually if you want to load logs during a run."""
+        """Writes buffered logs to file. Invoke manually if you want to load logs
+        during a run.
+        """
         self.__end_step()
         self.__buffer_to_file()
 
@@ -538,7 +569,8 @@ class ModuleLogger(AbstractLogger):
             self.log_file.flush()
 
     def set_additional_info(self, **kwargs):
-        """Can be used to log additional information for each step e.g. for seed and instance id.
+        """Can be used to log additional information for each step
+        e.g. for seed and instance id.
 
         Parameters
         ----------
@@ -559,7 +591,8 @@ class ModuleLogger(AbstractLogger):
             key to log
         value:
            the value must of of a type that is json serializable.
-           Currently only {str, int, float, bool, np.number} and recursive types of those are supported.
+           Currently only {str, int, float, bool, np.number} and recursive types of
+           those are supported.
 
         """
         self.__log(key, value, datetime.now().strftime("%d-%m-%y %H:%M:%S.%f"))
@@ -568,7 +601,8 @@ class ModuleLogger(AbstractLogger):
         if not self.is_of_valid_type(value):
             valid_types = self._pretty_valid_types()
             raise ValueError(
-                f"value {type(value)} is not of valid type or a recursive composition of valid types ({valid_types})"
+                f"value {type(value)} is not of valid type or a recursive composition"
+                f"of valid types ({valid_types})"
             )
         self.current_step[key]["times"].append(time)
         self.current_step[key]["values"].append(value)
@@ -597,7 +631,8 @@ class ModuleLogger(AbstractLogger):
             else:
                 if len(space_info) != 1:
                     raise ValueError(
-                        f"Space info must match length (expect 1 != got{len(space_info)}"
+                        "Space info must match length "
+                        f"(expect 1 != got{len(space_info)}"
                     )
 
                 data = {f"{key}_{space_info[0]}": value}
@@ -605,16 +640,21 @@ class ModuleLogger(AbstractLogger):
         elif isinstance(value, np.ndarray):
             if space_info is not None and len(space_info) != len(value):
                 raise ValueError(
-                    f"Space info must match length (expect {len(value)} != got{len(space_info)}"
+                    f"Space info must match length (expect {len(value)} "
+                    f"!= got{len(space_info)}"
                 )
             key_suffix = (
-                enumerate(value) if space_info is None else zip(space_info, value, strict=False)
+                enumerate(value)
+                if space_info is None
+                else zip(space_info, value, strict=False)
             )
             data = {f"{key}_{suffix}": x for suffix, x in key_suffix}
 
         elif isinstance(value, dict):
             key_suffix = (
-                value.items() if space_info is None else zip(space_info, value.values(), strict=False)
+                value.items()
+                if space_info is None
+                else zip(space_info, value.values(), strict=False)
             )
             dicts = (
                 ModuleLogger.__space_dict(f"{key}_{sub_key}", sub_value, None)
@@ -641,7 +681,8 @@ class ModuleLogger(AbstractLogger):
         value:
             see log
         space_info:
-            a list of column names. The length of this list must equal the resulting number of columns.
+            a list of column names.
+            The length of this list must equal the resulting number of columns.
 
         """
         data = self.__space_dict(key, value, space_info)
@@ -651,11 +692,14 @@ class ModuleLogger(AbstractLogger):
 class Logger(AbstractLogger):
     """A logger that manages the creation of the module loggers.
 
-    To get a ModuleLogger for you module (e.g. wrapper) call module_logger = Logger(...).add_module("my_wrapper").
-    From now on  module_logger.log(...) or logger.log(..., module="my_wrapper") can be used to log.
+    To get a ModuleLogger for you module (e.g. wrapper) call
+    module_logger = Logger(...).add_module("my_wrapper").
+    From now on  module_logger.log(...) or logger.log(..., module="my_wrapper")
+    can be used to log.
 
-    The logger module takes care of updating information like episode and step in the subloggers. To indicate to the loggers
-    the end of the episode or the next_step simple call logger.next_episode() or logger.next_step().
+    The logger module takes care of updating information like episode and step in the
+    subloggers. To indicate to the loggers the end of the episode or the next_step
+    simple call logger.next_episode() or logger.next_step().
     """
 
     def __init__(
@@ -675,7 +719,8 @@ class Logger(AbstractLogger):
             Path under which the experiment folder is created
         step_write_frequency: int
             number of steps after which the loggers writes to file.
-            If None only the data is only written to file if  write is called, if triggered by episode_write_frequency
+            If None only the data is only written to file if  write is called,
+            if triggered by episode_write_frequency
             or on close
         episode_write_frequency: int
             see step_write_frequency
@@ -701,7 +746,9 @@ class Logger(AbstractLogger):
             module_logger.set_env(env)
 
     def close(self):
-        """Makes sure, that all remaining entries (from all sublogger) are written to files and the files are closed."""
+        """Makes sure, that all remaining entries (from all sublogger) are written to
+        files and the files are closed.
+        """
         for _, module_logger in self.module_logger.items():
             module_logger.close()
 
@@ -710,7 +757,9 @@ class Logger(AbstractLogger):
         self.close()
 
     def next_step(self):
-        """Call at the end of the step. Updates the internal state of all subloggers and dumps the information of the last step into a json."""
+        """Call at the end of the step. Updates the internal state of all subloggers and
+        dumps the information of the last step into a json.
+        """
         for _, module_logger in self.module_logger.items():
             module_logger.next_step()
 
@@ -725,7 +774,9 @@ class Logger(AbstractLogger):
             module_logger.reset_episode()
 
     def write(self):
-        """Writes buffered logs to file. Invoke manually if you want to load logs during a run."""
+        """Writes buffered logs to file.
+        Invoke manually if you want to load logs during a run.
+        """
         for _, module_logger in self.module_logger.items():
             module_logger.write()
 
@@ -751,16 +802,16 @@ class Logger(AbstractLogger):
 
         if module in self.module_logger:
             raise ValueError(f"Module {module} already registered")
-        else:
-            self.module_logger[module] = ModuleLogger(
-                self.output_path,
-                self.experiment_name,
-                module,
-                self.step_write_frequency,
-                self.episode_write_frequency,
-            )
-            if self.env is not None:
-                self.module_logger[module].set_env(self.env)
+
+        self.module_logger[module] = ModuleLogger(
+            self.output_path,
+            self.experiment_name,
+            module,
+            self.step_write_frequency,
+            self.episode_write_frequency,
+        )
+        if self.env is not None:
+            self.module_logger[module].set_env(self.env)
 
         return self.module_logger[module]
 
@@ -774,7 +825,7 @@ class Logger(AbstractLogger):
 
         """
         agent_config = {"type": str(agent.__class__)}
-        with open(os.path.join(self.log_dir, "agent.json"), "w") as f:
+        with open(Path(self.log_dir) / "agent.json", "w") as f:
             json.dump(agent_config, f)
 
     def add_benchmark(self, benchmark: AbstractBenchmark) -> None:
@@ -786,7 +837,7 @@ class Logger(AbstractLogger):
             the benchmark object to add
 
         """
-        benchmark.save_config(os.path.join(self.log_dir, "benchmark.json"))
+        benchmark.save_config(Path(self.log_dir) / "benchmark.json")
 
     def set_additional_info(self, **kwargs):
         """Add additional info.

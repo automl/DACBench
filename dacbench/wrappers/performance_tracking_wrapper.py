@@ -1,3 +1,4 @@
+"""Wrapper for performance tracking."""
 from __future__ import annotations
 
 from collections import defaultdict
@@ -14,7 +15,8 @@ current_palette = list(sb.color_palette())
 class PerformanceTrackingWrapper(Wrapper):
     """Wrapper to track episode performance.
 
-    Includes interval mode that returns performance in lists of len(interval) instead of one long list.
+    Includes interval mode that returns performance in lists of len(interval)
+    instead of one long list.
     """
 
     def __init__(
@@ -112,8 +114,7 @@ class PerformanceTrackingWrapper(Wrapper):
         ]:
             return object.__getattribute__(self, name)
 
-        else:
-            return getattr(self.env, name)
+        return getattr(self.env, name)
 
     def step(self, action):
         """Execute environment step and record performance.
@@ -169,15 +170,14 @@ class PerformanceTrackingWrapper(Wrapper):
                 self.instance_performances,
             )
 
-        elif self.performance_interval:
+        if self.performance_interval:
             complete_intervals = [*self.performance_intervals, self.current_performance]
             return self.overall_performance, complete_intervals
 
-        elif self.track_instances:
+        if self.track_instances:
             return self.overall_performance, self.instance_performances
 
-        else:
-            return self.overall_performance
+        return self.overall_performance
 
     def render_performance(self):
         """Plot performance."""
@@ -200,7 +200,8 @@ class PerformanceTrackingWrapper(Wrapper):
         ax = plt.subplot(111)
         for k, i in zip(
             self.instance_performances.keys(),
-            np.arange(len(self.instance_performances.keys())), strict=False,
+            np.arange(len(self.instance_performances.keys())),
+            strict=False,
         ):
             ax.bar(str(i), np.mean(self.instance_performances[k]))
         plt.show()

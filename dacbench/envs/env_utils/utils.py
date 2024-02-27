@@ -1,13 +1,13 @@
+"""Utils for the environments."""
 from __future__ import annotations
 
 import numpy as np
 import torch
-import torch.nn.functional as F
 from torch import nn
 from torch.utils.data.dataloader import DataLoader
 from torchvision import datasets, transforms
 
-datasets.CIFAR10.download
+datasets.CIFAR10.download  # noqa: B018
 
 
 DATASETS = {
@@ -48,8 +48,8 @@ def random_torchvision_loader(
     rng = np.random.RandomState(seed)
 
     if name is None:
-        np.random.seed(seed)
-        name = np.random.choice(np.array(list(DATASETS.keys())))
+        rng.seed(seed)
+        name = rng.choice(np.array(list(DATASETS.keys())))
 
     if train_validation_ratio is None:
         train_validation_ratio = (
@@ -100,27 +100,22 @@ def _random_instance(
     """Helper for samling a random instance."""
     batch_size = 2 ** int(np.exp(rng.uniform(low=np.log(4), high=np.log(8))))
 
-    model, n_conv_layers = random_architecture(
-        rng, datasets[0][0][0].shape, len(datasets[0].classes)
-    )
+    model = random_architecture(rng, datasets[0][0][0].shape, len(datasets[0].classes))
     optimizer_params = sample_optimizer_params(rng, **kwargs)
-    loss = F.nll_loss
 
     crash_penalty = np.log(len(datasets[0].classes))
     return (
         model,
         optimizer_params,
-        loss,
         batch_size,
         crash_penalty,
-        n_conv_layers,
     )
 
 
 def sample_optimizer_params(rng, **kwargs):
     """Samples optimizer parameters according to below rules.
-    - With 0.8 probability keep default of all parameters
-    - For each hyperparameter, with 0.5 probability sample a new value else keep default.
+    -With 0.8 probability keep default of all parameters
+    -For each hyperparameter, with 0.5 probability sample a new value else keep default.
     """
     modify = rng.rand()
 
@@ -159,9 +154,10 @@ def random_architecture(
     rng: np.random.RandomState,
     input_shape: tuple[int, int, int],
     n_classes: int,
-    **kwargs,
-) -> tuple[nn.Module, int]:
-    """Samples random architecture with `rng` for given `input_shape` and `n_classes`."""
+) -> nn.Module:
+    """Samples random architecture with `rng` for given `input_shape`
+    and `n_classes`.
+    """
     modules = [nn.Identity()]
     max_n_conv_layers = 3
     n_conv_layers = rng.randint(low=0, high=max_n_conv_layers + 1)
@@ -221,4 +217,40 @@ def random_architecture(
     linear_layers.append(nn.Linear(prev_l, n_classes))
     linear_layers.append(nn.LogSoftmax(1))
     mlp = nn.Sequential(*linear_layers)
-    return nn.Sequential(feature_extractor, mlp), n_conv_layers
+    return nn.Sequential(feature_extractor, mlp)
+
+
+class LayerType:
+    """Enum for supported torch layers."""
+
+    CONV2D = 1
+    LINEAR = 2
+    FLATTEN = 3
+    POOLING = 4
+
+
+# Define a mapping from layer type to the corresponding PyTorch module
+layer_mapping = {
+    LayerType.CONV2D: nn.Conv2d,
+    LayerType.LINEAR: nn.Linear,
+    LayerType.FLATTEN: nn.Flatten,
+    LayerType.POOLING: nn.MaxPool2d,
+}
+
+
+# Define a function to create the model based on the layer specification
+def create_model(layer_specification, n_classes) -> nn.Sequential:
+    """Creates a torch model using the given layer_specification.
+
+    Returns:
+        nn.Sequential: The pytorch model
+    """
+    layers = []
+    for layer_type, layer_params in layer_specification:
+        layer_class = layer_mapping[layer_type]
+        layer = layer_class(**layer_params)
+        layers.append(layer)
+    lst_out_dim = layer_specification[-1][1]["out_features"]
+    layers.append(nn.Linear(lst_out_dim, n_classes))
+    layers.append(nn.LogSoftmax(1))
+    return nn.Sequential(*layers)

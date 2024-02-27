@@ -1,9 +1,10 @@
+"""Sigmoid Benchmark."""
 from __future__ import annotations
 
 import csv
-import os
+from pathlib import Path
 
-import ConfigSpace as CS
+import ConfigSpace as CS  # noqa: N817
 import ConfigSpace.hyperparameters as CSH
 import numpy as np
 
@@ -89,10 +90,7 @@ class SigmoidBenchmark(AbstractBenchmark):
             self.read_instance_set()
 
         # Read test set if path is specified
-        if (
-            "test_set" not in self.config
-            and "test_set_path" in self.config
-        ):
+        if "test_set" not in self.config and "test_set_path" in self.config:
             self.read_instance_set(test=True)
 
         if (
@@ -112,9 +110,11 @@ class SigmoidBenchmark(AbstractBenchmark):
                     env = ContinuousStateSigmoidEnv(self.config)
                 else:
                     raise Exception(
-                        f'The given environment type "{self.config["env_type"]}" does not support the'
-                        f' chosen action_space "{self.config["action_space"]}". The action space has to'
-                        f' be either of type "Box" for continuous actions or "Discrete".'
+                        f'The given environment type "{self.config["env_type"]}" does'
+                        f' not support the chosen action_space'
+                        f' {self.config["action_space"]}.'
+                        f' The action space has to be either of type "Box"'
+                        f' for continuous actions or "Discrete".'
                     )
             else:  # ... discrete.
                 env = SigmoidEnv(self.config)
@@ -143,36 +143,28 @@ class SigmoidBenchmark(AbstractBenchmark):
     def read_instance_set(self, test=False):
         """Read instance set from file."""
         if test:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.test_set_path
-            )
+            path = Path(__file__).resolve().parent / self.config.test_set_path
             keyword = "test_set"
         else:
-            path = (
-                os.path.dirname(os.path.abspath(__file__))
-                + "/"
-                + self.config.instance_set_path
-            )
+            path = Path(__file__).resolve().parent / self.config.instance_set_path
             keyword = "instance_set"
 
         self.config[keyword] = {}
         with open(path) as f:
             reader = csv.reader(f)
             for row in reader:
-                f = []
+                row_values = []
                 inst_id = None
                 for i in range(len(row)):
                     if i == 0:
                         try:
                             inst_id = int(row[i])
-                        except Exception:
+                        except Exception:  # noqa: S112, BLE001
                             continue
                     else:
                         try:
-                            f.append(float(row[i]))
-                        except Exception:
+                            row_values.append(float(row[i]))
+                        except Exception:  # noqa: S112, BLE001
                             continue
 
                 if len(f) != 0:

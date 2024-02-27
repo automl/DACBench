@@ -1,3 +1,4 @@
+"""Wrapper to track time."""
 from __future__ import annotations
 
 import time
@@ -15,7 +16,8 @@ current_palette = list(sb.color_palette())
 class EpisodeTimeWrapper(Wrapper):
     """Wrapper to track time spent per episode.
 
-    Includes interval mode that returns times in lists of len(interval) instead of one long list.
+    Includes interval mode that returns times in lists of len(interval)
+    instead of one long list.
     """
 
     def __init__(self, env, time_interval=None, logger=None):
@@ -110,8 +112,7 @@ class EpisodeTimeWrapper(Wrapper):
         ]:
             return object.__getattribute__(self, name)
 
-        else:
-            return getattr(self.env, name)
+        return getattr(self.env, name)
 
     def step(self, action):
         """Execute environment step and record time.
@@ -176,8 +177,7 @@ class EpisodeTimeWrapper(Wrapper):
                 complete_step_intervals,
             )
 
-        else:
-            return np.array(self.overall_times), np.array(self.all_steps)
+        return np.array(self.overall_times), np.array(self.all_steps)
 
     def render_step_time(self):
         """Render step times."""

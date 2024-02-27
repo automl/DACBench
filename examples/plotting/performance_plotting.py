@@ -1,17 +1,13 @@
 from pathlib import Path
 
-from seaborn import plotting_context
-
-from dacbench.logger import load_logs, log2dataframe
-from dacbench.plotting import plot_performance_per_instance, plot_performance
-
 import matplotlib.pyplot as plt
+from dacbench.logger import load_logs, log2dataframe
+from dacbench.plotting import plot_performance, plot_performance_per_instance
+from seaborn import plotting_context
 
 
 def per_instance_example():
-    """
-    Plot CMA performance for each training instance
-    """
+    """Plot CMA performance for each training instance"""
     file = Path("./data/chainererrl_cma/PerformanceTrackingWrapper.jsonl")
     logs = load_logs(file)
     data = log2dataframe(logs, wide=True, drop_columns=["time"])
@@ -24,9 +20,7 @@ def per_instance_example():
 
 
 def performance_example():
-    """
-    Plot Sigmoid performance over time, divided by seed and with each seed in its own plot
-    """
+    """Plot Sigmoid performance over time, divided by seed and with each seed in its own plot"""
     file = Path("./data/sigmoid_example/PerformanceTrackingWrapper.jsonl")
     logs = load_logs(file)
     data = log2dataframe(logs, wide=True, drop_columns=["time"])

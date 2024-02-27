@@ -1,3 +1,4 @@
+"""Wrapper for instance sampling."""
 from __future__ import annotations
 
 import numpy as np
@@ -8,7 +9,8 @@ from scipy.stats import norm
 class InstanceSamplingWrapper(Wrapper):
     """Wrapper to sample a new instance at a given time point.
 
-    Instances can either be sampled using a given method or a distribution infered from a given list of instances.
+    Instances can either be sampled using a given method
+    or a distribution infered from a given list of instances.
     """
 
     def __init__(self, env, sampling_function=None, instances=None, reset_interval=0):
@@ -71,8 +73,7 @@ class InstanceSamplingWrapper(Wrapper):
         if name in ["sampling_function", "env", "fit_dist", "reset"]:
             return object.__getattribute__(self, name)
 
-        else:
-            return getattr(self.env, name)
+        return getattr(self.env, name)
 
     def reset(self):
         """Reset environment and use sampled instance for training.
@@ -110,8 +111,9 @@ class InstanceSamplingWrapper(Wrapper):
 
         def sample():
             instance = []
+            rng = np.random.default_rng()
             for d in dists:
-                instance.append(np.random.normal(d[0], d[1]))
+                instance.append(rng.normal(d[0], d[1]))
             return instance
 
         return sample

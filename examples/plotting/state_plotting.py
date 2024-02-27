@@ -1,17 +1,13 @@
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+import pandas as pd
 from dacbench.logger import load_logs, log2dataframe
 from dacbench.plotting import plot_state
-import matplotlib.pyplot as plt
-
-import pandas as pd
 
 
 def plot_state_CMAES():
-    """
-    Plot state information of CMA-ES run over time
-    """
-
+    """Plot state information of CMA-ES run over time"""
     # Since converting the json logs to a data frame takes a couple of minutes
     # we we cache the logs for tuning the plot settings in a picked datafarme object
     path = Path("output/cached_logs.pickle")

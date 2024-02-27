@@ -1,9 +1,9 @@
 from pathlib import Path
 
 from dacbench.agents import RandomAgent
+from dacbench.benchmarks import CMAESBenchmark
 from dacbench.logger import Logger
 from dacbench.runner import run_benchmark
-from dacbench.benchmarks import CMAESBenchmark
 from dacbench.wrappers import StateTrackingWrapper
 
 # Make CMAESBenchmark environment

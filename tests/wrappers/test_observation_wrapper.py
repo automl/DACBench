@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import unittest
 
 import gymnasium as gym
 import numpy as np
-
 from dacbench import AbstractEnv
 from dacbench.wrappers import ObservationWrapper
 
@@ -31,8 +32,7 @@ class DummyDictEnv(AbstractEnv):
 
 class TestObservationTrackingWrapper(unittest.TestCase):
     def get_test_env(self) -> AbstractEnv:
-        env = DummyDictEnv(dummy_config)
-        return env
+        return DummyDictEnv(dummy_config)
 
     def test_flatten(self):
         wrapped_env = ObservationWrapper(self.get_test_env())
@@ -50,14 +50,14 @@ class TestObservationTrackingWrapper(unittest.TestCase):
         env = self.get_test_env()
         reset_state_env, info = env.reset()
         step_state_env, *rest_env = env.step(action)
-        self.assertIsInstance(reset_state_env, dict)
-        self.assertTrue(issubclass(type(info), dict))
+        assert isinstance(reset_state_env, dict)
+        assert issubclass(type(info), dict)
 
         wrapped_env = ObservationWrapper(self.get_test_env())
         reset_state_wrapped, info = wrapped_env.reset()
         step_state_wrapped, *rest_wrapped = wrapped_env.step(action)
 
-        self.assertIsInstance(reset_state_wrapped, np.ndarray)
+        assert isinstance(reset_state_wrapped, np.ndarray)
         self.assertListEqual(rest_env[1:], rest_wrapped[1:])
 
         np.testing.assert_array_equal(

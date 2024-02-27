@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import tempfile
 import unittest
@@ -5,10 +7,9 @@ from pathlib import Path
 
 import matplotlib
 import numpy as np
-from gymnasium import spaces
-
 from dacbench.abstract_agent import AbstractDACBenchAgent
 from dacbench.runner import run_dacbench
+from gymnasium import spaces
 
 matplotlib.use("Agg")
 
@@ -48,5 +49,5 @@ class TestRunner(unittest.TestCase):
                 seeds=[42],
             )
             path = Path(tmp_dir)
-            self.assertFalse(os.stat(path / "LubyBenchmark") == 0)
-            self.assertFalse(os.stat(path / "SigmoidBenchmark") == 0)
+            assert os.stat(path / "LubyBenchmark") != 0
+            assert os.stat(path / "SigmoidBenchmark") != 0

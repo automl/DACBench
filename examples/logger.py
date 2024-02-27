@@ -1,13 +1,12 @@
 from pathlib import Path
 
-from dacbench.plotting import plot_performance, plot_performance_per_instance
-from dacbench.logger import Logger, log2dataframe, load_logs
+import matplotlib.pyplot as plt
 from dacbench.agents.simple_agents import RandomAgent
 from dacbench.benchmarks import SigmoidBenchmark
+from dacbench.logger import Logger, load_logs, log2dataframe
+from dacbench.plotting import plot_performance, plot_performance_per_instance
 from dacbench.runner import run_benchmark
 from dacbench.wrappers import PerformanceTrackingWrapper, StateTrackingWrapper
-
-import matplotlib.pyplot as plt
 
 # Run an experiment and log the results
 if __name__ == "__main__":

@@ -33,7 +33,8 @@ class LubyEnv(AbstractEnv):
         self._r = 0
         self._genny = luby_gen(1)
         self._next_goal = next(self._genny)
-        # Generate luby sequence up to 2*max_steps + 2 as mode 1 could potentially shift up to max_steps
+        # Generate luby sequence up to 2*max_steps + 2 as mode 1 could potentially
+        # shift up to max_steps
         self._seq = np.log2(
             [next(luby_gen(i)) for i in range(1, 2 * config["cutoff"] + 2)]
         )
@@ -77,10 +78,11 @@ class LubyEnv(AbstractEnv):
         self._jenny_i += 1
         self.__error += self._sticky_shif
 
-        # next target in sequence at step luby_t is determined by the current time step (jenny_i), the start_shift
-        # value and the sticky error. Additive sticky error leads to sometimes rounding to the next time_step and
-        # thereby repeated actions. With check against lower/upper we reset the sequence to the correct timestep in
-        # the t+1 timestep.
+        # next target in sequence at step luby_t is determined by the current time step
+        # (jenny_i), the start_shift value and the sticky error. Additive sticky error
+        # leads to sometimes rounding to the next time_step and thereby repeated
+        # actions. With check against lower/upper we reset the sequence to the correct
+        # timestep in the t+1 timestep.
         luby_t = max(1, int(np.round(self._jenny_i + self._start_shift + self.__error)))
         self._next_goal = self._seq[luby_t - 1]
         return self.get_state(self), reward, False, self.done, {}
@@ -109,14 +111,32 @@ class LubyEnv(AbstractEnv):
         return self.get_state(self), {}
 
     def get_default_reward(self, _):
+        """The default reward function.
+
+        Args:
+            _ (_type_): Empty parameter, which can be used when overriding
+
+        Returns:
+            float: The calculated reward
+        """
         if self.action == self._next_goal:
-            self._r = 0  # we don't want to allow for exploiting large rewards by tending towards long sequences
+            # we don't want to allow for exploiting large rewards
+            # by tending towards long sequences
+            self._r = 0
         else:  # mean and var chosen s.t. ~1/4 of rewards are positive
             self._r = -1
         self._r = max(self.reward_range[0], min(self.reward_range[1], self._r))
         return self._r
 
     def get_default_state(self, _):
+        """Default state function.
+
+        Args:
+            _ (_type_): Empty parameter, which can be used when overriding
+
+        Returns:
+            dict: The current state
+        """
         if self.c_step == 0:
             self._state = [-1 for _ in range(self._hist_len + 1)]
         else:
@@ -150,7 +170,6 @@ class LubyEnv(AbstractEnv):
         """
         if mode != "human":
             raise NotImplementedError
-
 
 
 def luby_gen(i):

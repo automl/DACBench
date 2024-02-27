@@ -1,8 +1,10 @@
+"""Remote environment."""
+
 from __future__ import annotations
 
 import json
 from numbers import Number
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 import numpy as np
 import Pyro4
@@ -12,24 +14,24 @@ from dacbench.container.container_utils import Decoder, Encoder
 if TYPE_CHECKING:
     from dacbench.abstract_env import AbstractEnv
 
-NumpyTypes = Union[np.ndarray, np.int32, np.float32, np.random.RandomState]
-DefaultJsonable = Union[
-    bool,
-    None,
-    dict[str, "DefaultJsonable"],
-    list["DefaultJsonable"],
-    tuple["DefaultJsonable"],
-    str,
-    float,
-    int,
-]
-Jsonable = Union[
-    list["Jsonable"],
-    dict[str, "Jsonable"],
-    tuple["Jsonable"],
-    DefaultJsonable,
-    NumpyTypes,
-]
+NumpyTypes = np.ndarray | np.int32 | np.float32 | np.random.RandomState
+DefaultJsonable = (
+    bool
+    | None
+    | dict[str, "DefaultJsonable"]
+    | list["DefaultJsonable"]
+    | tuple["DefaultJsonable"]
+    | str
+    | float
+    | int
+)
+Jsonable = (
+    list["Jsonable"]
+    | dict[str, "Jsonable"]
+    | tuple["Jsonable"]
+    | DefaultJsonable
+    | NumpyTypes
+)
 
 
 def json_encode(obj: Jsonable) -> str:

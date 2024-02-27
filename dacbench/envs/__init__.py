@@ -32,8 +32,9 @@ if found:
 
     __all__.append("CMAESEnv")
 else:
-    warnings.warn(
-        "CMA-ES Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
+    warnings.warn(  # noqa: B028
+        "CMA-ES Benchmark not installed. If you want to use this benchmark, "
+        "please follow the installation guide."
     )
 
 sgd_spec = importlib.util.find_spec("backpack")
@@ -43,6 +44,7 @@ if found:
 
     __all__.append("SGDEnv")
 else:
-    warnings.warn(
-        "SGD Benchmark not installed. If you want to use this benchmark, please follow the installation guide."
+    warnings.warn(  # noqa: B028
+        "SGD Benchmark not installed. If you want to use this benchmark, "
+        "please follow the installation guide."
     )

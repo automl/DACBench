@@ -1,7 +1,9 @@
+"""Optimal policy for csa cma."""
 from __future__ import annotations
 
 
 def csa(env, state):
+    """Get the optimal action."""
     u = env.es.sigma
     hsig = env.es.adapt_sigma.hsig(env.es)
     env.es.hsig = hsig
