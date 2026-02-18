@@ -27,18 +27,18 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-  "gymnasium<=0.29.1",
-  "imageio~=2.35.1",
-  "numpy==1.26.4",
-  "pandas<=2.2.3",
-  "matplotlib==3.9.2",
-  "seaborn==0.13.2",
+  "gymnasium >= 0.29.1, <= 0.29.1",
+  "imageio >= 2.35, <= 2.37",
+  "numpy >= 1.26, < 2.0",
+  "pandas >= 2.2, < 3.0",
+  "matplotlib >= 3.9, <= 3.9",
+  "seaborn >= 0.13, <= 0.14",
   "configspace~=1.2.1",
-  "scikit-learn==1.5.2",
-  "scipy==1.14.1", 
-  "jupyter==1.0.0",
-  "Pyro4==4.82",
-  "ioh==0.3.17"]
+  "scikit-learn >= 1.5.0, <= 1.8",
+  "scipy >= 1.14.0, <= 1.17",
+  "jupyter ~= 1.0",
+  "Pyro4 >= 4.70, < 5",
+  "ioh >= 0.3, <= 0.4"]
 
 [project.urls]
 Homepage = "https://github.com/automl/DACBench"
@@ -49,7 +49,7 @@ Changelog = "https://github.com/automl/DACBench/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [
-    "pytest==8.3.3",
+    "pytest >= 8.0, < 9.0",
     "coverage[toml]==7.6.1",
     "pre-commit==3.8.0",
     "ruff==0.6.7"
@@ -65,10 +65,10 @@ docs = [
     "automl-sphinx-theme==0.2.0"
 ]
 all = [
-  "ioh==0.3.17", 
+  "ioh >= 0.3, <= 0.4",
   "modcma==1.0.8",
-  "torchvision==0.19.1",
-  "torch==2.4.1",
+  "torchvision >= 0.19, <= 0.25",
+  "torch >= 2.4, <= 2.10",
   "uuid"
 ]
 
