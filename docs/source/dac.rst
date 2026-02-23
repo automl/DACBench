@@ -23,5 +23,4 @@ than on a challenging one like ImageNet.
 DAC can be solved by a number of different methods, e.g. classical Algorithm Configuration
 tools or Reinforcement Learning. As the paradigm is still relatively new, there is a lot of
 space to experiment with new possibilities or combine existing configuration options.
-In order to stay up to date on the current DAC literatur, we recommend our *`DAC literature
-overview <https://www.automl.org/automated-algorithm-design/dac/literature-overview/>`_*.
+In order to stay up to date on the current DAC literature, we recommend our `DAC literature overview <https://www.automl.org/automated-algorithm-design/dac/literature-overview/>`_.

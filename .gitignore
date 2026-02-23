@@ -33,3 +33,6 @@ uv.lock
 *.egg
 *.egg-info/
 *.whl
+
+.DS_Store
+*uv.lock*
