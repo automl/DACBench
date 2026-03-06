@@ -94,13 +94,29 @@ class DACBOBenchmark(AbstractBenchmark):
 
     def get_environment(self):
         """Returns the internal env."""
+        if "instance_set" not in self.config:
+            self.read_instance_set()
+
         return DACBOEnv(self.config)
 
     def read_instance_set(self):
         """Reads the instance set."""
         assert self.config.instance_set_path
+        try:  # Look in hydra search path if user uses hydra
+            from hydra.core.hydra_config import HydraConfig
+            config = HydraConfig.get()
+            hydra_candidate_paths = [
+                Path(path_description["path"]) / self.config.instance_set_path
+                for path_description in config["runtime"]["config_sources"]
+                if path_description["schema"] == "file"
+            ]
+            matched_hydra_files = list(filter(lambda f: f.is_file(), hydra_candidate_paths))
+        except ImportError:
+            matched_hydra_files = []
         if Path(self.config.instance_set_path).is_file():
             path = self.config.instance_set_path
+        elif len(matched_hydra_files) > 0:
+            path = matched_hydra_files[0]
         else:
             path = (
                 Path(__file__).resolve().parent
