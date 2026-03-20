@@ -187,7 +187,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
         img = wrapped.render_action_tracking()
         assert img.shape[-1] == 3
 
-        class dict_action_env:
+        class dict_action_env(gym.Env):
             def __init__(self):
                 self.action_space = gym.spaces.Dict(
                     {
@@ -213,7 +213,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
         with pytest.raises(NotImplementedError):
             wrapped.render_action_tracking()
 
-        class tuple_action_env:
+        class tuple_action_env(gym.Env):
             def __init__(self):
                 self.action_space = gym.spaces.Tuple(
                     (
@@ -237,7 +237,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
         with pytest.raises(NotImplementedError):
             wrapped.render_action_tracking()
 
-        class multi_discrete_action_env:
+        class multi_discrete_action_env(gym.Env):
             def __init__(self):
                 self.action_space = gym.spaces.MultiDiscrete([2, 3])
                 self.observation_space = gym.spaces.Discrete(2)
@@ -258,7 +258,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
         img = wrapped.render_action_tracking()
         assert img.shape[-1] == 3
 
-        class multi_binary_action_env:
+        class multi_binary_action_env(gym.Env):
             def __init__(self):
                 self.action_space = gym.spaces.MultiBinary(2)
                 self.observation_space = gym.spaces.Discrete(2)
@@ -278,7 +278,7 @@ class TestActionTrackingWrapper(unittest.TestCase):
         img = wrapped.render_action_tracking()
         assert img.shape[-1] == 3
 
-        class large_action_env:
+        class large_action_env(gym.Env):
             def __init__(self):
                 self.action_space = gym.spaces.Box(low=np.zeros(15), high=np.ones(15))
                 self.observation_space = gym.spaces.Discrete(2)

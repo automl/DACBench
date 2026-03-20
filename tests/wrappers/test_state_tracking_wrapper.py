@@ -163,7 +163,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
         img = wrapped.render_state_tracking()
         assert img.shape[-1] == 3
 
-        class discrete_obs_env:
+        class discrete_obs_env(gym.Env):
             def __init__(self):
                 self.observation_space = gym.spaces.Discrete(2)
                 self.action_space = gym.spaces.Discrete(2)
@@ -183,7 +183,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
         img = wrapped.render_state_tracking()
         assert img.shape[-1] == 3
 
-        class multi_discrete_obs_env:
+        class multi_discrete_obs_env(gym.Env):
             def __init__(self):
                 self.observation_space = gym.spaces.MultiDiscrete([2, 3])
                 self.action_space = gym.spaces.Discrete(2)
@@ -203,7 +203,7 @@ class TestStateTrackingWrapper(unittest.TestCase):
         img = wrapped.render_state_tracking()
         assert img.shape[-1] == 3
 
-        class multi_binary_obs_env:
+        class multi_binary_obs_env(gym.Env):
             def __init__(self):
                 self.observation_space = gym.spaces.MultiBinary(2)
                 self.action_space = gym.spaces.Discrete(2)
