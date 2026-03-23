@@ -204,9 +204,9 @@ class EpisodeTimeWrapper(Wrapper):
         plt.legend(loc="upper right")
         canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
-        return np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
-            int(height), int(width), 3
-        )
+        return np.frombuffer(canvas.buffer_rgba(), dtype="uint8").reshape(
+            int(height), int(width), 4
+        )[:, :, :3]
         # plt.close(figure)
 
     def render_episode_time(self):
@@ -240,6 +240,6 @@ class EpisodeTimeWrapper(Wrapper):
         plt.legend(loc="upper right")
         canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
-        return np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
-            int(height), int(width), 3
-        )
+        return np.frombuffer(canvas.buffer_rgba(), dtype="uint8").reshape(
+            int(height), int(width), 4
+        )[:, :, :3]

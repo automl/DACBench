@@ -28,17 +28,17 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = [
   "gymnasium >= 0.29.1",
-  "imageio >= 2.35, <= 2.37",
-  "numpy >= 1.26, < 2.0",
-  "pandas >= 2.2, < 3.0",
-  "matplotlib >= 3.9, <= 3.9",
-  "seaborn >= 0.13, <= 0.14",
-  "configspace~=1.2.1",
-  "scikit-learn >= 1.5.0, <= 1.8",
-  "scipy >= 1.14.0, <= 1.17",
-  "jupyter ~= 1.0",
-  "Pyro4 >= 4.70, < 5",
-  "ioh >= 0.3, <= 0.4"]
+  "imageio >= 2.35",
+  "numpy >= 1.26",
+  "pandas >= 2.2",
+  "matplotlib >= 3.9",
+  "seaborn >= 0.13",
+  "configspace >= 1.2.1",
+  "scikit-learn >= 1.5.0",
+  "scipy >= 1.14.0",
+  "jupyter >= 1.0",
+  "Pyro4 >= 4.70",
+  "ioh >= 0.3"]
 
 [project.urls]
 Homepage = "https://github.com/automl/DACBench"
