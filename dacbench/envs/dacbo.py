@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 from dacboenv.dacboenv import DACBOEnv as DEnv
+from dacboenv.env.instance import ExternalInstanceSelector
 
 from dacbench.abstract_env import AbstractEnv
 
@@ -13,6 +14,7 @@ class DACBOEnv(AbstractEnv):
 
     def __init__(self, config):
         """Init DACBO env."""
+        config["instance_selector_class"] = ExternalInstanceSelector
         self._env = DEnv(**config)
         self._env.reset()  # Init spaces (NOT self.reset())
         config["cutoff"] = np.inf
@@ -31,7 +33,8 @@ class DACBOEnv(AbstractEnv):
         if options is None:
             options = {}
         super().reset_(seed, options)  # AbstractEnv picks next instance
-        obs, info = self._env.reset(options={"instance": self.instance})
+        self._env.instance_selector.set_instance(self.instance)
+        obs, info = self._env.reset()
         self.observation_space = self._env.observation_space
         self.action_space = self._env.action_space
         return obs, info

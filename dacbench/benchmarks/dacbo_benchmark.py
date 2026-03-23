@@ -120,7 +120,7 @@ class DACBOBenchmark(AbstractBenchmark):
             matched_hydra_files = list(
                 filter(lambda f: f.is_file(), hydra_candidate_paths)
             )
-        except ImportError:
+        except (ImportError, ValueError):
             matched_hydra_files = []
         if Path(instance_set_path).is_file():
             path = instance_set_path
