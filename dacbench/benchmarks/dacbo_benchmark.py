@@ -96,45 +96,54 @@ class DACBOBenchmark(AbstractBenchmark):
         """Returns the internal env."""
         if "instance_set" not in self.config:
             self.read_instance_set()
+        if "test_set" not in self.config and "test_set_path" in self.config:
+            self.read_instance_set(test=True)
+        env = DACBOEnv(self.config)
+        for func in self.wrap_funcs:
+            env = func(env)
+        return env
 
-        return DACBOEnv(self.config)
-
-    def read_instance_set(self):
+    def read_instance_set(self, test=False):
         """Reads the instance set."""
-        assert self.config.instance_set_path
+        path_key = "test_set_path" if test else "instance_set_path"
+        set_key = "test_set" if test else "instance_set"
+        assert self.config[path_key]
+        instance_set_path = self.config[path_key]
         try:  # Look in hydra search path if user uses hydra
             from hydra.core.hydra_config import HydraConfig
             config = HydraConfig.get()
             hydra_candidate_paths = [
-                Path(path_description["path"]) / self.config.instance_set_path
+                Path(path_description["path"]) / instance_set_path
                 for path_description in config["runtime"]["config_sources"]
                 if path_description["schema"] == "file"
             ]
-            matched_hydra_files = list(filter(lambda f: f.is_file(), hydra_candidate_paths))
+            matched_hydra_files = list(
+                filter(lambda f: f.is_file(), hydra_candidate_paths)
+            )
         except ImportError:
             matched_hydra_files = []
-        if Path(self.config.instance_set_path).is_file():
-            path = self.config.instance_set_path
+        if Path(instance_set_path).is_file():
+            path = instance_set_path
         elif len(matched_hydra_files) > 0:
             path = matched_hydra_files[0]
         else:
             path = (
                 Path(__file__).resolve().parent
                 / "../instance_sets/dacbo/"
-                / self.config.instance_set_path
+                / instance_set_path
             )
 
         with open(path) as f:
             instance_data = yaml.safe_load(f)
-        print(instance_data)
         self.config["task_ids"] = instance_data["task_ids"]
         self.config["inner_seeds"] = instance_data.get("inner_seeds", None)
-        self.config["instance_set"] = dict(
+        self.config[set_key] = dict(
             enumerate(
                 product(
-                    instance_data.get("inner_seeds", None), instance_data["task_ids"]
+                    instance_data.get("inner_seeds", [None]),
+                    instance_data["task_ids"],
                 )
             )
-        )  # Not used. Instance selection is handled by the internal env
+        )
 
-        assert len(self.config["instance_set"]) > 0, "ERROR: empty instance set"
+        assert len(self.config[set_key]) > 0, "ERROR: empty instance set"

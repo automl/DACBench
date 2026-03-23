@@ -14,21 +14,24 @@ class DACBOEnv(AbstractEnv):
     def __init__(self, config):
         """Init DACBO env."""
         self._env = DEnv(**config)
-        self.reset()
-        config[
-            "cutoff"
-        ] = np.inf  # Not used. DACBO handles BO runs (i.e. episodes) internally
+        self._env.reset()  # Init spaces (NOT self.reset())
+        config["cutoff"] = np.inf
         config["observation_space"] = self._env.observation_space
         config["action_space"] = self._env.action_space
         super().__init__(config)
 
     def step(self, action):
         """Takes one env step."""
+        super().step_()
         state, reward, terminated, truncated, info = self._env.step(action)
-        if truncated:  # Reset BO loop, select new instance
-            self._env.reset()
         return state, reward, terminated, truncated, info
 
-    def reset(self, seed=None):
+    def reset(self, seed=None, options=None):
         """Resets the internal env."""
-        return self._env.reset()
+        if options is None:
+            options = {}
+        super().reset_(seed, options)  # AbstractEnv picks next instance
+        obs, info = self._env.reset(options={"instance": self.instance})
+        self.observation_space = self._env.observation_space
+        self.action_space = self._env.action_space
+        return obs, info
