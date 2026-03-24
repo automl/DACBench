@@ -72,7 +72,6 @@ all = [
   "uuid",
 ]
 dacboenv = [
-  "dacboenv",
   "carps",
 ]
 
@@ -234,6 +233,7 @@ exclude = [
 ]
 
 "__init__.py" = ["I002"]
+"dacbench/envs/dacboenv/*" = ["E501", "D107", "D417", "N803"]
 "examples/*" = ["INP001", "I002", "E741", "D101", "D103", "T20", "D415", "ERA001", "E402", "E501"]
 "docs/*" = ["INP001"]
 

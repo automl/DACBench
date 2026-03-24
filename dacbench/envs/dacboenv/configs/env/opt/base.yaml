@@ -1,0 +1,26 @@
+# @package _global_
+
+
+dacboenv:
+  optimizer_cfg:
+    # CARPS SMAC3 Optimizer Config
+    smac_cfg:
+      smac_class: smac.facade.blackbox_facade.BlackBoxFacade
+      scenario:
+        seed: ${seed}
+        n_trials: ${task.optimization_resources.n_trials}  # Is determined during runtime
+        deterministic: true
+        n_workers: 1
+        output_directory: ${outdir}/smac3_output
+      smac_kwargs:
+        dask_client: null
+        overwrite: true
+        initial_design:
+          _target_: ${dacboenv.optimizer_cfg.smac_cfg.smac_class}.get_initial_design
+          _partial_: true
+          n_configs: null
+          max_ratio: 0.2
+        random_design:
+          _target_: ${dacboenv.optimizer_cfg.smac_cfg.smac_class}.get_random_design
+          scenario: ${dacboenv.optimizer_cfg.smac_cfg.scenario}
+          probability: 0.0

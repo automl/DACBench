@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 
 pytest = __import__("pytest")
-dacboenv = pytest.importorskip("dacboenv")
+pytest.importorskip("smac")
 
 from gymnasium.spaces import Dict
 
@@ -80,7 +80,7 @@ class TestDACBOEnv(unittest.TestCase):
             )
 
     def test_external_instance_selector(self):
-        from dacboenv.env.instance import ExternalInstanceSelector
+        from dacbench.envs.dacboenv.env.instance import ExternalInstanceSelector
 
         selector = ExternalInstanceSelector(
             task_ids=["task_a", "task_b"],

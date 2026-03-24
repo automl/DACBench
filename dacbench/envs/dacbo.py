@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import numpy as np
-from dacboenv.dacboenv import DACBOEnv as DEnv
-from dacboenv.env.instance import ExternalInstanceSelector
 
 from dacbench.abstract_env import AbstractEnv
+from dacbench.envs.dacboenv.dacboenv import DACBOEnv as DEnv
+from dacbench.envs.dacboenv.env.instance import ExternalInstanceSelector
 
 
 class DACBOEnv(AbstractEnv):

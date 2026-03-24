@@ -6,19 +6,19 @@ from importlib.resources import files
 from itertools import product
 from pathlib import Path
 
-import dacboenv
 import numpy as np
 import yaml
-from dacboenv.env.action import AcqParameterActionSpace
 from omegaconf import OmegaConf
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
+from dacbench.envs import dacboenv
 from dacbench.envs.dacbo import DACBOEnv
+from dacbench.envs.dacboenv.env.action import AcqParameterActionSpace
 
 
 def load_default_optimizer():
     """Handles dacboenv configs to configure WEI as default."""
-    dacboenv_path = files("dacboenv")
+    dacboenv_path = files("dacbench.envs.dacboenv")
     base = OmegaConf.load(dacboenv_path / "configs/env/opt/base.yaml")
     base.dacboenv.optimizer_cfg.smac_cfg.smac_kwargs = None
     override = OmegaConf.load(
@@ -111,6 +111,7 @@ class DACBOBenchmark(AbstractBenchmark):
         instance_set_path = self.config[path_key]
         try:  # Look in hydra search path if user uses hydra
             from hydra.core.hydra_config import HydraConfig
+
             config = HydraConfig.get()
             hydra_candidate_paths = [
                 Path(path_description["path"]) / instance_set_path

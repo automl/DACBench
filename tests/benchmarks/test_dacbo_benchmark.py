@@ -5,7 +5,7 @@ import os
 import unittest
 
 pytest = __import__("pytest")
-dacboenv = pytest.importorskip("dacboenv")
+pytest.importorskip("smac")
 
 from dacbench.benchmarks import DACBOBenchmark
 from dacbench.envs import DACBOEnv
