@@ -9,6 +9,10 @@ tox.ini
 TODOS.md
 builds/
 build/
+IMPLEMENTATION_PLAN.md
+reference_performance/
+run.log
+runs/
 
 ## results, data or temp files written during runs
 output/

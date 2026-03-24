@@ -39,9 +39,9 @@ def load_optimizer_config(optimizer_id: str) -> DictConfig:
     else:
         index_fn = CARPS_ROOT / "configs/optimizer/index.csv"
         try:
-            df = get_index_config(index_fn)  # noqa: PD901
+            df = get_index_config(index_fn)
         except NameError:
-            df = pd.read_csv(index_fn)  # noqa: PD901
+            df = pd.read_csv(index_fn)
         ids = [optimizer_id]
     config_fn = df.set_index("optimizer_id").loc[ids].reset_index().iloc[0]["config_fn"]
     cfg = OmegaConf.load(config_fn)
@@ -99,9 +99,9 @@ def get_task_config(task_id: str) -> DictConfig:
     """
     task_index_fn = CARPS_ROOT / "configs/task/index.csv"
     try:
-        df = get_index_config(task_index_fn)  # noqa: PD901
+        df = get_index_config(task_index_fn)
     except NameError:
-        df = pd.read_csv(task_index_fn)  # noqa: PD901
+        df = pd.read_csv(task_index_fn)
 
     ids = [task_id]
     # TODO raise proper error if task_id not in index. Can happen when task comes from external module.

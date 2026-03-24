@@ -12,7 +12,6 @@ from typing import TYPE_CHECKING
 
 import pandas as pd
 from carps.utils.index_configs import register_extra_paths
-from hydra.core.hydra_config import HydraConfig
 
 try:  # There have been breaking changes in CARP-S
     from carps.analysis.gather_data_utils import filelogs_to_df, normalize_logs
@@ -26,7 +25,6 @@ from carps.utils.running import optimize
 
 with contextlib.suppress(ImportError):
     from carps.utils.index_configs import get_index_config
-from hydra import compose, initialize_config_module
 
 from dacbench.envs.dacboenv.utils.loggingutils import get_logger
 
@@ -138,13 +136,14 @@ def get_config_overrides(
         List of Hydra overrides like '+task/some/path=id1,id2'
     """
     try:  # If using hydra
+        from hydra.core.hydra_config import HydraConfig  # noqa: PLC0415
         config = HydraConfig.get()
         index_paths = [
             Path(path_description["path"]) / index_csv_subpath
             for path_description in config["runtime"]["config_sources"]
             if path_description["schema"] == "file"
         ] + [CARPS_ROOT / "configs" / index_csv_subpath]
-    except ValueError:
+    except (ImportError, ValueError):
         index_paths = [CARPS_ROOT / "configs" / index_csv_subpath]
     if group_name == "task":
         register_extra_paths(
@@ -157,9 +156,9 @@ def get_config_overrides(
 
     try:
         print(index_paths)
-        df = pd.concat([get_index_config(path) for path in index_paths])  # noqa: PD901
+        df = pd.concat([get_index_config(path) for path in index_paths])
     except NameError:
-        df = pd.concat([pd.read_csv(path) for path in index_paths])  # noqa: PD901
+        df = pd.concat([pd.read_csv(path) for path in index_paths])
     try:
         filtered = df.set_index(id_col).loc[ids].reset_index()
     except KeyError as e:
@@ -336,6 +335,8 @@ def get_reference_performance(carps_overrides: list[str]) -> None:
     """
     if not any(override.startswith("baserundir") for override in carps_overrides):
         carps_overrides.append("baserundir=reference_performance")
+
+    from hydra import compose, initialize_config_module  # noqa: PLC0415
 
     with initialize_config_module(
         config_module="carps.configs", job_name="run_from_script"

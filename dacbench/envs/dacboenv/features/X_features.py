@@ -22,7 +22,7 @@ def exploration_tsd(X: np.ndarray) -> np.ndarray:
     -------
     np.ndarray, shape (T, )
     """
-    T, D = X.shape
+    T, _D = X.shape
     tsd_solution = np.zeros(shape=(T,), dtype=np.float32)
 
     # Initialize with the first point's TSP solution

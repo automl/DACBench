@@ -13,7 +13,7 @@ OmegaConf.register_new_resolver(
 OmegaConf.register_new_resolver(
     name="get_dacbo_task_name", resolver=get_dacbo_task_name, replace=True
 )
-OmegaConf.register_new_resolver(name="len", resolver=lambda x: len(x), replace=True)
+OmegaConf.register_new_resolver(name="len", resolver=len, replace=True)
 OmegaConf.register_new_resolver(
     name="multiply", resolver=lambda x, y: x * y, replace=True
 )

@@ -150,6 +150,10 @@ class WEITempoRLActionSpace(AbstractActionSpace):
         self._step_durations = (
             list(step_durations) if step_durations is not None else [1, 5, 10]
         )
+        if any(d <= 0 for d in self._step_durations):
+            raise ValueError(
+                f"All step_durations must be > 0, got {self._step_durations}"
+            )
         self._param_levels = (
             list(param_levels)
             if param_levels is not None
@@ -320,7 +324,7 @@ class AcqParameterActionSpace(AbstractActionSpace):
             elif action_val == 2:
                 self._last += self._step_size
 
-            self._last = np.clip(self._last, amin=self._bounds[0], amax=self._bounds[1])
+            self._last = np.clip(self._last, self._bounds[0], self._bounds[1])
             param_val = self._last
         elif self._adjustment_type == "bucket":
             param_val = (
@@ -360,9 +364,9 @@ class AcqFunctionActionSpace(AbstractActionSpace):
         acquisition_functions : list[AbstractAcquisitionFunction] | None, optional
             List of acquisition function classes, by default None. If None, will be [EI, PI, UCB].
         """
-        super().__init__(smac_instance)
         _afs = [EI, PI, UCB] if acquisition_functions is None else acquisition_functions
         self._acq_fun_dict = dict(enumerate(_afs))
+        super().__init__(smac_instance)
 
     def _create_action(self) -> FunctionAction:
         """Create a FunctionAction representing the discrete selection of acquisition functions.

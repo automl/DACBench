@@ -113,7 +113,7 @@ class WEI(AbstractAcquisitionFunction):
 
         if "xi" in kwargs and kwargs["xi"] is not None:
             self._xi = kwargs["xi"]
-        alpha = kwargs.get("alpha", None)
+        alpha = kwargs.get("alpha")
         if alpha is not None:
             self._alpha = alpha
 

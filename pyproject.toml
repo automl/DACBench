@@ -73,7 +73,11 @@ all = [
 ]
 dacboenv = [
   "carps",
+  "smac",
 ]
+
+[tool.uv.sources]
+carps = { path = "../CARP-S/", editable = true }
 
 [tool.extras]
 cma = ["ioh==0.3.17", 

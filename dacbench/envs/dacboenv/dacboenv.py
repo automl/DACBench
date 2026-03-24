@@ -12,7 +12,6 @@ from typing import (
 
 import gymnasium as gym
 import numpy as np
-from dataclasses_json import dataclass_json
 from gymnasium.spaces import Box, MultiDiscrete
 
 from dacbench.envs.dacboenv.env.action import (
@@ -44,7 +43,6 @@ ActType = int | float | list[float] | None
 logger = get_logger("dacboenv")
 
 
-@dataclass_json
 @dataclass(frozen=True)
 class InstanceSet:
     """Instance Set."""

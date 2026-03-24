@@ -49,7 +49,7 @@ else:
         "please follow the installation guide."
     )
 
-dacbo_deps_spec = importlib.util.find_spec("smac")
+dacbo_deps_spec = importlib.util.find_spec("smac") and importlib.util.find_spec("carps")
 found = dacbo_deps_spec is not None
 if found:
     from dacbench.envs.dacbo import DACBOEnv
