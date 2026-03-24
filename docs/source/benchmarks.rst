@@ -30,6 +30,7 @@ and more costly to run and thus present a real challenge for DAC algorithms:
 
 * :doc:`CMA-ES <benchmark_docs/cma>`: Step-size adpation and algorithm component selection for CMA-ES.
 * :doc:`SGD-DL <benchmark_docs/sgd>`: Learning rate adaption for neural networks.
+* :doc:`DACBO <benchmark_docs/dacbo>`: Acquisition function control for Bayesian optimization.
 
 Our benchmarks are based on the `gymnasium interface <https://gymnasium.farama.org/>`_ for Reinforcement Learning.
 That means to run a benchmark, you need to create an environment of that benchmark
