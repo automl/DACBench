@@ -24,7 +24,7 @@ from carps.utils.env_vars import CARPS_ROOT
 from carps.utils.running import optimize
 
 with contextlib.suppress(ImportError):
-    from carps.utils.index_configs import get_index_config
+    from carps.utils.index_configs import get_index
 
 from dacbench.envs.dacboenv.utils.loggingutils import get_logger
 
@@ -155,8 +155,7 @@ def get_config_overrides(
         )
 
     try:
-        print(index_paths)
-        df = pd.concat([get_index_config(path) for path in index_paths])
+        df = get_index()
     except NameError:
         df = pd.concat([pd.read_csv(path) for path in index_paths])
     try:

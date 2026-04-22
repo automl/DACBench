@@ -77,7 +77,7 @@ dacboenv = [
 ]
 
 [tool.uv.sources]
-carps = { path = "../CARP-S/", editable = true }
+carps = { git = "https://github.com/automl/CARP-S", branch="development" }
 
 [tool.extras]
 cma = ["ioh==0.3.17", 
