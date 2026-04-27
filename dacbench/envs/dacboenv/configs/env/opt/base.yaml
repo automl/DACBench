@@ -3,12 +3,11 @@
 
 dacboenv:
   optimizer_cfg:
-    # CARPS SMAC3 Optimizer Config
+    # SMAC3 Optimizer Config
     smac_cfg:
       smac_class: smac.facade.blackbox_facade.BlackBoxFacade
       scenario:
         seed: ${seed}
-        n_trials: ${task.optimization_resources.n_trials}  # Is determined during runtime
         deterministic: true
         n_workers: 1
         output_directory: ${outdir}/smac3_output

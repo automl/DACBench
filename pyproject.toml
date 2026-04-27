@@ -38,7 +38,8 @@ dependencies = [
   "scipy >= 1.14.0, <= 1.17",
   "jupyter ~= 1.0",
   "Pyro4 >= 4.70, < 5",
-  "ioh >= 0.3, <= 0.4"]
+  "ioh >= 0.3, <= 0.4",
+  "pyarrow"]
 
 [project.urls]
 Homepage = "https://github.com/automl/DACBench"
@@ -72,12 +73,10 @@ all = [
   "uuid",
 ]
 dacboenv = [
-  "carps",
   "smac",
+  "ioh",
+  "pyarrow",
 ]
-
-[tool.uv.sources]
-carps = { git = "https://github.com/automl/CARP-S", branch="development" }
 
 [tool.extras]
 cma = ["ioh==0.3.17", 

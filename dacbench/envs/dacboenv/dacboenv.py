@@ -25,13 +25,12 @@ from dacbench.envs.dacboenv.env.instance import (
 )
 from dacbench.envs.dacboenv.env.observation import ObservationSpace
 from dacbench.envs.dacboenv.env.reward import DACBOReward
-from dacbench.envs.dacboenv.utils.carps_optimizer import build_carps_optimizer
+from dacbench.envs.dacboenv.utils.carps_optimizer import build_smac_facade
 from dacbench.envs.dacboenv.utils.loggingutils import get_logger
 from dacbench.envs.dacboenv.utils.math import safe_log10
 from dacbench.envs.dacboenv.utils.reference_performance import ReferencePerformance
 
 if TYPE_CHECKING:
-    from carps.optimizers.optimizer import Optimizer
     from omegaconf import DictConfig
     from smac.facade.abstract_facade import AbstractFacade
     from smac.main.smbo import SMBO
@@ -111,16 +110,17 @@ class DACBOEnv(gym.Env):
         terminate_after_reference_performance_reached: bool = False,
         instance_selector_class: type[InstanceSelector] | None = None,
         evaluation_mode: bool = False,
-        **kwargs: dict,
+        n_trials: int = 77,
+        **kwargs: Any,
     ) -> None:
         """Initialize the DACBOEnv environment.
 
         Parameters
         ----------
         task_ids : list[str], optional
-            The carps task ids that BO should run on.
+            The task ids that BO should run on.
         optimizer_cfg : DictConfig, optional
-            The carps (SMAC) optimizer config. Defaults to `SMAC3-BlackBoxFacade` which is the standard blackbox
+            The SMAC optimizer config. Defaults to `SMAC3-BlackBoxFacade` which is the standard blackbox
             facade with a GP.
         observation_keys : list[str], optional
             Which observations to compute at each step.
@@ -141,6 +141,8 @@ class DACBOEnv(gym.Env):
             Whether to be in train (default) or evaluation mode. Evaluation mode means that the episode is not
             terminated after a reference performance has been reached, and the reward will be 0.
             This circumvents running a reference optimizer on each evaluation task.
+        n_trials : int, optional
+            Maximum number of optimization trials. Defaults to 77.
         """
         if reward_keys is None:
             reward_keys = ["incumbent_cost"]
@@ -157,6 +159,7 @@ class DACBOEnv(gym.Env):
         self._fallback_seeds = list(self._seeder.integers(low=344, high=46483, size=3))
 
         self._optimizer_cfg = optimizer_cfg
+        self._n_trials = n_trials
         self._action_space_class = action_space_class
         self._action_space_kwargs = action_space_kwargs
         self._action_space: AbstractActionSpace
@@ -197,12 +200,11 @@ class DACBOEnv(gym.Env):
                 task_ids=self.instance_set.task_ids,
                 seeds=self.instance_set.seeds,
                 reference_performance_fn=self.reference_performance_fn,
+                n_trials=self._n_trials,
             )
 
-        self._carps_solver: Optimizer
         self._smac_facade: AbstractFacade
         self._smac_instance: SMBO
-        self._n_trials = None
 
         self._episode_reward = 0.0
         self._episode_length = 0
@@ -484,8 +486,6 @@ class DACBOEnv(gym.Env):
             Additional information (empty).
         """
         # Reset SMAC instance
-        if hasattr(self, "_carps_solver"):
-            del self._carps_solver
         if hasattr(self, "_smac_instance"):
             del self._smac_instance
 
@@ -496,17 +496,14 @@ class DACBOEnv(gym.Env):
             seed = self._seeder.integers(low=0, high=2**32 - 1)
         seed = int(seed)
 
-        # Build carps optimizer (wrapper around smac) with appropriate objective function
-        optimizer_id = "SMAC3-BlackBoxFacade" if self._optimizer_cfg is None else None
-        self._carps_solver = build_carps_optimizer(
-            optimizer_id=optimizer_id,
+        # Build SMAC facade directly
+        self._smac_facade = build_smac_facade(
             task_id=task_id,
             seed=seed,
+            n_trials=self._n_trials,
             optimizer_cfg=self._optimizer_cfg,
         )
-        # Get the smac instance
-        self._smac_facade = self._carps_solver.solver
-        self._smac_instance = self._carps_solver.solver.optimizer
+        self._smac_instance = self._smac_facade.optimizer
 
         if self._smac_instance._scenario.count_objectives() != 1:
             raise NotImplementedError("Multi-objective not supported.")
@@ -550,7 +547,7 @@ class DACBOEnv(gym.Env):
             # This is important for training DAC policies because for the phase of the initial design, no action can
             # be taken and this might lead to misleading signals.
             # In evaluation, however, the initial design counts towards the total number of trials, controlled by
-            # carps optimizer.
+            # SMAC optimizer.
             for _ in (
                 self._smac_instance.intensifier.config_selector._initial_design_configs
             ):

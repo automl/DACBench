@@ -62,6 +62,7 @@ DACBO_DEFAULTS = objdict(
     {
         "reward_range": [-np.inf, np.inf],
         "seed": 0,
+        "n_trials": 77,
         "instance_set_path": "bbob_2_default.yaml",
         "optimizer_cfg": load_default_optimizer(),
         "observation_keys": [
@@ -110,7 +111,7 @@ class DACBOBenchmark(AbstractBenchmark):
         assert self.config[path_key]
         instance_set_path = self.config[path_key]
         try:  # Look in hydra search path if user uses hydra
-            from hydra.core.hydra_config import HydraConfig
+            from hydra.core.hydra_config import HydraConfig  # noqa: PLC0415
 
             config = HydraConfig.get()
             hydra_candidate_paths = [
@@ -138,6 +139,8 @@ class DACBOBenchmark(AbstractBenchmark):
             instance_data = yaml.safe_load(f)
         self.config["task_ids"] = instance_data["task_ids"]
         self.config["inner_seeds"] = instance_data.get("inner_seeds", None)
+        if "n_trials" in instance_data:
+            self.config["n_trials"] = instance_data["n_trials"]
         self.config[set_key] = dict(
             enumerate(
                 product(

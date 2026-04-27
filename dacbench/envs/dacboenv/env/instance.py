@@ -18,7 +18,7 @@ class InstanceSelector(ABC):
     Attributes:
     ----------
     task_ids : list[str]
-        List of carps task ids.
+        List of task ids.
     seeds : list[int]
         List of seeds.
     idx : int
@@ -35,7 +35,7 @@ class InstanceSelector(ABC):
         Parameters
         ----------
         task_ids : list[str]
-            List of carps task ids.
+            List of task ids.
         seeds : list[int]
             List of seeds.
         selector_seed : int | None, optional
@@ -82,7 +82,7 @@ class RoundRobinInstanceSelector(InstanceSelector):
         Parameters
         ----------
         task_ids : list[str]
-            List of carps task ids.
+            List of task ids.
         seeds : list[int]
             List of seeds.
         offset : int, 0

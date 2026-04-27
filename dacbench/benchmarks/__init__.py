@@ -52,7 +52,7 @@ else:
         "please follow the installation guide."
     )
 
-dacbo_spec = importlib.util.find_spec("smac") and importlib.util.find_spec("carps")
+dacbo_spec = importlib.util.find_spec("smac")
 found = dacbo_spec is not None
 if found:
     from dacbench.benchmarks.dacbo_benchmark import DACBOBenchmark
@@ -60,7 +60,7 @@ if found:
     __all__.append("DACBOBenchmark")
 else:
     warnings.warn(  # noqa: B028
-        "DACBO Env dependencies (smac, carps) not installed. "
+        "DACBO Env dependency (smac) not installed. "
         "If you want to use this benchmark, "
         "please follow the installation guide."
     )

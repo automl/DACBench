@@ -1,171 +1,174 @@
-"""Build carps optimizer."""
+"""Build SMAC3 optimizer facade (carps-free)."""
 
 from __future__ import annotations
 
-import contextlib
-from pathlib import Path
+from importlib import import_module
 from typing import TYPE_CHECKING
 
-import pandas as pd
-from carps.utils.env_vars import CARPS_ROOT
-from carps.utils.running import make_optimizer, make_task
-
-with contextlib.suppress(Exception):
-    from carps.utils.index_configs import get_index
-from omegaconf import OmegaConf
+import ioh
+from ConfigSpace import Configuration, ConfigurationSpace, UniformFloatHyperparameter
+from omegaconf import DictConfig, OmegaConf
+from smac.scenario import Scenario
 
 if TYPE_CHECKING:
-    from carps.optimizers.optimizer import Optimizer
-    from omegaconf import DictConfig
+    from smac.facade.abstract_facade import AbstractFacade
 
 
-def load_optimizer_config(optimizer_id: str) -> DictConfig:
-    """Load optimizer config from yaml file.
+def _parse_bbob_task_id(task_id: str) -> tuple[int, int, int]:
+    """Parse 'bbob/{dim}/{func_id}/{instance}' -> (dim, func_id, instance)."""
+    parts = task_id.split("/")
+    assert parts[0] == "bbob", f"Only 'bbob' benchmark supported, got '{parts[0]}'"
+    return int(parts[1]), int(parts[2]), int(parts[3])
 
-    The config can also have defaults=["base"], but not any other defaults structure.
 
-    Parameters
-    ----------
-    optimizer_id : str
-        carps optimizer_id or the filename of the optimizer config (yaml).
+def _build_bbob_configspace(dim: int) -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+    for i in range(dim):
+        cs.add_hyperparameter(UniformFloatHyperparameter(f"x{i}", lower=-5.0, upper=5.0))
+    return cs
 
-    Returns:
-    -------
-    DictConfig
-        The optimizer config.
+
+def _build_bbob_target_fn(func_id: int, instance: int, dim: int):
+    """Create target function from ioh problem.
+
+    ioh is 1-based for instances; carps task IDs are 0-based.
     """
-    if optimizer_id.endswith(".yaml"):
-        config_fn = optimizer_id
-    else:
-        index_fn = CARPS_ROOT / "configs/optimizer/index.csv"
-        try:
-            df = get_index()
-        except NameError:
-            df = pd.read_csv(index_fn)
-        ids = [optimizer_id]
-    config_fn = df.set_index("optimizer_id").loc[ids].reset_index().iloc[0]["config_fn"]
-    cfg = OmegaConf.load(config_fn)
-    return maybe_add_defaults(cfg, config_fn)
+    problem = ioh.get_problem(fid=func_id, instance=instance + 1, dimension=dim)
+
+    def target_fn(config: Configuration, seed: int = 0) -> float:
+        return problem([config[f"x{i}"] for i in range(dim)])
+
+    return target_fn
 
 
-def maybe_add_defaults(cfg: DictConfig, cfg_fn: str) -> DictConfig:
-    """Maybe add default config to config.
-
-    Only works with defaults = ["base"].
-
-    Parameters
-    ----------
-    cfg : DictConfig
-        The config.
-    cfg_fn : str
-        The source config filename.
-
-    Returns:
-    -------
-    DictConfig
-        Cfg, possibly with defaults added.
-
-    Raises:
-    ------
-    ValueError
-        When got other defaults than ['base'].
-    """
-    defaults = cfg.get("defaults", None)
-    if defaults is not None:
-        if list(cfg.defaults) == ["base"]:
-            cfg = OmegaConf.merge(
-                cfg, OmegaConf.load(Path(cfg_fn).parent / "base.yaml")
-            )
-            del cfg.defaults
-        else:
-            raise ValueError(
-                f"Can only handle defaults=['base'], but got {cfg.defaults}"
-            )
-    return cfg
+def _instantiate_from_target(target: str):
+    """Instantiate a class from a dotted _target_ string."""
+    mod_path, _, cls_name = target.rpartition(".")
+    mod = import_module(mod_path)
+    return getattr(mod, cls_name)
 
 
-def get_task_config(task_id: str) -> DictConfig:
-    """Get config filename for task id.
+def build_smac_facade(
+    task_id: str,
+    seed: int,
+    n_trials: int,
+    optimizer_cfg: DictConfig | None = None,
+) -> AbstractFacade:
+    """Build a SMAC3 AbstractFacade for the given task.
 
     Parameters
     ----------
     task_id : str
-        The task id.
+        The task id (e.g. 'bbob/14/0/5').
+    seed : int
+        The seed.
+    n_trials : int
+        Maximum number of optimization trials.
+    optimizer_cfg : DictConfig, optional
+        Optimizer config (must have smac_cfg with scenario, smac_class, etc.).
 
     Returns:
     -------
-    DictConfig
-        The config with the node task.
+    AbstractFacade
+        The SMAC3 facade ready for optimization.
     """
-    task_index_fn = CARPS_ROOT / "configs/task/index.csv"
-    try:
-        df = get_index()
-    except NameError:
-        df = pd.read_csv(task_index_fn)
+    # Ensure task_id is a native string (avoid numpy.str_ issues with OmegaConf)
+    task_id = str(task_id)
 
-    ids = [task_id]
-    # TODO raise proper error if task_id not in index. Can happen when task comes from external module.
-    # Find smart registering method.
-    config_fn = df.set_index("task_id").loc[ids].reset_index().iloc[0]["config_fn"]
-    cfg = OmegaConf.load(config_fn)
-    return maybe_add_defaults(cfg, config_fn)
+    # Resolve interpolations against parent config
+    parent = OmegaConf.create({
+        "benchmark_id": task_id.split("/")[1],
+        "task_id": task_id,
+        "seed": seed,
+        "outdir": "runs/test",
+    })
+    if optimizer_cfg is not None:
+        optimizer_cfg = OmegaConf.merge(parent, optimizer_cfg)
+    else:
+        optimizer_cfg = parent
+
+    dim, func_id, instance = _parse_bbob_task_id(task_id)
+    cs = _build_bbob_configspace(dim)
+    target_fn = _build_bbob_target_fn(func_id, instance, dim)
+
+    # Parse scenario config (explicit n_trials overrides any in smac_cfg)
+    scenario_raw = OmegaConf.select(optimizer_cfg, "smac_cfg.scenario")
+    if scenario_raw is None:
+        scenario_raw = OmegaConf.create()
+    scenario_cfg = OmegaConf.to_container(scenario_raw, resolve=True)
+    scenario_cfg["n_trials"] = n_trials
+    scenario = Scenario(cs, seed=seed, **scenario_cfg)
+
+    # Parse smac_class
+    smac_class_path = OmegaConf.select(
+        optimizer_cfg, "smac_cfg.smac_class"
+    ) or "smac.facade.blackbox_facade.BlackBoxFacade"
+    facade_class = _instantiate_from_target(smac_class_path)
+
+    # Parse initial_design
+    id_cfg = OmegaConf.select(
+        optimizer_cfg, "smac_cfg.smac_kwargs.initial_design"
+    )
+    initial_design = None
+    if id_cfg is not None:
+        id_cfg_dict = OmegaConf.to_container(id_cfg, resolve=True)
+        id_cls = _instantiate_from_target(id_cfg_dict.pop("_target_"))
+        if "max_ratio" not in id_cfg_dict:
+            id_cfg_dict["max_ratio"] = 0.2
+        if "n_configs" not in id_cfg_dict or id_cfg_dict["n_configs"] is None:
+            id_cfg_dict["n_configs"] = None
+        initial_design = id_cls(scenario, **id_cfg_dict)
+
+    # Parse random_design
+    rd_cfg = OmegaConf.select(
+        optimizer_cfg, "smac_cfg.smac_kwargs.random_design"
+    )
+    random_design = None
+    if rd_cfg is not None:
+        rd_cfg_dict = OmegaConf.to_container(rd_cfg, resolve=True)
+        rd_cls = _instantiate_from_target(rd_cfg_dict.pop("_target_"))
+        # Convert scenario ref back to object
+        rd_cfg_dict["scenario"] = scenario
+        random_design = rd_cls(scenario, **rd_cfg_dict)
+
+    # Parse acquisition_function
+    acq_cfg = OmegaConf.select(optimizer_cfg, "smac_cfg.smac_kwargs.acquisition_function")
+    acq_fn = None
+    if acq_cfg is not None:
+        acq_cls = _instantiate_from_target(OmegaConf.to_container(acq_cfg, resolve=True).get("_target_"))
+        acq_fn = acq_cls
+
+    # Parse dask_client
+    dask_client = None
+    if OmegaConf.select(optimizer_cfg, "smac_cfg.smac_kwargs.dask_client") is not None:
+        dask_client = OmegaConf.select(optimizer_cfg, "smac_cfg.smac_kwargs.dask_client")
+
+    # Build facade
+    return facade_class(
+        scenario=scenario,
+        target_function=target_fn,
+        initial_design=initial_design,
+        random_design=random_design,
+        acquisition_function=acq_fn,
+        overwrite=True,
+        dask_client=dask_client,
+    )
 
 
+
+# Deprecated alias for backward compatibility
 def build_carps_optimizer(
     task_id: str,
     seed: int,
     optimizer_id: str | None = None,
     optimizer_cfg: DictConfig | None = None,
-) -> Optimizer:
-    """Build carps optimizer.
-
-    Later, the built SMAC solver can be used.
-    Either specify `optimizer_id` or `optimizer_cfg`.
-
-    Parameters
-    ----------
-    task_id : str
-        The carps task id.
-    seed : int
-        The seed.
-    optimizer_id : str, optional
-        The carps optimizer id.
-    optimizer_cfg : DictConfig, optional
-        The optimizer config.
-
-    Returns:
-    -------
-    Optimizer
-        carps optimizer.
-    """
-    if optimizer_id is None and optimizer_cfg is None:
-        raise ValueError("Specify either optimizer_id or optimizer_cfg!")
-
-    cfg_opt = optimizer_cfg or None
-    if cfg_opt is None:
-        cfg_opt = load_optimizer_config(optimizer_id=optimizer_id)  # type: ignore[arg-type]
-
-    cfg = get_task_config(task_id=task_id)
-    cfg.seed = seed
-
-    if hasattr(cfg_opt, "optimizer"):
-        cfg = OmegaConf.merge(cfg, cfg_opt)
-    else:
-        cfg.optimizer = cfg_opt
-
-    if not hasattr(cfg.optimizer, "_target_"):
-        cfg.optimizer._target_ = "carps.optimizers.smac20.SMAC3Optimizer"
-        cfg.optimizer._partial_ = True
-
-    if hasattr(cfg, "loggers"):
-        del cfg.loggers
-    task = make_task(cfg=cfg)
-
-    if OmegaConf.select(cfg, "optimizer.smac_cfg.scenario.n_trials") is not None:
-        cfg.optimizer.smac_cfg.scenario.n_trials = (
-            cfg.task.optimization_resources.n_trials
-        )
-
-    optimizer = make_optimizer(cfg=cfg, task=task)
-    optimizer.setup_optimizer()
-    return optimizer
+    n_trials: int = 77,
+    **kwargs,
+) -> AbstractFacade:
+    """Deprecated: use build_smac_facade instead."""
+    return build_smac_facade(
+        task_id=task_id,
+        seed=seed,
+        n_trials=n_trials,
+        optimizer_cfg=optimizer_cfg,
+    )

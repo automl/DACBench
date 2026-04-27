@@ -2,7 +2,7 @@ This code was originally written by Carolin Benjamins and has been copied over f
 
 ## Quickstart
 
-**Dependencies:** `smac` and `carps` must be installed (included in DACBench's optional dependencies).
+**Dependencies:** `smac` and `ioh` must be installed (included in DACBench's optional dependencies).
 
 ```python
 from dacbench.benchmarks import DACBOBenchmark
