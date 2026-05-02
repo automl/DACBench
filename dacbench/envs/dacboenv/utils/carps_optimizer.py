@@ -136,12 +136,19 @@ def build_smac_facade(
     acq_fn = None
     if acq_cfg is not None:
         acq_cls = _instantiate_from_target(OmegaConf.to_container(acq_cfg, resolve=True).get("_target_"))
-        acq_fn = acq_cls
+        acq_fn = acq_cls()
 
     # Parse dask_client
     dask_client = None
     if OmegaConf.select(optimizer_cfg, "smac_cfg.smac_kwargs.dask_client") is not None:
         dask_client = OmegaConf.select(optimizer_cfg, "smac_cfg.smac_kwargs.dask_client")
+
+    # Build intensifier with max_config_calls=1.
+    # dacboenv always uses deterministic=True with no instances, so each config
+    # has exactly one valid (instance=None, seed) key. The default max_config_calls=3
+    # re-queues every config with doubled N (→2, →4), consuming ask() calls that
+    # return 0 trials and contribute nothing. Setting 1 eliminates this churn.
+    intensifier = facade_class.get_intensifier(scenario, max_config_calls=1)
 
     # Build facade
     return facade_class(
@@ -150,6 +157,7 @@ def build_smac_facade(
         initial_design=initial_design,
         random_design=random_design,
         acquisition_function=acq_fn,
+        intensifier=intensifier,
         overwrite=True,
         dask_client=dask_client,
     )

@@ -111,6 +111,7 @@ class DACBOEnv(gym.Env):
         instance_selector_class: type[InstanceSelector] | None = None,
         evaluation_mode: bool = False,
         n_trials: int = 77,
+        interaction_frequency: int = 1,
         **kwargs: Any,
     ) -> None:
         """Initialize the DACBOEnv environment.
@@ -143,6 +144,8 @@ class DACBOEnv(gym.Env):
             This circumvents running a reference optimizer on each evaluation task.
         n_trials : int, optional
             Maximum number of optimization trials. Defaults to 77.
+        interaction_frequency : int, optional
+            Number of steps between actions taken. Defaults to 1.
         """
         if reward_keys is None:
             reward_keys = ["incumbent_cost"]
@@ -160,6 +163,7 @@ class DACBOEnv(gym.Env):
 
         self._optimizer_cfg = optimizer_cfg
         self._n_trials = n_trials
+        self._interaction_frequency = interaction_frequency
         self._action_space_class = action_space_class
         self._action_space_kwargs = action_space_kwargs
         self._action_space: AbstractActionSpace
@@ -174,7 +178,9 @@ class DACBOEnv(gym.Env):
             if instance_selector_class
             else RoundRobinInstanceSelector
         )
-        self.instance_selector: InstanceSelector  # Set whenever task_id or inner_seeds are updated
+        self.instance_selector: (
+            InstanceSelector  # Set whenever task_id or inner_seeds are updated
+        )
         inner_seeds = inner_seeds or self._fallback_seeds
         self.instance_set = (inner_seeds, task_ids)  # type: ignore[assignment]
         self._instance: tuple[int, str] | None = None
@@ -211,6 +217,10 @@ class DACBOEnv(gym.Env):
 
         self.current_task_id = ""
         self.current_seed = -1
+        # Flag: only run initial design on first reset (in __init__), not on subsequent
+        # episode resets (auto-reset or manual). This prevents initial design from being
+        # consumed multiple times per SMAC instance.
+        self._init_reset_done = False
         self.current_threshold: float | None = None
         self.last_action: ActType | None = None
 
@@ -370,11 +380,12 @@ class DACBOEnv(gym.Env):
             step_duration = self._action_space._step_durations[int(action[0])]
             param_level = action[1]
             logger.info(f"Do action {param_level} for {step_duration} steps.")
-            for _i in range(step_duration):
-                # TODO Fix RL training logging for this as this seems that the episode length is way shorter
-                obs = self._step(action=action)
-            return obs
-        return self._step(action=action)
+        else:
+            step_duration = self._interaction_frequency
+
+        for _ in range(step_duration):
+            obs = self._step(action=action)
+        return obs
 
     def _step(
         self, action: ActType
@@ -399,8 +410,6 @@ class DACBOEnv(gym.Env):
         info : dict
             Additional information (empty).
         """
-        self.update_optimizer(action)
-
         # BO step
         trial_info = self._smac_instance.ask()
         _, trial_value = self._smac_instance._runner.run_wrapper(trial_info)
@@ -485,75 +494,100 @@ class DACBOEnv(gym.Env):
         info : dict
             Additional information (empty).
         """
-        # Reset SMAC instance
-        if hasattr(self, "_smac_instance"):
-            del self._smac_instance
-
-        # Get next instance which is a combo of task id and seed
+        # Get next instance.
         self.instance = self.get_next_instance()
         seed, task_id = self.instance
         if seed is None:
             seed = self._seeder.integers(low=0, high=2**32 - 1)
         seed = int(seed)
 
-        # Build SMAC facade directly
-        self._smac_facade = build_smac_facade(
-            task_id=task_id,
-            seed=seed,
-            n_trials=self._n_trials,
-            optimizer_cfg=self._optimizer_cfg,
+        # Only rebuild SMAC if this is a genuinely new instance (not an auto-reset
+        # within the same episode). Auto-reset happens when gymnasium detects
+        # terminated=True or truncated=True and calls reset() to get a fresh obs.
+        # In that case we keep the existing SMAC state — destroying it and rebuilding
+        # wastes the initial design and corrupts episode boundaries.
+        same_instance = (
+            hasattr(self, "_smac_instance")
+            and self.current_seed == seed
+            and self.current_task_id == task_id
         )
-        self._smac_instance = self._smac_facade.optimizer
 
-        if self._smac_instance._scenario.count_objectives() != 1:
-            raise NotImplementedError("Multi-objective not supported.")
+        if not same_instance:
+            # Reset SMAC instance
+            if hasattr(self, "_smac_instance"):
+                del self._smac_instance
 
-        # Setup observation space
-        self._dacbo_observation_space = ObservationSpace(
-            self._smac_instance, self._observation_keys
-        )
-        self._dacbo_observation_space.reset()
-        self.observation_space = (
-            self._dacbo_observation_space.space
-        )  # gym observation space
+            # Build SMAC facade directly
+            self._smac_facade = build_smac_facade(
+                task_id=task_id,
+                seed=seed,
+                n_trials=self._n_trials,
+                optimizer_cfg=self._optimizer_cfg,
+            )
+            self._smac_instance = self._smac_facade.optimizer
 
-        # Setup action space
-        self._action_space = self._action_space_class(
-            smac_instance=self._smac_instance, **self._action_space_kwargs
-        )
-        self.action_space = self._action_space.space  # gym action space
-        self.action_space.seed(seed)  # Seed with current seed
-        self.last_action = None
+            if self._smac_instance._scenario.count_objectives() != 1:
+                raise NotImplementedError("Multi-objective not supported.")
 
-        # If previous_param is in obs, define the observation space for it
-        if "previous_param" in self._dacbo_observation_space._keys:  # type: ignore
-            self._dacbo_observation_space._observation_space[
-                "previous_param"
-            ] = self.action_space
-            if isinstance(self._action_space, WEITempoRLActionSpace):
-                self._dacbo_observation_space._observation_space[
-                    "previous_param"
-                ] = Box(low=0, high=1)
+            # Setup observation space
+            self._dacbo_observation_space = ObservationSpace(
+                self._smac_instance, self._observation_keys
+            )
+            self._dacbo_observation_space.reset()
+            self.observation_space = (
+                self._dacbo_observation_space.space
+            )  # gym observation space
 
-        # Setup reward
-        self._reward = DACBOReward(self._smac_instance, self._reward_keys, self._rho)
+            # Setup action space
+            self._action_space = self._action_space_class(
+                smac_instance=self._smac_instance, **self._action_space_kwargs
+            )
+            self.action_space = self._action_space.space  # gym action space
+            self.action_space.seed(seed)  # Seed with current seed
+            self.last_action = None
+
+            # If previous_param is in obs, define the observation space for it
+            if "previous_param" in self._dacbo_observation_space._keys:  # type: ignore
+                self._dacbo_observation_space._observation_space["previous_param"] = (
+                    self.action_space
+                )
+                if isinstance(self._action_space, WEITempoRLActionSpace):
+                    self._dacbo_observation_space._observation_space[
+                        "previous_param"
+                    ] = Box(low=0, high=1)
+
+            # Setup reward
+            self._reward = DACBOReward(
+                self._smac_instance, self._reward_keys, self._rho
+            )
+
+            # _init_reset_done is reset so initial design runs once for this SMAC instance.
+            self._init_reset_done = False
 
         super().reset(seed=seed)
         self.current_seed = seed
         self.current_task_id = task_id
 
-        if not self._evaluation_mode:
-            # Work off new initial design
+        if not self._evaluation_mode and not self._init_reset_done:
+            # Work off new initial design.
             # This is important for training DAC policies because for the phase of the initial design, no action can
             # be taken and this might lead to misleading signals.
             # In evaluation, however, the initial design counts towards the total number of trials, controlled by
             # SMAC optimizer.
-            for _ in (
+            # _init_reset_done prevents re-running initial design on subsequent episode resets (auto-reset).
+            init_design_count = len(
                 self._smac_instance.intensifier.config_selector._initial_design_configs
-            ):
+            )
+            # Loop until all initial design configs are in the runhistory.
+            # A plain for-loop over _initial_design_configs only calls ask() N times,
+            # but the intensifier's queue management (max_config_calls re-queuing with
+            # deterministic=True) consumes ask() calls without advancing the config
+            # selector — so N asks only consume ~N/3 initial design configs.
+            while len(self._smac_instance.runhistory.get_configs()) < init_design_count:
                 trial_info = self._smac_instance.ask()
                 _, trial_value = self._smac_instance._runner.run_wrapper(trial_info)
                 self._smac_instance.tell(trial_info, trial_value)
+            self._init_reset_done = True
 
         initial_obs = {
             obs.name: np.atleast_1d(obs.default).astype(np.float32)

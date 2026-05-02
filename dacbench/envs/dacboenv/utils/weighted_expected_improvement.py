@@ -143,9 +143,9 @@ class WEI(AbstractAcquisitionFunction):
         assert self._model is not None
         assert self._xi is not None
         if self._use_pure_PI:
-            assert (
-                self._alpha == 1.0
-            ), f"{self._alpha} != 1.0 with pure PI. Any other combination leads to wrong behavior."
+            assert self._alpha == 1.0, (
+                f"{self._alpha} != 1.0 with pure PI. Any other combination leads to wrong behavior."
+            )
 
         if self._eta is None:
             raise ValueError(

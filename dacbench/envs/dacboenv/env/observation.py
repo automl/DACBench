@@ -257,9 +257,11 @@ ubr_smoothed_gradient_std_observation = ObservationType(
 modelfit_observation = ObservationType(
     "modelfit_mse",
     Box(low=0.0, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: -1
-    if np.isnan(scores := calculate_model_fit(smbo)["mean_scores"]).any()
-    else scores[0],
+    lambda smbo, memory: (
+        -1
+        if np.isnan(scores := calculate_model_fit(smbo)["mean_scores"]).any()
+        else scores[0]
+    ),
     -1,
 )
 dimensions_observation = ObservationType(
@@ -355,41 +357,51 @@ knn_entropy_observation = ObservationType(
 y_skewness_observation = ObservationType(
     "y_skewness",
     Box(low=-np.inf, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: np.nan_to_num(skew(costs).item(), nan=0)
-    if len(costs := smbo.intensifier.config_selector._collect_data()[1]) > 0
-    else 0,
+    lambda smbo, memory: (
+        np.nan_to_num(skew(costs).item(), nan=0)
+        if len(costs := smbo.intensifier.config_selector._collect_data()[1]) > 0
+        else 0
+    ),
     0,
 )
 y_kurtosis_observation = ObservationType(
     "y_kurtosis",
     Box(low=-np.inf, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: np.nan_to_num(kurtosis(costs).item(), nan=0)
-    if len(costs := smbo.intensifier.config_selector._collect_data()[1]) > 0
-    else 0,
+    lambda smbo, memory: (
+        np.nan_to_num(kurtosis(costs).item(), nan=0)
+        if len(costs := smbo.intensifier.config_selector._collect_data()[1]) > 0
+        else 0
+    ),
     0,
 )
 y_mean_observation = ObservationType(
     "y_mean",
     Box(low=-np.inf, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: np.mean(costs)
-    if len(costs := smbo.intensifier.config_selector._collect_data()[1]) > 0
-    else 0,
+    lambda smbo, memory: (
+        np.mean(costs)
+        if len(costs := smbo.intensifier.config_selector._collect_data()[1]) > 0
+        else 0
+    ),
     0,
 )
 std_observation = ObservationType(
     "y_std",
     Box(low=0, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: np.std(costs)
-    if len(costs := smbo.intensifier.config_selector._collect_data()[1]) > 0
-    else -1,
+    lambda smbo, memory: (
+        np.std(costs)
+        if len(costs := smbo.intensifier.config_selector._collect_data()[1]) > 0
+        else -1
+    ),
     -1,
 )
 variability_observation = ObservationType(
     "y_variability",
     Box(low=0, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: calc_variability(costs)
-    if len(costs := smbo.intensifier.config_selector._collect_data()[1]) > 3
-    else -1,
+    lambda smbo, memory: (
+        calc_variability(costs)
+        if len(costs := smbo.intensifier.config_selector._collect_data()[1]) > 3
+        else -1
+    ),
     -1,
 )
 tsd_best_observation = ObservationType(
@@ -401,50 +413,58 @@ tsd_best_observation = ObservationType(
 knn_entropy_best_observation = ObservationType(
     "knn_entropy_best",
     Box(low=0, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: knn_entropy(configs)  # type: ignore[arg-type]
-    if len(configs := get_best_percentile_configs(smbo, min_samples=4))
-    > 3  # (default k == 3)
-    else 0,
+    lambda smbo, memory: (
+        knn_entropy(configs)  # type: ignore[arg-type]
+        if len(configs := get_best_percentile_configs(smbo, min_samples=4))
+        > 3  # (default k == 3)
+        else 0
+    ),
     0,
 )
 skewness_best_observation = ObservationType(
     "y_skewness_best",
     Box(low=-np.inf, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: np.nan_to_num(skew(costs).item(), nan=0)
-    if len(costs := get_best_percentile_costs(smbo)) > 0
-    else 0,
+    lambda smbo, memory: (
+        np.nan_to_num(skew(costs).item(), nan=0)
+        if len(costs := get_best_percentile_costs(smbo)) > 0
+        else 0
+    ),
     0,
 )
 kurtosis_best_observation = ObservationType(
     "y_kurtosis_best",
     Box(low=-np.inf, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: np.nan_to_num(kurtosis(costs).item(), nan=0)
-    if len(costs := get_best_percentile_costs(smbo)) > 0
-    else 0,
+    lambda smbo, memory: (
+        np.nan_to_num(kurtosis(costs).item(), nan=0)
+        if len(costs := get_best_percentile_costs(smbo)) > 0
+        else 0
+    ),
     0,
 )
 mean_best_observation = ObservationType(
     "y_mean_best",
     Box(low=-np.inf, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: np.mean(costs)
-    if len(costs := get_best_percentile_costs(smbo)) > 0
-    else 0,
+    lambda smbo, memory: (
+        np.mean(costs) if len(costs := get_best_percentile_costs(smbo)) > 0 else 0
+    ),
     0,
 )
 std_best_observation = ObservationType(
     "y_std_best",
     Box(low=0, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: np.std(costs)
-    if len(costs := get_best_percentile_costs(smbo)) > 0
-    else -1,
+    lambda smbo, memory: (
+        np.std(costs) if len(costs := get_best_percentile_costs(smbo)) > 0 else -1
+    ),
     -1,
 )
 variability_best_observation = ObservationType(
     "y_variability_best",
     Box(low=0, high=np.inf, dtype=np.float32),
-    lambda smbo, memory: calc_variability(costs)  # type: ignore[arg-type]
-    if len(costs := get_best_percentile_costs(smbo, min_samples=4)) > 3
-    else -1,
+    lambda smbo, memory: (
+        calc_variability(costs)  # type: ignore[arg-type]
+        if len(costs := get_best_percentile_costs(smbo, min_samples=4)) > 3
+        else -1
+    ),
     -1,
 )
 budget_percentage_observation = ObservationType(
@@ -456,24 +476,28 @@ budget_percentage_observation = ObservationType(
 inc_improvement_scaled_observation = ObservationType(
     "inc_improvement_scaled",
     Box(low=0, high=1, dtype=np.float32),
-    lambda smbo, memory: 1 - min(curr, prev) / max(curr, prev)
-    if len(t := smbo.intensifier.trajectory) > 1
-    and t[-1].trial == len(smbo.runhistory)
-    and max(curr := abs(t[-1].costs[-1]), prev := abs(t[-2].costs[-1])) != 0
-    else 0,
+    lambda smbo, memory: (
+        1 - min(curr, prev) / max(curr, prev)
+        if len(t := smbo.intensifier.trajectory) > 1
+        and t[-1].trial == len(smbo.runhistory)
+        and max(curr := abs(t[-1].costs[-1]), prev := abs(t[-2].costs[-1])) != 0
+        else 0
+    ),
     0,
 )
 has_categorical_hps = ObservationType(
     "has_categorical_hps",
     Box(low=0, high=1, dtype=bool),
-    lambda smbo, memory: len(
-        [
-            hp
-            for hp in smbo._scenario.configspace.values()
-            if isinstance(hp, CategoricalHyperparameter)
-        ]
-    )
-    > 0,
+    lambda smbo, memory: (
+        len(
+            [
+                hp
+                for hp in smbo._scenario.configspace.values()
+                if isinstance(hp, CategoricalHyperparameter)
+            ]
+        )
+        > 0
+    ),
     False,
 )
 knn_difference_observation = ObservationType(
@@ -665,9 +689,10 @@ class ObservationSpace:
                 smac_instance
             )
         ]
-        for obs in self._observation_types:
-            if inspect.isclass(obs.compute):
-                obs.compute = obs.compute()
+        self._compute_fns: dict[str, Any] = {
+            obs.name: obs.compute() if inspect.isclass(obs.compute) else obs.compute
+            for obs in self._observation_types
+        }
         self._observation_space = Dict(
             {obs.name: obs.space for obs in self._observation_types}
         )
@@ -706,7 +731,7 @@ class ObservationSpace:
             self._memory[reg_key].append(val)
         return {
             obs.name: np.atleast_1d(
-                obs.compute(self._smac_instance, self._memory)
+                self._compute_fns[obs.name](self._smac_instance, self._memory)
             ).astype(np.float32)
             for obs in self._observation_types
         }
@@ -714,5 +739,6 @@ class ObservationSpace:
     def reset(self) -> None:
         """Reset any stateful observations. Should be called when the env is reset."""
         for obs in self._observation_types:
-            if isinstance(obs.compute, GetAFandAcqValue):
-                obs.compute.reset()
+            compute_fn = self._compute_fns[obs.name]
+            if isinstance(compute_fn, GetAFandAcqValue):
+                compute_fn.reset()

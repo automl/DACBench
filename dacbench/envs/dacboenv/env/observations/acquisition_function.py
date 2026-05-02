@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import (
     TYPE_CHECKING,
 )
@@ -29,6 +30,8 @@ if TYPE_CHECKING:
 
     from dacbench.envs.dacboenv.env.observations.types import Memory
 
+logger = logging.getLogger(__name__)
+
 
 def get_acq_value(
     solver: SMBO, acq_fun_class: AbstractAcquisitionFunction
@@ -43,7 +46,7 @@ def get_acq_value(
         The acquisition function class.
 
     Returns:
-    -------
+    ------
     float | None
         The acquisition value for the last configuration, or None, if the model has not been fitted yet.
     """
@@ -86,10 +89,10 @@ class GetAFandAcqValue:
         solver : SMBO
             The current SMAC instance.
         acq_fun_class : AbstractAcquisitionFunction
-            The acquisiton function class.
+            The acquisition function class.
 
         Returns:
-        -------
+        ------
         tuple[AbstractAcquisitionFunction, float] | None
             The evaluated AF, together with the value for the last proposed/evaluated config.
         """
@@ -121,7 +124,7 @@ class GetAcqValue(GetAFandAcqValue):
             The acquisition function class.
 
         Returns:
-        -------
+        ------
         float | None
             The acquisition value for the last configuration, or None, if the model has not been fitted yet.
         """
@@ -136,7 +139,7 @@ class GetAcqValueEI(GetAcqValue):
     """Get the acq value for EI."""
 
     def __call__(self, solver: SMBO, memory: Memory | None = None) -> float | None:  # type: ignore[override]
-        """Get acquisiton function value for last configuration with EI acquisition function.
+        """Get acquisition function value for last configuration with EI acquisition function.
 
         Parameters
         ----------
@@ -146,7 +149,7 @@ class GetAcqValueEI(GetAcqValue):
             Unused memory.
 
         Returns:
-        -------
+        ------
         float | None
             The acquisition value, or None, if the model has not been fitted yet.
         """
@@ -157,7 +160,7 @@ class GetAcqValuePI(GetAcqValue):
     """Get the acq value for PI."""
 
     def __call__(self, solver: SMBO, memory: Memory | None = None) -> float | None:  # type: ignore[override]
-        """Get acquisiton function value for last configuration with PI acquisition function.
+        """Get acquisition function value for last configuration with PI acquisition function.
 
         Parameters
         ----------
@@ -167,7 +170,7 @@ class GetAcqValuePI(GetAcqValue):
             Unused memory.
 
         Returns:
-        -------
+        ------
         float | None
             The acquisition value, or None, if the model has not been fitted yet.
         """
@@ -178,7 +181,7 @@ class GetAcqValueWEI(GetAcqValue):
     """Get the acq value for WEI."""
 
     def __call__(self, solver: SMBO, memory: Memory | None = None) -> float | None:  # type: ignore[override]
-        """Get acquisiton function value for last configuration with WEI acquisition function.
+        """Get acquisition function value for last configuration with WEI acquisition function.
 
         Parameters
         ----------
@@ -188,7 +191,7 @@ class GetAcqValueWEI(GetAcqValue):
             Unused memory.
 
         Returns:
-        -------
+        ------
         float | None
             The acquisition value, or None, if the model has not been fitted yet.
         """
@@ -209,7 +212,7 @@ class GetAcqValueWEIExplore(GetAFandAcqValue):
             Unused memory.
 
         Returns:
-        -------
+        ------
         float | None
             The exploration term of WEI, or None, if the model has not been fitted yet.
         """
@@ -224,7 +227,7 @@ class GetAcqValueWEIExplore(GetAFandAcqValue):
 
 def get_af_and_acq_value(
     solver: SMBO,
-    acq_fun_class: AbstractAcquisitionFunction,
+    acq_fun_class: type[AbstractAcquisitionFunction],
     model: AbstractModel | None = None,
     incumbent: Configuration | None = None,
 ) -> tuple[AbstractAcquisitionFunction, float] | None:
@@ -234,17 +237,19 @@ def get_af_and_acq_value(
     ----------
     solver : SMBO
         The SMAC solver instance.
-    acq_fun_class : AbstractAcquisitionFunction
+    acq_fun_class : type[AbstractAcquisitionFunction]
         The acquisition function class.
+    model : AbstractModel | None, optional
+        Model to use. Defaults to the solver's config selector model.
 
     Returns:
-    -------
+    ------
     tuple[AbstractAcquisitionFunction, float] | None
-        The acquisition function, and the acquisition value for the last configuration, or None, if the model has not
-        been fitted yet.
+        The acquisition function and its value, or None if the model has not been fitted yet.
     """
     config_selector = solver._intensifier._config_selector
     model = model or config_selector._model
+
     retval = None
     if model_fitted(model):
         rh: RunHistory = config_selector._runhistory

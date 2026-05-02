@@ -36,6 +36,10 @@ logger = get_logger(__name__)
 def model_fitted(model: AbstractModel | None) -> bool:
     """Check whether the surrogate model is fitted.
 
+    Handles both the ``GaussianProcess`` and ``MCMCGaussianProcess`` classes used in SMAC 3.x+
+    by checking for the ``_is_trained`` attribute directly.  Strict ``isinstance(..., GaussianProcess)``
+    checks would miss ``MCMCGaussianProcess``.
+
     Parameters
     ----------
     model : AbstractModel
@@ -48,7 +52,7 @@ def model_fitted(model: AbstractModel | None) -> bool:
     """
     fitted = False
     if model is not None:
-        fitted = (isinstance(model, GaussianProcess) and model._is_trained) or (
+        fitted = hasattr(model, "_is_trained") and model._is_trained or (
             isinstance(model, RandomForest) and model._rf is not None
         )
     return fitted
