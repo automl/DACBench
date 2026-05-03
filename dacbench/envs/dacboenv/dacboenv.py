@@ -181,6 +181,9 @@ class DACBOEnv(gym.Env):
         self.instance_selector: (
             InstanceSelector  # Set whenever task_id or inner_seeds are updated
         )
+        self.is_in_random_mode = inner_seeds is None or (
+            inner_seeds is not None and all(s is None for s in inner_seeds)
+        )
         inner_seeds = inner_seeds or self._fallback_seeds
         self.instance_set = (inner_seeds, task_ids)  # type: ignore[assignment]
         self._instance: tuple[int, str] | None = None
@@ -204,7 +207,7 @@ class DACBOEnv(gym.Env):
             self._reference_performance = ReferencePerformance(
                 optimizer_id=self.reference_performance_optimizer_id,
                 task_ids=self.instance_set.task_ids,
-                seeds=self.instance_set.seeds,
+                seeds=None if self.is_in_random_mode else self.instance_set.seeds,
                 reference_performance_fn=self.reference_performance_fn,
                 n_trials=self._n_trials,
             )
@@ -422,7 +425,7 @@ class DACBOEnv(gym.Env):
             threshold = self._reference_performance.query_cost(  # type: ignore[attr-defined]
                 optimizer_id=self.reference_performance_optimizer_id,
                 task_id=self.current_task_id,
-                seed=self.current_seed,
+                seed=self.current_seed if not self.is_in_random_mode else None,
             )
             self.current_threshold = threshold
 

@@ -24,7 +24,7 @@ class ReferencePerformance:
         self,
         optimizer_id: str,
         task_ids: list[str],
-        seeds: list[int],
+        seeds: list[int] | None,
         reference_performance_fn: str
         | Path = "reference_performance/reference_performance.parquet",
         n_trials: int = 77,
@@ -46,7 +46,7 @@ class ReferencePerformance:
         """
         self.optimizer_id = optimizer_id
         self.task_ids = task_ids
-        self.seeds = seeds
+        self.seeds = seeds if seeds is not None else list(range(1, 21))
         self.reference_performance_fn = Path(reference_performance_fn)
         self.n_trials = n_trials
 
@@ -58,7 +58,13 @@ class ReferencePerformance:
             n_trials=self.n_trials,
         )
 
-    def query_cost(self, optimizer_id: str, task_id: str, seed: int) -> float:
+    def query_cost(
+        self,
+        optimizer_id: str,
+        task_id: str,
+        seed: int | None,
+        key_performance: str = "trial_value__cost_inc",
+    ) -> float:
         """Query cost from reference performance data.
 
         Parameters
@@ -67,20 +73,26 @@ class ReferencePerformance:
             The optimizer id.
         task_id : str
             The task id.
-        seed : int
-            The seed.
+        seed : int | None
+            The seed. If None, averages over all precomputed seeds.
+        key_performance : str, optional
+            Column name for the performance metric, by default "trial_value__cost_inc".
 
         Returns:
         -------
         float
-            Cost of final incumbent.
+            Cost of final incumbent (or mean over seeds when seed is None).
         """
+        if seed is None:
+            ids = [(optimizer_id, task_id)]
+            index_columns = ["optimizer_id", "task_id"]
+            return self.perf_df.set_index(index_columns).loc[ids][key_performance].mean()
         ids = [(optimizer_id, task_id, seed)]
         index_columns = ["optimizer_id", "task_id", "seed"]
         return (
             self.perf_df.set_index(index_columns)
             .loc[ids]
-            .iloc[0]["trial_value__cost_inc"]
+            .iloc[0][key_performance]
         )
 
 
