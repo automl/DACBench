@@ -139,10 +139,11 @@ class DACBOBenchmark(AbstractBenchmark):
 
         with open(path) as f:
             instance_data = yaml.safe_load(f)
-        self.config["task_ids"] = instance_data["task_ids"]
-        self.config["inner_seeds"] = instance_data.get("inner_seeds", None)
-        if "n_trials" in instance_data:
-            self.config["n_trials"] = instance_data["n_trials"]
+        if not test:
+            self.config["task_ids"] = instance_data["task_ids"]
+            self.config["inner_seeds"] = instance_data.get("inner_seeds", None)
+            if "n_trials" in instance_data:
+                self.config["n_trials"] = instance_data["n_trials"]
         self.config[set_key] = dict(
             enumerate(
                 product(
