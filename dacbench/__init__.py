@@ -1,6 +1,20 @@
 """DACBench: a benchmark library for Dynamic Algorithm Configuration."""
 
-__version__ = "0.3.0"
+try:
+    from dacbench._version import version as __version__
+except ImportError:
+    # Package not built with setuptools_scm (e.g. raw source tree, no install).
+    # Fall back to installed metadata, then a hardcoded tail value.
+    try:
+        from importlib.metadata import (
+            PackageNotFoundError,
+            version as _pkg_version,
+        )
+
+        __version__ = _pkg_version("DACBench")
+    except PackageNotFoundError:
+        __version__ = "0.4.0.dev0"
+
 __contact__ = "automl.org"
 
 from dacbench.abstract_benchmark import AbstractBenchmark

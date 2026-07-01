@@ -13,7 +13,6 @@ This file gives on overview the poruses of the different files and folders:
 ├── README.md:              project readme
 ├── runscripts:             shell scripts to run baselines on  SLURM
 ├── setup.cfg:              pip-package config. Contains: dependencies, extras and thier dependencies, tags, project meta
-├── setup.py:               dummy setup.py require for downward compatibility          
 ├── tests:                  unit tests for dacbench
 └── train_ppo.py
 ``

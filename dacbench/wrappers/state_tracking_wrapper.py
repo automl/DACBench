@@ -267,6 +267,6 @@ class StateTrackingWrapper(Wrapper):
         else:
             raise ValueError("Unknown state type")
         width, height = figure.get_size_inches() * figure.get_dpi()
-        return np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
-            int(height), int(width), 3
-        )
+        return np.frombuffer(canvas.buffer_rgba(), dtype="uint8").reshape(
+            int(height), int(width), 4
+        )[:, :, :3]

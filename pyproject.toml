@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "DACBench"
-version = "0.4.0"
+dynamic = ["version"]
 description = "Dynamic Algorithm Configuration Benchmark"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -27,18 +27,18 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-  "gymnasium >= 0.29.1, <= 0.29.1",
-  "imageio >= 2.35, <= 2.37",
-  "numpy >= 1.26, < 2.0",
-  "pandas >= 2.2, < 3.0",
-  "matplotlib >= 3.9, <= 3.9",
-  "seaborn >= 0.13, <= 0.14",
-  "configspace~=1.2.1",
-  "scikit-learn >= 1.5.0, <= 1.8",
-  "scipy >= 1.14.0, <= 1.17",
-  "jupyter ~= 1.0",
-  "Pyro4 >= 4.70, < 5",
-  "ioh >= 0.3, <= 0.4",
+  "gymnasium >= 0.29.1",
+  "imageio >= 2.35",
+  "numpy >= 1.26",
+  "pandas >= 2.2",
+  "matplotlib >= 3.9",
+  "seaborn >= 0.13",
+  "configspace >= 1.2.1",
+  "scikit-learn >= 1.5.0",
+  "scipy >= 1.14.0",
+  "jupyter >= 1.0",
+  "Pyro4 >= 4.70",
+  "ioh >= 0.3",
   "pyarrow"]
 
 [project.urls]
@@ -79,13 +79,29 @@ dacboenv = [
 ]
 
 [tool.extras]
-cma = ["ioh==0.3.17", 
+cma = ["ioh==0.3.17",
   "modcma==1.0.8"]
 sgd = [
     "torchvision==0.19.1",
     "torch==2.4.1",
 ]
 theory = ["uuid"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["dacbench*"]
+exclude = [
+  "tests",
+  "examples",
+  "wheels",
+  "other_requirements",
+]
+
+[tool.setuptools_scm]
+write_to = "dacbench/_version.py"
+fallback_version = "0.4.0"
+# Accept both historical tags (v0.1, v0.3) and the future X.Y.Z form (v0.4.0).
+tag_regex = "^(?:v)?(?P<version>\\d+(?:\\.\\d+){0,2}(?:(?:\\.|\\+)(?:\\d+|[a-zA-Z0-9]+))*)$"
 
 [tool.ruff]
 target-version = "py310"
@@ -257,6 +273,9 @@ convention = "google"
 max-args = 10 # Changed from default of 5
 
 [tool.pytest.ini_options]
+markers = [
+    "slow: marks tests that require network access or heavy computation (deselect with -m 'not slow')",
+]
 filterwarnings = [
     "ignore::UserWarning",
     "ignore::DeprecationWarning",
