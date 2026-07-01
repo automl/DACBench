@@ -592,6 +592,18 @@ class DACBOEnv(gym.Env):
                 self._smac_instance.tell(trial_info, trial_value)
             self._init_reset_done = True
 
+        # Train the model from runhistory data.
+        # The old carps layer did this automatically via its tell() hook; SMBO.tell() only
+        # adds data to runhistory but does not train the model. Must be called here so that
+        # the model is fitted on the initial design data after the training-mode initial
+        # design loop. In evaluation mode, the initial design is consumed during normal
+        # ask/tell cycles and no data is available yet, so skip training.
+        cs = self._smac_instance.intensifier.config_selector
+        if len(cs._initial_design_configs) > 0:
+            X, Y = cs._collect_data()[:2]
+            if X.shape[0] > 0:
+                cs._model.train(X, Y)
+
         initial_obs = {
             obs.name: np.atleast_1d(obs.default).astype(np.float32)
             for obs in self._dacbo_observation_space._observation_types
