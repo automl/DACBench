@@ -24,7 +24,7 @@ copyright = "2021, Theresa Eimer, Maximilian Reimer"
 author = "Theresa Eimer, Maximilian Reimer"
 
 # The full version, including alpha/beta/rc tags
-release = "01.02.2021"
+release = version
 
 options = {
     "copyright": copyright,

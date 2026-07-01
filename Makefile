@@ -57,9 +57,9 @@ clean-doc:
 	$(MAKE) -C ${DOCDIR} clean
 
 clean-build:
-	$(PYTHON) setup.py clean
 	rm -rf ${DIST}
 	rm -rf build
+	rm -f dacbench/_version.py dacbench/_version.pyi
 
 clean-examples:
 	rm -rf examples/plotting

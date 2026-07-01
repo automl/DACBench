@@ -3,7 +3,7 @@ From: python:3.9-slim
 
 %labels
 MAINTAINER AREEB AHMAD
-VERSION v0.1
+VERSION v0.4.0
 
 %help
     Container with theory benchmark installed
