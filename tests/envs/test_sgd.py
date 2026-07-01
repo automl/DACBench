@@ -14,11 +14,14 @@ from dacbench.envs.env_utils import sgd_utils
 from dacbench.envs.sgd import SGDEnv, SGDInstance
 from dacbench.wrappers import ObservationWrapper
 
+from tests.helpers import tiny_sgd_loader
+
 
 class TestSGDEnv(unittest.TestCase):
     def make_env(self, epoch=True):
         bench = SGDBenchmark()
         bench.config.epoch_mode = epoch
+        bench.config.instance_update_func = "no_progression"
         return bench.get_environment()
 
     @staticmethod
@@ -88,27 +91,31 @@ class TestSGDEnv(unittest.TestCase):
             assert env.min_validation_loss is not None
 
     def test_multiple_epochs(self):
-        env = self.make_env()
-        _ = env.reset()
-        action = env.action_space.sample()
-        for _ in range(5):
-            _, reward, _, _, _ = env.step(action)
-            assert reward > env.crash_penalty, "Env should not crash"
+        with patch("dacbench.envs.sgd.random_torchvision_loader", side_effect=tiny_sgd_loader):
+            env = self.make_env()
+            _ = env.reset()
+            action = env.action_space.sample()
+            for _ in range(5):
+                _, reward, _, _, _ = env.step(action)
+                assert reward > env.crash_penalty, "Env should not crash"
 
+    @pytest.mark.slow
     def test_torch_hub_loading(self):
         bench = SGDBenchmark()
         env = bench.get_environment()
         env.instance_id_list = [0]
         env.instance_set = {0: env.instance_set[0]}
         env.instance_set[0].model = sgd_utils.load_model_from_torchhub(model_repo="chenyaofo/pytorch-cifar-models", model_name="cifar10_resnet20", pretrained=False)
-        env.reset()
-        assert env.model is not None
-        assert env.model.__class__.__name__ == "Sequential"
-        print(env.instance.dataset_name)
-        env.step(0.001)
+        with patch("dacbench.envs.sgd.random_torchvision_loader", side_effect=tiny_sgd_loader):
+            env.reset()
+            assert env.model is not None
+            assert env.model.__class__.__name__ == "Sequential"
+            print(env.instance.dataset_name)
+            env.step(0.001)
 
     def test_crash(self):
-        with patch("dacbench.envs.sgd.forward_backward") as mock_forward_backward:
+        with patch("dacbench.envs.sgd.forward_backward") as mock_forward_backward, \
+             patch("dacbench.envs.sgd.random_torchvision_loader", side_effect=tiny_sgd_loader):
             mock_forward_backward.return_value = torch.tensor(float("inf"))
             env = ObservationWrapper(self.make_env())
             state, info = env.reset()
@@ -121,28 +128,44 @@ class TestSGDEnv(unittest.TestCase):
 
     def test_reproducibility(self):
         mems = []
-        instances = []
-        env = self.make_env()
+        bench = SGDBenchmark()
+        bench.config.instance_update_func = "no_progression"
 
-        for _ in range(2):
-            rng = np.random.default_rng(123)
-            env.seed(123)
-            env.instance_index = 0
-            instances.append(env.get_instance_set())
+        with patch("dacbench.envs.sgd.random_torchvision_loader", side_effect=tiny_sgd_loader):
+            for _ in range(2):
+                env = bench.get_environment()
+                rng = np.random.default_rng(123)
+                env.seed(123)
+                # Sanity check: env remains anchored to instance 0 across resets.
+                assert env.instance is env.instance_set[0]
 
-            state, info = env.reset()
+                state, info = env.reset()
 
-            terminated, truncated = False, False
-            mem = []
-            step = 0
-            while not (terminated or truncated) and step < 5:
-                action = np.exp(rng.integers(low=-10, high=1))
-                state, reward, terminated, truncated, _ = env.step(action)
-                mem.append([state, [reward, int(truncated), action]])
-                step += 1
-            mems.append(mem)
+                terminated, truncated = False, False
+                mem = []
+                step = 0
+                while not (terminated or truncated) and step < 5:
+                    action = np.exp(rng.integers(low=-10, high=1))
+                    state, reward, terminated, truncated, _ = env.step(action)
+                    mem.append([state, [reward, int(truncated), action]])
+                    step += 1
+                mems.append(mem)
+
+        # Trajectories must be reproducible under the same seed.
         assert len(mems[0]) == len(mems[1])
-        assert instances[0] == instances[1]
+        for mem0, mem1 in zip(mems[0], mems[1], strict=True):
+            state0, (reward0, trunc0, action0) = mem0
+            state1, (reward1, trunc1, action1) = mem1
+            assert trunc0 == trunc1
+            assert np.allclose(reward0, reward1), f"reward differs: {reward0} vs {reward1}"
+            assert np.allclose(action0, action1), f"action differs: {action0} vs {action1}"
+            assert state0.keys() == state1.keys()
+            for k in state0:
+                v0, v1 = state0[k], state1[k]
+                if isinstance(v0, (bool, int)):
+                    assert v0 == v1, f"state[{k}] differs: {v0!r} vs {v1!r}"
+                else:
+                    assert np.allclose(v0, v1), f"state[{k}] differs: {v0!r} vs {v1!r}"
 
     def test_invalid_model(self):
         bench = SGDBenchmark()
@@ -185,8 +208,9 @@ class TestSGDEnv(unittest.TestCase):
         assert env.close() is None
 
     def test_render(self):
-        env = self.make_env()
-        state, info = env.reset()
-        env.render("human")
-        with pytest.raises(NotImplementedError):
-            env.render("random")
+        with patch("dacbench.envs.sgd.random_torchvision_loader", side_effect=tiny_sgd_loader):
+            env = self.make_env()
+            state, info = env.reset()
+            env.render("human")
+            with pytest.raises(NotImplementedError):
+                env.render("random")

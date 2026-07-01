@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 from dacbench import benchmarks
 from numpy.testing import assert_almost_equal
+
+from tests.helpers import tiny_sgd_loader
 
 
 def assert_state_space_equal(state1, state2):
@@ -22,16 +25,20 @@ def assert_state_space_equal(state1, state2):
 
 
 class TestDeterministic(unittest.TestCase):
-    def run_deterministic_test(self, benchmark_name, seed=42):
+    def run_deterministic_test(self, benchmark_name, seed=42, instance_update_func=None):
         print(benchmark_name)
         bench = getattr(benchmarks, benchmark_name)()
         action = bench.get_environment().action_space.sample()
 
         env1 = bench.get_benchmark(seed=seed)
+        if instance_update_func is not None:
+            env1.instance_updates = instance_update_func
         init_state1, info1 = env1.reset()
         _, reward1, terminated1, truncated1, info1 = env1.step(action)
 
         env2 = bench.get_benchmark(seed=seed)
+        if instance_update_func is not None:
+            env2.instance_updates = instance_update_func
         init_state2, info2 = env2.reset()
         _, reward2, terminated2, truncated2, info2 = env2.step(action)
 
@@ -74,7 +81,8 @@ class TestDeterministic(unittest.TestCase):
     #     self.assertEqual(info1, info2)
 
     def test_SGDBenchmark(self):
-        self.run_deterministic_test("SGDBenchmark")
+        with patch("dacbench.envs.sgd.random_torchvision_loader", side_effect=tiny_sgd_loader):
+            self.run_deterministic_test("SGDBenchmark", instance_update_func="no_progression")
 
     def test_OneLLBenchmark(self):
         ...
