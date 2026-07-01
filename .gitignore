@@ -5,6 +5,10 @@ __pycache__/
 tox.ini
 *.egg-info/
 
+# setuptools_scm generated version file
+dacbench/_version.py
+dacbench/_version.pyi
+
 # project spcecific stuff
 TODOS.md
 builds/

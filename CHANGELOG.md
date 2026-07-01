@@ -1,3 +1,38 @@
+# 0.4.0
+
+### Dependency Updates
+- Lower bound on `gymnasium` raised to support `gymnasium >= 1.0`. Environment registration and step API remain unchanged for users on `>= 0.29.1`.
+- Upper-version pins removed across the core dependency set (`numpy`, `pandas`, `scikit-learn`, `scipy`, `matplotlib`, `seaborn`, `configspace`, `imageio`, `ioh`, etc.). Compatibility now follows PEP 440 minimums combined with the upper bound implied by the broadest optional extra.
+- Optional `all` extra continues to pin `torch` and `torchvision` to keep SGD benchmarks reproducible.
+
+### Infrastructure
+- Dependabot enabled for the `uv` ecosystem on `development` so dependency drift is surfaced automatically.
+- `flake.nix` / `.devenv` shell added so contributors can drop into a fully-pinned dev environment without manually managing the toolchain.
+- `pre-commit` config switched to use `uvx` for hooks; the `make pre-commit` and `make check` targets now resolve their tools through `uv`.
+- CI workflows continue to use pinned `actions/checkout` and `actions/setup-python` versions; bumps of those actions are tracked by Dependabot.
+
+### Bug Fixes
+- `Theory` env: corrected action-size computation so the action space matches the configured knobs (`relax key constraints in theory env`, `correct action size definition in theory env`).
+- `ConfigSpace` integration: fixed parsing of discrete action spaces so HP bounds declared via `ConfigSpace` round-trip correctly into the gym space.
+- Fixed integer hyperparameter conversion when constructing the search space (`fix integer hp conversion bug`).
+- Renderers that previously called the deprecated `matplotlib.image.imsave` path now use `buffer_rgba` to avoid `tostring_rgb` deprecation warnings.
+- Documentation: fixed broken `dac literature` cross-link.
+- `FastDownward` imports that lingered in the public surface were removed; the benchmark remains deprecated (see below) but no longer leaks into common `from dacbench import ...` flows.
+
+### Examples
+- `examples/smac_agent.py` now demonstrates a full SMAC-in-agent configuration, complementing the existing plain-SMAC runner.
+
+### Deprecations
+- No new deprecations in 0.4.0. `FastDownwardBenchmark` continues to be deprecated (see 0.3.0 notes); container recipes remain available but no CI coverage is provided.
+
+### Internal
+- Several `uv.lock` regenerations to keep the lockfile consistent with `pyproject.toml` after dependency changes.
+- Repository cleanups: removed stale `dist` artifacts from the repo, `.gitignore` tightened.
+
+### Versioning
+- `setup.py` removed. The single source of truth for the version is now `setuptools_scm`, driven by git tags with a fallback string defined in `pyproject.toml`. Read `dacbench.__version__` to query the installed version.
+
+
 # 0.3.0
 
 ### Instance Specification
