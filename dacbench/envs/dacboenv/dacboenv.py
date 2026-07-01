@@ -386,6 +386,7 @@ class DACBOEnv(gym.Env):
         else:
             step_duration = self._interaction_frequency
 
+        self.update_optimizer(action)
         for _ in range(step_duration):
             obs = self._step(action=action)
         return obs
