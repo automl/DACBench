@@ -99,7 +99,7 @@ exclude = [
 
 [tool.setuptools_scm]
 write_to = "dacbench/_version.py"
-fallback_version = "0.4.0"
+fallback_version = "0.5.0"
 # Accept both historical tags (v0.1, v0.3) and the future X.Y.Z form (v0.4.0).
 tag_regex = "^(?:v)?(?P<version>\\d+(?:\\.\\d+){0,2}(?:(?:\\.|\\+)(?:\\d+|[a-zA-Z0-9]+))*)$"
 

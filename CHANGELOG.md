@@ -1,3 +1,28 @@
+# 0.5.0
+
+### New Benchmark: DACBOEnv
+The Bayesian Optimisation benchmark (`DACBOBenchmark` / `DACBOEnv`) is now a first-class citizen of DACBench. Previously maintained as a separate `dacboenv` package with an optional `carps` dependency, it has been fully inlined and rewritten against SMAC3 and IOH directly.
+
+Key capabilities:
+- **DAC over BO**: the agent controls the BO hyperparameters (e.g. acquisition function parameters) at every BO iteration, framed as a sequential decision problem.
+- **BBOB instance sets**: defaults to all 24 BBOB 2-D functions; custom instance sets can be supplied as paths relative to Hydra's search path.
+- **`interaction_frequency`**: controls how often the agent is queried relative to BO iterations.
+- **`ReferencePerformance`**: computes normalised regret baselines; supports `seeds=None` to average over multiple seeds automatically.
+- Registers as `"DACBO-v0"` in the Gymnasium registry on import.
+- Optional dependency group: install with `pip install dacbench[dacbo]`.
+
+### Bug Fixes
+- `AbstractEnv`: task and instance IDs are no longer overwritten when an explicit test set is provided to `reset()`.
+- `DACBOEnv`: guard against calling `model.train()` on an empty initial design dataset.
+- `DACBOEnv`: `update_optimizer` call restored in `step()` — was silently dropped during refactor.
+- `DACBOEnv`: dependency guard, action-space construction, and optional-import handling corrected.
+
+### Dependencies
+- `pyarrow` added as a core dependency (required by DACBO instance-set serialisation).
+
+### Tests
+- SGD benchmark tests sped up significantly and hardened against flaky timing-dependent assertions.
+
 # 0.4.0
 
 ### Dependency Updates
