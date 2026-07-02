@@ -51,12 +51,12 @@ Changelog = "https://github.com/automl/DACBench/main/CHANGELOG.md"
 [project.optional-dependencies]
 dev = [
     "pytest >= 8.0, < 9.0",
-    "coverage[toml]==7.6.1",
+    "coverage[toml]==7.14.3",
     "pre-commit==3.8.0",
-    "ruff==0.6.7"
+    "ruff==0.15.20"
 ]
 example = [
-    "tabulate==0.9.0",
+    "tabulate==0.10.0",
     "rich",
     "hydra-core",
   #  "hypersweeper",
@@ -67,7 +67,7 @@ docs = [
 ]
 all = [
   "ioh >= 0.3, <= 0.4",
-  "modcma==1.0.8",
+  "modcma==1.2.0",
   "torchvision >= 0.19, <= 0.25",
   "torch >= 2.4, <= 2.10",
   "uuid",
@@ -80,7 +80,7 @@ dacboenv = [
 
 [tool.extras]
 cma = ["ioh==0.3.17",
-  "modcma==1.0.8"]
+  "modcma==1.2.0"]
 sgd = [
     "torchvision==0.19.1",
     "torch==2.4.1",
