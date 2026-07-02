@@ -24,7 +24,9 @@ def _parse_bbob_task_id(task_id: str) -> tuple[int, int, int]:
 def _build_bbob_configspace(dim: int) -> ConfigurationSpace:
     cs = ConfigurationSpace()
     for i in range(dim):
-        cs.add_hyperparameter(UniformFloatHyperparameter(f"x{i}", lower=-5.0, upper=5.0))
+        cs.add_hyperparameter(
+            UniformFloatHyperparameter(f"x{i}", lower=-5.0, upper=5.0)
+        )
     return cs
 
 
@@ -76,12 +78,14 @@ def build_smac_facade(
     task_id = str(task_id)
 
     # Resolve interpolations against parent config
-    parent = OmegaConf.create({
-        "benchmark_id": task_id.split("/")[1],
-        "task_id": task_id,
-        "seed": seed,
-        "outdir": "runs/test",
-    })
+    parent = OmegaConf.create(
+        {
+            "benchmark_id": task_id.split("/")[1],
+            "task_id": task_id,
+            "seed": seed,
+            "outdir": "runs/test",
+        }
+    )
     if optimizer_cfg is not None:
         optimizer_cfg = OmegaConf.merge(parent, optimizer_cfg)
     else:
@@ -100,15 +104,14 @@ def build_smac_facade(
     scenario = Scenario(cs, seed=seed, **scenario_cfg)
 
     # Parse smac_class
-    smac_class_path = OmegaConf.select(
-        optimizer_cfg, "smac_cfg.smac_class"
-    ) or "smac.facade.blackbox_facade.BlackBoxFacade"
+    smac_class_path = (
+        OmegaConf.select(optimizer_cfg, "smac_cfg.smac_class")
+        or "smac.facade.blackbox_facade.BlackBoxFacade"
+    )
     facade_class = _instantiate_from_target(smac_class_path)
 
     # Parse initial_design
-    id_cfg = OmegaConf.select(
-        optimizer_cfg, "smac_cfg.smac_kwargs.initial_design"
-    )
+    id_cfg = OmegaConf.select(optimizer_cfg, "smac_cfg.smac_kwargs.initial_design")
     initial_design = None
     if id_cfg is not None:
         id_cfg_dict = OmegaConf.to_container(id_cfg, resolve=True)
@@ -120,9 +123,7 @@ def build_smac_facade(
         initial_design = id_cls(scenario, **id_cfg_dict)
 
     # Parse random_design
-    rd_cfg = OmegaConf.select(
-        optimizer_cfg, "smac_cfg.smac_kwargs.random_design"
-    )
+    rd_cfg = OmegaConf.select(optimizer_cfg, "smac_cfg.smac_kwargs.random_design")
     random_design = None
     if rd_cfg is not None:
         rd_cfg_dict = OmegaConf.to_container(rd_cfg, resolve=True)
@@ -132,16 +133,22 @@ def build_smac_facade(
         random_design = rd_cls(scenario, **rd_cfg_dict)
 
     # Parse acquisition_function
-    acq_cfg = OmegaConf.select(optimizer_cfg, "smac_cfg.smac_kwargs.acquisition_function")
+    acq_cfg = OmegaConf.select(
+        optimizer_cfg, "smac_cfg.smac_kwargs.acquisition_function"
+    )
     acq_fn = None
     if acq_cfg is not None:
-        acq_cls = _instantiate_from_target(OmegaConf.to_container(acq_cfg, resolve=True).get("_target_"))
+        acq_cls = _instantiate_from_target(
+            OmegaConf.to_container(acq_cfg, resolve=True).get("_target_")
+        )
         acq_fn = acq_cls()
 
     # Parse dask_client
     dask_client = None
     if OmegaConf.select(optimizer_cfg, "smac_cfg.smac_kwargs.dask_client") is not None:
-        dask_client = OmegaConf.select(optimizer_cfg, "smac_cfg.smac_kwargs.dask_client")
+        dask_client = OmegaConf.select(
+            optimizer_cfg, "smac_cfg.smac_kwargs.dask_client"
+        )
 
     # Build intensifier with max_config_calls=1.
     # dacboenv always uses deterministic=True with no instances, so each config
@@ -161,7 +168,6 @@ def build_smac_facade(
         overwrite=True,
         dask_client=dask_client,
     )
-
 
 
 # Deprecated alias for backward compatibility

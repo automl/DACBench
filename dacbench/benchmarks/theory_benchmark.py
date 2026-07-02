@@ -112,10 +112,10 @@ class TheoryBenchmark(AbstractBenchmark):
         self.env_class = globals()[self.config.env_class]
         assert self.env_class in (TheoryEnv, TheoryEnvDiscrete)
 
-        self.config[
-            "observation_space"
-        ] = self.create_observation_space_from_description(
-            self.config["observation_description"], self.env_class
+        self.config["observation_space"] = (
+            self.create_observation_space_from_description(
+                self.config["observation_description"], self.env_class
+            )
         )
 
     def create_observation_space_from_description(

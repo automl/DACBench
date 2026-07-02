@@ -164,10 +164,8 @@ def calculate_model_fit(
 
             if score_function == gp_nll:
                 score = score_function(y_pred, var, y_test)
-            elif (
-                score_function != r2_score
-                or (score_function == r2_score
-                and len(y_test) > 1)
+            elif score_function != r2_score or (
+                score_function == r2_score and len(y_test) > 1
             ):
                 score = score_function(y_pred, y_test)
             else:

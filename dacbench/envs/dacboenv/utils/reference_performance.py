@@ -86,14 +86,12 @@ class ReferencePerformance:
         if seed is None:
             ids = [(optimizer_id, task_id)]
             index_columns = ["optimizer_id", "task_id"]
-            return self.perf_df.set_index(index_columns).loc[ids][key_performance].mean()
+            return (
+                self.perf_df.set_index(index_columns).loc[ids][key_performance].mean()
+            )
         ids = [(optimizer_id, task_id, seed)]
         index_columns = ["optimizer_id", "task_id", "seed"]
-        return (
-            self.perf_df.set_index(index_columns)
-            .loc[ids]
-            .iloc[0][key_performance]
-        )
+        return self.perf_df.set_index(index_columns).loc[ids].iloc[0][key_performance]
 
 
 def group_tuples(tuples: list[tuple], depth: int = 0) -> list:
@@ -257,12 +255,14 @@ def run_reference_optimizer(
         facade.optimize()
         trajectory = facade.intensifier.trajectory
         final_cost = trajectory[-1].costs[0] if trajectory else float("inf")
-        records.append({
-            "optimizer_id": opt_id,
-            "task_id": task_id,
-            "seed": seed,
-            "trial_value__cost_inc": final_cost,
-        })
+        records.append(
+            {
+                "optimizer_id": opt_id,
+                "task_id": task_id,
+                "seed": seed,
+                "trial_value__cost_inc": final_cost,
+            }
+        )
 
     ref_fn = Path(reference_performance_fn)
     ref_fn.parent.mkdir(parents=True, exist_ok=True)

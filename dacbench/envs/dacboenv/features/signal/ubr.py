@@ -52,8 +52,10 @@ def model_fitted(model: AbstractModel | None) -> bool:
     """
     fitted = False
     if model is not None:
-        fitted = hasattr(model, "_is_trained") and model._is_trained or (
-            isinstance(model, RandomForest) and model._rf is not None
+        fitted = (
+            hasattr(model, "_is_trained")
+            and model._is_trained
+            or (isinstance(model, RandomForest) and model._rf is not None)
         )
     return fitted
 
