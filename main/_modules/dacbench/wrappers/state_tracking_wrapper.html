@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.wrappers.state_tracking_wrapper &#8212; DACBench Documentation 0.3.0 documentation</title>
+    <title>dacbench.wrappers.state_tracking_wrapper &#8212; DACBench Documentation 0.5.1.dev1+g4a98615a7 documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=f129cdf0"></script>
+    <script src="../../../_static/documentation_options.js?v=8c34d74f"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.3.0
+        v0.5.1.dev1+g4a98615a7
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.3.0</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g4a98615a7</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.3.0</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g4a98615a7</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -542,14 +542,14 @@
                     <span class="n">p</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">plot_single</span><span class="p">(</span><span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">y</span> <span class="o">=</span> <span class="n">i</span> <span class="o">%</span> <span class="n">state_length</span> <span class="o">//</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">0</span>
-                    <span class="n">p</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">plot_single</span><span class="p">(</span><span class="n">axarr</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">dim</span><span class="p">,</span> <span class="n">i</span> <span class="o">//</span> <span class="n">dim</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+                    <span class="n">_p</span><span class="p">,</span> <span class="n">_p2</span> <span class="o">=</span> <span class="n">plot_single</span><span class="p">(</span><span class="n">axarr</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">dim</span><span class="p">,</span> <span class="n">i</span> <span class="o">//</span> <span class="n">dim</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
             <span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown state type&quot;</span><span class="p">)</span>
         <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">figure</span><span class="o">.</span><span class="n">get_size_inches</span><span class="p">()</span> <span class="o">*</span> <span class="n">figure</span><span class="o">.</span><span class="n">get_dpi</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">tostring_rgb</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-            <span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">),</span> <span class="mi">3</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">buffer_rgba</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">),</span> <span class="mi">4</span>
+        <span class="p">)[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span></div>
 </div>
 
 </pre></div>
