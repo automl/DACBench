@@ -48,3 +48,16 @@ else:
         "SGD Benchmark not installed. If you want to use this benchmark, "
         "please follow the installation guide."
     )
+
+dacbo_deps_spec = importlib.util.find_spec("smac")
+found = dacbo_deps_spec is not None
+if found:
+    from dacbench.envs.dacbo import DACBOEnv
+
+    __all__.append("DACBOEnv")
+else:
+    warnings.warn(  # noqa: B028
+        "DACBO Env dependency (smac) not installed. "
+        "If you want to use this benchmark, "
+        "please follow the installation guide."
+    )

@@ -1,0 +1,16 @@
+# @package _global_
+
+action_space_id: WEI-cont
+dacboenv:
+  action_space_class:
+    _target_: dacbench.envs.dacboenv.env.action.AcqParameterActionSpace
+    _partial_: true
+  action_space_kwargs:
+    bounds: [0,1]
+    adjustment_type: continuous
+  
+  optimizer_cfg:
+    smac_cfg:
+      smac_kwargs:
+        acquisition_function:
+          _target_: dacbench.envs.dacboenv.utils.weighted_expected_improvement.WEI

@@ -38,7 +38,8 @@ dependencies = [
   "scipy >= 1.14.0",
   "jupyter >= 1.0",
   "Pyro4 >= 4.70",
-  "ioh >= 0.3"]
+  "ioh >= 0.3",
+  "pyarrow"]
 
 [project.urls]
 Homepage = "https://github.com/automl/DACBench"
@@ -69,7 +70,12 @@ all = [
   "modcma==1.0.8",
   "torchvision >= 0.19, <= 0.25",
   "torch >= 2.4, <= 2.10",
-  "uuid"
+  "uuid",
+]
+dacboenv = [
+  "smac",
+  "ioh",
+  "pyarrow",
 ]
 
 [tool.extras]
@@ -246,6 +252,7 @@ exclude = [
 ]
 
 "__init__.py" = ["I002"]
+"dacbench/envs/dacboenv/*" = ["E501", "D107", "D417", "N803"]
 "examples/*" = ["INP001", "I002", "E741", "D101", "D103", "T20", "D415", "ERA001", "E402", "E501"]
 "docs/*" = ["INP001"]
 

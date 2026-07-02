@@ -256,7 +256,7 @@ class ActionFrequencyWrapper(Wrapper):
                     p, p2 = plot_single(axarr[i], i, y=True, x=x)
                 else:
                     y = i % action_size // dim == 0
-                    p, p2 = plot_single(axarr[i % dim, i // dim], i, x=x, y=y)
+                    _p, _p2 = plot_single(axarr[i % dim, i // dim], i, x=x, y=y)
             canvas.draw()
         width, height = figure.get_size_inches() * figure.get_dpi()
         return np.frombuffer(canvas.buffer_rgba(), dtype="uint8").reshape(
