@@ -1,61 +1,50 @@
 # 0.5.0
 
 ### New Benchmark: DACBOEnv
-The Bayesian Optimisation benchmark (`DACBOBenchmark` / `DACBOEnv`) is now a first-class citizen of DACBench. Previously maintained as a separate `dacboenv` package with an optional `carps` dependency, it has been fully inlined and rewritten against SMAC3 and IOH directly.
+Bayesian Optimisation is now a supported DAC benchmark. `DACBOBenchmark` / `DACBOEnv` frames BO as a sequential decision problem where the agent controls hyperparameters of the BO loop (e.g. acquisition function parameters) at each iteration. It was previously an external `dacboenv` package; it is now inlined and no longer requires the `carps` dependency.
 
-Key capabilities:
-- **DAC over BO**: the agent controls the BO hyperparameters (e.g. acquisition function parameters) at every BO iteration, framed as a sequential decision problem.
-- **BBOB instance sets**: defaults to all 24 BBOB 2-D functions; custom instance sets can be supplied as paths relative to Hydra's search path.
-- **`interaction_frequency`**: controls how often the agent is queried relative to BO iterations.
-- **`ReferencePerformance`**: computes normalised regret baselines; supports `seeds=None` to average over multiple seeds automatically.
-- Registers as `"DACBO-v0"` in the Gymnasium registry on import.
-- Optional dependency group: install with `pip install dacbench[dacbo]`.
+- Built on SMAC3 and IOH directly.
+- Defaults to all 24 BBOB 2-D functions as the instance set; custom instance sets can be supplied as paths relative to Hydra's search path.
+- `interaction_frequency` parameter controls how often the agent is queried per BO step.
+- `ReferencePerformance` computes normalised regret baselines and supports `seeds=None` to average over multiple seeds automatically.
+- Registers as `"DACBO-v0"` in the Gymnasium registry on import (requires optional `dacbo` extra).
+- Documentation, README, and an example notebook are included.
+
+### Dependency Updates
+- `gymnasium` upper bound removed; `>= 1.0` is now fully supported.
+- Upper-version pins removed across all core dependencies (`numpy`, `pandas`, `scikit-learn`, `scipy`, `matplotlib`, `seaborn`, `configspace`, `imageio`, `ioh`, etc.). Versions follow PEP 440 lower bounds only.
+- `pyarrow` added as a core dependency.
+- Dependabot enabled for the `uv` ecosystem to surface dependency drift automatically.
+
+### Infrastructure
+- `setup.py` removed. The version is now derived from git tags via `setuptools_scm`; the fallback is defined in `pyproject.toml`.
+- `flake.nix` / `.devenv` shell added for a fully-pinned contributor environment without manual toolchain management.
+- `pre-commit` hooks updated to run via `uvx`.
 
 ### Bug Fixes
-- `AbstractEnv`: task and instance IDs are no longer overwritten when an explicit test set is provided to `reset()`.
-- `DACBOEnv`: guard against calling `model.train()` on an empty initial design dataset.
+- `Theory` env: corrected action-space size computation and relaxed overly strict key constraints.
+- `ConfigSpace` integration: fixed parsing of discrete action spaces and integer hyperparameter conversion.
+- `AbstractEnv`: task and instance IDs are no longer overwritten when an explicit test set is passed to `reset()`.
 - `DACBOEnv`: `update_optimizer` call restored in `step()` — was silently dropped during refactor.
+- `DACBOEnv`: guard against calling `model.train()` on an empty initial design dataset.
 - `DACBOEnv`: dependency guard, action-space construction, and optional-import handling corrected.
+- Renderers: replaced deprecated `tostring_rgb` with `buffer_rgba`.
+- Documentation: fixed broken DAC literature cross-link.
 
-### Dependencies
-- `pyarrow` added as a core dependency (required by DACBO instance-set serialisation).
+### Examples
+- `examples/smac_agent.py` demonstrates a full SMAC-in-agent configuration.
 
 ### Tests
-- SGD benchmark tests sped up significantly and hardened against flaky timing-dependent assertions.
+- SGD benchmark tests sped up and hardened.
 
 # 0.4.0
 
-### Dependency Updates
-- Lower bound on `gymnasium` raised to support `gymnasium >= 1.0`. Environment registration and step API remain unchanged for users on `>= 0.29.1`.
-- Upper-version pins removed across the core dependency set (`numpy`, `pandas`, `scikit-learn`, `scipy`, `matplotlib`, `seaborn`, `configspace`, `imageio`, `ioh`, etc.). Compatibility now follows PEP 440 minimums combined with the upper bound implied by the broadest optional extra.
-- Optional `all` extra continues to pin `torch` and `torchvision` to keep SGD benchmarks reproducible.
-
-### Infrastructure
-- Dependabot enabled for the `uv` ecosystem on `development` so dependency drift is surfaced automatically.
-- `flake.nix` / `.devenv` shell added so contributors can drop into a fully-pinned dev environment without manually managing the toolchain.
-- `pre-commit` config switched to use `uvx` for hooks; the `make pre-commit` and `make check` targets now resolve their tools through `uv`.
-- CI workflows continue to use pinned `actions/checkout` and `actions/setup-python` versions; bumps of those actions are tracked by Dependabot.
-
 ### Bug Fixes
-- `Theory` env: corrected action-size computation so the action space matches the configured knobs (`relax key constraints in theory env`, `correct action size definition in theory env`).
-- `ConfigSpace` integration: fixed parsing of discrete action spaces so HP bounds declared via `ConfigSpace` round-trip correctly into the gym space.
-- Fixed integer hyperparameter conversion when constructing the search space (`fix integer hp conversion bug`).
-- Renderers that previously called the deprecated `matplotlib.image.imsave` path now use `buffer_rgba` to avoid `tostring_rgb` deprecation warnings.
-- Documentation: fixed broken `dac literature` cross-link.
-- `FastDownward` imports that lingered in the public surface were removed; the benchmark remains deprecated (see below) but no longer leaks into common `from dacbench import ...` flows.
+- `FunctionApproximationBenchmark`: observation space bounds are now derived correctly from the `config_space` when one is provided, rather than falling back to the default bounds. The 1-D and 2-D sigmoid preset methods also set the correct bounds.
 
-### Examples
-- `examples/smac_agent.py` now demonstrates a full SMAC-in-agent configuration, complementing the existing plain-SMAC runner.
-
-### Deprecations
-- No new deprecations in 0.4.0. `FastDownwardBenchmark` continues to be deprecated (see 0.3.0 notes); container recipes remain available but no CI coverage is provided.
-
-### Internal
-- Several `uv.lock` regenerations to keep the lockfile consistent with `pyproject.toml` after dependency changes.
-- Repository cleanups: removed stale `dist` artifacts from the repo, `.gitignore` tightened.
-
-### Versioning
-- `setup.py` removed. The single source of truth for the version is now `setuptools_scm`, driven by git tags with a fallback string defined in `pyproject.toml`. Read `dacbench.__version__` to query the installed version.
+### Dependency Updates
+- `ioh` added as a core dependency.
+- Version pins loosened for `gymnasium`, `imageio`, and `configspace`.
 
 
 # 0.3.0
