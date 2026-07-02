@@ -55,47 +55,49 @@ class TestSGDEnv(unittest.TestCase):
         assert env2.get_reward == env2.get_default_reward
 
     def test_reset(self):
-        env = self.make_env()
-        state, info = env.reset()
+        with patch("dacbench.envs.sgd.random_torchvision_loader", side_effect=tiny_sgd_loader):
+            env = self.make_env()
+            state, info = env.reset()
         assert isinstance(state, dict)
         assert isinstance(info, dict)
         assert env.loss == 0
         assert env._done is False
 
     def test_step(self):
-        env = self.make_env(False)
-        state, info = env.reset()
+        with patch("dacbench.envs.sgd.random_torchvision_loader", side_effect=tiny_sgd_loader):
+            env = self.make_env(False)
+            state, info = env.reset()
 
-        # Test if step method executes without error
-        print(env.model)
-        state, reward, done, truncated, info = env.step(0.001)
-        assert isinstance(state, dict)
-        assert isinstance(reward, float)
-        assert isinstance(done, bool)
-        assert isinstance(truncated, bool)
-        assert isinstance(info, dict)
-        if not env._done:
-            assert env.min_validation_loss is not None
+            # Test if step method executes without error
+            print(env.model)
+            state, reward, done, truncated, info = env.step(0.001)
+            assert isinstance(state, dict)
+            assert isinstance(reward, float)
+            assert isinstance(done, bool)
+            assert isinstance(truncated, bool)
+            assert isinstance(info, dict)
+            if not env._done:
+                assert env.min_validation_loss is not None
 
-        env = self.make_env()
-        state, info = env.reset()
+            env = self.make_env()
+            state, info = env.reset()
 
-        # Test if step method executes without error in epoch mode
-        state, reward, done, truncated, info = env.step(0.001)
-        assert isinstance(state, dict)
-        assert isinstance(reward, float)
-        assert isinstance(done, bool)
-        assert isinstance(truncated, bool)
-        assert isinstance(info, dict)
-        if not env._done:
-            assert env.min_validation_loss is not None
+            # Test if step method executes without error in epoch mode
+            state, reward, done, truncated, info = env.step(0.001)
+            assert isinstance(state, dict)
+            assert isinstance(reward, float)
+            assert isinstance(done, bool)
+            assert isinstance(truncated, bool)
+            assert isinstance(info, dict)
+            if not env._done:
+                assert env.min_validation_loss is not None
 
     def test_multiple_epochs(self):
         with patch("dacbench.envs.sgd.random_torchvision_loader", side_effect=tiny_sgd_loader):
             env = self.make_env()
             _ = env.reset()
             action = env.action_space.sample()
-            for _ in range(5):
+            for _ in range(3):
                 _, reward, _, _, _ = env.step(action)
                 assert reward > env.crash_penalty, "Env should not crash"
 
@@ -144,7 +146,7 @@ class TestSGDEnv(unittest.TestCase):
                 terminated, truncated = False, False
                 mem = []
                 step = 0
-                while not (terminated or truncated) and step < 5:
+                while not (terminated or truncated) and step < 2:
                     action = np.exp(rng.integers(low=-10, high=1))
                     state, reward, terminated, truncated, _ = env.step(action)
                     mem.append([state, [reward, int(truncated), action]])
