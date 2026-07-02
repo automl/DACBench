@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "DACBench"
-version = "0.4.0"
+dynamic = ["version"]
 description = "Dynamic Algorithm Configuration Benchmark"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -27,18 +27,19 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-  "gymnasium<=0.29.1",
-  "imageio~=2.35.1",
-  "numpy==1.26.4",
-  "pandas==2.2.3",
-  "matplotlib==3.9.2",
-  "seaborn==0.13.2",
-  "configspace~=1.2.1",
-  "scikit-learn==1.5.2",
-  "scipy==1.14.1", 
-  "jupyter==1.0.0",
-  "Pyro4==4.82",
-  "ioh==0.3.17"]
+  "gymnasium >= 0.29.1",
+  "imageio >= 2.35",
+  "numpy >= 1.26",
+  "pandas >= 2.2",
+  "matplotlib >= 3.9",
+  "seaborn >= 0.13",
+  "configspace >= 1.2.1",
+  "scikit-learn >= 1.5.0",
+  "scipy >= 1.14.0",
+  "jupyter >= 1.0",
+  "Pyro4 >= 4.70",
+  "ioh >= 0.3",
+  "pyarrow"]
 
 [project.urls]
 Homepage = "https://github.com/automl/DACBench"
@@ -49,34 +50,58 @@ Changelog = "https://github.com/automl/DACBench/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [
-    "pytest==8.3.3",
+    "pytest >= 8.0, < 9.0",
     "coverage[toml]==7.6.1",
     "pre-commit==3.8.0",
     "ruff==0.6.7"
 ]
 example = [
     "tabulate==0.9.0",
-    "rich"
+    "rich",
+    "hydra-core",
+  #  "hypersweeper",
+    "smac"
 ]
 docs = [
     "automl-sphinx-theme==0.2.0"
 ]
 all = [
-  "ioh==0.3.17", 
+  "ioh >= 0.3, <= 0.4",
   "modcma==1.0.8",
-  "torchvision==0.19.1",
-  "torch==2.4.1",
-  "uuid"
+  "torchvision >= 0.19, <= 0.25",
+  "torch >= 2.4, <= 2.10",
+  "uuid",
+]
+dacboenv = [
+  "smac",
+  "ioh",
+  "pyarrow",
 ]
 
 [tool.extras]
-cma = ["ioh==0.3.17", 
+cma = ["ioh==0.3.17",
   "modcma==1.0.8"]
 sgd = [
     "torchvision==0.19.1",
     "torch==2.4.1",
 ]
 theory = ["uuid"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["dacbench*"]
+exclude = [
+  "tests",
+  "examples",
+  "wheels",
+  "other_requirements",
+]
+
+[tool.setuptools_scm]
+write_to = "dacbench/_version.py"
+fallback_version = "0.5.0"
+# Accept both historical tags (v0.1, v0.3) and the future X.Y.Z form (v0.4.0).
+tag_regex = "^(?:v)?(?P<version>\\d+(?:\\.\\d+){0,2}(?:(?:\\.|\\+)(?:\\d+|[a-zA-Z0-9]+))*)$"
 
 [tool.ruff]
 target-version = "py310"
@@ -227,6 +252,7 @@ exclude = [
 ]
 
 "__init__.py" = ["I002"]
+"dacbench/envs/dacboenv/*" = ["E501", "D107", "D417", "N803"]
 "examples/*" = ["INP001", "I002", "E741", "D101", "D103", "T20", "D415", "ERA001", "E402", "E501"]
 "docs/*" = ["INP001"]
 
@@ -247,6 +273,9 @@ convention = "google"
 max-args = 10 # Changed from default of 5
 
 [tool.pytest.ini_options]
+markers = [
+    "slow: marks tests that require network access or heavy computation (deselect with -m 'not slow')",
+]
 filterwarnings = [
     "ignore::UserWarning",
     "ignore::DeprecationWarning",

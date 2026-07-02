@@ -384,7 +384,7 @@ class FastDownwardEnv(AbstractEnv):
 
         self.socket.listen()
         try:
-            self.conn, address = self.socket.accept()
+            self.conn, _address = self.socket.accept()
         except TimeoutError:
             raise OSError(  # noqa: B904
                 "Fast downward subprocess not reachable (time out). "

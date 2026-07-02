@@ -1,4 +1,5 @@
 """Example utils."""
+
 import argparse
 from collections import defaultdict, namedtuple
 

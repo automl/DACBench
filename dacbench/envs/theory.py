@@ -502,7 +502,7 @@ class TheoryEnv(AbstractEnv):
         if stop is False:
             # flip r bits
             r = int(r)
-            y, f_y, n_evals = self.x.mutate_rls(r, self.np_random)
+            y, _f_y, n_evals = self.x.mutate_rls(r, self.np_random)
 
             # update x
             if self.x.fitness <= y.fitness:

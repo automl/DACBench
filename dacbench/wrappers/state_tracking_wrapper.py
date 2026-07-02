@@ -262,11 +262,11 @@ class StateTrackingWrapper(Wrapper):
                     p, p2 = plot_single(axarr[i], i, y=True, x=x)
                 else:
                     y = i % state_length // dim == 0
-                    p, p2 = plot_single(axarr[i % dim, i // dim], i, x=x, y=y)
+                    _p, _p2 = plot_single(axarr[i % dim, i // dim], i, x=x, y=y)
             canvas.draw()
         else:
             raise ValueError("Unknown state type")
         width, height = figure.get_size_inches() * figure.get_dpi()
-        return np.fromstring(canvas.tostring_rgb(), dtype="uint8").reshape(
-            int(height), int(width), 3
-        )
+        return np.frombuffer(canvas.buffer_rgba(), dtype="uint8").reshape(
+            int(height), int(width), 4
+        )[:, :, :3]

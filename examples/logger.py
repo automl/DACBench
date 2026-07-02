@@ -1,4 +1,5 @@
 """Run and log an experiment."""
+
 from pathlib import Path
 
 import matplotlib.pyplot as plt

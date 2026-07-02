@@ -5,10 +5,18 @@ __pycache__/
 tox.ini
 *.egg-info/
 
+# setuptools_scm generated version file
+dacbench/_version.py
+dacbench/_version.pyi
+
 # project spcecific stuff
 TODOS.md
 builds/
 build/
+IMPLEMENTATION_PLAN.md
+reference_performance/
+run.log
+runs/
 
 ## results, data or temp files written during runs
 output/
@@ -33,3 +41,6 @@ uv.lock
 *.egg
 *.egg-info/
 *.whl
+
+.DS_Store
+*uv.lock*

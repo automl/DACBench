@@ -1,3 +1,52 @@
+# 0.5.0
+
+### New Benchmark: DACBOEnv
+Bayesian Optimisation is now a supported DAC benchmark. `DACBOBenchmark` / `DACBOEnv` frames BO as a sequential decision problem where the agent controls hyperparameters of the BO loop (e.g. acquisition function parameters) at each iteration. It was previously an external `dacboenv` package; it is now inlined and no longer requires the `carps` dependency.
+
+- Built on SMAC3 and IOH directly.
+- Defaults to all 24 BBOB 2-D functions as the instance set; custom instance sets can be supplied as paths relative to Hydra's search path.
+- `interaction_frequency` parameter controls how often the agent is queried per BO step.
+- `ReferencePerformance` computes normalised regret baselines and supports `seeds=None` to average over multiple seeds automatically.
+- Registers as `"DACBO-v0"` in the Gymnasium registry on import (requires optional `dacbo` extra).
+- Documentation, README, and an example notebook are included.
+
+### Dependency Updates
+- `gymnasium` upper bound removed; `>= 1.0` is now fully supported.
+- Upper-version pins removed across all core dependencies (`numpy`, `pandas`, `scikit-learn`, `scipy`, `matplotlib`, `seaborn`, `configspace`, `imageio`, `ioh`, etc.). Versions follow PEP 440 lower bounds only.
+- `pyarrow` added as a core dependency.
+- Dependabot enabled for the `uv` ecosystem to surface dependency drift automatically.
+
+### Infrastructure
+- `setup.py` removed. The version is now derived from git tags via `setuptools_scm`; the fallback is defined in `pyproject.toml`.
+- `flake.nix` / `.devenv` shell added for a fully-pinned contributor environment without manual toolchain management.
+- `pre-commit` hooks updated to run via `uvx`.
+
+### Bug Fixes
+- `Theory` env: corrected action-space size computation and relaxed overly strict key constraints.
+- `ConfigSpace` integration: fixed parsing of discrete action spaces and integer hyperparameter conversion.
+- `AbstractEnv`: task and instance IDs are no longer overwritten when an explicit test set is passed to `reset()`.
+- `DACBOEnv`: `update_optimizer` call restored in `step()` — was silently dropped during refactor.
+- `DACBOEnv`: guard against calling `model.train()` on an empty initial design dataset.
+- `DACBOEnv`: dependency guard, action-space construction, and optional-import handling corrected.
+- Renderers: replaced deprecated `tostring_rgb` with `buffer_rgba`.
+- Documentation: fixed broken DAC literature cross-link.
+
+### Examples
+- `examples/smac_agent.py` demonstrates a full SMAC-in-agent configuration.
+
+### Tests
+- SGD benchmark tests sped up and hardened.
+
+# 0.4.0
+
+### Bug Fixes
+- `FunctionApproximationBenchmark`: observation space bounds are now derived correctly from the `config_space` when one is provided, rather than falling back to the default bounds. The 1-D and 2-D sigmoid preset methods also set the correct bounds.
+
+### Dependency Updates
+- `ioh` added as a core dependency.
+- Version pins loosened for `gymnasium`, `imageio`, and `configspace`.
+
+
 # 0.3.0
 
 ### Instance Specification

@@ -3,8 +3,11 @@ from __future__ import annotations
 import json
 import os
 import unittest
+from unittest.mock import patch
+
 import numpy as np
 
+from tests.helpers import tiny_sgd_loader
 from dacbench.benchmarks import SGDBenchmark
 from dacbench.envs import SGDEnv, SGDInstance
 
@@ -78,24 +81,39 @@ class TestSGDBenchmark(unittest.TestCase):
     def test_seeding(self):
         bench = SGDBenchmark()
         bench.config.seed = 123
+        bench.config.seed_action_space = True
+        bench.config.instance_update_func = "no_progression"
         mems = []
-        instances = []
 
-        for _ in range(2):
-            env = bench.get_environment()
-            env.instance_index = 0
-            instances.append(env.get_instance_set())
+        with patch("dacbench.envs.sgd.random_torchvision_loader", side_effect=tiny_sgd_loader):
+            for _ in range(2):
+                env = bench.get_environment()
+                assert env.instance is env.instance_set[0]
 
-            state, _ = env.reset()
+                state, _ = env.reset()
 
-            terminated, truncated = False, False
-            mem = []
-            step = 0
-            while not (terminated or truncated) and step < 5:
-                action = env.action_space.sample()
-                state, reward, terminated, truncated, _ = env.step(action)
-                mem.append([state, [reward, int(truncated), action]])
-                step += 1
-            mems.append(mem)
+                terminated, truncated = False, False
+                mem = []
+                step = 0
+                while not (terminated or truncated) and step < 5:
+                    action = env.action_space.sample()
+                    state, reward, terminated, truncated, _ = env.step(action)
+                    mem.append([state, [reward, int(truncated), action]])
+                    step += 1
+                mems.append(mem)
+
+        # Trajectories must be reproducible under the same seed.
         assert len(mems[0]) == len(mems[1])
-        assert instances[0] == instances[1]
+        for mem0, mem1 in zip(mems[0], mems[1], strict=True):
+            state0, (reward0, trunc0, action0) = mem0
+            state1, (reward1, trunc1, action1) = mem1
+            assert trunc0 == trunc1
+            assert np.allclose(reward0, reward1), f"reward differs: {reward0} vs {reward1}"
+            assert np.allclose(action0, action1), f"action differs: {action0} vs {action1}"
+            assert state0.keys() == state1.keys()
+            for k in state0:
+                v0, v1 = state0[k], state1[k]
+                if isinstance(v0, (bool, int)):
+                    assert v0 == v1, f"state[{k}] differs: {v0!r} vs {v1!r}"
+                else:
+                    assert np.allclose(v0, v1), f"state[{k}] differs: {v0!r} vs {v1!r}"
