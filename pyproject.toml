@@ -266,6 +266,9 @@ convention = "google"
 max-args = 10 # Changed from default of 5
 
 [tool.pytest.ini_options]
+markers = [
+    "slow: marks tests that require network access or heavy computation (deselect with -m 'not slow')",
+]
 filterwarnings = [
     "ignore::UserWarning",
     "ignore::DeprecationWarning",
