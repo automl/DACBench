@@ -113,7 +113,7 @@ class DACBOBenchmark(AbstractBenchmark):
         assert self.config[path_key]
         instance_set_path = self.config[path_key]
         try:  # Look in hydra search path if user uses hydra
-            from hydra.core.hydra_config import HydraConfig  # noqa: PLC0415
+            from hydra.core.hydra_config import HydraConfig
 
             config = HydraConfig.get()
             hydra_candidate_paths = [

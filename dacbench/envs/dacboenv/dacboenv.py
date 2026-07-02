@@ -552,9 +552,9 @@ class DACBOEnv(gym.Env):
 
             # If previous_param is in obs, define the observation space for it
             if "previous_param" in self._dacbo_observation_space._keys:  # type: ignore
-                self._dacbo_observation_space._observation_space["previous_param"] = (
-                    self.action_space
-                )
+                self._dacbo_observation_space._observation_space[
+                    "previous_param"
+                ] = self.action_space
                 if isinstance(self._action_space, WEITempoRLActionSpace):
                     self._dacbo_observation_space._observation_space[
                         "previous_param"

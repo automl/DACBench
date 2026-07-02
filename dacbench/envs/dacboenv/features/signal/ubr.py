@@ -16,7 +16,6 @@ import numpy as np
 from ConfigSpace import Configuration
 from smac import BlackBoxFacade
 from smac.acquisition.maximizer import LocalAndSortedRandomSearch
-from smac.model.gaussian_process import GaussianProcess
 from smac.model.random_forest import RandomForest
 from smac.scenario import Scenario
 from smac.utils.logging import get_logger
