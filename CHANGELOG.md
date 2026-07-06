@@ -1,3 +1,17 @@
+# 0.5.1
+
+### Documentation
+- DACBO benchmark page is now included in the documentation build (was missing from the toctree).
+- Corrected the episode termination description: early termination via reference performance is opt-in (`terminate_after_reference_performance_reached=True`), not the default behaviour.
+
+### Dependency Updates
+- `pytest` bumped from 8.4.2 to 9.1.1.
+- `pre-commit` bumped from 3.8.0 to 4.6.0.
+- Minor dependency updates across the development group.
+
+### Infrastructure
+- Added PyPI publish workflow using OIDC trusted publisher.
+
 # 0.5.0
 
 ### New Benchmark: DACBOEnv
