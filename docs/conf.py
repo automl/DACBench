@@ -50,4 +50,6 @@ options = {
         "sphinx.ext.doctest",
     ],
 }
+autodoc_mock_imports = ["smac", "omegaconf"]
+
 automl_sphinx_theme.set_options(globals(), options)
