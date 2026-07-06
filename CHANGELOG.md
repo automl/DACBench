@@ -1,3 +1,11 @@
+# 0.5.2
+
+### Documentation
+- DACBO benchmark documentation now builds without the optional `dacboenv` dependencies installed; `smac` and `omegaconf` are mocked during Sphinx autodoc.
+
+### Infrastructure
+- GitHub release is now created automatically after a successful PyPI publish.
+
 # 0.5.1
 
 ### Documentation
