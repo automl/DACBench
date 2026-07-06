@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>The DACBO Benchmark &#8212; DACBench Documentation 0.5.1.dev1+ga46427b9f documentation</title>
+    <title>The DACBO Benchmark &#8212; DACBench Documentation 0.5.1.dev1+gf0d4431f1 documentation</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet">
   <link href="../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -27,11 +27,13 @@
     
   <link rel="preload" as="script" href="../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../_static/documentation_options.js?v=0ffdce9d"></script>
+    <script src="../../_static/documentation_options.js?v=c788e587"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Saving &amp; Loading Benchmark Configurations" href="../modifications.html" />
+    <link rel="prev" title="The SGD Deep Learning Benchmark" href="sgd.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en">
     
@@ -89,11 +91,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+ga46427b9f
+        v0.5.1.dev1+gf0d4431f1
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+ga46427b9f</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+gf0d4431f1</a>
     </div>
 </div>
       </div>
@@ -118,7 +120,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+ga46427b9f</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+gf0d4431f1</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -147,7 +149,7 @@
   The Benchmarks:
  </span>
 </p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../benchmarks.html">
    Benchmark Overview
@@ -181,6 +183,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="sgd.html">
    The SGD Deep Learning Benchmark
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   The DACBO Benchmark
   </a>
  </li>
 </ul>
@@ -297,8 +304,9 @@ In every step the agent provides an action, the optimizer performs one BO trial 
 / tell), and the environment returns an observation and reward.
 The initial design is executed automatically during <code class="docutils literal notranslate"><span class="pre">reset()</span></code>, so the agent only controls
 the acquisition phase.
-Episodes end either when all trials are exhausted (<code class="docutils literal notranslate"><span class="pre">truncated</span></code>) or when the incumbent
-already surpasses a reference performance threshold (<code class="docutils literal notranslate"><span class="pre">terminated</span></code>).</p>
+Episodes end when all trials are exhausted (<code class="docutils literal notranslate"><span class="pre">truncated</span></code>). Optionally, early termination
+(<code class="docutils literal notranslate"><span class="pre">terminated</span></code>) can be enabled via <code class="docutils literal notranslate"><span class="pre">terminate_after_reference_performance_reached=True</span></code>,
+which ends an episode as soon as the incumbent surpasses the reference performance threshold.</p>
 <p>The default reward is <em>symlog regret</em>: the difference between the current incumbent cost and
 the reference performance, passed through a symmetric log transform.
 This makes the reward comparable across BBOB functions whose objective values live on very
@@ -316,7 +324,21 @@ and has been integrated into DACBench. A publication is forthcoming.</em></p>
               
               
               <!-- Previous / next buttons -->
-<div class='prev-next-area'>
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="sgd.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">The SGD Deep Learning Benchmark</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../modifications.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Saving &amp; Loading Benchmark Configurations</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
               
           </main>
