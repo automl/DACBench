@@ -26,8 +26,9 @@ In every step the agent provides an action, the optimizer performs one BO trial 
 / tell), and the environment returns an observation and reward.
 The initial design is executed automatically during ``reset()``, so the agent only controls
 the acquisition phase.
-Episodes end either when all trials are exhausted (``truncated``) or when the incumbent
-already surpasses a reference performance threshold (``terminated``).
+Episodes end when all trials are exhausted (``truncated``). Optionally, early termination
+(``terminated``) can be enabled via ``terminate_after_reference_performance_reached=True``,
+which ends an episode as soon as the incumbent surpasses the reference performance threshold.
 
 The default reward is *symlog regret*: the difference between the current incumbent cost and
 the reference performance, passed through a symmetric log transform.
