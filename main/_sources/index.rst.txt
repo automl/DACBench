@@ -24,6 +24,7 @@ Welcome to DACBench's documentation!
  source/benchmark_docs/theory
  source/benchmark_docs/cma
  source/benchmark_docs/sgd
+ source/benchmark_docs/dacbo
 
 .. toctree::
  :maxdepth: 1
