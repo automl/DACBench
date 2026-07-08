@@ -68,6 +68,17 @@ class FunctionApproximationBenchmark(AbstractBenchmark):
     relevant functions for Function Approximation.
     """
 
+    @staticmethod
+    def _isolate_benchmark_info(config):
+        """Deep-copy `benchmark_info` (and its state_description list) so
+        that per-instance mutations do not leak into the module-level INFO
+        dict. Idempotent: safe to call multiple times on the same config.
+        """
+        config["benchmark_info"] = objdict(config["benchmark_info"])
+        config["benchmark_info"]["state_description"] = list(
+            config["benchmark_info"]["state_description"]
+        )
+
     def __init__(self, config_path=None, config=None):
         """Initialize Function Approximation Benchmark.
 
@@ -81,15 +92,29 @@ class FunctionApproximationBenchmark(AbstractBenchmark):
             self.config = objdict(FUNCTION_APPROXIMATION_DEFAULTS.copy())
 
         for key in FUNCTION_APPROXIMATION_DEFAULTS:
-            if key not in self.config:
-                if key == "observation_space_args" and "config_space" in self.config:
-                    obs_length = 1 + len(self.config["config_space"]) * 4
-                    self.config[key] = [
-                        np.array([-np.inf for _ in range(obs_length)]),
-                        np.array([np.inf for _ in range(obs_length)]),
-                    ]
-                else:
-                    self.config[key] = FUNCTION_APPROXIMATION_DEFAULTS[key]
+            if key not in self.config and key != "observation_space_args":
+                self.config[key] = FUNCTION_APPROXIMATION_DEFAULTS[key]
+
+        self._isolate_benchmark_info(self.config)
+
+        if "observation_space_args" not in self.config:
+            if "config_space" in self.config:
+                # Derive obs length from `state_description` so it stays
+                # consistent regardless of `omit_instance_type` or the
+                # length of `instance_description` returned by the toy
+                # functions. The state produced by FunctionApproximationEnv
+                # has exactly one entry per item in `state_description`.
+                # Deferred until after the default-fill loop so that
+                # `benchmark_info.state_description` is guaranteed to be set.
+                obs_length = len(self.config["benchmark_info"]["state_description"])
+                self.config["observation_space_args"] = [
+                    np.array([-np.inf for _ in range(obs_length)]),
+                    np.array([np.inf for _ in range(obs_length)]),
+                ]
+            else:
+                self.config["observation_space_args"] = FUNCTION_APPROXIMATION_DEFAULTS[
+                    "observation_space_args"
+                ]
 
     def get_environment(self):
         """Return Function Approximation env with current configuration.
@@ -187,6 +212,7 @@ class FunctionApproximationBenchmark(AbstractBenchmark):
             Sigmoid environment
         """
         self.config = objdict(FUNCTION_APPROXIMATION_DEFAULTS.copy())
+        self._isolate_benchmark_info(self.config)
         self.config.omit_instance_type = True
         if dimension == 1:
             self.config.instance_set_path = "sigmoid_1D3M_train.csv"
@@ -194,7 +220,7 @@ class FunctionApproximationBenchmark(AbstractBenchmark):
             self.config.discrete = [3]
             cfg_space = CS.ConfigurationSpace()
             dim1 = CSH.UniformIntegerHyperparameter(
-                name="value_dim_1", lower=0, upper=3
+                name="value_dim_1", lower=0, upper=2
             )
             cfg_space.add(dim1)
             self.config.config_space = cfg_space
