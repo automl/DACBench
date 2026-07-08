@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.benchmarks.function_approximation_benchmark &#8212; DACBench Documentation 0.5.1.dev1+g942881943 documentation</title>
+    <title>dacbench.benchmarks.function_approximation_benchmark &#8212; DACBench Documentation 0.5.1.dev1+g4803e3899 documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=a781e812"></script>
+    <script src="../../../_static/documentation_options.js?v=b2ea57e0"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g942881943
+        v0.5.1.dev1+g4803e3899
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g942881943</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g4803e3899</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g942881943</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g4803e3899</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -336,6 +336,17 @@
 <span class="sd">    relevant functions for Function Approximation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_isolate_benchmark_info</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deep-copy `benchmark_info` (and its state_description list) so</span>
+<span class="sd">        that per-instance mutations do not leak into the module-level INFO</span>
+<span class="sd">        dict. Idempotent: safe to call multiple times on the same config.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;benchmark_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">objdict</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;benchmark_info&quot;</span><span class="p">])</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;benchmark_info&quot;</span><span class="p">][</span><span class="s2">&quot;state_description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;benchmark_info&quot;</span><span class="p">][</span><span class="s2">&quot;state_description&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize Function Approximation Benchmark.</span>
 
@@ -349,15 +360,29 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">objdict</span><span class="p">(</span><span class="n">FUNCTION_APPROXIMATION_DEFAULTS</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">FUNCTION_APPROXIMATION_DEFAULTS</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;observation_space_args&quot;</span> <span class="ow">and</span> <span class="s2">&quot;config_space&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
-                    <span class="n">obs_length</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;config_space&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">4</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">obs_length</span><span class="p">)]),</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">obs_length</span><span class="p">)]),</span>
-                    <span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">FUNCTION_APPROXIMATION_DEFAULTS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;observation_space_args&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">FUNCTION_APPROXIMATION_DEFAULTS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_isolate_benchmark_info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;observation_space_args&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;config_space&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+                <span class="c1"># Derive obs length from `state_description` so it stays</span>
+                <span class="c1"># consistent regardless of `omit_instance_type` or the</span>
+                <span class="c1"># length of `instance_description` returned by the toy</span>
+                <span class="c1"># functions. The state produced by FunctionApproximationEnv</span>
+                <span class="c1"># has exactly one entry per item in `state_description`.</span>
+                <span class="c1"># Deferred until after the default-fill loop so that</span>
+                <span class="c1"># `benchmark_info.state_description` is guaranteed to be set.</span>
+                <span class="n">obs_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;benchmark_info&quot;</span><span class="p">][</span><span class="s2">&quot;state_description&quot;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;observation_space_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">obs_length</span><span class="p">)]),</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">obs_length</span><span class="p">)]),</span>
+                <span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;observation_space_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FUNCTION_APPROXIMATION_DEFAULTS</span><span class="p">[</span>
+                    <span class="s2">&quot;observation_space_args&quot;</span>
+                <span class="p">]</span>
 
 <div class="viewcode-block" id="FunctionApproximationBenchmark.get_environment">
 <a class="viewcode-back" href="../../../source/benchmark_docs/function_approximation.html#dacbench.benchmarks.function_approximation_benchmark.FunctionApproximationBenchmark.get_environment">[docs]</a>
@@ -463,6 +488,7 @@
 <span class="sd">            Sigmoid environment</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">objdict</span><span class="p">(</span><span class="n">FUNCTION_APPROXIMATION_DEFAULTS</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_isolate_benchmark_info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">omit_instance_type</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">dimension</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set_path</span> <span class="o">=</span> <span class="s2">&quot;sigmoid_1D3M_train.csv&quot;</span>
@@ -470,7 +496,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">discrete</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
             <span class="n">cfg_space</span> <span class="o">=</span> <span class="n">CS</span><span class="o">.</span><span class="n">ConfigurationSpace</span><span class="p">()</span>
             <span class="n">dim1</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">UniformIntegerHyperparameter</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;value_dim_1&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">3</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;value_dim_1&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">2</span>
             <span class="p">)</span>
             <span class="n">cfg_space</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dim1</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config_space</span> <span class="o">=</span> <span class="n">cfg_space</span>
