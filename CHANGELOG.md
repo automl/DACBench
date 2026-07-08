@@ -1,3 +1,13 @@
+# 0.5.3
+
+### Bug Fixes
+- `FunctionApproximationBenchmark`: action space no longer over-allocates a bin for `get_benchmark(dimension=1)`. The integer hyperparameter's `upper` now matches the discrete bin count (`[3]` → 3 valid indices), so stepping with a valid index no longer raises `IndexError`.
+- `FunctionApproximationBenchmark`: `observation_space_args` derivation no longer assumes a fixed 3-entry `instance_description`. The size is now derived from `state_description`, keeping it consistent regardless of `omit_instance_type` or toy-function layout.
+- `FunctionApproximationBenchmark`: module-level `benchmark_info` is no longer mutated across repeated `get_benchmark()` calls. A new `_isolate_benchmark_info()` helper deep-copies the info and its `state_description` list at construction time.
+
+### Tests
+- Added regression tests for action-space size, observation-space derivation under `omit_instance_type=True`, and isolation of the shared info dict.
+
 # 0.5.2
 
 ### Documentation
