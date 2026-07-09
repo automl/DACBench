@@ -1,3 +1,11 @@
+# 0.5.4
+
+### Bug Fixes
+- `FunctionApproximationEnv`: `step()` now wraps a scalar integer action in a
+  1-D array via `np.atleast_1d()` before iterating over action dimensions,
+  fixing an `AttributeError` / `TypeError` that occurred when the environment
+  has a single continuous dimension and the agent passes a plain `int`.
+
 # 0.5.3
 
 ### Bug Fixes

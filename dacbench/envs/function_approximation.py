@@ -49,7 +49,9 @@ class FunctionApproximationEnv(AbstractMADACEnv):
         self.done = super().step_()
         # apply action per dimension
         self.distances = []
-        action_items = action.values() if isinstance(action, dict) else action
+        action_items = (
+            action.values() if isinstance(action, dict) else np.atleast_1d(action)
+        )
         for i, a in enumerate(action_items):
             target = self.functions[i](self.n_steps)
             value = a
