@@ -92,6 +92,27 @@ class DACBOEnv(gym.Env):
         Computes the current observation and reward from the optimizer.
     get_reward()
         Computes the current reward from the optimizer.
+
+    Note:
+    ----
+    The DACBO environment uses numpy, scipy, and SMAC's Gaussian Process (via
+    sklearn) under the hood, all of which can leverage multi-threaded BLAS
+    (OpenBLAS / MKL). By default, these libraries use all available CPU cores,
+    which causes oversubscription when multiple environments run in parallel
+    within the same process (e.g. via ``AsyncVectorEnv`` or ``multiprocessing``).
+
+    Set these environment variables **before importing numpy** to cap each
+    process at single-threaded BLAS:
+
+    .. code-block:: python
+
+        import os
+        os.environ["OMP_NUM_THREADS"] = "1"
+        os.environ["OPENBLAS_NUM_THREADS"] = "1"
+        os.environ["MKL_NUM_THREADS"] = "1"
+        os.environ["NUMEXPR_NUM_THREADS"] = "1"
+
+        import numpy  # noqa: E402
     """
 
     def __init__(
