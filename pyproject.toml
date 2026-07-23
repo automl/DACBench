@@ -51,9 +51,9 @@ Changelog = "https://github.com/automl/DACBench/main/CHANGELOG.md"
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0,<10.0",
-    "coverage[toml]==7.14.3",
-    "pre-commit==4.6.0",
-    "ruff==0.15.20"
+    "coverage[toml]==7.15.2",
+    "pre-commit==4.6.1",
+    "ruff==0.15.22"
 ]
 example = [
     "tabulate==0.10.0",
