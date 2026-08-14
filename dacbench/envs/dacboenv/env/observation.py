@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import inspect
-from collections.abc import Callable, Iterator, Sequence
+from collections.abc import Callable, Iterator
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -19,7 +19,14 @@ from ConfigSpace.hyperparameters import (
 )
 from gymnasium.spaces import Box, Dict, Space
 from scipy.stats import kurtosis, skew
+from sklearn.gaussian_process.kernels import (
+    ConstantKernel,
+    KernelOperator,
+    WhiteKernel,
+)
 from smac.main.smbo import SMBO
+from smac.model.gaussian_process.kernels.hamming_kernel import HammingKernel
+from smac.model.gaussian_process.kernels.matern_kernel import MaternKernel
 
 from dacbench.envs.dacboenv.env.observations.acquisition_function import (
     GetAFandAcqValue,
@@ -78,14 +85,6 @@ def get_best_percentile_costs(
     ]
     n = max(min_samples, len(costs_sorted) // p)
     return np.array(costs_sorted[:n])
-
-
-def enumerate_offset(hyperparameters: Sequence[Any]) -> Iterator[tuple[int, Any]]:
-    """Enumerates the given hyperparameters along with their running length as offset."""
-    offset = 0
-    for hp in hyperparameters:
-        yield offset, hp
-        offset += hp.n_elements
 
 
 def calc_last_diff(memory: Memory, key: str) -> float:
@@ -522,8 +521,21 @@ previous_param_observation = ObservationType(
 )
 
 
-def build_gp_hp_observations(smbo: SMBO) -> list[ObservationType]:
-    """Build the GP Hyperparameter Observations.
+def _iter_leaf_kernels(kernel: Any) -> Iterator[Any]:
+    """Recursively yield leaf kernels from a composite (Sum/Product) kernel tree."""
+    if isinstance(kernel, KernelOperator):
+        yield from _iter_leaf_kernels(kernel.k1)
+        yield from _iter_leaf_kernels(kernel.k2)
+    else:
+        yield kernel
+
+
+def collect_gp_kernel_thetas(smbo: SMBO) -> dict[str, np.ndarray]:
+    """Group the fitted GP kernel's log-space hyperparameters by kernel role.
+
+    Groups by leaf-kernel type rather than by position in the composite kernel
+    tree, so the result is independent of search-space dimensionality and of
+    whether continuous, categorical, or both kinds of hyperparameters are present.
 
     Parameters
     ----------
@@ -532,39 +544,79 @@ def build_gp_hp_observations(smbo: SMBO) -> list[ObservationType]:
 
     Returns:
     -------
-    list[ObservationType]
-        A list of the single GP HPs.
+    dict[str, np.ndarray]
+        Log-space theta values grouped under "length_scale" (continuous, Matern),
+        "cat_length_scale" (categorical, Hamming), "signal_variance" (ConstantKernel),
+        and "noise" (WhiteKernel). Groups with no matching leaf kernel are empty arrays.
     """
-    observations = []
-
-    for offset, hp in enumerate_offset(
-        smbo._intensifier._config_selector._acquisition_function.model._kernel.hyperparameters
-    ):
-        if hp.fixed:
-            continue
-
-        for i in range(hp.n_elements):
-            idx = i + offset
-
-            observations.append(
-                ObservationType(
-                    name=f"gp_hp_{hp.name}{i}_observation",
-                    space=Box(hp.bounds[i][0], hp.bounds[i][1]),
-                    compute=lambda smbo_, memory=None, idx=idx: (  # type: ignore[misc]
-                        smbo_._intensifier._config_selector._acquisition_function.model._kernel.theta[
-                            idx
-                        ]
-                    ),
-                    default=0,
-                )
-            )
-
-    return observations
+    kernel = smbo._intensifier._config_selector._acquisition_function.model._kernel
+    groups: dict[str, list[float]] = {
+        "length_scale": [],
+        "cat_length_scale": [],
+        "signal_variance": [],
+        "noise": [],
+    }
+    for leaf in _iter_leaf_kernels(kernel):
+        if isinstance(leaf, MaternKernel):
+            groups["length_scale"].extend(leaf.theta)
+        elif isinstance(leaf, HammingKernel):
+            groups["cat_length_scale"].extend(leaf.theta)
+        elif isinstance(leaf, ConstantKernel):
+            groups["signal_variance"].extend(leaf.theta)
+        elif isinstance(leaf, WhiteKernel):
+            groups["noise"].extend(leaf.theta)
+    return {name: np.array(values) for name, values in groups.items()}
 
 
-gp_hp_observation = MultiObservationType(
-    "gp_hp_observations",
-    build_gp_hp_observations,
+gp_length_scale_mean_observation = ObservationType(
+    "gp_length_scale_mean",
+    Box(low=-np.inf, high=np.inf, dtype=np.float32),
+    lambda smbo, memory: (
+        theta.mean()
+        if (theta := collect_gp_kernel_thetas(smbo)["length_scale"]).size
+        else 0.0
+    ),
+    0.0,
+)
+gp_length_scale_std_observation = ObservationType(
+    "gp_length_scale_std",
+    Box(low=0, high=np.inf, dtype=np.float32),
+    lambda smbo, memory: (
+        theta.std()
+        if (theta := collect_gp_kernel_thetas(smbo)["length_scale"]).size
+        else 0.0
+    ),
+    0.0,
+)
+gp_cat_length_scale_mean_observation = ObservationType(
+    "gp_cat_length_scale_mean",
+    Box(low=-np.inf, high=np.inf, dtype=np.float32),
+    lambda smbo, memory: (
+        theta.mean()
+        if (theta := collect_gp_kernel_thetas(smbo)["cat_length_scale"]).size
+        else 0.0
+    ),
+    0.0,
+)
+gp_signal_variance_observation = ObservationType(
+    "gp_signal_variance",
+    Box(low=-np.inf, high=np.inf, dtype=np.float32),
+    lambda smbo, memory: (
+        float(theta[0])
+        if (theta := collect_gp_kernel_thetas(smbo)["signal_variance"]).size
+        else 0.0
+    ),
+    0.0,
+)
+gp_noise_level_observation = ObservationType(
+    "gp_noise_level",
+    Box(low=-np.inf, high=np.inf, dtype=np.float32),
+    lambda smbo, memory: (
+        float(theta[0])
+        if (theta := collect_gp_kernel_thetas(smbo)["noise"]).size
+        else 0.0
+    ),
+    0.0,
 )
 
 ALL_OBSERVATIONS = [
@@ -605,9 +657,14 @@ ALL_OBSERVATIONS = [
     knn_entropy_observation,
     knn_entropy_best_observation,
     knn_difference_observation,
+    gp_length_scale_mean_observation,
+    gp_length_scale_std_observation,
+    gp_cat_length_scale_mean_observation,
+    gp_signal_variance_observation,
+    gp_noise_level_observation,
 ]
 
-MULTI_OBSERVATIONS = [gp_hp_observation]
+MULTI_OBSERVATIONS: list[MultiObservationType] = []
 
 
 class ObservationSpace:
