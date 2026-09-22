@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Saving &amp; Loading Benchmark Configurations &#8212; DACBench Documentation 0.5.1.dev1+g341f80dee documentation</title>
+    <title>Saving &amp; Loading Benchmark Configurations &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet">
   <link href="../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -27,7 +27,7 @@
     
   <link rel="preload" as="script" href="../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../_static/documentation_options.js?v=08247575"></script>
+    <script src="../_static/documentation_options.js?v=e6c29603"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -91,11 +91,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g341f80dee
+        v0.5.1.dev1+g23dcd4d9c
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g341f80dee</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
     </div>
 </div>
       </div>
@@ -120,7 +120,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g341f80dee</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -289,7 +289,7 @@ Therefore, it is possible to modify benchmarks and save these modifications to s
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dacbench.benchmarks</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionApproximationBenchmark</span>
 
 <span class="n">bench</span> <span class="o">=</span> <span class="n">FunctionApproximationBenchmark</span><span class="p">()</span>
-<span class="n">bench</span><span class="o">.</span><span class="n">read_config_file</span><span class="p">(</span><span class="s2">&quot;path/to/your/config.json&quot;</span><span class="p">)</span>
+<span class="n">bench</span><span class="o">.</span><span class="n">read_config_file</span><span class="p">(</span><span class="s2">"path/to/your/config.json"</span><span class="p">)</span>
 <span class="n">modified_benchmark</span> <span class="o">=</span> <span class="n">bench</span><span class="o">.</span><span class="n">get_environment</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -308,7 +308,7 @@ That way you can directly modify the benchmarks:</p>
 </pre></div>
 </div>
 <p>To then save this configuration:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bench</span><span class="o">.</span><span class="n">save_config</span><span class="p">(</span><span class="s2">&quot;your/path/config.json&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bench</span><span class="o">.</span><span class="n">save_config</span><span class="p">(</span><span class="s2">"your/path/config.json"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In case you want to modify state information, reward function or other complex benchmark attributes,

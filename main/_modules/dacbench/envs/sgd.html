@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.envs.sgd &#8212; DACBench Documentation 0.5.1.dev1+g341f80dee documentation</title>
+    <title>dacbench.envs.sgd &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=08247575"></script>
+    <script src="../../../_static/documentation_options.js?v=e6c29603"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g341f80dee
+        v0.5.1.dev1+g23dcd4d9c
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g341f80dee</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g341f80dee</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.envs.sgd</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;SGD environment.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""SGD environment."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -286,16 +286,16 @@
     <span class="n">loader</span><span class="p">,</span>
     <span class="n">batch_size</span><span class="p">,</span>
     <span class="n">batch_percentage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate given `model` on `loss_function`.</span>
+<span class="w">    </span><span class="sd">"""Evaluate given `model` on `loss_function`.</span>
 
 <span class="sd">    Percentage defines how much percentage of the data shall be used.</span>
 <span class="sd">    If nothing given the whole data is used.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        test_losses: Batch validation loss per data point</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">nmb_sets</span> <span class="o">=</span> <span class="n">batch_percentage</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">)</span>
     <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
     <span class="n">test_losses</span> <span class="o">=</span> <span class="p">[]</span>
@@ -318,12 +318,12 @@
 
 <div class="viewcode-block" id="forward_backward">
 <a class="viewcode-back" href="../../../source/benchmark_docs/sgd.html#dacbench.envs.sgd.forward_backward">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">forward_backward</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">loss_function</span><span class="p">,</span> <span class="n">loader</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Do a forward and a backward pass for given `model` for `loss_function`.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">forward_backward</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">loss_function</span><span class="p">,</span> <span class="n">loader</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Do a forward and a backward pass for given `model` for `loss_function`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        loss: Mini batch training loss per data point</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
     <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loader</span><span class="p">))</span>
     <span class="n">data</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">target</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
@@ -336,8 +336,8 @@
 
 <div class="viewcode-block" id="run_epoch">
 <a class="viewcode-back" href="../../../source/benchmark_docs/sgd.html#dacbench.envs.sgd.run_epoch">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">run_epoch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">loss_function</span><span class="p">,</span> <span class="n">loader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run a single epoch of training for given `model` with `loss_function`.&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_epoch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">loss_function</span><span class="p">,</span> <span class="n">loader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run a single epoch of training for given `model` with `loss_function`."""</span>
     <span class="n">last_loss</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">running_loss</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
@@ -358,7 +358,7 @@
 <a class="viewcode-back" href="../../../source/benchmark_docs/sgd.html#dacbench.envs.sgd.SGDInstance">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SGDInstance</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;SGD Instance.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""SGD Instance."""</span>
 
     <span class="n">model</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span>
     <span class="n">optimizer_type</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Optimizer</span>
@@ -375,7 +375,7 @@
 <div class="viewcode-block" id="SGDEnv">
 <a class="viewcode-back" href="../../../source/benchmark_docs/sgd.html#dacbench.envs.sgd.SGDEnv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SGDEnv</span><span class="p">(</span><span class="n">AbstractMADACEnv</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The SGD DAC Environment implements the problem of dynamically configuring</span>
+<span class="w">    </span><span class="sd">"""The SGD DAC Environment implements the problem of dynamically configuring</span>
 <span class="sd">    the learning rate hyperparameter of a neural network optimizer</span>
 <span class="sd">    (more specifically, torch.optim.AdamW) for a supervised learning task.</span>
 <span class="sd">    While training, the model is evaluated after every epoch.</span>
@@ -387,43 +387,43 @@
 <span class="sd">        negative loss of model on test_loader of the instance       if done</span>
 <span class="sd">        crash_penalty of the instance                               if crashed</span>
 <span class="sd">        0                                                           otherwise</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;render_modes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;human&quot;</span><span class="p">]}</span>  <span class="c1"># noqa: RUF012</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"render_modes"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"human"</span><span class="p">]}</span>  <span class="c1"># noqa: RUF012</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init env.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Init env."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">epoch_mode</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;epoch_mode&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;device&quot;</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"seed"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch_mode</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"epoch_mode"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"device"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">crash_penalty</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;crash_penalty&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crash_penalty</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"crash_penalty"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">loss_function</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">loss_function_kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">use_generator</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_instance_generator&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_generator</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"use_instance_generator"</span><span class="p">)</span>
 
         <span class="c1"># Use default reward function, if no specific function is given</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_reward</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reward_function&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_reward</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_reward</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"reward_function"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_reward</span><span class="p">)</span>
 
         <span class="c1"># Use default state function, if no specific function is given</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_method&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"state_method"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_state</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SGDEnv.step">
 <a class="viewcode-back" href="../../../source/benchmark_docs/sgd.html#dacbench.envs.sgd.SGDEnv.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the parameters of the neural network using the given learning rate lr,</span>
+<span class="w">        </span><span class="sd">"""Update the parameters of the neural network using the given learning rate lr,</span>
 <span class="sd">        in the direction specified by AdamW, and if not done (crashed/cutoff reached),</span>
 <span class="sd">        performs another forward/backward pass (update only in the next step).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">truncated</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step_</span><span class="p">()</span>
         <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
             <span class="n">action</span> <span class="o">=</span> <span class="p">[</span><span class="n">action</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
-            <span class="n">g</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">g</span><span class="p">[</span><span class="s2">"lr"</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">g</span><span class="p">[</span><span class="s2">&quot;betas&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mf">0.999</span><span class="p">)</span>
+                <span class="n">g</span><span class="p">[</span><span class="s2">"betas"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mf">0.999</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_mode</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">average_loss</span> <span class="o">=</span> <span class="n">run_epoch</span><span class="p">(</span>
@@ -508,10 +508,10 @@
 <div class="viewcode-block" id="SGDEnv.reset">
 <a class="viewcode-back" href="../../../source/benchmark_docs/sgd.html#dacbench.envs.sgd.SGDEnv.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the neural network, data loaders, etc. for given/random next task.</span>
+<span class="w">        </span><span class="sd">"""Initialize the neural network, data loaders, etc. for given/random next task.</span>
 <span class="sd">        Also perform a single forward/backward pass,</span>
 <span class="sd">        not yet updating the neural network parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -566,14 +566,14 @@
 <div class="viewcode-block" id="SGDEnv.get_default_reward">
 <a class="viewcode-back" href="../../../source/benchmark_docs/sgd.html#dacbench.envs.sgd.SGDEnv.get_default_reward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_default_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The default reward function.</span>
+<span class="w">        </span><span class="sd">"""The default reward function.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            _ (_type_): Empty parameter, which can be used when overriding</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The calculated reward</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_losses</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_losses</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -584,44 +584,44 @@
 <div class="viewcode-block" id="SGDEnv.get_default_state">
 <a class="viewcode-back" href="../../../source/benchmark_docs/sgd.html#dacbench.envs.sgd.SGDEnv.get_default_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_default_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Default state function.</span>
+<span class="w">        </span><span class="sd">"""Default state function.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            _ (_type_): Empty parameter, which can be used when overriding</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: The current state</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">state</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_step</span><span class="p">,</span>
-            <span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span>
-            <span class="s2">&quot;validation_loss&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_loss</span><span class="p">,</span>
-            <span class="s2">&quot;validation_accuracy&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_accuracy</span><span class="p">,</span>
-            <span class="s2">&quot;done&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_done</span><span class="p">,</span>
+            <span class="s2">"step"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_step</span><span class="p">,</span>
+            <span class="s2">"loss"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span>
+            <span class="s2">"validation_loss"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_loss</span><span class="p">,</span>
+            <span class="s2">"validation_accuracy"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_accuracy</span><span class="p">,</span>
+            <span class="s2">"done"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_done</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_mode</span><span class="p">:</span>
-            <span class="n">state</span><span class="p">[</span><span class="s2">&quot;average_loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">average_loss</span>
+            <span class="n">state</span><span class="p">[</span><span class="s2">"average_loss"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">average_loss</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_done</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_losses</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">state</span><span class="p">[</span><span class="s2">&quot;test_losses&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_losses</span>
-            <span class="n">state</span><span class="p">[</span><span class="s2">&quot;test_accuracies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_accuracies</span>
+            <span class="n">state</span><span class="p">[</span><span class="s2">"test_losses"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_losses</span>
+            <span class="n">state</span><span class="p">[</span><span class="s2">"test_accuracies"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_accuracies</span>
         <span class="k">return</span> <span class="n">state</span></div>
 
 
 <div class="viewcode-block" id="SGDEnv.render">
 <a class="viewcode-back" href="../../../source/benchmark_docs/sgd.html#dacbench.envs.sgd.SGDEnv.render">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render progress.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Render progress."""</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"human"</span><span class="p">:</span>
             <span class="n">epoch</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_step</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_loader</span><span class="p">)</span>
             <span class="n">epoch_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_loader</span><span class="p">)</span>
             <span class="n">batch</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_step</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_loader</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;prev_lr </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="kc">None</span><span class="si">}</span><span class="s2">, &quot;</span>  <span class="c1"># noqa: E501</span>
-                <span class="sa">f</span><span class="s2">&quot;epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">epoch_cutoff</span><span class="si">}</span><span class="s2">, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;batch </span><span class="si">{</span><span class="n">batch</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_loader</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;batch_loss </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="si">}</span><span class="s2">, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;val_loss </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_loss</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"prev_lr </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'lr'</span><span class="p">]</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="kc">None</span><span class="si">}</span><span class="s2">, "</span>  <span class="c1"># noqa: E501</span>
+                <span class="sa">f</span><span class="s2">"epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">epoch_cutoff</span><span class="si">}</span><span class="s2">, "</span>
+                <span class="sa">f</span><span class="s2">"batch </span><span class="si">{</span><span class="n">batch</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_loader</span><span class="p">)</span><span class="si">}</span><span class="s2">, "</span>
+                <span class="sa">f</span><span class="s2">"batch_loss </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="si">}</span><span class="s2">, "</span>
+                <span class="sa">f</span><span class="s2">"val_loss </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_loss</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>

@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.wrappers.performance_tracking_wrapper &#8212; DACBench Documentation 0.5.1.dev1+g341f80dee documentation</title>
+    <title>dacbench.wrappers.performance_tracking_wrapper &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=08247575"></script>
+    <script src="../../../_static/documentation_options.js?v=e6c29603"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g341f80dee
+        v0.5.1.dev1+g23dcd4d9c
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g341f80dee</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g341f80dee</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.wrappers.performance_tracking_wrapper</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Wrapper for performance tracking.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Wrapper for performance tracking."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -275,18 +275,18 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sb</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Wrapper</span>
 
-<span class="n">sb</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+<span class="n">sb</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">"darkgrid"</span><span class="p">)</span>
 <span class="n">current_palette</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sb</span><span class="o">.</span><span class="n">color_palette</span><span class="p">())</span>
 
 
 <div class="viewcode-block" id="PerformanceTrackingWrapper">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PerformanceTrackingWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PerformanceTrackingWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to track episode performance.</span>
+<span class="w">    </span><span class="sd">"""Wrapper to track episode performance.</span>
 
 <span class="sd">    Includes interval mode that returns performance in lists of len(interval)</span>
 <span class="sd">    instead of one long list.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -295,7 +295,7 @@
         <span class="n">track_instance_performance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize wrapper.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -308,7 +308,7 @@
 <span class="sd">        logger : dacbench.logger.ModuleLogger</span>
 <span class="sd">            logger to write to</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">performance_interval</span> <span class="o">=</span> <span class="n">performance_interval</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overall_performance</span> <span class="o">=</span> <span class="p">[]</span>
@@ -325,7 +325,7 @@
 <div class="viewcode-block" id="PerformanceTrackingWrapper.__setattr__">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PerformanceTrackingWrapper.__setattr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set attribute in wrapper if available and in env if not.</span>
+<span class="w">        </span><span class="sd">"""Set attribute in wrapper if available and in env if not.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -334,21 +334,21 @@
 <span class="sd">        value</span>
 <span class="sd">            Value to set attribute to</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="s2">&quot;performance_interval&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;track_instances&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;overall_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;performance_intervals&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;current_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;env&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;get_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;step&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;instance_performances&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;episode_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;render_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;render_instance_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;logger&quot;</span><span class="p">,</span>
+            <span class="s2">"performance_interval"</span><span class="p">,</span>
+            <span class="s2">"track_instances"</span><span class="p">,</span>
+            <span class="s2">"overall_performance"</span><span class="p">,</span>
+            <span class="s2">"performance_intervals"</span><span class="p">,</span>
+            <span class="s2">"current_performance"</span><span class="p">,</span>
+            <span class="s2">"env"</span><span class="p">,</span>
+            <span class="s2">"get_performance"</span><span class="p">,</span>
+            <span class="s2">"step"</span><span class="p">,</span>
+            <span class="s2">"instance_performances"</span><span class="p">,</span>
+            <span class="s2">"episode_performance"</span><span class="p">,</span>
+            <span class="s2">"render_performance"</span><span class="p">,</span>
+            <span class="s2">"render_instance_performance"</span><span class="p">,</span>
+            <span class="s2">"logger"</span><span class="p">,</span>
         <span class="p">]:</span>
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -358,7 +358,7 @@
 <div class="viewcode-block" id="PerformanceTrackingWrapper.__getattribute__">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PerformanceTrackingWrapper.__getattribute__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get attribute value of wrapper if available and of env if not.</span>
+<span class="w">        </span><span class="sd">"""Get attribute value of wrapper if available and of env if not.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -370,21 +370,21 @@
 <span class="sd">        value</span>
 <span class="sd">            Value of given name</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="s2">&quot;performance_interval&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;track_instances&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;overall_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;performance_intervals&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;current_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;env&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;get_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;step&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;instance_performances&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;episode_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;render_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;render_instance_performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;logger&quot;</span><span class="p">,</span>
+            <span class="s2">"performance_interval"</span><span class="p">,</span>
+            <span class="s2">"track_instances"</span><span class="p">,</span>
+            <span class="s2">"overall_performance"</span><span class="p">,</span>
+            <span class="s2">"performance_intervals"</span><span class="p">,</span>
+            <span class="s2">"current_performance"</span><span class="p">,</span>
+            <span class="s2">"env"</span><span class="p">,</span>
+            <span class="s2">"get_performance"</span><span class="p">,</span>
+            <span class="s2">"step"</span><span class="p">,</span>
+            <span class="s2">"instance_performances"</span><span class="p">,</span>
+            <span class="s2">"episode_performance"</span><span class="p">,</span>
+            <span class="s2">"render_performance"</span><span class="p">,</span>
+            <span class="s2">"render_instance_performance"</span><span class="p">,</span>
+            <span class="s2">"logger"</span><span class="p">,</span>
         <span class="p">]:</span>
             <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
@@ -394,7 +394,7 @@
 <div class="viewcode-block" id="PerformanceTrackingWrapper.step">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PerformanceTrackingWrapper.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute environment step and record performance.</span>
+<span class="w">        </span><span class="sd">"""Execute environment step and record performance.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -406,7 +406,7 @@
 <span class="sd">        np.array, float, bool, dict</span>
 <span class="sd">            state, reward, done, metainfo</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">episode_performance</span> <span class="o">+=</span> <span class="n">reward</span>
 
@@ -414,7 +414,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">overall_performance</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_performance</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                    <span class="s2">&quot;overall_performance&quot;</span><span class="p">,</span>
+                    <span class="s2">"overall_performance"</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">episode_performance</span><span class="p">,</span>
                 <span class="p">)</span>
 
@@ -425,7 +425,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">performance_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_performance</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">current_performance</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_performance</span><span class="p">]</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_instances</span><span class="p">:</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">instance_performances</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_performance</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">episode_performance</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span></div>
@@ -434,14 +434,14 @@
 <div class="viewcode-block" id="PerformanceTrackingWrapper.get_performance">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PerformanceTrackingWrapper.get_performance">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get state performance.</span>
+<span class="w">        </span><span class="sd">"""Get state performance.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        -------</span>
 <span class="sd">        np.array or np.array, np.array or np.array, dict or np.array, np.arry, dict</span>
 <span class="sd">            all states or all states and interval sorted states</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">performance_interval</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_instances</span><span class="p">:</span>
             <span class="n">complete_intervals</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">performance_intervals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_performance</span><span class="p">]</span>
             <span class="k">return</span> <span class="p">(</span>
@@ -463,26 +463,26 @@
 <div class="viewcode-block" id="PerformanceTrackingWrapper.render_performance">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PerformanceTrackingWrapper.render_performance">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot performance.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Plot performance."""</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">overall_performance</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">overall_performance</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span>
         <span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Mean Performance per episode&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Reward&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Mean Performance per episode"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Episode"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Reward"</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="PerformanceTrackingWrapper.render_instance_performance">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PerformanceTrackingWrapper.render_instance_performance">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render_instance_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot mean performance for each instance.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Plot mean performance for each instance."""</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Mean Performance per Instance&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Mean reward&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Instance&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Mean Performance per Instance"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Mean reward"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Instance"</span><span class="p">)</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">instance_performances</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>

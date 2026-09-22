@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.envs.theory &#8212; DACBench Documentation 0.5.1.dev1+g341f80dee documentation</title>
+    <title>dacbench.envs.theory &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=08247575"></script>
+    <script src="../../../_static/documentation_options.js?v=e6c29603"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g341f80dee
+        v0.5.1.dev1+g23dcd4d9c
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g341f80dee</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g341f80dee</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.envs.theory</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Theory Environment.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Theory Environment."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -282,10 +282,10 @@
 <div class="viewcode-block" id="BinaryProblem">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.BinaryProblem">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BinaryProblem</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An abstract class for an individual in binary representation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""An abstract class for an individual in binary representation."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init problem.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Init problem."""</span>
         <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
@@ -295,7 +295,7 @@
 <div class="viewcode-block" id="BinaryProblem.initialise_with_fixed_number_of_bits">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.BinaryProblem.initialise_with_fixed_number_of_bits">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">initialise_with_fixed_number_of_bits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init with given number of bits.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Init with given number of bits."""</span>
         <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
         <span class="n">nbits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -310,25 +310,25 @@
 <div class="viewcode-block" id="BinaryProblem.is_optimal">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.BinaryProblem.is_optimal">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_optimal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get is_optimal flag.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">"""Get is_optimal flag."""</span></div>
 
 
 <div class="viewcode-block" id="BinaryProblem.get_optimal">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.BinaryProblem.get_optimal">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_optimal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get optimum.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">"""Get optimum."""</span></div>
 
 
 <div class="viewcode-block" id="BinaryProblem.eval">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.BinaryProblem.eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate fitness.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">"""Evaluate fitness."""</span></div>
 
 
 <div class="viewcode-block" id="BinaryProblem.get_fitness_after_flipping">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.BinaryProblem.get_fitness_after_flipping">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_fitness_after_flipping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the change in fitness after flipping the bits at positions locs.</span>
+<span class="w">        </span><span class="sd">"""Calculate the change in fitness after flipping the bits at positions locs.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -339,14 +339,14 @@
 <span class="sd">        -------</span>
 <span class="sd">            objective after flipping</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="BinaryProblem.get_fitness_after_crossover">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.BinaryProblem.get_fitness_after_crossover">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_fitness_after_crossover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xprime</span><span class="p">,</span> <span class="n">locs_x</span><span class="p">,</span> <span class="n">locs_xprime</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate fitness of the child aftering being crossovered with xprime.</span>
+<span class="w">        </span><span class="sd">"""Calculate fitness of the child aftering being crossovered with xprime.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -355,20 +355,20 @@
 <span class="sd">        locs_x: 1d boolean/integer array</span>
 <span class="sd">            positions where we keep current bits of self</span>
 <span class="sd">        locs_xprime: : 1d boolean/integer array</span>
-<span class="sd">            positions where we change to xprime&#39;s bits</span>
+<span class="sd">            positions where we change to xprime's bits</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        -------</span>
 <span class="sd">            fitness of the new individual after crossover</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="BinaryProblem.flip">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.BinaryProblem.flip">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">flip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Flip the bits at position indicated by locs.</span>
+<span class="w">        </span><span class="sd">"""Flip the bits at position indicated by locs.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -379,7 +379,7 @@
 <span class="sd">        -------</span>
 <span class="sd">            the new individual after the flip</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">child</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">child</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">locs</span><span class="p">]</span> <span class="o">=</span> <span class="o">~</span><span class="n">child</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">locs</span><span class="p">]</span>
         <span class="n">child</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
@@ -389,8 +389,8 @@
 <div class="viewcode-block" id="BinaryProblem.combine">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.BinaryProblem.combine">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xprime</span><span class="p">,</span> <span class="n">locs_xprime</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Combine (crossover) self and xprime by taking xprime&#39;s bits at locs_xprime</span>
-<span class="sd">        and self&#39;s bits at other positions.</span>
+<span class="w">        </span><span class="sd">"""Combine (crossover) self and xprime by taking xprime's bits at locs_xprime</span>
+<span class="sd">        and self's bits at other positions.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -399,13 +399,13 @@
 <span class="sd">        locs_x: 1d boolean/integer array</span>
 <span class="sd">            positions where we keep current bits of self</span>
 <span class="sd">        locs_xprime: : 1d boolean/integer array</span>
-<span class="sd">            positions where we change to xprime&#39;s bits</span>
+<span class="sd">            positions where we change to xprime's bits</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        -------</span>
 <span class="sd">            the new individual after the crossover</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">child</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">child</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">locs_xprime</span><span class="p">]</span> <span class="o">=</span> <span class="n">xprime</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">locs_xprime</span><span class="p">]</span>
         <span class="n">child</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
@@ -415,7 +415,7 @@
 <div class="viewcode-block" id="BinaryProblem.mutate">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.BinaryProblem.mutate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">n_childs</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw l ~ binomial(n, p), l&gt;0.</span>
+<span class="w">        </span><span class="sd">"""Draw l ~ binomial(n, p), l&gt;0.</span>
 
 <span class="sd">        Generate n_childs children by flipping exactly l bits</span>
 
@@ -423,7 +423,7 @@
 <span class="sd">        -------</span>
 <span class="sd">            the best child (maximum fitness), its fitness and number of evaluations used</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="mi">0</span>
@@ -452,13 +452,13 @@
 <div class="viewcode-block" id="BinaryProblem.mutate_rls">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.BinaryProblem.mutate_rls">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">mutate_rls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a child by flipping exactly l bits.</span>
+<span class="w">        </span><span class="sd">"""Generate a child by flipping exactly l bits.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        -------</span>
 <span class="sd">            child, its fitness</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">length</span> <span class="o">&gt;=</span> <span class="mi">0</span>
@@ -483,7 +483,7 @@
         <span class="n">count_different_inds_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Crossover operation in population.</span>
+<span class="w">        </span><span class="sd">"""Crossover operation in population.</span>
 
 <span class="sd">        Crossover operator: for each bit, taking value from x with probability p</span>
 <span class="sd">        and from self with probability 1-p</span>
@@ -503,7 +503,7 @@
 <span class="sd">        rng:</span>
 <span class="sd">            random number generator</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="mi">1</span>
@@ -547,13 +547,13 @@
 <div class="viewcode-block" id="LeadingOne">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.LeadingOne">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LeadingOne</span><span class="p">(</span><span class="n">BinaryProblem</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An individual for LeadingOne problem.</span>
+<span class="w">    </span><span class="sd">"""An individual for LeadingOne problem.</span>
 
 <span class="sd">    The aim is to maximise the number of leading (and consecutive) 1 bits in the string</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initObj</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># noqa: N803</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make individual.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Make individual."""</span>
         <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">initObj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -568,7 +568,7 @@
 <div class="viewcode-block" id="LeadingOne.eval">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.LeadingOne.eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate fitness.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Evaluate fitness."""</span>
         <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
@@ -580,21 +580,21 @@
 <div class="viewcode-block" id="LeadingOne.is_optimal">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.LeadingOne.is_optimal">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_optimal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return is_optimal flag.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return is_optimal flag."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="LeadingOne.get_optimal">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.LeadingOne.get_optimal">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_optimal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return optimum.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return optimum."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span></div>
 
 
 <div class="viewcode-block" id="LeadingOne.get_fitness_after_flipping">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.LeadingOne.get_fitness_after_flipping">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_fitness_after_flipping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return fitness after flipping.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return fitness after flipping."""</span>
         <span class="n">min_loc</span> <span class="o">=</span> <span class="n">locs</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">min_loc</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">min_loc</span>
@@ -611,7 +611,7 @@
 <div class="viewcode-block" id="LeadingOne.get_fitness_after_crossover">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.LeadingOne.get_fitness_after_crossover">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_fitness_after_crossover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xprime</span><span class="p">,</span> <span class="n">locs_x</span><span class="p">,</span> <span class="n">locs_xprime</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return fitness after crossover.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return fitness after crossover."""</span>
         <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">xprime</span><span class="p">,</span> <span class="n">locs_xprime</span><span class="p">)</span>
         <span class="n">child</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">child</span><span class="o">.</span><span class="n">fitness</span></div>
@@ -626,14 +626,14 @@
 <div class="viewcode-block" id="TheoryEnv">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TheoryEnv</span><span class="p">(</span><span class="n">AbstractEnv</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Environment for RLS with step size.</span>
+<span class="w">    </span><span class="sd">"""Environment for RLS with step size.</span>
 
 <span class="sd">    Current assumption: we only consider (1+1)-RLS,</span>
-<span class="sd">    so there&#39;s only one parameter to tune (r)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    so there's only one parameter to tune (r)</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">test_env</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize TheoryEnv.</span>
+<span class="w">        </span><span class="sd">"""Initialize TheoryEnv.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -642,7 +642,7 @@
 <span class="sd">        test_env : bool</span>
 <span class="sd">            whether to use test mode</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
 
@@ -652,16 +652,16 @@
 
         <span class="c1"># name of reward function</span>
         <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">reward_choice</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="s2">&quot;imp_div_evals&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;imp_div_evals_new&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;imp_minus_evals&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;minus_evals&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;imp&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;minus_evals_normalised&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;imp_minus_evals_normalised&quot;</span><span class="p">,</span>
+            <span class="s2">"imp_div_evals"</span><span class="p">,</span>
+            <span class="s2">"imp_div_evals_new"</span><span class="p">,</span>
+            <span class="s2">"imp_minus_evals"</span><span class="p">,</span>
+            <span class="s2">"minus_evals"</span><span class="p">,</span>
+            <span class="s2">"imp"</span><span class="p">,</span>
+            <span class="s2">"minus_evals_normalised"</span><span class="p">,</span>
+            <span class="s2">"imp_minus_evals_normalised"</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">reward_choice</span>
-        <span class="c1"># print(&quot;Reward choice: &quot; + self.reward_choice)</span>
+        <span class="c1"># print("Reward choice: " + self.reward_choice)</span>
 
         <span class="c1"># get problem</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">problem</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="n">config</span><span class="o">.</span><span class="n">problem</span><span class="p">]</span>
@@ -669,79 +669,79 @@
         <span class="c1"># read names of all observation variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obs_description</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">observation_description</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obs_var_names</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">observation_description</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">observation_description</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
         <span class="p">]</span>
 
         <span class="c1"># functions to get values of the current state from histories</span>
         <span class="c1"># (see reset() function for those history variables)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state_functions</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_var_names</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">var_name</span> <span class="o">==</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">var_name</span> <span class="o">==</span> <span class="s2">"n"</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">state_functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]:</span>
+            <span class="k">elif</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"r"</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">state_functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">his</span><span class="o">=</span><span class="s2">&quot;history_&quot;</span> <span class="o">+</span> <span class="n">var_name</span><span class="p">:</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)[</span><span class="n">his</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">lambda</span> <span class="n">his</span><span class="o">=</span><span class="s2">"history_"</span> <span class="o">+</span> <span class="n">var_name</span><span class="p">:</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)[</span><span class="n">his</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="p">(</span>
-                <span class="s2">&quot;_{t-&quot;</span> <span class="ow">in</span> <span class="n">var_name</span>
+                <span class="s2">"_{t-"</span> <span class="ow">in</span> <span class="n">var_name</span>
             <span class="p">):</span>  <span class="c1"># TODO: this implementation only allow accessing history of r,</span>
                 <span class="c1"># but not delta_f(x), optimal_k, etc</span>
                 <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
-                    <span class="n">var_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_{t-&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">var_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_{t-"</span><span class="p">)[</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 <span class="p">)</span>  <span class="c1"># get the number in _{t-&lt;number&gt;}</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="n">var_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_{t-&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># get the variable name (r, f(x), etc)</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">var_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_{t-"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># get the variable name (r, f(x), etc)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">state_functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">his</span><span class="o">=</span><span class="s2">&quot;history_&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">:</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)[</span><span class="n">his</span><span class="p">][</span><span class="o">-</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+                    <span class="k">lambda</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">his</span><span class="o">=</span><span class="s2">"history_"</span> <span class="o">+</span> <span class="n">name</span><span class="p">:</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)[</span><span class="n">his</span><span class="p">][</span><span class="o">-</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
                 <span class="p">)</span>  <span class="c1"># the last element is the value at the current time step,</span>
                 <span class="c1"># so we have to go one step back to access the history</span>
-            <span class="k">elif</span> <span class="n">var_name</span> <span class="o">==</span> <span class="s2">&quot;f(x)&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">var_name</span> <span class="o">==</span> <span class="s2">"f(x)"</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">state_functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_fx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="k">elif</span> <span class="n">var_name</span> <span class="o">==</span> <span class="s2">&quot;delta_f(x)&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">var_name</span> <span class="o">==</span> <span class="s2">"delta_f(x)"</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">state_functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_fx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_fx</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">var_name</span> <span class="o">==</span> <span class="s2">&quot;optimal_r&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">var_name</span> <span class="o">==</span> <span class="s2">"optimal_r"</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">state_functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="k">lambda</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history_fx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error: invalid state variable name: &quot;</span> <span class="o">+</span> <span class="n">var_name</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"Error: invalid state variable name: "</span> <span class="o">+</span> <span class="n">var_name</span><span class="p">)</span>
 
         <span class="c1"># the random generator used by RLS</span>
-        <span class="n">seed</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">seed</span> <span class="k">if</span> <span class="s2">&quot;seed&quot;</span> <span class="ow">in</span> <span class="n">config</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="s2">&quot;seed&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">:</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">seed</span> <span class="k">if</span> <span class="s2">"seed"</span> <span class="ow">in</span> <span class="n">config</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s2">"seed"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">:</span>
             <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">seed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
         <span class="c1"># for logging</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="s2">&quot;outdir&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+        <span class="k">if</span> <span class="s2">"outdir"</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
 
 <div class="viewcode-block" id="TheoryEnv.get_obs_domain_from_name">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv.get_obs_domain_from_name">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_obs_domain_from_name</span><span class="p">(</span><span class="n">var_name</span><span class="p">):</span>  <span class="c1"># noqa: ARG004</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get default lower and upperbound of a observation variable based on its name.</span>
+<span class="w">        </span><span class="sd">"""Get default lower and upperbound of a observation variable based on its name.</span>
 
 <span class="sd">        The observation space will then be created</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        --------</span>
 <span class="sd">        Two int values, e.g., 1, np.inf</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span></div>
 
 
 <div class="viewcode-block" id="TheoryEnv.reset">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets env.</span>
+<span class="w">        </span><span class="sd">"""Resets env.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        --------</span>
 <span class="sd">        numpy.array: Environment state</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -752,14 +752,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">max_evals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">max_evals</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.8</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;n:</span><span class="si">%d</span><span class="s2">, max_evals:</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_evals</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"n:</span><span class="si">%d</span><span class="s2">, max_evals:</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_evals</span><span class="p">))</span>
 
         <span class="c1"># set random seed</span>
-        <span class="k">if</span> <span class="s2">&quot;seed&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"seed"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
 
         <span class="c1"># create an initial solution</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">initObj</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">initObj</span> <span class="o">==</span> <span class="s2">"random"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">(</span>
@@ -787,14 +787,14 @@
 <div class="viewcode-block" id="TheoryEnv.get_state">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv.get_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return state.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return state."""</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">f</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_functions</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="TheoryEnv.step">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute environment step.</span>
+<span class="w">        </span><span class="sd">"""Execute environment step.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -804,7 +804,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">        --------</span>
 <span class="sd">        np.array, float, bool, bool, dict: state, reward, terminated, truncated, info</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">truncated</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step_</span><span class="p">()</span>
 
         <span class="n">fitness_before_update</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span>
@@ -819,16 +819,16 @@
         <span class="c1"># if r is out of range</span>
         <span class="n">stop</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: r=</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2"> is out of bound&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"WARNING: r=</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2"> is out of bound"</span><span class="p">)</span>
 
-            <span class="c1"># if we&#39;re in the training phase, we return a large negative reward</span>
+            <span class="c1"># if we're in the training phase, we return a large negative reward</span>
             <span class="c1"># and stop the episode</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_env</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="n">terminated</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="n">n_evals</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="n">reward</span> <span class="o">=</span> <span class="o">-</span><span class="n">MAX_INT</span>
                 <span class="n">stop</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="c1"># if we&#39;re in the test phase, just clip r back to the range and continue</span>
+            <span class="c1"># if we're in the test phase, just clip r back to the range and continue</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
 
@@ -848,19 +848,19 @@
             <span class="n">terminated</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_evals</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_evals</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">is_optimal</span><span class="p">())</span>
 
             <span class="c1"># calculate reward</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">&quot;imp_div_evals&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">"imp_div_evals"</span><span class="p">:</span>
                 <span class="n">reward</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span> <span class="o">-</span> <span class="n">fitness_before_update</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_evals</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">&quot;imp_minus_evals&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">"imp_minus_evals"</span><span class="p">:</span>
                 <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span> <span class="o">-</span> <span class="n">fitness_before_update</span> <span class="o">-</span> <span class="n">n_evals</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">&quot;minus_evals&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">"minus_evals"</span><span class="p">:</span>
                 <span class="n">reward</span> <span class="o">=</span> <span class="o">-</span><span class="n">n_evals</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">&quot;minus_evals_normalised&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">"minus_evals_normalised"</span><span class="p">:</span>
                 <span class="n">reward</span> <span class="o">=</span> <span class="o">-</span><span class="n">n_evals</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_evals</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">&quot;imp_minus_evals_normalised&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">"imp_minus_evals_normalised"</span><span class="p">:</span>
                 <span class="n">reward</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span> <span class="o">-</span> <span class="n">fitness_before_update</span> <span class="o">-</span> <span class="n">n_evals</span>
                 <span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_evals</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">&quot;imp&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">"imp"</span><span class="p">:</span>
                 <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span> <span class="o">-</span> <span class="n">fitness_before_update</span> <span class="o">-</span> <span class="mf">0.5</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log_reward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
 
@@ -873,12 +873,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">log_fx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_reward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
 
-        <span class="n">returned_info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="p">{}}</span>
+        <span class="n">returned_info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"msg"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span> <span class="s2">"values"</span><span class="p">:</span> <span class="p">{}}</span>
         <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Env &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_type</span> <span class="o">+</span> <span class="s2">&quot;. &quot;</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;env_type&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Env "</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_type</span> <span class="o">+</span> <span class="s2">". "</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"env_type"</span><span class="p">)</span> <span class="k">else</span> <span class="s2">""</span>
             <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
-                <span class="s2">&quot;Episode done: n=</span><span class="si">%d</span><span class="s2">; obj=</span><span class="si">%d</span><span class="s2">; init_obj=</span><span class="si">%d</span><span class="s2">; evals=</span><span class="si">%d</span><span class="s2">; max_evals=</span><span class="si">%d</span><span class="s2">; &quot;</span>
-                <span class="s2">&quot;steps=</span><span class="si">%d</span><span class="s2">; r_min=</span><span class="si">%.1f</span><span class="s2">; r_max=</span><span class="si">%.1f</span><span class="s2">; r_mean=</span><span class="si">%.1f</span><span class="s2">; R=</span><span class="si">%.4f</span><span class="s2">&quot;</span>
+                <span class="s2">"Episode done: n=</span><span class="si">%d</span><span class="s2">; obj=</span><span class="si">%d</span><span class="s2">; init_obj=</span><span class="si">%d</span><span class="s2">; evals=</span><span class="si">%d</span><span class="s2">; max_evals=</span><span class="si">%d</span><span class="s2">; "</span>
+                <span class="s2">"steps=</span><span class="si">%d</span><span class="s2">; r_min=</span><span class="si">%.1f</span><span class="s2">; r_max=</span><span class="si">%.1f</span><span class="s2">; r_mean=</span><span class="si">%.1f</span><span class="s2">; R=</span><span class="si">%.4f</span><span class="s2">"</span>
             <span class="p">)</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span><span class="p">,</span>
@@ -892,21 +892,21 @@
                 <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_reward</span><span class="p">),</span>
             <span class="p">)</span>
             <span class="c1"># self.logger.info(msg)</span>
-            <span class="n">returned_info</span><span class="p">[</span><span class="s2">&quot;msg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span>
-            <span class="n">returned_info</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">),</span>
-                <span class="s2">&quot;obj&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span><span class="p">),</span>
-                <span class="s2">&quot;init_obj&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init_obj</span><span class="p">),</span>
-                <span class="s2">&quot;evals&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_evals</span><span class="p">),</span>
-                <span class="s2">&quot;max_evals&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_evals</span><span class="p">),</span>
-                <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c_step</span><span class="p">),</span>
-                <span class="s2">&quot;r_min&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_r</span><span class="p">)),</span>
-                <span class="s2">&quot;r_max&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_r</span><span class="p">)),</span>
-                <span class="s2">&quot;r_mean&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_r</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_r</span><span class="p">)),</span>
-                <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_reward</span><span class="p">)),</span>
-                <span class="s2">&quot;log_r&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_r</span><span class="p">],</span>
-                <span class="s2">&quot;log_fx&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_fx</span><span class="p">],</span>
-                <span class="s2">&quot;log_reward&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_reward</span><span class="p">],</span>
+            <span class="n">returned_info</span><span class="p">[</span><span class="s2">"msg"</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span>
+            <span class="n">returned_info</span><span class="p">[</span><span class="s2">"values"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">"n"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">),</span>
+                <span class="s2">"obj"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span><span class="p">),</span>
+                <span class="s2">"init_obj"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init_obj</span><span class="p">),</span>
+                <span class="s2">"evals"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_evals</span><span class="p">),</span>
+                <span class="s2">"max_evals"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_evals</span><span class="p">),</span>
+                <span class="s2">"steps"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c_step</span><span class="p">),</span>
+                <span class="s2">"r_min"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_r</span><span class="p">)),</span>
+                <span class="s2">"r_max"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_r</span><span class="p">)),</span>
+                <span class="s2">"r_mean"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_r</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_r</span><span class="p">)),</span>
+                <span class="s2">"R"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_reward</span><span class="p">)),</span>
+                <span class="s2">"log_r"</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_r</span><span class="p">],</span>
+                <span class="s2">"log_fx"</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_fx</span><span class="p">],</span>
+                <span class="s2">"log_reward"</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_reward</span><span class="p">],</span>
             <span class="p">}</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span><span class="p">(),</span> <span class="n">reward</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">returned_info</span></div>
@@ -915,14 +915,14 @@
 <div class="viewcode-block" id="TheoryEnv.close">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnv.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close Env.</span>
+<span class="w">        </span><span class="sd">"""Close Env.</span>
 
 <span class="sd">        No additional cleanup necessary</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        --------</span>
 <span class="sd">        bool: Closing confirmation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 </div>
 
@@ -931,27 +931,27 @@
 <div class="viewcode-block" id="TheoryEnvDiscrete">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnvDiscrete">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TheoryEnvDiscrete</span><span class="p">(</span><span class="n">TheoryEnv</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;RLS environment where the choices of r is discretised.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""RLS environment where the choices of r is discretised."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">test_env</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init env.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Init env."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">test_env</span><span class="p">)</span>
         <span class="k">assert</span> <span class="p">(</span>
-            <span class="s2">&quot;action_choices&quot;</span> <span class="ow">in</span> <span class="n">config</span>
-        <span class="p">),</span> <span class="s2">&quot;Error: action_choices must be specified in benchmark&#39;s config&quot;</span>
+            <span class="s2">"action_choices"</span> <span class="ow">in</span> <span class="n">config</span>
+        <span class="p">),</span> <span class="s2">"Error: action_choices must be specified in benchmark's config"</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span>
-        <span class="p">),</span> <span class="s2">&quot;Error: action space must be discrete&quot;</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;action_choices&quot;</span><span class="p">]),</span> <span class="p">(</span>
-            <span class="s2">&quot;Error: action space&#39;s size (</span><span class="si">%d</span><span class="s2">) must be equal &quot;</span>
-            <span class="s2">&quot;to the len(action_choices) (</span><span class="si">%d</span><span class="s2">)&quot;</span>
-        <span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;action_choices&quot;</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">action_choices</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;action_choices&quot;</span><span class="p">]</span>
+        <span class="p">),</span> <span class="s2">"Error: action space must be discrete"</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">"action_choices"</span><span class="p">]),</span> <span class="p">(</span>
+            <span class="s2">"Error: action space's size (</span><span class="si">%d</span><span class="s2">) must be equal "</span>
+            <span class="s2">"to the len(action_choices) (</span><span class="si">%d</span><span class="s2">)"</span>
+        <span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">"action_choices"</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_choices</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">"action_choices"</span><span class="p">]</span>
 
 <div class="viewcode-block" id="TheoryEnvDiscrete.step">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.envs.theory.TheoryEnvDiscrete.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Take step.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Take step."""</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

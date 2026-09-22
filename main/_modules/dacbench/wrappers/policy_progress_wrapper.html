@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.wrappers.policy_progress_wrapper &#8212; DACBench Documentation 0.5.1.dev1+g341f80dee documentation</title>
+    <title>dacbench.wrappers.policy_progress_wrapper &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=08247575"></script>
+    <script src="../../../_static/documentation_options.js?v=e6c29603"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g341f80dee
+        v0.5.1.dev1+g23dcd4d9c
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g341f80dee</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g341f80dee</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.wrappers.policy_progress_wrapper</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Wrapper for process tracking.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Wrapper for process tracking."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -276,14 +276,14 @@
 <div class="viewcode-block" id="PolicyProgressWrapper">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PolicyProgressWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PolicyProgressWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to track progress towards optimal policy.</span>
+<span class="w">    </span><span class="sd">"""Wrapper to track progress towards optimal policy.</span>
 
 <span class="sd">    Can only be used if a way to obtain the optimal policy</span>
 <span class="sd">    given an instance can be obtained.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">compute_optimal</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize wrapper.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -292,7 +292,7 @@
 <span class="sd">        compute_optimal : function</span>
 <span class="sd">            Function to compute optimal policy</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compute_optimal</span> <span class="o">=</span> <span class="n">compute_optimal</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">episode</span> <span class="o">=</span> <span class="p">[]</span>
@@ -301,7 +301,7 @@
 <div class="viewcode-block" id="PolicyProgressWrapper.__setattr__">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PolicyProgressWrapper.__setattr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set attribute in wrapper if available and in env if not.</span>
+<span class="w">        </span><span class="sd">"""Set attribute in wrapper if available and in env if not.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -310,13 +310,13 @@
 <span class="sd">        value</span>
 <span class="sd">            Value to set attribute to</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="s2">&quot;compute_optimal&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;env&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;episode&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;policy_progress&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;render_policy_progress&quot;</span><span class="p">,</span>
+            <span class="s2">"compute_optimal"</span><span class="p">,</span>
+            <span class="s2">"env"</span><span class="p">,</span>
+            <span class="s2">"episode"</span><span class="p">,</span>
+            <span class="s2">"policy_progress"</span><span class="p">,</span>
+            <span class="s2">"render_policy_progress"</span><span class="p">,</span>
         <span class="p">]:</span>
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -326,7 +326,7 @@
 <div class="viewcode-block" id="PolicyProgressWrapper.__getattribute__">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PolicyProgressWrapper.__getattribute__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get attribute value of wrapper if available and of env if not.</span>
+<span class="w">        </span><span class="sd">"""Get attribute value of wrapper if available and of env if not.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -338,14 +338,14 @@
 <span class="sd">        value</span>
 <span class="sd">            Value of given name</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="s2">&quot;step&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;compute_optimal&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;env&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;episode&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;policy_progress&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;render_policy_progress&quot;</span><span class="p">,</span>
+            <span class="s2">"step"</span><span class="p">,</span>
+            <span class="s2">"compute_optimal"</span><span class="p">,</span>
+            <span class="s2">"env"</span><span class="p">,</span>
+            <span class="s2">"episode"</span><span class="p">,</span>
+            <span class="s2">"policy_progress"</span><span class="p">,</span>
+            <span class="s2">"render_policy_progress"</span><span class="p">,</span>
         <span class="p">]:</span>
             <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
@@ -354,7 +354,7 @@
 <div class="viewcode-block" id="PolicyProgressWrapper.step">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PolicyProgressWrapper.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute environment step and record distance.</span>
+<span class="w">        </span><span class="sd">"""Execute environment step and record distance.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -366,7 +366,7 @@
 <span class="sd">        np.array, float, bool, bool, dict</span>
 <span class="sd">            state, reward, terminated, truncated, metainfo</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">action</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
@@ -387,12 +387,12 @@
 <div class="viewcode-block" id="PolicyProgressWrapper.render_policy_progress">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.PolicyProgressWrapper.render_policy_progress">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render_policy_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot progress.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Plot progress."""</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy_progress</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy_progress</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Policy progress over time&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Distance to optimal policy&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Policy progress over time"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Episode"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Distance to optimal policy"</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 </div>
 

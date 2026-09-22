@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.benchmarks.theory_benchmark &#8212; DACBench Documentation 0.5.1.dev1+g341f80dee documentation</title>
+    <title>dacbench.benchmarks.theory_benchmark &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=08247575"></script>
+    <script src="../../../_static/documentation_options.js?v=e6c29603"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g341f80dee
+        v0.5.1.dev1+g23dcd4d9c
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g341f80dee</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g341f80dee</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.benchmarks.theory_benchmark</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Theory Benchmark.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Theory Benchmark."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -280,54 +280,54 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dacbench.envs.theory</span><span class="w"> </span><span class="kn">import</span> <span class="n">TheoryEnv</span><span class="p">,</span> <span class="n">TheoryEnvDiscrete</span>
 
 <span class="n">INFO</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="s2">&quot;Theory&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;DAC benchmark with RLS algorithm and LeadingOne problem&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;reward&quot;</span><span class="p">:</span> <span class="s2">&quot;Negative number of iterations until solution&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;state_description&quot;</span><span class="p">:</span> <span class="s2">&quot;specified by user&quot;</span><span class="p">,</span>
+    <span class="s2">"identifier"</span><span class="p">:</span> <span class="s2">"Theory"</span><span class="p">,</span>
+    <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"DAC benchmark with RLS algorithm and LeadingOne problem"</span><span class="p">,</span>
+    <span class="s2">"reward"</span><span class="p">:</span> <span class="s2">"Negative number of iterations until solution"</span><span class="p">,</span>
+    <span class="s2">"state_description"</span><span class="p">:</span> <span class="s2">"specified by user"</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">THEORY_DEFAULTS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;observation_description&quot;</span><span class="p">:</span> <span class="s2">&quot;n, f(x)&quot;</span><span class="p">,</span>  <span class="c1"># examples: n, f(x), delta_f(x), optimal_k,</span>
+    <span class="s2">"observation_description"</span><span class="p">:</span> <span class="s2">"n, f(x)"</span><span class="p">,</span>  <span class="c1"># examples: n, f(x), delta_f(x), optimal_k,</span>
     <span class="c1"># k, k_{t-0..4}, f(x)_{t-1}, f(x)_{t-0..4}</span>
-    <span class="s2">&quot;reward_range&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span>  <span class="c1"># the true reward range is instance dependent</span>
-    <span class="s2">&quot;reward_choice&quot;</span><span class="p">:</span> <span class="s2">&quot;imp_minus_evals&quot;</span><span class="p">,</span>  <span class="c1"># see envs/theory.py for more details</span>
-    <span class="s2">&quot;cutoff&quot;</span><span class="p">:</span> <span class="mf">1e6</span><span class="p">,</span>  <span class="c1"># if using as a &quot;train&quot; environment, a cutoff of 0.8*n^2 where n</span>
+    <span class="s2">"reward_range"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span>  <span class="c1"># the true reward range is instance dependent</span>
+    <span class="s2">"reward_choice"</span><span class="p">:</span> <span class="s2">"imp_minus_evals"</span><span class="p">,</span>  <span class="c1"># see envs/theory.py for more details</span>
+    <span class="s2">"cutoff"</span><span class="p">:</span> <span class="mf">1e6</span><span class="p">,</span>  <span class="c1"># if using as a "train" environment, a cutoff of 0.8*n^2 where n</span>
     <span class="c1"># is problem size will be used (for more details, please see https://arxiv.org/abs/2202.03259)</span>
     <span class="c1"># see get_environment function of TheoryBenchmark on how to specify</span>
     <span class="c1"># a train/test environment</span>
-    <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;seed_action_space&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># set this one to True for reproducibility when random</span>
+    <span class="s2">"seed"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"seed_action_space"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># set this one to True for reproducibility when random</span>
     <span class="c1"># action is sampled in the action space with gym.action_space.sample()</span>
-    <span class="s2">&quot;problem&quot;</span><span class="p">:</span> <span class="s2">&quot;LeadingOne&quot;</span><span class="p">,</span>  <span class="c1"># possible values: &quot;LeadingOne&quot;</span>
-    <span class="s2">&quot;instance_set_path&quot;</span><span class="p">:</span> <span class="s2">&quot;lo_rls_50.csv&quot;</span><span class="p">,</span>  <span class="c1"># if the instance list file cannot be found</span>
+    <span class="s2">"problem"</span><span class="p">:</span> <span class="s2">"LeadingOne"</span><span class="p">,</span>  <span class="c1"># possible values: "LeadingOne"</span>
+    <span class="s2">"instance_set_path"</span><span class="p">:</span> <span class="s2">"lo_rls_50.csv"</span><span class="p">,</span>  <span class="c1"># if the instance list file cannot be found</span>
     <span class="c1"># in the running directory, it will be</span>
     <span class="c1"># looked up in</span>
     <span class="c1"># &lt;DACBench&gt;/dacbench/instance_sets/theory/</span>
-    <span class="s2">&quot;discrete_action&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># action space is discrete</span>
-    <span class="s2">&quot;action_choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>  <span class="c1"># portfolio of k values</span>
-    <span class="s2">&quot;benchmark_info&quot;</span><span class="p">:</span> <span class="n">INFO</span><span class="p">,</span>
-    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;LeadingOnesDAC&quot;</span><span class="p">,</span>
+    <span class="s2">"discrete_action"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># action space is discrete</span>
+    <span class="s2">"action_choices"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>  <span class="c1"># portfolio of k values</span>
+    <span class="s2">"benchmark_info"</span><span class="p">:</span> <span class="n">INFO</span><span class="p">,</span>
+    <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"LeadingOnesDAC"</span><span class="p">,</span>
 <span class="p">}</span>
 
 
 <div class="viewcode-block" id="TheoryBenchmark">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.benchmarks.theory_benchmark.TheoryBenchmark">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TheoryBenchmark</span><span class="p">(</span><span class="n">AbstractBenchmark</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Benchmark with various settings for (1+(lbd, lbd))-GA and RLS.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Benchmark with various settings for (1+(lbd, lbd))-GA and RLS."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a theory benchmark.</span>
+<span class="w">        </span><span class="sd">"""Initialize a theory benchmark.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        -------</span>
 <span class="sd">        base_config_name: str</span>
-<span class="sd">            OneLL&#39;s config name</span>
+<span class="sd">            OneLL's config name</span>
 <span class="sd">            possible values: see ../additional_configs/onell/configs.py</span>
 <span class="sd">        config : str</span>
 <span class="sd">            a dictionary, all options specified in this argument will override the one</span>
 <span class="sd">            in base_config_name</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">objdict</span><span class="p">(</span><span class="n">THEORY_DEFAULTS</span><span class="p">)</span>
@@ -342,48 +342,48 @@
         <span class="n">cfg_space</span> <span class="o">=</span> <span class="n">CS</span><span class="o">.</span><span class="n">ConfigurationSpace</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">discrete_action</span><span class="p">:</span>
             <span class="k">assert</span> <span class="p">(</span>
-                <span class="s2">&quot;action_choices&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
-            <span class="p">),</span> <span class="s2">&quot;ERROR: action_choices must be specified&quot;</span>
-            <span class="k">assert</span> <span class="p">(</span><span class="s2">&quot;min_action&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>  <span class="c1"># noqa: PT018</span>
-                <span class="s2">&quot;max_action&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+                <span class="s2">"action_choices"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+            <span class="p">),</span> <span class="s2">"ERROR: action_choices must be specified"</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="s2">"min_action"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>  <span class="c1"># noqa: PT018</span>
+                <span class="s2">"max_action"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
             <span class="p">),</span> <span class="p">(</span>
-                <span class="s2">&quot;ERROR: min_action and max_action should not be used for &quot;</span>
-                <span class="s2">&quot;discrete action space&quot;</span>
+                <span class="s2">"ERROR: min_action and max_action should not be used for "</span>
+                <span class="s2">"discrete action space"</span>
             <span class="p">)</span>
             <span class="k">assert</span> <span class="p">(</span>
-                <span class="s2">&quot;max_action&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
-            <span class="p">),</span> <span class="s2">&quot;ERROR: max_action should not be used for discrete action space&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">env_class</span> <span class="o">=</span> <span class="s2">&quot;TheoryEnvDiscrete&quot;</span>
-            <span class="n">n_acts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;action_choices&quot;</span><span class="p">])</span>
+                <span class="s2">"max_action"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+            <span class="p">),</span> <span class="s2">"ERROR: max_action should not be used for discrete action space"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">env_class</span> <span class="o">=</span> <span class="s2">"TheoryEnvDiscrete"</span>
+            <span class="n">n_acts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"action_choices"</span><span class="p">])</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">UniformIntegerHyperparameter</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">n_acts</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">n_acts</span> <span class="o">-</span> <span class="mi">1</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;action_choices&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"action_choices"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;WARNING: &#39;action_choices&#39; is ignored in continuous action spaces.&quot;</span>
+                    <span class="s2">"WARNING: 'action_choices' is ignored in continuous action spaces."</span>
                 <span class="p">)</span>
-            <span class="k">assert</span> <span class="p">(</span><span class="s2">&quot;min_action&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>  <span class="c1"># noqa: PT018</span>
-                <span class="s2">&quot;max_action&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
-            <span class="p">),</span> <span class="s2">&quot;ERROR: min_action and max_action must be specified&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">env_class</span> <span class="o">=</span> <span class="s2">&quot;TheoryEnv&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="s2">"min_action"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>  <span class="c1"># noqa: PT018</span>
+                <span class="s2">"max_action"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+            <span class="p">),</span> <span class="s2">"ERROR: min_action and max_action must be specified"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">env_class</span> <span class="o">=</span> <span class="s2">"TheoryEnv"</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">UniformFloatHyperparameter</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Step_size&quot;</span><span class="p">,</span>
-                <span class="n">lower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;min_action&quot;</span><span class="p">],</span>
-                <span class="n">upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;max_action&quot;</span><span class="p">],</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"Step_size"</span><span class="p">,</span>
+                <span class="n">lower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"min_action"</span><span class="p">],</span>
+                <span class="n">upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"max_action"</span><span class="p">],</span>
             <span class="p">)</span>
 
         <span class="n">cfg_space</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;config_space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"config_space"</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg_space</span>
 
         <span class="c1"># create observation space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env_class</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">env_class</span><span class="p">]</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_class</span> <span class="ow">in</span> <span class="p">(</span><span class="n">TheoryEnv</span><span class="p">,</span> <span class="n">TheoryEnvDiscrete</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span>
-            <span class="s2">&quot;observation_space&quot;</span>
+            <span class="s2">"observation_space"</span>
         <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_observation_space_from_description</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;observation_description&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_class</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"observation_description"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_class</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="TheoryBenchmark.create_observation_space_from_description">
@@ -391,13 +391,13 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">create_observation_space_from_description</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">obs_description</span><span class="p">,</span> <span class="n">env_class</span><span class="o">=</span><span class="n">TheoryEnvDiscrete</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a gym observation space (Box only) based on a string containing</span>
-<span class="sd">        observation variable names, e.g. &quot;n, f(x), k, k_{t-1}&quot;.</span>
+<span class="w">        </span><span class="sd">"""Create a gym observation space (Box only) based on a string containing</span>
+<span class="sd">        observation variable names, e.g. "n, f(x), k, k_{t-1}".</span>
 
 <span class="sd">        Return:</span>
 <span class="sd">            A gym.spaces.Box observation space.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">obs_var_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">obs_description</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+<span class="sd">        """</span>
+        <span class="n">obs_var_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">obs_description</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)]</span>
         <span class="n">low</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">high</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">obs_var_names</span><span class="p">:</span>
@@ -410,7 +410,7 @@
 <div class="viewcode-block" id="TheoryBenchmark.get_environment">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.benchmarks.theory_benchmark.TheoryBenchmark.get_environment">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_environment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_env</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an environment with current configuration.</span>
+<span class="w">        </span><span class="sd">"""Return an environment with current configuration.</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">            test_env:   whether the enviroment is used for train an agent or for testing</span>
@@ -420,10 +420,10 @@
 <span class="sd">                            if an action is out of range, stop the episode immediately</span>
 <span class="sd">                            and return a large negative reward (see envs/theory.py for</span>
 <span class="sd">                            more details)</span>
-<span class="sd">                        otherwise: benchmark&#39;s original cutoff time is used,</span>
+<span class="sd">                        otherwise: benchmark's original cutoff time is used,</span>
 <span class="sd">                            and out-of-range action will be clipped to nearest valid</span>
 <span class="sd">                            value and the episode will continue.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">test_env</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_funcs</span><span class="p">:</span>
@@ -435,33 +435,33 @@
 <div class="viewcode-block" id="TheoryBenchmark.read_instance_set">
 <a class="viewcode-back" href="../../../source/benchmark_docs/theory.html#dacbench.benchmarks.theory_benchmark.TheoryBenchmark.read_instance_set">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_instance_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read instance set from file</span>
+<span class="w">        </span><span class="sd">"""Read instance set from file</span>
 <span class="sd">        we look at the current directory first,</span>
-<span class="sd">        if the file doesn&#39;t exist, we look in &lt;DACBench&gt;/dacbench/instance_sets/theory/.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        if the file doesn't exist, we look in &lt;DACBench&gt;/dacbench/instance_sets/theory/.</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set_path</span>
         <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set_path</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
             <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set_path</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
-                <span class="o">/</span> <span class="s2">&quot;../instance_sets/theory/&quot;</span>
+                <span class="o">/</span> <span class="s2">"../instance_sets/theory/"</span>
                 <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set_path</span>
             <span class="p">)</span>
 
         <span class="n">instance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;instance_set&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"instance_set"</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">"index"</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;instance_set&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;ERROR: empty instance set&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"instance_set"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"ERROR: empty instance set"</span>
         <span class="k">assert</span> <span class="p">(</span>
-            <span class="s2">&quot;initObj&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;instance_set&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="p">),</span> <span class="s2">&quot;ERROR: initial solution (initObj) must be specified in instance set&quot;</span>
+            <span class="s2">"initObj"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"instance_set"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">),</span> <span class="s2">"ERROR: initial solution (initObj) must be specified in instance set"</span>
         <span class="k">assert</span> <span class="p">(</span>
-            <span class="s2">&quot;size&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;instance_set&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="p">),</span> <span class="s2">&quot;ERROR: problem size must be specified in instance set&quot;</span>
+            <span class="s2">"size"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"instance_set"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">),</span> <span class="s2">"ERROR: problem size must be specified in instance set"</span>
 
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;instance_set&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;instance_set&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">objdict</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"instance_set"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"instance_set"</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">objdict</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

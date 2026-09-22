@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.benchmarks.cma_benchmark &#8212; DACBench Documentation 0.5.1.dev1+g341f80dee documentation</title>
+    <title>dacbench.benchmarks.cma_benchmark &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=08247575"></script>
+    <script src="../../../_static/documentation_options.js?v=e6c29603"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g341f80dee
+        v0.5.1.dev1+g23dcd4d9c
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g341f80dee</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g341f80dee</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.benchmarks.cma_benchmark</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;CMA ES Benchmark.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""CMA ES Benchmark."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -280,34 +280,34 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dacbench.envs.env_utils.toy_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">IOHFunction</span>
 
 <span class="n">DEFAULT_CFG_SPACE</span> <span class="o">=</span> <span class="n">CS</span><span class="o">.</span><span class="n">ConfigurationSpace</span><span class="p">()</span>
-<span class="n">ACTIVE</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;0_active&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
-<span class="n">ELITIST</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;1_elitist&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
-<span class="n">ORTHOGONAL</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;2_orthogonal&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
-<span class="n">SEQUENTIAL</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;3_sequential&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="n">ACTIVE</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"0_active"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="n">ELITIST</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"1_elitist"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="n">ORTHOGONAL</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"2_orthogonal"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="n">SEQUENTIAL</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"3_sequential"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
 <span class="n">THRESHOLD_CONVERGENCE</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;4_threshold_convergence&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"4_threshold_convergence"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="n">STEP_SIZE_ADAPTATION</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;5_step_size_adaptation&quot;</span><span class="p">,</span>
-    <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;csa&quot;</span><span class="p">,</span> <span class="s2">&quot;tpa&quot;</span><span class="p">,</span> <span class="s2">&quot;msr&quot;</span><span class="p">,</span> <span class="s2">&quot;xnes&quot;</span><span class="p">,</span> <span class="s2">&quot;m-xnes&quot;</span><span class="p">,</span> <span class="s2">&quot;lp-xnes&quot;</span><span class="p">,</span> <span class="s2">&quot;psr&quot;</span><span class="p">],</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"5_step_size_adaptation"</span><span class="p">,</span>
+    <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"csa"</span><span class="p">,</span> <span class="s2">"tpa"</span><span class="p">,</span> <span class="s2">"msr"</span><span class="p">,</span> <span class="s2">"xnes"</span><span class="p">,</span> <span class="s2">"m-xnes"</span><span class="p">,</span> <span class="s2">"lp-xnes"</span><span class="p">,</span> <span class="s2">"psr"</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="n">MIRRORED</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;6_mirrored&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;mirrored&quot;</span><span class="p">,</span> <span class="s2">&quot;mirrored pairwise&quot;</span><span class="p">]</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"6_mirrored"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"None"</span><span class="p">,</span> <span class="s2">"mirrored"</span><span class="p">,</span> <span class="s2">"mirrored pairwise"</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="n">BASE_SAMPLER</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;7_base_sampler&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span> <span class="s2">&quot;sobol&quot;</span><span class="p">,</span> <span class="s2">&quot;halton&quot;</span><span class="p">]</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"7_base_sampler"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"gaussian"</span><span class="p">,</span> <span class="s2">"sobol"</span><span class="p">,</span> <span class="s2">"halton"</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="n">WEIGHTS_OPTION</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;8_weights_option&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="s2">&quot;1/2^lambda&quot;</span><span class="p">]</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"8_weights_option"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"default"</span><span class="p">,</span> <span class="s2">"equal"</span><span class="p">,</span> <span class="s2">"1/2^lambda"</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="n">LOCAL_RESTART</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;90_local_restart&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;IPOP&quot;</span><span class="p">,</span> <span class="s2">&quot;BIPOP&quot;</span><span class="p">]</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"90_local_restart"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"None"</span><span class="p">,</span> <span class="s2">"IPOP"</span><span class="p">,</span> <span class="s2">"BIPOP"</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="n">BOUND_CORRECTION</span> <span class="o">=</span> <span class="n">CSH</span><span class="o">.</span><span class="n">CategoricalHyperparameter</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;91_bound_correction&quot;</span><span class="p">,</span>
-    <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;saturate&quot;</span><span class="p">,</span> <span class="s2">&quot;unif_resample&quot;</span><span class="p">,</span> <span class="s2">&quot;COTN&quot;</span><span class="p">,</span> <span class="s2">&quot;toroidal&quot;</span><span class="p">,</span> <span class="s2">&quot;mirror&quot;</span><span class="p">],</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"91_bound_correction"</span><span class="p">,</span>
+    <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"None"</span><span class="p">,</span> <span class="s2">"saturate"</span><span class="p">,</span> <span class="s2">"unif_resample"</span><span class="p">,</span> <span class="s2">"COTN"</span><span class="p">,</span> <span class="s2">"toroidal"</span><span class="p">,</span> <span class="s2">"mirror"</span><span class="p">],</span>
 <span class="p">)</span>
-<span class="n">STEP_SIZE</span> <span class="o">=</span> <span class="n">CS</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;92_step_size&quot;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span>
+<span class="n">STEP_SIZE</span> <span class="o">=</span> <span class="n">CS</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"92_step_size"</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span>
 <span class="n">DEFAULT_CFG_SPACE</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ACTIVE</span><span class="p">)</span>
 <span class="n">DEFAULT_CFG_SPACE</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ELITIST</span><span class="p">)</span>
 <span class="n">DEFAULT_CFG_SPACE</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ORTHOGONAL</span><span class="p">)</span>
@@ -322,59 +322,59 @@
 <span class="n">DEFAULT_CFG_SPACE</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">STEP_SIZE</span><span class="p">)</span>
 
 <span class="n">FUNCTION_NAMES</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;BentCigar&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;BuecheRastrigin&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s2">&quot;DifferentPowers&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;Discus&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="s2">&quot;Ellipsoid&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s2">&quot;EllipsoidRotated&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
-    <span class="s2">&quot;Gallagher101&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-    <span class="s2">&quot;Gallagher21&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-    <span class="s2">&quot;GriewankRosenbrock&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
-    <span class="s2">&quot;Katsuura&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="s2">&quot;LinearSlope&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
-    <span class="s2">&quot;LunacekBiRastrigin&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
-    <span class="s2">&quot;Rastrigin&quot;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
-    <span class="s2">&quot;RastriginRotated&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
-    <span class="s2">&quot;Rosenbrock&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
-    <span class="s2">&quot;RosenbrockRotated&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
-    <span class="s2">&quot;Schaffers10&quot;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
-    <span class="s2">&quot;Schaffers1000&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
-    <span class="s2">&quot;Schwefel&quot;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span>
-    <span class="s2">&quot;SharpRidge&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
-    <span class="s2">&quot;Sphere&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
-    <span class="s2">&quot;StepEllipsoid&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
-    <span class="s2">&quot;Weierstrass&quot;</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span>
+    <span class="s2">"BentCigar"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"BuecheRastrigin"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">"DifferentPowers"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">"Discus"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">"Ellipsoid"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">"EllipsoidRotated"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">"Gallagher101"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s2">"Gallagher21"</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">"GriewankRosenbrock"</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">"Katsuura"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">"LinearSlope"</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">"LunacekBiRastrigin"</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s2">"Rastrigin"</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+    <span class="s2">"RastriginRotated"</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="s2">"Rosenbrock"</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="s2">"RosenbrockRotated"</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="s2">"Schaffers10"</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
+    <span class="s2">"Schaffers1000"</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+    <span class="s2">"Schwefel"</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span>
+    <span class="s2">"SharpRidge"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="s2">"Sphere"</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
+    <span class="s2">"StepEllipsoid"</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+    <span class="s2">"Weierstrass"</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">INFO</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="s2">&quot;CMA-ES&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Online Selection of CMA-ES Variants and step-size control&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;reward&quot;</span><span class="p">:</span> <span class="s2">&quot;Negative best function value&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;state_description&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;Generation Size&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Sigma&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Remaining Budget&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Function ID&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Instance ID&quot;</span><span class="p">,</span>
+    <span class="s2">"identifier"</span><span class="p">:</span> <span class="s2">"CMA-ES"</span><span class="p">,</span>
+    <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Online Selection of CMA-ES Variants and step-size control"</span><span class="p">,</span>
+    <span class="s2">"reward"</span><span class="p">:</span> <span class="s2">"Negative best function value"</span><span class="p">,</span>
+    <span class="s2">"state_description"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"Generation Size"</span><span class="p">,</span>
+        <span class="s2">"Sigma"</span><span class="p">,</span>
+        <span class="s2">"Remaining Budget"</span><span class="p">,</span>
+        <span class="s2">"Function ID"</span><span class="p">,</span>
+        <span class="s2">"Instance ID"</span><span class="p">,</span>
     <span class="p">],</span>
 <span class="p">}</span>
 
 
 <span class="n">CMAES_DEFAULTS</span> <span class="o">=</span> <span class="n">objdict</span><span class="p">(</span>
     <span class="p">{</span>
-        <span class="s2">&quot;config_space&quot;</span><span class="p">:</span> <span class="n">DEFAULT_CFG_SPACE</span><span class="p">,</span>
-        <span class="s2">&quot;observation_space_class&quot;</span><span class="p">:</span> <span class="s2">&quot;Box&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;observation_space_args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">)],</span>
-        <span class="s2">&quot;observation_space_type&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
-        <span class="s2">&quot;reward_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">12</span><span class="p">),</span> <span class="mi">0</span><span class="p">),</span>
-        <span class="s2">&quot;budget&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="s2">&quot;cutoff&quot;</span><span class="p">:</span> <span class="mf">1e6</span><span class="p">,</span>
-        <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;multi_agent&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s2">&quot;instance_set_path&quot;</span><span class="p">:</span> <span class="s2">&quot;../instance_sets/cma/cma_bbob_dim10_train.csv&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;test_set_path&quot;</span><span class="p">:</span> <span class="s2">&quot;../instance_sets/cma/cma_bbob_dim10_test.csv&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;benchmark_info&quot;</span><span class="p">:</span> <span class="n">INFO</span><span class="p">,</span>
+        <span class="s2">"config_space"</span><span class="p">:</span> <span class="n">DEFAULT_CFG_SPACE</span><span class="p">,</span>
+        <span class="s2">"observation_space_class"</span><span class="p">:</span> <span class="s2">"Box"</span><span class="p">,</span>
+        <span class="s2">"observation_space_args"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">)],</span>
+        <span class="s2">"observation_space_type"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+        <span class="s2">"reward_range"</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">12</span><span class="p">),</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="s2">"budget"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s2">"cutoff"</span><span class="p">:</span> <span class="mf">1e6</span><span class="p">,</span>
+        <span class="s2">"seed"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"multi_agent"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"instance_set_path"</span><span class="p">:</span> <span class="s2">"../instance_sets/cma/cma_bbob_dim10_train.csv"</span><span class="p">,</span>
+        <span class="s2">"test_set_path"</span><span class="p">:</span> <span class="s2">"../instance_sets/cma/cma_bbob_dim10_test.csv"</span><span class="p">,</span>
+        <span class="s2">"benchmark_info"</span><span class="p">:</span> <span class="n">INFO</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">)</span>
 
@@ -382,34 +382,34 @@
 <div class="viewcode-block" id="CMAESBenchmark">
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.benchmarks.cma_benchmark.CMAESBenchmark">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CMAESBenchmark</span><span class="p">(</span><span class="n">AbstractBenchmark</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Benchmark for controlling the step size of CMA-ES on BBOB functions.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Benchmark for controlling the step size of CMA-ES on BBOB functions."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize CMA ES Benchmark.</span>
+<span class="w">        </span><span class="sd">"""Initialize CMA ES Benchmark.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        -------</span>
 <span class="sd">        config_path : str</span>
 <span class="sd">            Path to config file (optional)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">objdict</span><span class="p">(</span><span class="n">CMAES_DEFAULTS</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="o">**</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="ow">or</span> <span class="p">{}))</span>
 
 <div class="viewcode-block" id="CMAESBenchmark.get_environment">
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.benchmarks.cma_benchmark.CMAESBenchmark.get_environment">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_environment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return SGDEnv env with current configuration.</span>
+<span class="w">        </span><span class="sd">"""Return SGDEnv env with current configuration.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        -------</span>
 <span class="sd">        SGDEnv</span>
 <span class="sd">            SGD environment</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;instance_set&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="s2">"instance_set"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read_instance_set</span><span class="p">()</span>
 
         <span class="c1"># Read test set if path is specified</span>
-        <span class="k">if</span> <span class="s2">&quot;test_set&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="ow">and</span> <span class="s2">&quot;test_set_path&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"test_set"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="ow">and</span> <span class="s2">"test_set_path"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read_instance_set</span><span class="p">(</span><span class="n">test</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">env</span> <span class="o">=</span> <span class="n">CMAESEnv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
@@ -422,16 +422,16 @@
 <div class="viewcode-block" id="CMAESBenchmark.read_instance_set">
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.benchmarks.cma_benchmark.CMAESBenchmark.read_instance_set">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_instance_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read path of instances from config into list.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Read path of instances from config into list."""</span>
         <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
             <span class="n">relative_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">test_set_path</span>
             <span class="n">absolute_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">test_set_path</span><span class="p">)</span>
             <span class="n">dacbench_path</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
-                <span class="o">/</span> <span class="s2">&quot;../instance_sets/cma&quot;</span>
+                <span class="o">/</span> <span class="s2">"../instance_sets/cma"</span>
                 <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">test_set_path</span>
             <span class="p">)</span>
-            <span class="n">keyword</span> <span class="o">=</span> <span class="s2">&quot;test_set&quot;</span>
+            <span class="n">keyword</span> <span class="o">=</span> <span class="s2">"test_set"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">relative_path</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set_path</span>
@@ -439,10 +439,10 @@
             <span class="n">absolute_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set_path</span><span class="p">)</span>
             <span class="p">(</span>
                 <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
-                <span class="o">/</span> <span class="s2">&quot;../instance_sets/toysgd&quot;</span>
+                <span class="o">/</span> <span class="s2">"../instance_sets/toysgd"</span>
                 <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_set_path</span>
             <span class="p">)</span>
-            <span class="n">keyword</span> <span class="o">=</span> <span class="s2">&quot;instance_set&quot;</span>
+            <span class="n">keyword</span> <span class="o">=</span> <span class="s2">"instance_set"</span>
 
         <span class="k">if</span> <span class="n">absolute_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">absolute_path</span>
@@ -452,7 +452,7 @@
             <span class="n">path</span> <span class="o">=</span> <span class="n">dacbench_path</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Instance set file not found at </span><span class="si">{</span><span class="n">absolute_path</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Instance set file not found at </span><span class="si">{</span><span class="n">absolute_path</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">keyword</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -460,22 +460,22 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">instance_csv</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">keyword</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">CMAESInstance</span><span class="p">(</span>
                 <span class="n">IOHFunction</span><span class="p">(</span>
-                    <span class="n">function_name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;func_name&quot;</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;dim&quot;</span><span class="p">],</span> <span class="n">iid</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;iid&quot;</span><span class="p">]</span>
+                    <span class="n">function_name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"func_name"</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"dim"</span><span class="p">],</span> <span class="n">iid</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"iid"</span><span class="p">]</span>
                 <span class="p">),</span>
-                <span class="n">dim</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;dim&quot;</span><span class="p">],</span>
-                <span class="n">fid</span><span class="o">=</span><span class="n">FUNCTION_NAMES</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;func_name&quot;</span><span class="p">]],</span>
-                <span class="n">iid</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;iid&quot;</span><span class="p">],</span>
-                <span class="n">active</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;active&quot;</span><span class="p">],</span>
-                <span class="n">elitist</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;elitist&quot;</span><span class="p">],</span>
-                <span class="n">orthogonal</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;orthogonal&quot;</span><span class="p">],</span>
-                <span class="n">sequential</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;sequential&quot;</span><span class="p">],</span>
-                <span class="n">threshold_convergence</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;threshold_convergence&quot;</span><span class="p">],</span>
-                <span class="n">step_size_adaptation</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;step_size_adaptation&quot;</span><span class="p">],</span>
-                <span class="n">mirrored</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;mirrored&quot;</span><span class="p">],</span>
-                <span class="n">base_sampler</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;base_sampler&quot;</span><span class="p">],</span>
-                <span class="n">weights_option</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;weights_option&quot;</span><span class="p">],</span>
-                <span class="n">local_restart</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;local_restart&quot;</span><span class="p">],</span>
-                <span class="n">bound_correction</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;bound_correction&quot;</span><span class="p">],</span>
+                <span class="n">dim</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"dim"</span><span class="p">],</span>
+                <span class="n">fid</span><span class="o">=</span><span class="n">FUNCTION_NAMES</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s2">"func_name"</span><span class="p">]],</span>
+                <span class="n">iid</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"iid"</span><span class="p">],</span>
+                <span class="n">active</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"active"</span><span class="p">],</span>
+                <span class="n">elitist</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"elitist"</span><span class="p">],</span>
+                <span class="n">orthogonal</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"orthogonal"</span><span class="p">],</span>
+                <span class="n">sequential</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"sequential"</span><span class="p">],</span>
+                <span class="n">threshold_convergence</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"threshold_convergence"</span><span class="p">],</span>
+                <span class="n">step_size_adaptation</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"step_size_adaptation"</span><span class="p">],</span>
+                <span class="n">mirrored</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"mirrored"</span><span class="p">],</span>
+                <span class="n">base_sampler</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"base_sampler"</span><span class="p">],</span>
+                <span class="n">weights_option</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"weights_option"</span><span class="p">],</span>
+                <span class="n">local_restart</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"local_restart"</span><span class="p">],</span>
+                <span class="n">bound_correction</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">"bound_correction"</span><span class="p">],</span>
             <span class="p">)</span></div>
 </div>
 

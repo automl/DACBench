@@ -42,6 +42,27 @@ can be used instead for discrete acquisition function selection among EI, PI, an
 *The DACBO benchmark was originally developed by Carolin Benjamins as the dacboenv package
 and has been integrated into DACBench. A publication is forthcoming.*
 
+.. note::
+
+   The DACBO environment uses numpy, scipy, and SMAC's Gaussian Process (via
+   sklearn) under the hood, all of which can leverage multi-threaded BLAS
+   (OpenBLAS / MKL). By default, these libraries use all available CPU cores,
+   which causes oversubscription when multiple environments run in parallel
+   within the same process (e.g. via ``AsyncVectorEnv`` or ``multiprocessing``).
+
+   Set these environment variables **before importing numpy** to cap each
+   process at single-threaded BLAS:
+
+   .. code-block:: python
+
+       import os
+       os.environ["OMP_NUM_THREADS"] = "1"
+       os.environ["OPENBLAS_NUM_THREADS"] = "1"
+       os.environ["MKL_NUM_THREADS"] = "1"
+       os.environ["NUMEXPR_NUM_THREADS"] = "1"
+
+       import numpy  # noqa: E402
+
 .. automodule:: dacbench.benchmarks.dacbo_benchmark
     :members:
     :show-inheritance:

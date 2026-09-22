@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.envs.cma_es &#8212; DACBench Documentation 0.5.1.dev1+g341f80dee documentation</title>
+    <title>dacbench.envs.cma_es &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=08247575"></script>
+    <script src="../../../_static/documentation_options.js?v=e6c29603"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g341f80dee
+        v0.5.1.dev1+g23dcd4d9c
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g341f80dee</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g341f80dee</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.envs.cma_es</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;CMA ES Environment.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""CMA ES Environment."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -282,25 +282,25 @@
 
 <span class="n">BINARIES</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
 <span class="n">STEP_SIZE_ADAPTATION</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;csa&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;tpa&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;msr&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s2">&quot;xnes&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;m-xnes&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="s2">&quot;lp-xnes&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s2">&quot;psr&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">"csa"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"tpa"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"msr"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">"xnes"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">"m-xnes"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">"lp-xnes"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">"psr"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
 <span class="p">}</span>
-<span class="n">MIRRORED</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;None&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;mirrored&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;mirrored pairwise&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
-<span class="n">BASE_SAMPLER</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;gaussian&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;sobol&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;halton&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
-<span class="n">WEIGHTS_OPTION</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;equal&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;1/2^lambda&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
-<span class="n">LOCAL_RESTART</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;None&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;IPOP&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;BIPOP&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="n">MIRRORED</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"None"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"mirrored"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"mirrored pairwise"</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="n">BASE_SAMPLER</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"gaussian"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"sobol"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"halton"</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="n">WEIGHTS_OPTION</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"default"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"equal"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"1/2^lambda"</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="n">LOCAL_RESTART</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"None"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"IPOP"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"BIPOP"</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
 <span class="n">BOUND_CORRECTION</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;None&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;saturate&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;unif_resample&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s2">&quot;COTN&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;toroidal&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="s2">&quot;mirror&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">"None"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"saturate"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"unif_resample"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">"COTN"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">"toroidal"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">"mirror"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
 <span class="p">}</span>
 
 
@@ -308,7 +308,7 @@
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.envs.cma_es.CMAESInstance">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CMAESInstance</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;CMA-ES Instance.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""CMA-ES Instance."""</span>
 
     <span class="n">target_function</span><span class="p">:</span> <span class="n">AbstractFunction</span>
     <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span>
@@ -331,53 +331,53 @@
 <div class="viewcode-block" id="CMAESEnv">
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.envs.cma_es.CMAESEnv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CMAESEnv</span><span class="p">(</span><span class="n">AbstractMADACEnv</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The CMA ES environment controlles the step size on BBOB functions.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""The CMA ES environment controlles the step size on BBOB functions."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Initialize the environment."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">es</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">budget</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">budget</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_budget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">budget</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;normalize_reward&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">get_reward</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reward_function&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_reward</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"normalize_reward"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_reward</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"reward_function"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_reward</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">get_reward</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reward_function&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_normalized_reward</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_reward</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"reward_function"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_normalized_reward</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_method&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"state_method"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_state</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_uniform_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="c1"># Convert name of parameters uniformly to lowercase,</span>
         <span class="c1"># separated with _ and no numbers</span>
-        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^\d+_&quot;</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"^\d+_"</span>
 
         <span class="c1"># Use re.sub to remove the leading number and underscore</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
 <div class="viewcode-block" id="CMAESEnv.reset">
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.envs.cma_es.CMAESEnv.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Reset the environment."""</span>
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">representation_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;active&quot;</span><span class="p">:</span> <span class="n">BINARIES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">active</span><span class="p">],</span>
-            <span class="s2">&quot;elitist&quot;</span><span class="p">:</span> <span class="n">BINARIES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">elitist</span><span class="p">],</span>
-            <span class="s2">&quot;orthogonal&quot;</span><span class="p">:</span> <span class="n">BINARIES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">orthogonal</span><span class="p">],</span>
-            <span class="s2">&quot;sequential&quot;</span><span class="p">:</span> <span class="n">BINARIES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">sequential</span><span class="p">],</span>
-            <span class="s2">&quot;threshold_convergence&quot;</span><span class="p">:</span> <span class="n">BINARIES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">threshold_convergence</span><span class="p">],</span>
-            <span class="s2">&quot;step_size_adaptation&quot;</span><span class="p">:</span> <span class="n">STEP_SIZE_ADAPTATION</span><span class="p">[</span>
+            <span class="s2">"active"</span><span class="p">:</span> <span class="n">BINARIES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">active</span><span class="p">],</span>
+            <span class="s2">"elitist"</span><span class="p">:</span> <span class="n">BINARIES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">elitist</span><span class="p">],</span>
+            <span class="s2">"orthogonal"</span><span class="p">:</span> <span class="n">BINARIES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">orthogonal</span><span class="p">],</span>
+            <span class="s2">"sequential"</span><span class="p">:</span> <span class="n">BINARIES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">sequential</span><span class="p">],</span>
+            <span class="s2">"threshold_convergence"</span><span class="p">:</span> <span class="n">BINARIES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">threshold_convergence</span><span class="p">],</span>
+            <span class="s2">"step_size_adaptation"</span><span class="p">:</span> <span class="n">STEP_SIZE_ADAPTATION</span><span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step_size_adaptation</span>
             <span class="p">],</span>
-            <span class="s2">&quot;mirrored&quot;</span><span class="p">:</span> <span class="n">MIRRORED</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">mirrored</span><span class="p">],</span>
-            <span class="s2">&quot;base_sampler&quot;</span><span class="p">:</span> <span class="n">BASE_SAMPLER</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">base_sampler</span><span class="p">],</span>
-            <span class="s2">&quot;weights_option&quot;</span><span class="p">:</span> <span class="n">WEIGHTS_OPTION</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">weights_option</span><span class="p">],</span>
-            <span class="s2">&quot;local_restart&quot;</span><span class="p">:</span> <span class="n">LOCAL_RESTART</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">local_restart</span><span class="p">],</span>
-            <span class="s2">&quot;bound_correction&quot;</span><span class="p">:</span> <span class="n">BOUND_CORRECTION</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">bound_correction</span><span class="p">],</span>
+            <span class="s2">"mirrored"</span><span class="p">:</span> <span class="n">MIRRORED</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">mirrored</span><span class="p">],</span>
+            <span class="s2">"base_sampler"</span><span class="p">:</span> <span class="n">BASE_SAMPLER</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">base_sampler</span><span class="p">],</span>
+            <span class="s2">"weights_option"</span><span class="p">:</span> <span class="n">WEIGHTS_OPTION</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">weights_option</span><span class="p">],</span>
+            <span class="s2">"local_restart"</span><span class="p">:</span> <span class="n">LOCAL_RESTART</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">local_restart</span><span class="p">],</span>
+            <span class="s2">"bound_correction"</span><span class="p">:</span> <span class="n">BOUND_CORRECTION</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">bound_correction</span><span class="p">],</span>
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">objective</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">target_function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">es</span> <span class="o">=</span> <span class="n">ModularCMAES</span><span class="p">(</span>
@@ -393,7 +393,7 @@
 <div class="viewcode-block" id="CMAESEnv.step">
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.envs.cma_es.CMAESEnv.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make one step of the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Make one step of the environment."""</span>
         <span class="n">truncated</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step_</span><span class="p">()</span>
 
         <span class="c1"># Get all action values and uniform names</span>
@@ -401,7 +401,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">hp</span> <span class="ow">in</span> <span class="n">action</span><span class="p">:</span>
                 <span class="n">n_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uniform_name</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">n_name</span> <span class="o">==</span> <span class="s2">&quot;step_size&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">n_name</span> <span class="o">==</span> <span class="s2">"step_size"</span><span class="p">:</span>
                     <span class="c1"># Step size is set separately</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">es</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="n">hp</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -410,13 +410,13 @@
 
             <span class="c1"># Complete the given action with defaults</span>
             <span class="k">for</span> <span class="n">default</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation_dict</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">default</span> <span class="o">==</span> <span class="s2">&quot;step_size&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">default</span> <span class="o">==</span> <span class="s2">"step_size"</span><span class="p">:</span>
                     <span class="k">continue</span>
                 <span class="k">if</span> <span class="n">default</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">complete_action</span><span class="p">:</span>
                     <span class="n">complete_action</span><span class="p">[</span><span class="n">default</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation_dict</span><span class="p">[</span><span class="n">default</span><span class="p">]</span>
             <span class="n">complete_action</span> <span class="o">=</span> <span class="n">complete_action</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Action must be a Dict&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Action must be a Dict"</span><span class="p">)</span>
 
         <span class="n">new_parameters</span> <span class="o">=</span> <span class="n">Parameters</span><span class="o">.</span><span class="n">from_config_array</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">complete_action</span>
@@ -432,21 +432,21 @@
 <div class="viewcode-block" id="CMAESEnv.close">
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.envs.cma_es.CMAESEnv.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Closes the environment."""</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="CMAESEnv.get_default_reward">
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.envs.cma_es.CMAESEnv.get_default_reward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_default_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The default reward function.</span>
+<span class="w">        </span><span class="sd">"""The default reward function.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            _ (_type_): Empty parameter, which can be used when overriding</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The calculated reward</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">es</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">fopt</span><span class="p">)</span>
         <span class="p">)</span></div>
@@ -455,14 +455,14 @@
 <div class="viewcode-block" id="CMAESEnv.get_normalized_reward">
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.envs.cma_es.CMAESEnv.get_normalized_reward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_normalized_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize each reward within domain bounds.</span>
+<span class="w">        </span><span class="sd">"""Normalize each reward within domain bounds.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            _ (_type_): Empty parameter, which can be used when overriding</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The calculated reward</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">obj_min</span><span class="p">,</span> <span class="n">obj_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="o">.</span><span class="n">fmin</span><span class="p">,</span> <span class="mi">0</span>
         <span class="n">current_reward</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">es</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">fopt</span>
         <span class="n">norm_reward</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_reward</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">obj_max</span> <span class="o">-</span> <span class="n">obj_min</span><span class="p">)</span>
@@ -472,14 +472,14 @@
 <div class="viewcode-block" id="CMAESEnv.get_default_state">
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.envs.cma_es.CMAESEnv.get_default_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_default_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Default state function.</span>
+<span class="w">        </span><span class="sd">"""Default state function.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            _ (_type_): Empty parameter, which can be used when overriding</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: The current state</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">es</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">lambda_</span><span class="p">,</span>
@@ -493,9 +493,9 @@
 
 <div class="viewcode-block" id="CMAESEnv.render">
 <a class="viewcode-back" href="../../../source/benchmark_docs/cma.html#dacbench.envs.cma_es.CMAESEnv.render">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render progress.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;CMA-ES does not support rendering at this point&quot;</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Render progress."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"CMA-ES does not support rendering at this point"</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

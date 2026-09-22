@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.envs.fast_downward &#8212; DACBench Documentation 0.5.1.dev1+g341f80dee documentation</title>
+    <title>dacbench.envs.fast_downward &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=08247575"></script>
+    <script src="../../../_static/documentation_options.js?v=e6c29603"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g341f80dee
+        v0.5.1.dev1+g23dcd4d9c
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g341f80dee</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g341f80dee</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,11 +264,11 @@
               <div>
                 
   <h1>Source code for dacbench.envs.fast_downward</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Planning environment from</span>
-<span class="sd">&quot;Learning Heuristic Selection with Dynamic Algorithm Configuration&quot;</span>
+<span></span><span class="sd">"""Planning environment from</span>
+<span class="sd">"Learning Heuristic Selection with Dynamic Algorithm Configuration"</span>
 <span class="sd">by David Speck, André Biedenkapp, Frank Hutter, Robert Mattmüller und Marius Lindauer.</span>
 <span class="sd">Original environment authors: David Speck, André Biedenkapp.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -288,7 +288,7 @@
 <div class="viewcode-block" id="StateType">
 <a class="viewcode-back" href="../../../source/benchmark_docs/fastdownward.html#dacbench.envs.fast_downward.StateType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">StateType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to define numbers for state types.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Class to define numbers for state types."""</span>
 
     <span class="n">RAW</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">DIFF</span> <span class="o">=</span> <span class="mi">2</span>
@@ -302,30 +302,30 @@
 <div class="viewcode-block" id="FastDownwardEnv">
 <a class="viewcode-back" href="../../../source/benchmark_docs/fastdownward.html#dacbench.envs.fast_downward.FastDownwardEnv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FastDownwardEnv</span><span class="p">(</span><span class="n">AbstractEnv</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Environment to control Solver Heuristics of FastDownward.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Environment to control Solver Heuristics of FastDownward."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize FD Env.</span>
+<span class="w">        </span><span class="sd">"""Initialize FD Env.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        -------</span>
 <span class="sd">        config : objdict</span>
 <span class="sd">            Environment configuration</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_heuristic_state_features</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;Average Value&quot;</span><span class="p">,</span>  <span class="c1"># &#39;Dead Ends Reliable&#39;,</span>
-            <span class="s2">&quot;Max Value&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Min Value&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Open List Entries&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Varianz&quot;</span><span class="p">,</span>
+            <span class="s2">"Average Value"</span><span class="p">,</span>  <span class="c1"># 'Dead Ends Reliable',</span>
+            <span class="s2">"Max Value"</span><span class="p">,</span>
+            <span class="s2">"Min Value"</span><span class="p">,</span>
+            <span class="s2">"Open List Entries"</span><span class="p">,</span>
+            <span class="s2">"Varianz"</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_general_state_features</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="c1"># &#39;evaluated_states&#39;, &#39;evaluations&#39;, &#39;expanded_states&#39;,</span>
-            <span class="c1"># &#39;generated_ops&#39;,</span>
-            <span class="c1"># &#39;generated_states&#39;, &#39;num_variables&#39;,</span>
-            <span class="c1"># &#39;registered_states&#39;, &#39;reopened_states&#39;,</span>
-            <span class="c1"># &quot;cg_num_eff_to_eff&quot;, &quot;cg_num_eff_to_pre&quot;, &quot;cg_num_pre_to_eff&quot;</span>
+            <span class="c1"># 'evaluated_states', 'evaluations', 'expanded_states',</span>
+            <span class="c1"># 'generated_ops',</span>
+            <span class="c1"># 'generated_states', 'num_variables',</span>
+            <span class="c1"># 'registered_states', 'reopened_states',</span>
+            <span class="c1"># "cg_num_eff_to_eff", "cg_num_eff_to_pre", "cg_num_pre_to_eff"</span>
         <span class="p">]</span>
 
         <span class="n">total_state_features</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">heuristics</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span>
@@ -344,8 +344,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">heuristics</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">heuristics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">host</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;port&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"port"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">"parallel"</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fd_seed</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">fd_seed</span>
@@ -355,12 +355,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logpath_out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">devnull</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logpath_err</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">devnull</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logpath_out</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">fd_logs</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;fdout.txt&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logpath_err</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">fd_logs</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;fderr.txt&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logpath_out</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">fd_logs</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"fdout.txt"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logpath_err</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">fd_logs</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"fderr.txt"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fd_path</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">fd_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fd</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="s2">&quot;domain_file&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">domain_file</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;domain_file&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">"domain_file"</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">domain_file</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">"domain_file"</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
@@ -406,11 +406,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Port function.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Port function."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Automatic port selection enabled. Port not know at the moment&quot;</span>
+                    <span class="s2">"Automatic port selection enabled. Port not know at the moment"</span>
                 <span class="p">)</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">getsockname</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -425,13 +425,13 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_argstring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># if a socket is bound to 0 it will automatically choose a free port</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;rl_eager(rl([</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">h</span><span class="si">}</span><span class="s1">,&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">heuristics</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">],&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;random_seed=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fd_seed</span><span class="si">}</span><span class="s2">),rl_control_interval=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">control_interval</span><span class="si">}</span><span class="s2">,rl_client_port=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="sa">f</span><span class="s2">"rl_eager(rl([</span><span class="si">{</span><span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">h</span><span class="si">}</span><span class="s1">,'</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">heuristics</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">],"</span>
+            <span class="sa">f</span><span class="s2">"random_seed=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fd_seed</span><span class="si">}</span><span class="s2">),rl_control_interval=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">control_interval</span><span class="si">}</span><span class="s2">,rl_client_port=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">)"</span>
         <span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_save_div</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method for safe division.</span>
+<span class="w">        </span><span class="sd">"""Helper method for safe division.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -444,13 +444,13 @@
 <span class="sd">        -------</span>
 <span class="sd">        np.array</span>
 <span class="sd">            Division result</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">b</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FastDownwardEnv.send_msg">
 <a class="viewcode-back" href="../../../source/benchmark_docs/fastdownward.html#dacbench.envs.fast_downward.FastDownwardEnv.send_msg">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">send_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send message and prepend the message size.</span>
+<span class="w">        </span><span class="sd">"""Send message and prepend the message size.</span>
 
 <span class="sd">        Based on comment from SO see [1]</span>
 <span class="sd">        [1] https://stackoverflow.com/a/17668009</span>
@@ -459,23 +459,23 @@
 <span class="sd">        ----------</span>
 <span class="sd">        msg : bytes</span>
 <span class="sd">            The message as byte</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Prefix each message with a 4-byte length (network byte order)</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;04d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">msg</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;04d</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="o">+</span> <span class="n">msg</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="FastDownwardEnv.recv_msg">
 <a class="viewcode-back" href="../../../source/benchmark_docs/fastdownward.html#dacbench.envs.fast_downward.FastDownwardEnv.recv_msg">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">recv_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Recieve a whole message. The message has to be prepended with its total size</span>
+<span class="w">        </span><span class="sd">"""Recieve a whole message. The message has to be prepended with its total size</span>
 <span class="sd">        Based on comment from SO see [1].</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        ----------</span>
 <span class="sd">        bytes</span>
 <span class="sd">            The message as byte</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Read message length and unpack it into an integer</span>
         <span class="n">raw_msglen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recvall</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_msglen</span><span class="p">:</span>
@@ -488,7 +488,7 @@
 <div class="viewcode-block" id="FastDownwardEnv.recvall">
 <a class="viewcode-back" href="../../../source/benchmark_docs/fastdownward.html#dacbench.envs.fast_downward.FastDownwardEnv.recvall">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">recvall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given we know the size we want to recieve,</span>
+<span class="w">        </span><span class="sd">"""Given we know the size we want to recieve,</span>
 <span class="sd">        we can recieve that amount of bytes.</span>
 <span class="sd">        Based on comment from SO see [1].</span>
 
@@ -501,9 +501,9 @@
 <span class="sd">        ----------</span>
 <span class="sd">        bytes</span>
 <span class="sd">            The message as byte</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Helper function to recv n bytes or return None if EOF is hit</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">""</span>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
             <span class="n">packet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">packet</span><span class="p">:</span>
@@ -513,25 +513,25 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_process_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Split received json into state reward and done.</span>
+<span class="w">        </span><span class="sd">"""Split received json into state reward and done.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        ----------</span>
 <span class="sd">        np.array, float, bool</span>
 <span class="sd">            state, reward, done</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recv_msg</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-        <span class="c1"># print(&quot;----------------------------&quot;)</span>
+        <span class="c1"># print("----------------------------")</span>
         <span class="c1"># print(msg)</span>
-        <span class="c1"># print(&quot;=&gt;&quot;)</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="c1"># print("=&gt;")</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-inf"</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">)</span>
         <span class="c1"># print(msg)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>  <span class="c1"># noqa: S307</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">]</span>
-        <span class="n">done</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;done&quot;</span><span class="p">]</span>
-        <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">]</span>
-        <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;done&quot;</span><span class="p">]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"reward"</span><span class="p">]</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"done"</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="s2">"reward"</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="s2">"done"</span><span class="p">]</span>
 
         <span class="n">state</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -540,7 +540,7 @@
                 <span class="n">state</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">feature</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">heuristic_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">heuristics</span><span class="p">)):</span>  <span class="c1"># process heuristic data</span>
             <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_heuristic_state_features</span><span class="p">:</span>
-                <span class="n">state</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">heuristic_id</span><span class="p">][</span><span class="n">feature</span><span class="p">])</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">heuristic_id</span><span class="p">][</span><span class="n">feature</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__norm_vals</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
@@ -564,7 +564,7 @@
 <div class="viewcode-block" id="FastDownwardEnv.step">
 <a class="viewcode-back" href="../../../source/benchmark_docs/fastdownward.html#dacbench.envs.fast_downward.FastDownwardEnv.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Environment step.</span>
+<span class="w">        </span><span class="sd">"""Environment step.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ---------</span>
@@ -575,7 +575,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        np.array, float, bool, bool, dict</span>
 <span class="sd">            state, reward, terminated, truncated, info</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step_</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span>
             <span class="nb">type</span><span class="p">(</span><span class="n">action</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span>
@@ -586,7 +586,7 @@
                 <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">action</span><span class="p">))</span>
                 <span class="k">raise</span> <span class="n">e</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">action</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">)])</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">action</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">)])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send_msg</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
@@ -597,8 +597,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">kill_connection</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_step</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span><span class="p">:</span>
-            <span class="n">info</span><span class="p">[</span><span class="s2">&quot;needs_reset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">send_msg</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;END&quot;</span><span class="p">))</span>
+            <span class="n">info</span><span class="p">[</span><span class="s2">"needs_reset"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_msg</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"END"</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">kill_connection</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="p">,</span> <span class="n">info</span></div>
 
@@ -606,7 +606,7 @@
 <div class="viewcode-block" id="FastDownwardEnv.reset">
 <a class="viewcode-back" href="../../../source/benchmark_docs/fastdownward.html#dacbench.envs.fast_downward.FastDownwardEnv.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset environment.</span>
+<span class="w">        </span><span class="sd">"""Reset environment.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        ----------</span>
@@ -614,7 +614,7 @@
 <span class="sd">            State after reset</span>
 <span class="sd">        dict</span>
 <span class="sd">            Meta-info</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -622,7 +622,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="p">:</span>  <span class="c1"># This means we interrupt FD before a plan was found</span>
             <span class="c1"># Inform FD about imminent shutdown of the connection</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">send_msg</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;END&quot;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_msg</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"END"</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -637,34 +637,34 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fd</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fd</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pddl&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".pddl"</span><span class="p">):</span>
             <span class="n">command</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s2">&quot;python3&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fd_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">"python3"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fd_path</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">domain_file</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">,</span>
-                <span class="s2">&quot;--search&quot;</span><span class="p">,</span>
+                <span class="s2">"--search"</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_argstring</span><span class="p">,</span>
             <span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">command</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s2">&quot;python3&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fd_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">"python3"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fd_path</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">,</span>
-                <span class="s2">&quot;--search&quot;</span><span class="p">,</span>
+                <span class="s2">"--search"</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_argstring</span><span class="p">,</span>
             <span class="p">]</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logpath_out</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logpath_err</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ferr</span><span class="p">:</span>
-            <span class="n">err_output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpath_err</span> <span class="o">==</span> <span class="s2">&quot;/dev/null&quot;</span> <span class="k">else</span> <span class="n">ferr</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logpath_out</span><span class="p">,</span> <span class="s2">"a+"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logpath_err</span><span class="p">,</span> <span class="s2">"a+"</span><span class="p">)</span> <span class="k">as</span> <span class="n">ferr</span><span class="p">:</span>
+            <span class="n">err_output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpath_err</span> <span class="o">==</span> <span class="s2">"/dev/null"</span> <span class="k">else</span> <span class="n">ferr</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fd</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">fout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">err_output</span><span class="p">)</span>
 
         <span class="c1"># write down port such that FD can potentially read where to connect to</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port_file_id</span><span class="p">:</span>
-            <span class="n">fp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;port_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_port_file_id</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">.txt&quot;</span>
+            <span class="n">fp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"port_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_port_file_id</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">.txt"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">fp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;port_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">.txt&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">portfh</span><span class="p">:</span>
+            <span class="n">fp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"port_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">.txt"</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">portfh</span><span class="p">:</span>
             <span class="n">portfh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">listen</span><span class="p">()</span>
@@ -672,12 +672,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">,</span> <span class="n">_address</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span>  <span class="c1"># noqa: B904</span>
-                <span class="s2">&quot;Fast downward subprocess not reachable (time out). &quot;</span>
-                <span class="s2">&quot;Possible solutions:</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot; (1) Did you run &#39;./dacbench/envs/rl-plan/fast-downward/build.py&#39; &quot;</span>
-                <span class="s2">&quot;in order to build the fd backend?</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot; (2) Try to fix this by setting OPENBLAS_NUM_THREADS=1. &quot;</span>
-                <span class="s2">&quot;For more details see https://github.com/automl/DACBench/issues/96&quot;</span>
+                <span class="s2">"Fast downward subprocess not reachable (time out). "</span>
+                <span class="s2">"Possible solutions:</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="s2">" (1) Did you run './dacbench/envs/rl-plan/fast-downward/build.py' "</span>
+                <span class="s2">"in order to build the fd backend?</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="s2">" (2) Try to fix this by setting OPENBLAS_NUM_THREADS=1. "</span>
+                <span class="s2">"For more details see https://github.com/automl/DACBench/issues/96"</span>
             <span class="p">)</span>
 
         <span class="n">s</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_data</span><span class="p">()</span>
@@ -698,7 +698,7 @@
 <div class="viewcode-block" id="FastDownwardEnv.kill_connection">
 <a class="viewcode-back" href="../../../source/benchmark_docs/fastdownward.html#dacbench.envs.fast_downward.FastDownwardEnv.kill_connection">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">kill_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Kill the connection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Kill the connection."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -712,16 +712,16 @@
 <div class="viewcode-block" id="FastDownwardEnv.close">
 <a class="viewcode-back" href="../../../source/benchmark_docs/fastdownward.html#dacbench.envs.fast_downward.FastDownwardEnv.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close Env.</span>
+<span class="w">        </span><span class="sd">"""Close Env.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            Closing confirmation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
-        <span class="n">fp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;port_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">.txt&quot;</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"port_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">.txt"</span>
         <span class="k">if</span> <span class="n">Path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fp</span><span class="p">):</span>
             <span class="n">Path</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
 
@@ -731,14 +731,14 @@
 
 <div class="viewcode-block" id="FastDownwardEnv.render">
 <a class="viewcode-back" href="../../../source/benchmark_docs/fastdownward.html#dacbench.envs.fast_downward.FastDownwardEnv.render">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;human&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Required by gym.Env but not implemented.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"human"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Required by gym.Env but not implemented.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        -------</span>
 <span class="sd">        mode : str</span>
 <span class="sd">            Rendering mode</span>
-<span class="sd">        &quot;&quot;&quot;</span></div>
+<span class="sd">        """</span></div>
 </div>
 
 </pre></div>

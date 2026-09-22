@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.wrappers.instance_sampling_wrapper &#8212; DACBench Documentation 0.5.1.dev1+g341f80dee documentation</title>
+    <title>dacbench.wrappers.instance_sampling_wrapper &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=08247575"></script>
+    <script src="../../../_static/documentation_options.js?v=e6c29603"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g341f80dee
+        v0.5.1.dev1+g23dcd4d9c
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g341f80dee</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g341f80dee</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.wrappers.instance_sampling_wrapper</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Wrapper for instance sampling.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Wrapper for instance sampling."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -276,14 +276,14 @@
 <div class="viewcode-block" id="InstanceSamplingWrapper">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.InstanceSamplingWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InstanceSamplingWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to sample a new instance at a given time point.</span>
+<span class="w">    </span><span class="sd">"""Wrapper to sample a new instance at a given time point.</span>
 
 <span class="sd">    Instances can either be sampled using a given method</span>
 <span class="sd">    or a distribution infered from a given list of instances.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">sampling_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reset_interval</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize wrapper.</span>
 
 <span class="sd">        Either sampling_function or instances must be given</span>
 
@@ -298,21 +298,21 @@
 <span class="sd">        reset_interval : int</span>
 <span class="sd">            additional episodes for which to keep an instance</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">sampling_function</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sampling_function</span> <span class="o">=</span> <span class="n">sampling_function</span>
         <span class="k">elif</span> <span class="n">instances</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sampling_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_dist</span><span class="p">(</span><span class="n">instances</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No distribution to sample from given&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"No distribution to sample from given"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_interval</span> <span class="o">=</span> <span class="n">reset_interval</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_tracker</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="InstanceSamplingWrapper.__setattr__">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.InstanceSamplingWrapper.__setattr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set attribute in wrapper if available and in env if not.</span>
+<span class="w">        </span><span class="sd">"""Set attribute in wrapper if available and in env if not.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -321,8 +321,8 @@
 <span class="sd">        value</span>
 <span class="sd">            Value to set attribute to</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;sampling_function&quot;</span><span class="p">,</span> <span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="s2">&quot;fit_dist&quot;</span><span class="p">,</span> <span class="s2">&quot;reset&quot;</span><span class="p">]:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"sampling_function"</span><span class="p">,</span> <span class="s2">"env"</span><span class="p">,</span> <span class="s2">"fit_dist"</span><span class="p">,</span> <span class="s2">"reset"</span><span class="p">]:</span>
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
@@ -331,7 +331,7 @@
 <div class="viewcode-block" id="InstanceSamplingWrapper.__getattribute__">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.InstanceSamplingWrapper.__getattribute__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get attribute value of wrapper if available and of env if not.</span>
+<span class="w">        </span><span class="sd">"""Get attribute value of wrapper if available and of env if not.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -343,8 +343,8 @@
 <span class="sd">        value</span>
 <span class="sd">            Value of given name</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;sampling_function&quot;</span><span class="p">,</span> <span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="s2">&quot;fit_dist&quot;</span><span class="p">,</span> <span class="s2">&quot;reset&quot;</span><span class="p">]:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"sampling_function"</span><span class="p">,</span> <span class="s2">"env"</span><span class="p">,</span> <span class="s2">"fit_dist"</span><span class="p">,</span> <span class="s2">"reset"</span><span class="p">]:</span>
             <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
@@ -353,14 +353,14 @@
 <div class="viewcode-block" id="InstanceSamplingWrapper.reset">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.InstanceSamplingWrapper.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset environment and use sampled instance for training.</span>
+<span class="w">        </span><span class="sd">"""Reset environment and use sampled instance for training.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        -------</span>
 <span class="sd">        np.array</span>
 <span class="sd">            state</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset_tracker</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset_interval</span><span class="p">:</span>
@@ -372,7 +372,7 @@
 <div class="viewcode-block" id="InstanceSamplingWrapper.fit_dist">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.InstanceSamplingWrapper.fit_dist">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instances</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Approximate instance distribution in given instance set.</span>
+<span class="w">        </span><span class="sd">"""Approximate instance distribution in given instance set.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -384,7 +384,7 @@
 <span class="sd">        method</span>
 <span class="sd">            sampling method for new instances</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">dists</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="n">component</span> <span class="o">=</span> <span class="p">[</span><span class="n">instances</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">]</span>

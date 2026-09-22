@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.wrappers.reward_noise_wrapper &#8212; DACBench Documentation 0.5.1.dev1+g341f80dee documentation</title>
+    <title>dacbench.wrappers.reward_noise_wrapper &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=08247575"></script>
+    <script src="../../../_static/documentation_options.js?v=e6c29603"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g341f80dee
+        v0.5.1.dev1+g23dcd4d9c
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g341f80dee</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g341f80dee</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.wrappers.reward_noise_wrapper</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Wrapper for reward noise.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Wrapper for reward noise."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -275,16 +275,16 @@
 <div class="viewcode-block" id="RewardNoiseWrapper">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.RewardNoiseWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RewardNoiseWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to add noise to the reward signal.</span>
+<span class="w">    </span><span class="sd">"""Wrapper to add noise to the reward signal.</span>
 
 <span class="sd">    Noise can be sampled from a custom distribution</span>
-<span class="sd">    or any distribution in numpy&#39;s random module.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    or any distribution in numpy's random module.</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">noise_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">noise_dist</span><span class="o">=</span><span class="s2">&quot;standard_normal&quot;</span><span class="p">,</span> <span class="n">dist_args</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">noise_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">noise_dist</span><span class="o">=</span><span class="s2">"standard_normal"</span><span class="p">,</span> <span class="n">dist_args</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize wrapper.</span>
 
 <span class="sd">        Either noise_function or noise_dist and dist_args need to be given</span>
 
@@ -299,7 +299,7 @@
 <span class="sd">        dist_args : list</span>
 <span class="sd">            Arguments for noise distribution</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">noise_function</span><span class="p">:</span>
@@ -307,12 +307,12 @@
         <span class="k">elif</span> <span class="n">noise_dist</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">noise_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_noise</span><span class="p">(</span><span class="n">noise_dist</span><span class="p">,</span> <span class="n">dist_args</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No distribution to sample noise from given&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"No distribution to sample noise from given"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RewardNoiseWrapper.__setattr__">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.RewardNoiseWrapper.__setattr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set attribute in wrapper if available and in env if not.</span>
+<span class="w">        </span><span class="sd">"""Set attribute in wrapper if available and in env if not.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -321,8 +321,8 @@
 <span class="sd">        value</span>
 <span class="sd">            Value to set attribute to</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;noise_function&quot;</span><span class="p">,</span> <span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="s2">&quot;add_noise&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">]:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"noise_function"</span><span class="p">,</span> <span class="s2">"env"</span><span class="p">,</span> <span class="s2">"add_noise"</span><span class="p">,</span> <span class="s2">"step"</span><span class="p">]:</span>
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
@@ -331,7 +331,7 @@
 <div class="viewcode-block" id="RewardNoiseWrapper.__getattribute__">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.RewardNoiseWrapper.__getattribute__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get attribute value of wrapper if available and of env if not.</span>
+<span class="w">        </span><span class="sd">"""Get attribute value of wrapper if available and of env if not.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -343,8 +343,8 @@
 <span class="sd">        value</span>
 <span class="sd">            Value of given name</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;noise_function&quot;</span><span class="p">,</span> <span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="s2">&quot;add_noise&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">]:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"noise_function"</span><span class="p">,</span> <span class="s2">"env"</span><span class="p">,</span> <span class="s2">"add_noise"</span><span class="p">,</span> <span class="s2">"step"</span><span class="p">]:</span>
             <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
@@ -353,7 +353,7 @@
 <div class="viewcode-block" id="RewardNoiseWrapper.step">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.RewardNoiseWrapper.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute environment step and add noise.</span>
+<span class="w">        </span><span class="sd">"""Execute environment step and add noise.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -365,7 +365,7 @@
 <span class="sd">        np.array, float, bool, bool, dict</span>
 <span class="sd">            state, reward, terminated, truncated, metainfo</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="n">reward</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_function</span><span class="p">()</span>
         <span class="n">reward</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reward</span><span class="p">))</span>
@@ -375,7 +375,7 @@
 <div class="viewcode-block" id="RewardNoiseWrapper.add_noise">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.RewardNoiseWrapper.add_noise">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_noise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make noise function from distribution name and arguments.</span>
+<span class="w">        </span><span class="sd">"""Make noise function from distribution name and arguments.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -389,7 +389,7 @@
 <span class="sd">        function</span>
 <span class="sd">            Noise sampling function</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
         <span class="n">function</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">dist</span><span class="p">)</span>
 
