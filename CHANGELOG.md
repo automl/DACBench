@@ -1,3 +1,16 @@
+# 0.5.5
+
+### Bug Fixes
+- `FunctionApproximationEnv`: target functions are now evaluated at the current
+  step (`c_step`) instead of the fixed episode cutoff (`n_steps`). Previously the
+  target stayed constant across all steps of an episode, degenerating the task
+  into a static prediction problem (making constant near-1.0 actions
+  near-optimal on the shipped sigmoid instance sets).
+
+### Documentation
+- DACBO: documented capping BLAS threads (numpy/scipy/SMAC) to avoid
+  oversubscription when running multiple DACBO environments in parallel.
+
 # 0.5.4
 
 ### Bug Fixes
