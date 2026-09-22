@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.envs.toysgd &#8212; DACBench Documentation 0.5.1.dev1+gcb6847954 documentation</title>
+    <title>dacbench.envs.toysgd &#8212; DACBench Documentation 0.5.1.dev1+ga2e8237cb documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=4c89913f"></script>
+    <script src="../../../_static/documentation_options.js?v=2c53c686"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+gcb6847954
+        v0.5.1.dev1+ga2e8237cb
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+gcb6847954</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+ga2e8237cb</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+gcb6847954</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+ga2e8237cb</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.envs.toysgd</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Environment for sgd with toy functions.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Environment for sgd with toy functions."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -283,7 +283,7 @@
 <a class="viewcode-back" href="../../../source/benchmark_docs/toy_sgd.html#dacbench.envs.toysgd.ToySGDInstance">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ToySGDInstance</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Toy SGD Instance.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Toy SGD Instance."""</span>
 
     <span class="n">function</span><span class="p">:</span> <span class="n">AbstractFunction</span></div>
 
@@ -292,7 +292,7 @@
 <div class="viewcode-block" id="ToySGDEnv">
 <a class="viewcode-back" href="../../../source/benchmark_docs/toy_sgd.html#dacbench.envs.toysgd.ToySGDEnv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ToySGDEnv</span><span class="p">(</span><span class="n">AbstractMADACEnv</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimize toy functions with SGD + Momentum.</span>
+<span class="w">    </span><span class="sd">"""Optimize toy functions with SGD + Momentum.</span>
 
 <span class="sd">    Action: [log_learning_rate, log_momentum] (log base 10)</span>
 <span class="sd">    State: Dict with entries remaining_budget, gradient, learning_rate, momentum</span>
@@ -306,14 +306,14 @@
 <span class="sd">    high                                                2</span>
 <span class="sd">    coefficients    [ 1.40501053 -0.59899755  1.43337392]</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init env.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Init env."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">"batch_size"</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">"batch_size"</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gradient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
@@ -325,15 +325,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_reward</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reward_function&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_reward</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_method&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_reward</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"reward_function"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_reward</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"state_method"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_state</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ToySGDEnv.step">
 <a class="viewcode-back" href="../../../source/benchmark_docs/toy_sgd.html#dacbench.envs.toysgd.ToySGDEnv.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Take one step with SGD.</span>
+<span class="w">        </span><span class="sd">"""Take one step with SGD.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -347,13 +347,13 @@
 
 <span class="sd">            - state : Dict[str, float]</span>
 <span class="sd">                State with entries:</span>
-<span class="sd">                &quot;remaining_budget&quot;, &quot;gradient&quot;, &quot;learning_rate&quot;, &quot;momentum&quot;</span>
+<span class="sd">                "remaining_budget", "gradient", "learning_rate", "momentum"</span>
 <span class="sd">            - reward : float</span>
 <span class="sd">            - terminated : bool</span>
 <span class="sd">            - truncated : bool</span>
 <span class="sd">            - info : Dict</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">truncated</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step_</span><span class="p">()</span>
         <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -384,7 +384,7 @@
 <div class="viewcode-block" id="ToySGDEnv.reset">
 <a class="viewcode-back" href="../../../source/benchmark_docs/toy_sgd.html#dacbench.envs.toysgd.ToySGDEnv.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset environment.</span>
+<span class="w">        </span><span class="sd">"""Reset environment.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -400,7 +400,7 @@
 <span class="sd">        dict</span>
 <span class="sd">            Meta-info</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -422,7 +422,7 @@
 <div class="viewcode-block" id="ToySGDEnv.get_default_reward">
 <a class="viewcode-back" href="../../../source/benchmark_docs/toy_sgd.html#dacbench.envs.toysgd.ToySGDEnv.get_default_reward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_default_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Default reward: negative log regret.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Default reward: negative log regret."""</span>
         <span class="n">log_regret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_function</span><span class="o">.</span><span class="n">fmin</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_cur</span><span class="p">))</span>
         <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">log_regret</span><span class="p">)</span></div>
 
@@ -430,21 +430,21 @@
 <div class="viewcode-block" id="ToySGDEnv.get_default_state">
 <a class="viewcode-back" href="../../../source/benchmark_docs/toy_sgd.html#dacbench.envs.toysgd.ToySGDEnv.get_default_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_default_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Default state: remaining_budget, gradient, learning_rate, momentum.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Default state: remaining_budget, gradient, learning_rate, momentum."""</span>
         <span class="c1"># TODO: add instance description?</span>
         <span class="n">remaining_budget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_step</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;remaining_budget&quot;</span><span class="p">:</span> <span class="n">remaining_budget</span><span class="p">,</span>
-            <span class="s2">&quot;gradient&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gradient</span><span class="p">,</span>
-            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">,</span>
-            <span class="s2">&quot;momentum&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">momentum</span><span class="p">,</span>
+            <span class="s2">"remaining_budget"</span><span class="p">:</span> <span class="n">remaining_budget</span><span class="p">,</span>
+            <span class="s2">"gradient"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gradient</span><span class="p">,</span>
+            <span class="s2">"learning_rate"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">,</span>
+            <span class="s2">"momentum"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">momentum</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="ToySGDEnv.render">
 <a class="viewcode-back" href="../../../source/benchmark_docs/toy_sgd.html#dacbench.envs.toysgd.ToySGDEnv.render">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render progress.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Render progress."""</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
         <span class="n">history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -452,32 +452,32 @@
         <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective_function</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"True"</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">history</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">objective_function</span><span class="p">(</span><span class="n">history</span><span class="p">),</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Observed&quot;</span><span class="p">,</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">"Observed"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">x_cur</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">objective_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_cur</span><span class="p">),</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Current Optimum&quot;</span><span class="p">,</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">"Current Optimum"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;instance: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">]))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"x"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"y"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"instance: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">[</span><span class="s2">"coefficients"</span><span class="p">]))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ToySGDEnv.close">
 <a class="viewcode-back" href="../../../source/benchmark_docs/toy_sgd.html#dacbench.envs.toysgd.ToySGDEnv.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close env.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">"""Close env."""</span></div>
 </div>
 
 </pre></div>

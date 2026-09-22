@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.wrappers.action_tracking_wrapper &#8212; DACBench Documentation 0.5.1.dev1+gcb6847954 documentation</title>
+    <title>dacbench.wrappers.action_tracking_wrapper &#8212; DACBench Documentation 0.5.1.dev1+ga2e8237cb documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=4c89913f"></script>
+    <script src="../../../_static/documentation_options.js?v=2c53c686"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+gcb6847954
+        v0.5.1.dev1+ga2e8237cb
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+gcb6847954</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+ga2e8237cb</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+gcb6847954</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+ga2e8237cb</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.wrappers.action_tracking_wrapper</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Wrapper for action frequency.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Wrapper for action frequency."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -274,21 +274,21 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Wrapper</span><span class="p">,</span> <span class="n">spaces</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.backends.backend_agg</span><span class="w"> </span><span class="kn">import</span> <span class="n">FigureCanvasAgg</span> <span class="k">as</span> <span class="n">FigureCanvas</span>
 
-<span class="n">sb</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+<span class="n">sb</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">"darkgrid"</span><span class="p">)</span>
 <span class="n">current_palette</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sb</span><span class="o">.</span><span class="n">color_palette</span><span class="p">())</span>
 
 
 <div class="viewcode-block" id="ActionFrequencyWrapper">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.ActionFrequencyWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ActionFrequencyWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to action frequency.</span>
+<span class="w">    </span><span class="sd">"""Wrapper to action frequency.</span>
 
 <span class="sd">    Includes interval mode that returns frequencies in lists of len(interval)</span>
 <span class="sd">    instead of one long list.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">action_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize wrapper.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -299,7 +299,7 @@
 <span class="sd">        logger: logger.ModuleLogger</span>
 <span class="sd">            logger to write to</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_interval</span> <span class="o">=</span> <span class="n">action_interval</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overall_actions</span> <span class="o">=</span> <span class="p">[]</span>
@@ -312,7 +312,7 @@
 <div class="viewcode-block" id="ActionFrequencyWrapper.__setattr__">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.ActionFrequencyWrapper.__setattr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set attribute in wrapper if available and in env if not.</span>
+<span class="w">        </span><span class="sd">"""Set attribute in wrapper if available and in env if not.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -321,17 +321,17 @@
 <span class="sd">        value</span>
 <span class="sd">            Value to set attribute to</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="s2">&quot;action_interval&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;overall_actions&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;action_intervals&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;current_actions&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;env&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;get_actions&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;step&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;render_action_tracking&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;logger&quot;</span><span class="p">,</span>
+            <span class="s2">"action_interval"</span><span class="p">,</span>
+            <span class="s2">"overall_actions"</span><span class="p">,</span>
+            <span class="s2">"action_intervals"</span><span class="p">,</span>
+            <span class="s2">"current_actions"</span><span class="p">,</span>
+            <span class="s2">"env"</span><span class="p">,</span>
+            <span class="s2">"get_actions"</span><span class="p">,</span>
+            <span class="s2">"step"</span><span class="p">,</span>
+            <span class="s2">"render_action_tracking"</span><span class="p">,</span>
+            <span class="s2">"logger"</span><span class="p">,</span>
         <span class="p">]:</span>
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -341,7 +341,7 @@
 <div class="viewcode-block" id="ActionFrequencyWrapper.__getattribute__">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.ActionFrequencyWrapper.__getattribute__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get attribute value of wrapper if available and of env if not.</span>
+<span class="w">        </span><span class="sd">"""Get attribute value of wrapper if available and of env if not.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -353,17 +353,17 @@
 <span class="sd">        value</span>
 <span class="sd">            Value of given name</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="s2">&quot;action_interval&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;overall_actions&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;action_intervals&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;current_actions&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;env&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;get_actions&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;step&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;render_action_tracking&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;logger&quot;</span><span class="p">,</span>
+            <span class="s2">"action_interval"</span><span class="p">,</span>
+            <span class="s2">"overall_actions"</span><span class="p">,</span>
+            <span class="s2">"action_intervals"</span><span class="p">,</span>
+            <span class="s2">"current_actions"</span><span class="p">,</span>
+            <span class="s2">"env"</span><span class="p">,</span>
+            <span class="s2">"get_actions"</span><span class="p">,</span>
+            <span class="s2">"step"</span><span class="p">,</span>
+            <span class="s2">"render_action_tracking"</span><span class="p">,</span>
+            <span class="s2">"logger"</span><span class="p">,</span>
         <span class="p">]:</span>
             <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
@@ -373,7 +373,7 @@
 <div class="viewcode-block" id="ActionFrequencyWrapper.step">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.ActionFrequencyWrapper.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute environment step and record state.</span>
+<span class="w">        </span><span class="sd">"""Execute environment step and record state.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -385,7 +385,7 @@
 <span class="sd">        np.array, float, bool, dict</span>
 <span class="sd">            state, reward, done, metainfo</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="n">log_action</span> <span class="o">=</span> <span class="n">action</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_action</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -396,7 +396,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">overall_actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">log_action</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log_space</span><span class="p">(</span><span class="s2">&quot;action&quot;</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log_space</span><span class="p">(</span><span class="s2">"action"</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_interval</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_actions</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_interval</span><span class="p">:</span>
@@ -410,14 +410,14 @@
 <div class="viewcode-block" id="ActionFrequencyWrapper.get_actions">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.ActionFrequencyWrapper.get_actions">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get state progression.</span>
+<span class="w">        </span><span class="sd">"""Get state progression.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        -------</span>
 <span class="sd">        np.array or np.array, np.array</span>
 <span class="sd">            all states or all states and interval sorted states</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_interval</span><span class="p">:</span>
             <span class="n">complete_intervals</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">action_intervals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_actions</span><span class="p">]</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">overall_actions</span><span class="p">,</span> <span class="n">complete_intervals</span>
@@ -428,26 +428,26 @@
 <div class="viewcode-block" id="ActionFrequencyWrapper.render_action_tracking">
 <a class="viewcode-back" href="../../../source/wrappers.html#dacbench.wrappers.ActionFrequencyWrapper.render_action_tracking">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render_action_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render action progression.</span>
+<span class="w">        </span><span class="sd">"""Render action progression.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">        -------</span>
 <span class="sd">        np.array</span>
 <span class="sd">            RBG data of action tracking</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">plot_single</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Step&quot;</span><span class="p">)</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Action value&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Step"</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Action value"</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">y</span><span class="p">:</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Action value&quot;</span><span class="p">)</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Step&quot;</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Action value"</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Step"</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">x</span><span class="p">:</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Step&quot;</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Step"</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">y</span><span class="p">:</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Action value&quot;</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Action value"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">state</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">overall_actions</span><span class="p">]</span>
@@ -458,15 +458,15 @@
                 <span class="n">p</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">overall_actions</span><span class="p">)),</span>
                     <span class="n">ys</span><span class="p">,</span>
-                    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Step actions&quot;</span><span class="p">,</span>
-                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">"Step actions"</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">"g"</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">p</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">overall_actions</span><span class="p">)),</span>
                     <span class="n">ys</span><span class="p">,</span>
-                    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Step actions&quot;</span><span class="p">,</span>
-                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">"Step actions"</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">"g"</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="n">p2</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_interval</span><span class="p">:</span>
@@ -480,18 +480,18 @@
                     <span class="n">p2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
                         <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_intervals</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_interval</span><span class="p">,</span>
                         <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">y_ints</span><span class="p">],</span>
-                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean interval action&quot;</span><span class="p">,</span>
-                        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">"Mean interval action"</span><span class="p">,</span>
+                        <span class="n">color</span><span class="o">=</span><span class="s2">"orange"</span><span class="p">,</span>
                     <span class="p">)</span>
-                    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">p2</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
                         <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_intervals</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_interval</span><span class="p">,</span>
                         <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">y_ints</span><span class="p">],</span>
-                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean interval action&quot;</span><span class="p">,</span>
-                        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">"Mean interval action"</span><span class="p">,</span>
+                        <span class="n">color</span><span class="o">=</span><span class="s2">"orange"</span><span class="p">,</span>
                     <span class="p">)</span>
-                    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">p2</span>
 
         <span class="n">action_size_border</span> <span class="o">=</span> <span class="mi">5</span>
@@ -525,7 +525,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">dim</span> <span class="o">=</span> <span class="n">action_size</span> <span class="o">%</span> <span class="mi">4</span>
                 <span class="n">figure</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">action_size</span> <span class="o">%</span> <span class="mi">4</span><span class="p">,</span> <span class="n">action_size</span> <span class="o">//</span> <span class="n">dim</span><span class="p">)</span>
-            <span class="n">figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;State over time&quot;</span><span class="p">)</span>
+            <span class="n">figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"State over time"</span><span class="p">)</span>
             <span class="n">canvas</span> <span class="o">=</span> <span class="n">FigureCanvas</span><span class="p">(</span><span class="n">figure</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">action_size</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">action_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -541,7 +541,7 @@
                     <span class="n">_p</span><span class="p">,</span> <span class="n">_p2</span> <span class="o">=</span> <span class="n">plot_single</span><span class="p">(</span><span class="n">axarr</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">dim</span><span class="p">,</span> <span class="n">i</span> <span class="o">//</span> <span class="n">dim</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
             <span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">figure</span><span class="o">.</span><span class="n">get_size_inches</span><span class="p">()</span> <span class="o">*</span> <span class="n">figure</span><span class="o">.</span><span class="n">get_dpi</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">buffer_rgba</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">buffer_rgba</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"uint8"</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
             <span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">),</span> <span class="mi">4</span>
         <span class="p">)[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span></div>
 </div>

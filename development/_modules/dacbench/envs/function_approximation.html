@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.envs.function_approximation &#8212; DACBench Documentation 0.5.1.dev1+gcb6847954 documentation</title>
+    <title>dacbench.envs.function_approximation &#8212; DACBench Documentation 0.5.1.dev1+ga2e8237cb documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=4c89913f"></script>
+    <script src="../../../_static/documentation_options.js?v=2c53c686"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+gcb6847954
+        v0.5.1.dev1+ga2e8237cb
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+gcb6847954</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+ga2e8237cb</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+gcb6847954</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+ga2e8237cb</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.envs.function_approximation</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Function Approximation Environment.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Function Approximation Environment."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -283,7 +283,7 @@
 <a class="viewcode-back" href="../../../source/benchmark_docs/function_approximation.html#dacbench.envs.function_approximation.FunctionApproximationInstance">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FunctionApproximationInstance</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function Approximation Instance.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Function Approximation Instance."""</span>
 
     <span class="n">functions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AbstractFunction</span><span class="p">]</span>
     <span class="n">dimension_importances</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
@@ -295,19 +295,19 @@
 <div class="viewcode-block" id="FunctionApproximationEnv">
 <a class="viewcode-back" href="../../../source/benchmark_docs/function_approximation.html#dacbench.envs.function_approximation.FunctionApproximationEnv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FunctionApproximationEnv</span><span class="p">(</span><span class="n">AbstractMADACEnv</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function Approximation Environment.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Function Approximation Environment."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize Function Approximation Environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Initialize Function Approximation Environment."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_reward</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reward_function&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_reward</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_method&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_reward</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"reward_function"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_reward</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"state_method"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_state</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FunctionApproximationEnv.reset">
 <a class="viewcode-back" href="../../../source/benchmark_docs/function_approximation.html#dacbench.envs.function_approximation.FunctionApproximationEnv.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Reset environment."""</span>
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -321,7 +321,7 @@
 <div class="viewcode-block" id="FunctionApproximationEnv.step">
 <a class="viewcode-back" href="../../../source/benchmark_docs/function_approximation.html#dacbench.envs.function_approximation.FunctionApproximationEnv.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Step function: check how close the action is to the target.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Step function: check how close the action is to the target."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step_</span><span class="p">()</span>
         <span class="c1"># apply action per dimension</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">distances</span> <span class="o">=</span> <span class="p">[]</span>
@@ -329,7 +329,7 @@
             <span class="n">action</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">action_items</span><span class="p">):</span>
-            <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">functions</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span><span class="p">)</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">functions</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">c_step</span><span class="p">)</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">a</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">discrete</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">discrete</span><span class="p">[</span><span class="n">i</span><span class="p">])[</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)]</span>
@@ -350,8 +350,8 @@
             <span class="kc">False</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="p">,</span>
             <span class="p">{</span>
-                <span class="s2">&quot;raw_distances&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distances</span><span class="p">,</span>
-                <span class="s2">&quot;weighted_distances&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weighted_distances</span><span class="p">,</span>
+                <span class="s2">"raw_distances"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distances</span><span class="p">,</span>
+                <span class="s2">"weighted_distances"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weighted_distances</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span></div>
 
@@ -359,7 +359,7 @@
 <div class="viewcode-block" id="FunctionApproximationEnv.get_default_reward">
 <a class="viewcode-back" href="../../../source/benchmark_docs/function_approximation.html#dacbench.envs.function_approximation.FunctionApproximationEnv.get_default_reward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_default_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get default reward: muliply dimensions.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get default reward: muliply dimensions."""</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weighted_distances</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">r</span><span class="p">))</span></div>
 
@@ -367,7 +367,7 @@
 <div class="viewcode-block" id="FunctionApproximationEnv.get_sum_reward">
 <a class="viewcode-back" href="../../../source/benchmark_docs/function_approximation.html#dacbench.envs.function_approximation.FunctionApproximationEnv.get_sum_reward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_sum_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get sum reward.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get sum reward."""</span>
         <span class="n">r</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weighted_distances</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">r</span><span class="p">))</span></div>
 
@@ -375,7 +375,7 @@
 <div class="viewcode-block" id="FunctionApproximationEnv.get_default_state">
 <a class="viewcode-back" href="../../../source/benchmark_docs/function_approximation.html#dacbench.envs.function_approximation.FunctionApproximationEnv.get_default_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_default_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get default state representation.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get default state representation."""</span>
         <span class="n">remaining_budget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_step</span>
         <span class="n">next_state</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">remaining_budget</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">functions</span><span class="p">:</span>
@@ -393,7 +393,7 @@
 <div class="viewcode-block" id="FunctionApproximationEnv.close">
 <a class="viewcode-back" href="../../../source/benchmark_docs/function_approximation.html#dacbench.envs.function_approximation.FunctionApproximationEnv.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Close environment."""</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance_set</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 </div>

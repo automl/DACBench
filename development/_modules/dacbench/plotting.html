@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.plotting &#8212; DACBench Documentation 0.5.1.dev1+gcb6847954 documentation</title>
+    <title>dacbench.plotting &#8212; DACBench Documentation 0.5.1.dev1+ga2e8237cb documentation</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet">
   <link href="../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../_static/documentation_options.js?v=4c89913f"></script>
+    <script src="../../_static/documentation_options.js?v=2c53c686"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+gcb6847954
+        v0.5.1.dev1+ga2e8237cb
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+gcb6847954</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+ga2e8237cb</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+gcb6847954</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+ga2e8237cb</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -264,7 +264,7 @@
               <div>
                 
   <h1>Source code for dacbench.plotting</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Plotting helper.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Plotting helper."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -272,13 +272,13 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
-<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">"darkgrid"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="space_sep_upper">
 <a class="viewcode-back" href="../../source/plotting.html#dacbench.plotting.space_sep_upper">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">space_sep_upper</span><span class="p">(</span><span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Separates strings at underscores into headings.</span>
+<span class="w">    </span><span class="sd">"""Separates strings at underscores into headings.</span>
 <span class="sd">    Used to generate labels from logging names.</span>
 
 <span class="sd">    Parameters</span>
@@ -290,10 +290,10 @@
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">return</span> <span class="n">column_name</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">column_name</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)</span></div>
 
 
 
@@ -301,10 +301,10 @@
 <a class="viewcode-back" href="../../source/plotting.html#dacbench.plotting.generate_global_step">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_global_step</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-    <span class="n">x_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;global_step&quot;</span><span class="p">,</span>
-    <span class="n">x_label_columns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">],</span>
+    <span class="n">x_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"global_step"</span><span class="p">,</span>
+    <span class="n">x_label_columns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"episode"</span><span class="p">,</span> <span class="s2">"step"</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a global_step column which enumerate all step over all episodes.</span>
+<span class="w">    </span><span class="sd">"""Add a global_step column which enumerate all step over all episodes.</span>
 
 <span class="sd">    Returns the altered data, a data frame containing mapping between global_step,</span>
 <span class="sd">    x_column and x_label_columns.</span>
@@ -316,15 +316,15 @@
 <span class="sd">    data: pd.DataFrame</span>
 <span class="sd">        data source</span>
 <span class="sd">    x_column: str</span>
-<span class="sd">        the name of the global_step (default &#39;global_step&#39;)</span>
+<span class="sd">        the name of the global_step (default 'global_step')</span>
 <span class="sd">    x_label_columns: [str, ...]</span>
-<span class="sd">        the name and hierarchical order of the columns (default [&#39;episode&#39;, &#39;step&#39;]</span>
+<span class="sd">        the name and hierarchical order of the columns (default ['episode', 'step']</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">    -------</span>
 <span class="sd">    (data, plot_index, x_column, x_label_columns)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">plot_index</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">x_label_columns</span><span class="p">)</span>
         <span class="o">.</span><span class="n">count</span><span class="p">()</span>
@@ -343,13 +343,13 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">add_multi_level_ticks</span><span class="p">(</span>
     <span class="n">grid</span><span class="p">:</span> <span class="n">sns</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">,</span> <span class="n">plot_index</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">x_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">x_label_columns</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expects a FacedGrid with global_step (x_column) as x-axis</span>
+<span class="w">    </span><span class="sd">"""Expects a FacedGrid with global_step (x_column) as x-axis</span>
 <span class="sd">    and replaces the tick labels to match format episode:step.</span>
 
 <span class="sd">    E.g. Run with 3 episodes, each of 10 steps. This results in 30 global steps.</span>
-<span class="sd">    The resulting tick labels could be [&#39;0&#39;, &#39;4&#39;, &#39;9&#39;, &#39;14&#39;, &#39;19&#39;, &#39;24&#39;, &#39;29&#39;].</span>
+<span class="sd">    The resulting tick labels could be ['0', '4', '9', '14', '19', '24', '29'].</span>
 <span class="sd">    After applying this method they will look like</span>
-<span class="sd">    [&#39;0:0&#39;, &#39;0:4&#39;, &#39;1:0&#39;, &#39;1:4&#39;, &#39;2:0&#39;, &#39;2:4&#39;, &#39;3:0&#39;, &#39;3:4&#39;]</span>
+<span class="sd">    ['0:0', '0:4', '1:0', '1:4', '2:0', '2:4', '3:0', '3:4']</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -357,13 +357,13 @@
 <span class="sd">        The grid to plot onto</span>
 <span class="sd">    plot_index: pd.DataFrame</span>
 <span class="sd">        The mapping between current tick labels (global step values) and new tick labels</span>
-<span class="sd">        joined by &#39;:&#39;. Usually the result from generate_global_step</span>
+<span class="sd">        joined by ':'. Usually the result from generate_global_step</span>
 <span class="sd">    x_column: str</span>
 <span class="sd">        column label to use for looking up tick values</span>
 <span class="sd">    x_label_columns: [str, ...]</span>
-<span class="sd">        columns labels of columns to use for new labels (joined by &#39;:&#39;</span>
+<span class="sd">        columns labels of columns to use for new labels (joined by ':'</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
         <span class="n">ticks</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xticks</span><span class="p">()</span>
         <span class="n">sub_set</span> <span class="o">=</span> <span class="n">plot_index</span><span class="p">[</span><span class="n">plot_index</span><span class="p">[</span><span class="n">x_column</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">ticks</span><span class="p">)]</span>
@@ -376,7 +376,7 @@
             <span class="k">for</span> <span class="n">tick</span> <span class="ow">in</span> <span class="n">ticks</span>
         <span class="p">)</span>
         <span class="n">new_labels</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">epoch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">new_labels</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">epoch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">""</span> <span class="k">for</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">new_labels</span>
         <span class="p">]</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">new_labels</span><span class="p">,</span> <span class="n">minor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
@@ -392,7 +392,7 @@
     <span class="n">y_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sns</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function that creates a FacetGrid.</span>
+<span class="w">    </span><span class="sd">"""Helper function that creates a FacetGrid.</span>
 
 <span class="sd">    1. Updates settings with kwargs (overwrites values)</span>
 <span class="sd">    2. Plots using plot_function(**settings)</span>
@@ -420,7 +420,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    sns.FacedGrid</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">settings</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>  <span class="c1"># 1.</span>
     <span class="n">grid</span> <span class="o">=</span> <span class="n">plot_function</span><span class="p">(</span><span class="o">**</span><span class="n">settings</span><span class="p">)</span>  <span class="c1"># 2.</span>
 
@@ -445,11 +445,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_performance</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sns</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a line plot of the performance over episodes.</span>
+<span class="w">    </span><span class="sd">"""Create a line plot of the performance over episodes.</span>
 
 <span class="sd">    Per default the mean performance and and one stddev over all</span>
 <span class="sd">    instances and seeds is shown if you want to change this specify a property</span>
-<span class="sd">    to map those attributes to e.g hue=&#39;seed&#39; or/and col=&#39;instance&#39;.</span>
+<span class="sd">    to map those attributes to e.g hue='seed' or/and col='instance'.</span>
 <span class="sd">    For more details see: https://seaborn.pydata.org/generated/seaborn.relplot.html</span>
 
 <span class="sd">    For examples refer to examples/plotting/performance_plotting.py</span>
@@ -472,12 +472,12 @@
 <span class="sd">    -------</span>
 <span class="sd">    sns.FacedGrid</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
-        <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;episode&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;overall_performance&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span>
+        <span class="s2">"data"</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="s2">"episode"</span><span class="p">,</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="s2">"overall_performance"</span><span class="p">,</span>
+        <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"line"</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">plot</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">relplot</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">x_label</span><span class="p">,</span> <span class="n">y_label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -488,10 +488,10 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_performance_per_instance</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sns</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create bar plot of the mean performance per instance ordered by the performance.</span>
+<span class="w">    </span><span class="sd">"""Create bar plot of the mean performance per instance ordered by the performance.</span>
 
 <span class="sd">    Per default the mean performance seeds is shown if you want to change</span>
-<span class="sd">    this specify a property to map seed to e.g. col=&#39;seed&#39;.</span>
+<span class="sd">    this specify a property to map seed to e.g. col='seed'.</span>
 <span class="sd">    For more details see: https://seaborn.pydata.org/generated/seaborn.catplot.html</span>
 
 <span class="sd">    For examples refer to examples/plotting/performance_plotting.py</span>
@@ -514,19 +514,19 @@
 <span class="sd">    -------</span>
 <span class="sd">    sns.FacedGrid</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># order the columns by mean instance</span>
-    <span class="n">order</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;instance&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;overall_performance&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"instance"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"overall_performance"</span><span class="p">)</span><span class="o">.</span><span class="n">index</span>
     <span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
-        <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;instance&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;overall_performance&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="n">order</span><span class="p">,</span>
-        <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span><span class="p">,</span>
+        <span class="s2">"data"</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="s2">"instance"</span><span class="p">,</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="s2">"overall_performance"</span><span class="p">,</span>
+        <span class="s2">"order"</span><span class="p">:</span> <span class="n">order</span><span class="p">,</span>
+        <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"bar"</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">grid</span> <span class="o">=</span> <span class="n">plot</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">catplot</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">x_label</span><span class="p">,</span> <span class="n">y_label</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
     <span class="c1"># todo: should probably not always be set like this (multi row/col)</span>
-    <span class="n">grid</span><span class="o">.</span><span class="n">set_titles</span><span class="p">(</span><span class="s2">&quot;Mean Performance per Instance&quot;</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">set_titles</span><span class="p">(</span><span class="s2">"Mean Performance per Instance"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">grid</span></div>
 
 
@@ -542,11 +542,11 @@
     <span class="n">y_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">args</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sns</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a line plot showing the measured time per step.</span>
+<span class="w">    </span><span class="sd">"""Create a line plot showing the measured time per step.</span>
 
 <span class="sd">    Per default the mean performance and and one stddev over all instances</span>
 <span class="sd">    and seeds is shown if you want to change this specify a property to map</span>
-<span class="sd">    those attributes to e.g hue=&#39;seed&#39; or/and col=&#39;instance&#39;.</span>
+<span class="sd">    those attributes to e.g hue='seed' or/and col='instance'.</span>
 <span class="sd">    For more details see: https://seaborn.pydata.org/generated/seaborn.relplot.html</span>
 
 <span class="sd">    For examples refer to examples/plotting/time_plotting.py</span>
@@ -574,21 +574,21 @@
 <span class="sd">    -------</span>
 <span class="sd">    sns.FacedGrid</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">multi_level_x_label</span> <span class="o">=</span> <span class="s2">&quot;Epoch:Step&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">multi_level_x_label</span> <span class="o">=</span> <span class="s2">"Epoch:Step"</span>
     <span class="n">data</span><span class="p">,</span> <span class="n">plot_index</span><span class="p">,</span> <span class="n">x_column</span><span class="p">,</span> <span class="n">x_label_columns</span> <span class="o">=</span> <span class="n">generate_global_step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">interval</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">x_column</span><span class="p">]</span> <span class="o">//</span> <span class="n">interval</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;groups&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="n">x_column</span><span class="p">:</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;step_duration&quot;</span><span class="p">:</span> <span class="s2">&quot;mean&quot;</span><span class="p">})</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"groups"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">x_column</span><span class="p">]</span> <span class="o">//</span> <span class="n">interval</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"groups"</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="n">x_column</span><span class="p">:</span> <span class="s2">"min"</span><span class="p">,</span> <span class="s2">"step_duration"</span><span class="p">:</span> <span class="s2">"mean"</span><span class="p">})</span>
         <span class="n">y_label</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Mean per duration per </span><span class="si">{</span><span class="n">interval</span><span class="si">}</span><span class="s2"> steps&quot;</span> <span class="k">if</span> <span class="n">y_label</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y_label</span>
+            <span class="sa">f</span><span class="s2">"Mean per duration per </span><span class="si">{</span><span class="n">interval</span><span class="si">}</span><span class="s2"> steps"</span> <span class="k">if</span> <span class="n">y_label</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y_label</span>
         <span class="p">)</span>
 
     <span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
-        <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">x_column</span><span class="p">,</span>
-        <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;step_duration&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span>
+        <span class="s2">"data"</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="n">x_column</span><span class="p">,</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="s2">"step_duration"</span><span class="p">,</span>
+        <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"line"</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">if</span> <span class="n">x_label</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">show_global_step</span><span class="p">:</span>
         <span class="n">x_label</span> <span class="o">=</span> <span class="n">multi_level_x_label</span>
@@ -606,11 +606,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_episode_time</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sns</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a line plot showing the measured time per episode.</span>
+<span class="w">    </span><span class="sd">"""Create a line plot showing the measured time per episode.</span>
 
 <span class="sd">    Per default the mean performance and and one stddev over all instances</span>
 <span class="sd">    and seeds is shown if you want to change this specify a property to map</span>
-<span class="sd">    those attributes to e.g hue=&#39;seed&#39; or/and col=&#39;instance&#39;.</span>
+<span class="sd">    those attributes to e.g hue='seed' or/and col='instance'.</span>
 <span class="sd">    For more details see: https://seaborn.pydata.org/generated/seaborn.relplot.html</span>
 
 <span class="sd">    For examples refer to examples/plotting/time_plotting.py</span>
@@ -633,12 +633,12 @@
 <span class="sd">    -------</span>
 <span class="sd">    sns.FacedGrid</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
-        <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;episode&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;episode_duration&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span>
+        <span class="s2">"data"</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="s2">"episode"</span><span class="p">,</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="s2">"episode_duration"</span><span class="p">,</span>
+        <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"line"</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">return</span> <span class="n">plot</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">relplot</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">x_label</span><span class="p">,</span> <span class="n">y_label</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
@@ -656,7 +656,7 @@
     <span class="n">y_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a line plot showing actions over time.</span>
+<span class="w">    </span><span class="sd">"""Create a line plot showing actions over time.</span>
 
 <span class="sd">    Please be aware that spaces can be quite large and the plots can become quite messy</span>
 <span class="sd">    (and take some time) if you try plot all dimensions at once.</span>
@@ -665,7 +665,7 @@
 
 <span class="sd">    Per default the mean performance and and one stddev over all instances</span>
 <span class="sd">    and seeds is shown if you want to change this specify a property to map those</span>
-<span class="sd">    attributes to e.g hue=&#39;seed&#39; or/and col=&#39;instance&#39;.</span>
+<span class="sd">    attributes to e.g hue='seed' or/and col='instance'.</span>
 <span class="sd">    For more details see: https://seaborn.pydata.org/generated/seaborn.relplot.html</span>
 
 <span class="sd">    For examples refer to examples/plotting/action_plotting.py</span>
@@ -693,9 +693,9 @@
 <span class="sd">    -------</span>
 <span class="sd">    sns.FacedGrid</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">plot_space</span><span class="p">(</span>
-        <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">,</span> <span class="n">show_global_step</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">x_label</span><span class="p">,</span> <span class="n">y_label</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span>
+        <span class="n">data</span><span class="p">,</span> <span class="s2">"action"</span><span class="p">,</span> <span class="n">show_global_step</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">x_label</span><span class="p">,</span> <span class="n">y_label</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span>
     <span class="p">)</span></div>
 
 
@@ -711,7 +711,7 @@
     <span class="n">y_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a line plot showing state over time.</span>
+<span class="w">    </span><span class="sd">"""Create a line plot showing state over time.</span>
 
 <span class="sd">    -----</span>
 <span class="sd">    Create a line plot showing space over time.</span>
@@ -723,7 +723,7 @@
 
 <span class="sd">    Per default the mean performance and and one stddev over all instances</span>
 <span class="sd">    and seeds is shown if you want to change this specify a property to map those</span>
-<span class="sd">    attributes to e.g hue=&#39;seed&#39; or/and col=&#39;instance&#39;.</span>
+<span class="sd">    attributes to e.g hue='seed' or/and col='instance'.</span>
 <span class="sd">    For more details see: https://seaborn.pydata.org/generated/seaborn.relplot.html</span>
 
 <span class="sd">    For examples refer to examples/plotting/state_plotting.py</span>
@@ -751,9 +751,9 @@
 <span class="sd">    -------</span>
 <span class="sd">    sns.FacedGrid</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">plot_space</span><span class="p">(</span>
-        <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="n">show_global_step</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">x_label</span><span class="p">,</span> <span class="n">y_label</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span>
+        <span class="n">data</span><span class="p">,</span> <span class="s2">"state"</span><span class="p">,</span> <span class="n">show_global_step</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">x_label</span><span class="p">,</span> <span class="n">y_label</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span>
     <span class="p">)</span></div>
 
 
@@ -770,7 +770,7 @@
     <span class="n">y_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">args</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sns</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a line plot showing space over time.</span>
+<span class="w">    </span><span class="sd">"""Create a line plot showing space over time.</span>
 
 <span class="sd">    Please be aware that spaces can be quite large and the plots can become quite messy</span>
 <span class="sd">    (and take some time) if you try plot all dimensions at once.</span>
@@ -779,7 +779,7 @@
 
 <span class="sd">    Per default the mean performance and and one stddev over all instances</span>
 <span class="sd">    and seeds is shown if you want to change this specify a property to map those</span>
-<span class="sd">    attributes to e.g hue=&#39;seed&#39; or/and col=&#39;instance&#39;.</span>
+<span class="sd">    attributes to e.g hue='seed' or/and col='instance'.</span>
 <span class="sd">    For more details see: https://seaborn.pydata.org/generated/seaborn.relplot.html</span>
 
 <span class="sd">    For examples refer to</span>
@@ -812,7 +812,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    sns.FacedGrid</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># first find columns with prefix space_column_name</span>
     <span class="n">space_entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
         <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">space_column_name</span><span class="p">),</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
@@ -826,11 +826,11 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">wide_to_long</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span>
             <span class="n">stubnames</span><span class="o">=</span><span class="p">[</span><span class="n">space_column_name</span><span class="p">],</span>
-            <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">,</span>
-            <span class="n">i</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="s2">&quot;instance&quot;</span><span class="p">]</span>
-            <span class="o">+</span> <span class="p">([</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;seed&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="k">else</span> <span class="p">[]),</span>
-            <span class="n">j</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.*&quot;</span><span class="p">,</span>
+            <span class="n">sep</span><span class="o">=</span><span class="s2">"_"</span><span class="p">,</span>
+            <span class="n">i</span><span class="o">=</span><span class="p">[</span><span class="s2">"episode"</span><span class="p">,</span> <span class="s2">"step"</span><span class="p">,</span> <span class="s2">"instance"</span><span class="p">]</span>
+            <span class="o">+</span> <span class="p">([</span><span class="s2">"seed"</span><span class="p">]</span> <span class="k">if</span> <span class="s2">"seed"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="k">else</span> <span class="p">[]),</span>
+            <span class="n">j</span><span class="o">=</span><span class="s2">"i"</span><span class="p">,</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="s2">".*"</span><span class="p">,</span>
         <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">number_of_space_entries</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">space_column_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
         <span class="c1"># Of there is only one dimension but the name is odd</span>
@@ -840,37 +840,37 @@
 
     <span class="c1"># perform averaging over intervals</span>
     <span class="k">if</span> <span class="n">interval</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;interval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">x_column</span><span class="p">]</span> <span class="o">//</span> <span class="n">interval</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"interval"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">x_column</span><span class="p">]</span> <span class="o">//</span> <span class="n">interval</span>
         <span class="n">group_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="o">*</span><span class="n">x_label_columns</span><span class="p">,</span> <span class="n">x_column</span><span class="p">,</span> <span class="n">space_column_name</span><span class="p">])</span>
         <span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group_columns</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
-            <span class="p">{</span><span class="n">x_column</span><span class="p">:</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="n">space_column_name</span><span class="p">:</span> <span class="s2">&quot;mean&quot;</span><span class="p">}</span>
+            <span class="p">{</span><span class="n">x_column</span><span class="p">:</span> <span class="s2">"min"</span><span class="p">,</span> <span class="n">space_column_name</span><span class="p">:</span> <span class="s2">"mean"</span><span class="p">}</span>
         <span class="p">)</span>
         <span class="n">y_label</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Mean </span><span class="si">{</span><span class="n">y_label_name</span><span class="si">}</span><span class="s2"> per </span><span class="si">{</span><span class="n">interval</span><span class="si">}</span><span class="s2"> steps&quot;</span> <span class="k">if</span> <span class="n">y_label</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y_label</span>
+            <span class="sa">f</span><span class="s2">"Mean </span><span class="si">{</span><span class="n">y_label_name</span><span class="si">}</span><span class="s2"> per </span><span class="si">{</span><span class="n">interval</span><span class="si">}</span><span class="s2"> steps"</span> <span class="k">if</span> <span class="n">y_label</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y_label</span>
         <span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
     <span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
-        <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">x_column</span><span class="p">,</span>
-        <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">space_column_name</span><span class="p">,</span>
-        <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span>
+        <span class="s2">"data"</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="n">x_column</span><span class="p">,</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="n">space_column_name</span><span class="p">,</span>
+        <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"line"</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="c1"># we want the different dims in different plots / columns</span>
     <span class="c1"># todo: refactor</span>
     <span class="k">if</span> <span class="n">number_of_space_entries</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;col&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;i&quot;</span>
+        <span class="n">settings</span><span class="p">[</span><span class="s2">"col"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"i"</span>
     <span class="k">if</span> <span class="n">number_of_space_entries</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;col_wrap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">settings</span><span class="p">[</span><span class="s2">"col_wrap"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
 
-    <span class="k">if</span> <span class="s2">&quot;instance&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;hue&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;instance&quot;</span>
+    <span class="k">if</span> <span class="s2">"instance"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">settings</span><span class="p">[</span><span class="s2">"hue"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"instance"</span>
 
     <span class="k">if</span> <span class="n">x_label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">x_label</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">show_global_step</span> <span class="k">else</span> <span class="s2">&quot;Epoch:Step&quot;</span>
+        <span class="n">x_label</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">show_global_step</span> <span class="k">else</span> <span class="s2">"Epoch:Step"</span>
 
     <span class="k">if</span> <span class="n">y_label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">y_label</span> <span class="o">=</span> <span class="n">y_label_name</span>
