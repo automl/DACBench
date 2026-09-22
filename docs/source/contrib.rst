@@ -41,7 +41,7 @@ For tests and test coverage:
         pytest --cov=dacbench --cov-report html tests
 
 3. If you install the 'dev' extras of DACBench, you should have flake8 and the code formatting tool black setup in a pre-commit hook. Both ensure consistent code quality, so ensure that the format is correct.
-4. If you make larger changes to the docs, please build them locally using Sphinx. If you're not familiar with the tool, you can find a guide here: https://docs.readthedocs.io/en/stable/intro/getting-started-with-sphinx.html
+4. If you make larger changes to the docs, please build them locally using Sphinx. If you're not familiar with the tool, you can find a guide here: https://docs.readthedocs.com/platform/stable/intro/sphinx.html
 
 Adding a Benchmark
 ############################
