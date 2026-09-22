@@ -52,4 +52,8 @@ options = {
 }
 autodoc_mock_imports = ["smac", "omegaconf"]
 
+# StackOverflow blocks non-browser clients (403), causing false positives
+# in CI even though the links resolve fine in a browser.
+linkcheck_ignore = [r"https://stackoverflow\.com/"]
+
 automl_sphinx_theme.set_options(globals(), options)
