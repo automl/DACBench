@@ -51,7 +51,7 @@ class FunctionApproximationEnv(AbstractMADACEnv):
         self.distances = []
         action_items = action.values() if isinstance(action, dict) else action
         for i, a in enumerate(action_items):
-            target = self.functions[i](self.n_steps)
+            target = self.functions[i](self.c_step)
             value = a
             if self.discrete[i]:
                 value = np.linspace(0, 1, self.discrete[i])[int(a)]
