@@ -80,14 +80,19 @@ class FunctionApproximationEnv(AbstractMADACEnv):
         )
 
     def get_default_reward(self, _):
-        """Get default reward: muliply dimensions."""
-        r = np.prod(self.weighted_distances)
-        return max(self.reward_range[0], min(self.reward_range[1], r))
+        """Get default reward: rescaled mean per-dimension similarity.
 
-    def get_sum_reward(self, _):
-        """Get sum reward."""
-        r = -np.sum(self.weighted_distances)
-        return max(self.reward_range[0], min(self.reward_range[1], r))
+        Each dimension's weighted distance is squashed to a similarity in
+        (0, 1] via exp(-distance), so a perfect match yields 1 and larger
+        distances approach 0, regardless of the underlying value range.
+        The similarities are averaged (not multiplied) so that a perfect
+        match on one dimension does not mask error on the others, then
+        rescaled into `reward_range`.
+        """
+        similarities = np.exp(-self.weighted_distances)
+        r = np.mean(similarities)
+        lo, hi = self.reward_range
+        return lo + (hi - lo) * r
 
     def get_default_state(self, _):
         """Get default state representation."""
