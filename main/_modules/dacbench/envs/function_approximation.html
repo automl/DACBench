@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.envs.function_approximation &#8212; DACBench Documentation 0.5.1.dev1+g23dcd4d9c documentation</title>
+    <title>dacbench.envs.function_approximation &#8212; DACBench Documentation 0.5.1.dev1+g90898823d documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=e6c29603"></script>
+    <script src="../../../_static/documentation_options.js?v=23477dda"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g23dcd4d9c
+        v0.5.1.dev1+g90898823d
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g23dcd4d9c</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g90898823d</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g23dcd4d9c</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g90898823d</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -359,17 +359,19 @@
 <div class="viewcode-block" id="FunctionApproximationEnv.get_default_reward">
 <a class="viewcode-back" href="../../../source/benchmark_docs/function_approximation.html#dacbench.envs.function_approximation.FunctionApproximationEnv.get_default_reward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_default_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Get default reward: muliply dimensions."""</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weighted_distances</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">r</span><span class="p">))</span></div>
+<span class="w">        </span><span class="sd">"""Get default reward: rescaled mean per-dimension similarity.</span>
 
-
-<div class="viewcode-block" id="FunctionApproximationEnv.get_sum_reward">
-<a class="viewcode-back" href="../../../source/benchmark_docs/function_approximation.html#dacbench.envs.function_approximation.FunctionApproximationEnv.get_sum_reward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_sum_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Get sum reward."""</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weighted_distances</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">r</span><span class="p">))</span></div>
+<span class="sd">        Each dimension's weighted distance is squashed to a similarity in</span>
+<span class="sd">        (0, 1] via exp(-distance), so a perfect match yields 1 and larger</span>
+<span class="sd">        distances approach 0, regardless of the underlying value range.</span>
+<span class="sd">        The similarities are averaged (not multiplied) so that a perfect</span>
+<span class="sd">        match on one dimension does not mask error on the others, then</span>
+<span class="sd">        rescaled into `reward_range`.</span>
+<span class="sd">        """</span>
+        <span class="n">similarities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">weighted_distances</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">similarities</span><span class="p">)</span>
+        <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span>
+        <span class="k">return</span> <span class="n">lo</span> <span class="o">+</span> <span class="p">(</span><span class="n">hi</span> <span class="o">-</span> <span class="n">lo</span><span class="p">)</span> <span class="o">*</span> <span class="n">r</span></div>
 
 
 <div class="viewcode-block" id="FunctionApproximationEnv.get_default_state">
