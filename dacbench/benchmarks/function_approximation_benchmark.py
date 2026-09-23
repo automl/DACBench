@@ -27,7 +27,8 @@ DEFAULT_CFG_SPACE.add(DIM2)
 INFO = {
     "identifier": "FunctionApproximation",
     "name": "Function Approximation",
-    "reward": "Multiplied Differences between Function and Action in each Dimension",
+    "reward": "Rescaled mean of per-dimension similarity (exp(-weighted distance)) "
+    "between Function and Action",
     "state_description": [
         "Remaining Budget",
         "Function Identifier (dimension 1)",
