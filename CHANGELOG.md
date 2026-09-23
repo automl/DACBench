@@ -1,3 +1,29 @@
+# 0.5.6
+
+### Bug Fixes
+- `FunctionApproximationEnv`: the default reward multiplied per-dimension
+  weighted distances, which inverted the sign (reward decreased as the agent
+  got closer to the target) and could be masked to zero by a single exactly
+  matched dimension. The unused alternative `get_sum_reward` was also dead:
+  its negative values were always clamped to 0 by the default
+  `reward_range=(0, 1)`. Both are replaced by a single default reward,
+  `mean(exp(-weighted_distance))` rescaled into `reward_range`, which
+  increases monotonically as distance shrinks and no longer lets one
+  dimension mask the others.
+
+# 0.5.5
+
+### Bug Fixes
+- `FunctionApproximationEnv`: target functions are now evaluated at the current
+  step (`c_step`) instead of the fixed episode cutoff (`n_steps`). Previously the
+  target stayed constant across all steps of an episode, degenerating the task
+  into a static prediction problem (making constant near-1.0 actions
+  near-optimal on the shipped sigmoid instance sets).
+
+### Documentation
+- DACBO: documented capping BLAS threads (numpy/scipy/SMAC) to avoid
+  oversubscription when running multiple DACBO environments in parallel.
+
 # 0.5.4
 
 ### Bug Fixes
