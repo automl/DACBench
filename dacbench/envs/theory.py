@@ -576,7 +576,7 @@ class TheoryEnv(AbstractEnv):
                 "log_reward": [float(x) for x in self.log_reward],
             }
 
-        return self.get_state(), reward, truncated, terminated, returned_info
+        return self.get_state(), reward, terminated, truncated, returned_info
 
     def close(self) -> bool:
         """Close Env.
