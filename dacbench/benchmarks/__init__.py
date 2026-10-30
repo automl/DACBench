@@ -6,11 +6,13 @@ import warnings
 from dacbench.benchmarks.function_approximation_benchmark import (
     FunctionApproximationBenchmark,
 )
+from dacbench.benchmarks.ga_benchmark import GABenchmark
 from dacbench.benchmarks.luby_benchmark import LubyBenchmark
 from dacbench.benchmarks.toysgd_benchmark import ToySGDBenchmark
 
 __all__ = [
     "FunctionApproximationBenchmark",
+    "GABenchmark",
     "LubyBenchmark",
     "ToySGDBenchmark",
     #    "FastDownwardBenchmark",
