@@ -255,9 +255,13 @@ class LeadingOne(BinaryProblem):
         if initObj is None:
             super().__init__(n=n, rng=rng)
         else:
+            init_obj = int(initObj)
+            if not 0 <= init_obj <= n:
+                raise ValueError(f"initObj must be in [0, {n}], got {initObj}")
             self.data = rng.choice([True, False], size=n)
-            self.data[: int(initObj)] = True
-            self.data[int(initObj)] = False
+            self.data[:init_obj] = True
+            if init_obj < n:
+                self.data[init_obj] = False
             self.n = n
             self.fitness = self.eval()
 
@@ -331,7 +335,6 @@ class TheoryEnv(AbstractEnv):
         # name of reward function
         assert config.reward_choice in [
             "imp_div_evals",
-            "imp_div_evals_new",
             "imp_minus_evals",
             "minus_evals",
             "imp",
@@ -529,7 +532,6 @@ class TheoryEnv(AbstractEnv):
                 ) / self.max_evals
             elif self.reward_choice == "imp":
                 reward = self.x.fitness - fitness_before_update - 0.5
-            self.log_reward.append(reward)
 
         # update histories
         self.history_fx.append(self.x.fitness)

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 
 import ConfigSpace as CS  # noqa: N817
@@ -91,9 +92,13 @@ class TheoryBenchmark(AbstractBenchmark):
                 name="", lower=0, upper=n_acts - 1
             )
         else:
-            if "action_choices" not in self.config:
-                raise ValueError(
-                    "WARNING: 'action_choices' is ignored in continuous action spaces."
+            # THEORY_DEFAULTS always contains action_choices, so only warn if the
+            # user explicitly passed it
+            if config and "action_choices" in config:
+                warnings.warn(
+                    "'action_choices' is ignored in continuous action spaces.",
+                    UserWarning,
+                    stacklevel=2,
                 )
             assert ("min_action" in self.config) and (  # noqa: PT018
                 "max_action" in self.config
