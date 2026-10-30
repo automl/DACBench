@@ -72,6 +72,38 @@ class TestTheoryEnv(unittest.TestCase):
         assert r < -1e4
         assert terminated or truncated
 
+    def test_cutoff_truncates(self):
+        """Reaching the step cutoff truncates the episode."""
+        bench = TheoryBenchmark()
+        bench.config.cutoff = 3
+        env = bench.get_environment()
+        env.reset(seed=0)
+        # Start from the all-zeros string so three steps cannot reach the optimum.
+        env.x.data[:] = False
+        env.x.eval()
+
+        for _ in range(3):
+            _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+
+        assert not env.x.is_optimal()
+        assert truncated
+        assert not terminated
+
+    def test_optimum_terminates(self):
+        """Reaching the optimum terminates the episode."""
+        bench = TheoryBenchmark()
+        env = bench.get_environment()
+        env.reset(seed=0)
+        # LeadingOnes optimum: every bit set.
+        env.x.data[:] = True
+        env.x.eval()
+
+        _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+
+        assert env.x.is_optimal()
+        assert terminated
+        assert not truncated
+
 
 if __name__ == "__main__":
     TestTheoryEnv().test_discrete_env()
