@@ -1,3 +1,22 @@
+# 0.5.7
+
+### Bug Fixes
+- `TheoryEnv.step`: **behaviour change** — each step's reward is now logged
+  once. Previously in-range steps were logged twice, so `log_reward` had two
+  entries per step and the episode return `info["values"]["R"]` was doubled.
+- `TheoryEnv`: `reward_choice="imp_div_evals_new"` was accepted but never
+  computed, so `step()` raised `UnboundLocalError`. It is now implemented as
+  `(f(x) - f(x_prev) - 0.5) / n_evals`, matching the original LeadingOnesDAC
+  code.
+- `Theory-v0` (`gym.make`) now uses `TheoryEnvDiscrete` for its default
+  discrete config, so actions are indices into `action_choices`. Previously
+  the action index was used directly as the number of bits to flip.
+- `TheoryBenchmark`: with `discrete_action=False`, an explicitly passed
+  `action_choices` now triggers a `UserWarning` saying it is ignored.
+  The check was inverted before, so this warning could never fire.
+- `LeadingOne(n, initObj=n)` now builds the optimal all-ones string instead of
+  raising `IndexError`. `initObj` outside `[0, n]` raises a `ValueError`.
+
 # 0.5.6
 
 ### Bug Fixes
