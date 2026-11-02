@@ -186,9 +186,9 @@ class GAEnv(AbstractEnv):
 
         # algorithm and action handling
         self.algorithm = config.algorithm
-        assert self.algorithm in ALGORITHMS, (
-            f"Error: algorithm must be one of {ALGORITHMS}, got {self.algorithm}"
-        )
+        assert (
+            self.algorithm in ALGORITHMS
+        ), f"Error: algorithm must be one of {ALGORITHMS}, got {self.algorithm}"
         self.discrete_action = config.discrete_action
         if not self.discrete_action and self.algorithm != "one_plus_one":
             raise ValueError(
@@ -197,9 +197,9 @@ class GAEnv(AbstractEnv):
                 "(discrete_action=True with action_choices)."
             )
         if self.discrete_action:
-            assert "action_choices" in config, (
-                "Error: action_choices must be specified in benchmark's config"
-            )
+            assert (
+                "action_choices" in config
+            ), "Error: action_choices must be specified in benchmark's config"
             self.action_choices = list(config.action_choices)
         self.count_different_inds_only = config.get("count_different_inds_only", True)
 
@@ -212,9 +212,9 @@ class GAEnv(AbstractEnv):
         self.reward_choice = config.reward_choice
 
         # get problem
-        assert config.problem in PROBLEMS, (
-            f"Error: problem must be one of {list(PROBLEMS)}, got {config.problem}"
-        )
+        assert (
+            config.problem in PROBLEMS
+        ), f"Error: problem must be one of {list(PROBLEMS)}, got {config.problem}"
         self.problem = PROBLEMS[config.problem]
 
         # read names of all observation variables

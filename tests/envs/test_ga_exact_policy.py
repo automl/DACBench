@@ -489,8 +489,12 @@ class TestShippedTables:
                 assert (means == 0.0).all()
                 continue
             assert np.isfinite(means).all()
-            # the CSV carries the DP values with full precision
-            assert np.allclose(means, solution["columns"][:, bucket], rtol=1e-15)
+            # the CSV carries the DP values in full precision; a different
+            # platform may sum in a different order, hence the tolerance of the
+            # --check path (see exact.CHECK_RTOL)
+            assert np.allclose(
+                means, solution["columns"][:, bucket], rtol=exact.CHECK_RTOL
+            )
             # the per-bucket argmin is the DP's optimal action
             assert int(np.argmin(means)) == int(solution["policy"][bucket])
             # playing the action once and then optimally is never worse than
@@ -536,7 +540,7 @@ class TestShippedTables:
                 assert np.allclose(
                     optimal["expected_evals"].to_numpy(dtype=float),
                     expected,
-                    rtol=1e-15,
+                    rtol=exact.CHECK_RTOL,
                 )
                 for index, value in enumerate(PORTFOLIO):
                     rows = block[block["action"] == index].sort_values("start_f")
@@ -545,7 +549,7 @@ class TestShippedTables:
                     assert np.allclose(
                         rows["expected_evals"].to_numpy(dtype=float),
                         expected,
-                        rtol=1e-15,
+                        rtol=exact.CHECK_RTOL,
                     )
 
     def test_one_plus_lambda_optimum_is_the_constant_action(self, exact):
@@ -710,3 +714,33 @@ class TestPortfolioScope:
         narrow = exact.solve(20, "one_plus_lambda", [1, 2, 4, 8, 16])
         wide = exact.solve(20, "one_plus_lambda", list(range(1, 21)))
         assert wide["values"][0] == pytest.approx(narrow["values"][0])
+
+
+class TestCheckTolerance:
+    """``--check`` ignores rounding noise but still reports a real change."""
+
+    def test_tolerance_ignores_rounding_and_reports_real_changes(self, exact, tmp_path):
+        """A 1e-10 relative perturbation passes; a 1 % perturbation is stale."""
+        assert exact.main(["--output-dir", str(tmp_path), "--check"]) == 1  # empty
+        assert exact.main(["--output-dir", str(tmp_path)]) == 0
+
+        name = "optimal_policy_onemax_50_one_plus_one.csv"
+        path = tmp_path / name
+        original = path.read_text()
+
+        noisy = pd.read_csv(path)
+        noisy["mean_evals"] = noisy["mean_evals"] * (1.0 + 1e-10)
+        path.write_text(noisy.to_csv(index=False))
+        assert exact.main(["--output-dir", str(tmp_path), "--check"]) == 0
+
+        shifted = pd.read_csv(path)
+        shifted["mean_evals"] = shifted["mean_evals"] * 1.01
+        path.write_text(shifted.to_csv(index=False))
+        assert exact.main(["--output-dir", str(tmp_path), "--check"]) == 1
+
+        # a changed action column is a real change, whatever the floats do
+        path.write_text(original)
+        reordered = pd.read_csv(path)
+        reordered.loc[0, "action"] = 4
+        path.write_text(reordered.to_csv(index=False))
+        assert exact.main(["--output-dir", str(tmp_path), "--check"]) == 1

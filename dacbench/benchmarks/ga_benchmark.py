@@ -95,9 +95,9 @@ class GABenchmark(AbstractBenchmark):
         # initialise action space
         cfg_space = CS.ConfigurationSpace()
         if self.config.discrete_action:
-            assert "action_choices" in self.config, (
-                "ERROR: action_choices must be specified"
-            )
+            assert (
+                "action_choices" in self.config
+            ), "ERROR: action_choices must be specified"
             assert ("min_action" not in self.config) and (  # noqa: PT018
                 "max_action" not in self.config
             ), (
@@ -136,10 +136,10 @@ class GABenchmark(AbstractBenchmark):
 
         # create observation space
         self.env_class = GAEnv
-        self.config["observation_space"] = (
-            self.create_observation_space_from_description(
-                self.config["observation_description"], self.env_class
-            )
+        self.config[
+            "observation_space"
+        ] = self.create_observation_space_from_description(
+            self.config["observation_description"], self.env_class
         )
 
     def create_observation_space_from_description(
@@ -201,9 +201,9 @@ class GABenchmark(AbstractBenchmark):
 
         assert len(instance_set.items()) > 0, "ERROR: empty instance set"
         first = next(iter(instance_set.values()))
-        assert "initObj" in first, (
-            "ERROR: initial solution (initObj) must be specified in instance set"
-        )
+        assert (
+            "initObj" in first
+        ), "ERROR: initial solution (initObj) must be specified in instance set"
         assert "size" in first, "ERROR: problem size must be specified in instance set"
 
         return {key: objdict(val) for key, val in instance_set.items()}

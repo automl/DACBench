@@ -77,7 +77,7 @@ child worse.  The bucket ``n`` is terminal (``T_a[n, n] = 1``).
 product of three binomial coefficients has in double precision for ``n`` far above
 the shipped sizes; there is no dependency beyond ``numpy`` and ``pandas``.
 The binomial probability of a flip count ``l`` that is below
-``BINOMIAL_TRUNCATION = 1e-16`` is set to zero and every row of ``T`` is then
+``BINOMIAL_TRUNCATION`` is set to zero and every row of ``T`` is then
 renormalised to sum to one, so the truncated tails are redistributed over the
 remaining flip counts.  The dropped mass is at most a few ``1e-16`` per row.
 
@@ -162,6 +162,7 @@ whether the files on disk are up to date instead of writing them.
 from __future__ import annotations
 
 import argparse
+import io
 import time
 from math import lgamma
 from pathlib import Path
@@ -189,6 +190,14 @@ EXACT_ALGORITHMS = ("one_plus_one", "one_plus_lambda")
 #: Binomial probabilities below this value are dropped from the flip-count sum
 #: and the remaining row is renormalised (see the module docstring).
 BINOMIAL_TRUNCATION = 1e-16
+
+#: Relative tolerance of ``--check`` when it compares a recomputed table with the
+#: file on disk.  The dynamic programme sums in a fixed order, so a rerun on the
+#: same machine is bit-identical; a different platform may sum in a different
+#: order and differ in the last bits (observed: 1.2e-12 relative on OneMax
+#: n = 200).  The tolerance is far below the smallest difference between two
+#: actions that matters, so it distinguishes a real change from rounding noise.
+CHECK_RTOL = 1e-9
 
 #: File name of the fixed-action cost table.
 FIXED_ACTIONS_FILE = "exact_fixed_action_counts.csv"
@@ -570,7 +579,14 @@ def backward_dp(n, matrices, costs):
         improve = 1.0 - self_loop
         feasible = improve > 0.0
         future = matrices[:, f, f + 1 :] @ values[f + 1 :]
-        fixed_future = (matrices[:, f, f + 1 :] * fixed[:, f + 1 :]).sum(axis=1)
+        # an inf cost where the transition probability is 0 must contribute 0, not
+        # inf * 0 = nan (the fixed-action DP produces inf for unreachable buckets)
+        with np.errstate(invalid="ignore"):
+            fixed_future = np.where(
+                matrices[:, f, f + 1 :] > 0.0,
+                matrices[:, f, f + 1 :] * fixed[:, f + 1 :],
+                0.0,
+            ).sum(axis=1)
         with np.errstate(divide="ignore", invalid="ignore"):
             columns[:, f] = np.where(feasible, (costs + future) / improve, np.inf)
             fixed[:, f] = np.where(feasible, (costs + fixed_future) / improve, np.inf)
@@ -845,6 +861,52 @@ def _frame_text(table):
     return table.to_csv(index=False)
 
 
+def _same_table(current, expected):
+    """Return whether an on-disk table matches a recomputed one within tolerance.
+
+    ``current`` is the text of the file on disk (``None`` if it does not exist),
+    ``expected`` the text of the recomputed table.  Non-float columns must match
+    exactly and in the same order; float columns are compared with
+    :data:`CHECK_RTOL`, because a different platform may sum the dynamic
+    programme in a different order and differ in the last bits.
+
+    Returns:
+    -------
+    bool
+        ``True`` if the tables agree.
+
+    """
+    if current is None:
+        return False
+    try:
+        have = pd.read_csv(io.StringIO(current))
+        want = pd.read_csv(io.StringIO(expected))
+    except pd.errors.EmptyDataError:
+        return False
+    if list(have.columns) != list(want.columns) or have.shape != want.shape:
+        return False
+    for column in want.columns:
+        want_column, have_column = want[column], have[column]
+        if pd.api.types.is_float_dtype(want_column.dtype):
+            if not np.allclose(
+                have_column.astype(float).to_numpy(),
+                want_column.astype(float).to_numpy(),
+                rtol=CHECK_RTOL,
+                atol=0.0,
+                equal_nan=True,
+            ):
+                return False
+        elif pd.api.types.is_integer_dtype(want_column.dtype):
+            if not np.array_equal(
+                have_column.astype("int64").to_numpy(),
+                want_column.astype("int64").to_numpy(),
+            ):
+                return False
+        elif have_column.astype(str).tolist() != want_column.astype(str).tolist():
+            return False
+    return True
+
+
 def main(argv=None):
     """Regenerate the exact policy tables and the fixed-action cost table.
 
@@ -885,7 +947,7 @@ def main(argv=None):
         text = _frame_text(table)
         if args.check:
             current = path.read_text() if path.is_file() else None
-            up_to_date = current == text
+            up_to_date = _same_table(current, text)
             if not up_to_date:
                 stale.append(path.name)
         else:
@@ -931,7 +993,7 @@ def main(argv=None):
     fixed_text = _frame_text(fixed_table)
     if args.check:
         current = fixed_path.read_text() if fixed_path.is_file() else None
-        if current != fixed_text:
+        if not _same_table(current, fixed_text):
             stale.append(fixed_path.name)
     else:
         fixed_path.write_text(fixed_text)

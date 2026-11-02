@@ -414,20 +414,22 @@ def load_policy_table(path):
     path = Path(path)
     if not path.is_file():
         raise FileNotFoundError(f"Error: derived policy table not found: {path}")
-    df = pd.read_csv(path)
-    missing = [c for c in _REQUIRED_COLUMNS if c not in df.columns]
+    table = pd.read_csv(path)
+    missing = [c for c in _REQUIRED_COLUMNS if c not in table.columns]
     if missing:
         raise ValueError(
             f"Error: {path} is missing the column(s) {missing}; expected at least "
             f"{list(_REQUIRED_COLUMNS)}"
         )
-    df = df.copy()
-    df["f_x"] = pd.to_numeric(df["f_x"], errors="raise").astype(float)
-    df["action"] = pd.to_numeric(df["action"], errors="raise").astype(int)
-    df["choice"] = pd.to_numeric(df["choice"], errors="raise").astype(float)
+    table = table.copy()
+    table["f_x"] = pd.to_numeric(table["f_x"], errors="raise").astype(float)
+    table["action"] = pd.to_numeric(table["action"], errors="raise").astype(int)
+    table["choice"] = pd.to_numeric(table["choice"], errors="raise").astype(float)
     # "inf" parses directly; anything unparsable becomes NaN -> treated as inf
-    df["mean_evals"] = pd.to_numeric(df["mean_evals"], errors="coerce").astype(float)
-    return df.sort_values(["f_x", "action"]).reset_index(drop=True)
+    table["mean_evals"] = pd.to_numeric(table["mean_evals"], errors="coerce").astype(
+        float
+    )
+    return table.sort_values(["f_x", "action"]).reset_index(drop=True)
 
 
 def _build_lookup(df):
@@ -518,7 +520,7 @@ def _validate_reference_size(n):
         If ``n`` is not an integer or not one of :data:`REFERENCE_SIZES`.
 
     """
-    if isinstance(n, bool) or not isinstance(n, (int, np.integer)):
+    if isinstance(n, bool) or not isinstance(n, int | np.integer):
         raise ValueError(
             f"Error: n must be an integer, got {n!r}; reference data exists for "
             f"n in {REFERENCE_SIZES}"
@@ -560,7 +562,7 @@ def _validate_start_f(start_f, n):
     """
     if start_f is None:
         return 0
-    if isinstance(start_f, bool) or not isinstance(start_f, (int, np.integer)):
+    if isinstance(start_f, bool) or not isinstance(start_f, int | np.integer):
         raise ValueError(
             f"Error: start_f must be an integer in [0, {n}], got {start_f!r}"
         )
@@ -1097,8 +1099,8 @@ def best_static_portfolio(problem, n, algorithm, policy_path=None, instance_dir=
 
     """
     path = _policy_path(problem, n, algorithm, policy_path, instance_dir)
-    df = load_policy_table(path)
-    choices = np.sort(df["choice"].dropna().unique())
+    table = load_policy_table(path)
+    choices = np.sort(table["choice"].dropna().unique())
     if np.all(np.equal(np.mod(choices, 1), 0)):
         return [int(c) for c in choices]
     return [float(c) for c in choices]
