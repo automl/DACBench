@@ -16,6 +16,28 @@
   [OneMax-DAC-Extension](https://github.com/taindp98/OneMax-DAC-Extension) by
   Tai Nguyen, Phong Le, André Biedenkapp, Carola Doerr and Nguyen Dang.
 - Documentation page added.
+- Simulation-derived reference policies for 9 of the 18 (problem, n, algorithm)
+  combinations (`optimal_policy_*.csv`), produced by the standalone script
+  `dacbench/instance_sets/ga/derive_optimal_policy.py`: per-bucket costs are
+  estimated by policy iteration over on-policy state pools (common random
+  numbers) and combined by backward dynamic programming with a `/q` self-loop
+  correction, following the methodology of Biedenkapp et al.
+  (GECCO'22). These are approximate reference policies, not optima. A table
+  ships only if the policy needs at most 1.05x the evaluations of the best fixed
+  action on both paired seed sets (12 seeds 0-11, the selection protocol, and 12
+  held-out seeds 1000-1011, with a fresh environment per policy) and is never
+  significantly worse; the shipped policies measure 0.79-1.01. The other nine
+  combinations are
+  documented as unvalidated: four failed that validation and five are
+  structurally unvalidated because the fitness-only buckets miss the LeadingOne
+  suffix. They remain fully usable for training and evaluation
+  (`derive_optimal_policy.py --all` derives them, `best_static` refuses them and
+  names the measured best fixed action instead).
+- Baseline policies `best_static`, `success_rule` and `random_policy` in
+  `dacbench/envs/env_utils/ga_baselines.py`, and
+  `examples/run_ga_baselines.py`, which prints a paired comparison (mean number
+  of evaluations to the optimum with 95% confidence intervals and the ratio to
+  `best_static`) of these baselines on the OneMax and LeadingOnes instance sets.
 
 ### Bug Fixes
 - `BinaryProblem.initialise_with_fixed_number_of_bits` compared the array with

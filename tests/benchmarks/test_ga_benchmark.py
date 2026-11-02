@@ -34,7 +34,12 @@ class TestGABenchmark(unittest.TestCase):
 
     def test_read_instance_sets(self):
         """Every shipped instance set can be read."""
-        files = sorted(GA_INSTANCE_DIR.glob("*.csv"))
+        # the directory also holds the derived policy tables (optimal_policy_*.csv)
+        files = sorted(
+            path
+            for path in GA_INSTANCE_DIR.glob("*.csv")
+            if not path.name.startswith("optimal_policy_")
+        )
         assert len(files) == 17
         for path in files:
             bench = GABenchmark(config={"instance_set_path": path.name})

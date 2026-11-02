@@ -19,6 +19,11 @@ We want to optimize how many algorithm steps are taken, so the number of iterati
 While this is not an easy to solve benchmark, it is cheap to run and interfaces a real EA.
 Thus it may be a good entry point for harder EA-based benchmarks and also a good benchmark for analyzing controller behavior.
 
+The ``imp`` and ``imp_div_evals`` rewards subtract 0.5 from the fitness improvement, unlike
+the original LeadingOnesDAC implementation. The offset is kept unchanged so that existing
+results stay comparable; when comparing against the upstream code, add 0.5 to those two
+rewards.
+
 *The Theory benchmark was constructed by Biedenkapp et al. for the paper `"Theory-Inspired Parameter Control Benchmarks for Dynamic Algorithm Configuration" <https://arxiv.org/pdf/2202.03259.pdf>`_ at GECCO 2022*
 
 
