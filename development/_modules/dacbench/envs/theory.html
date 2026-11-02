@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dacbench.envs.theory &#8212; DACBench Documentation 0.5.1.dev1+g88e92d4ba documentation</title>
+    <title>dacbench.envs.theory &#8212; DACBench Documentation 0.5.1.dev1+g8d1cf1813 documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet">
   <link href="../../../_static/css/index.ac9c05f7c49ca1e1f876c6e36360ea26.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     
   <link rel="preload" as="script" href="../../../_static/js/index.9ea38e314b9e6d9dab77.js">
 
-    <script src="../../../_static/documentation_options.js?v=d90d17cb"></script>
+    <script src="../../../_static/documentation_options.js?v=893ecff4"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -88,11 +88,11 @@
         <div class="dropdown mt-1">
     <button type="button" class="btn btn-secondary btn-md navbar-btn dropdown-toggle" id="dLabelMore"
         data-toggle="dropdown">
-        v0.5.1.dev1+g88e92d4ba
+        v0.5.1.dev1+g8d1cf1813
         <span class="caret"></span>
     </button>
     <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
-        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g88e92d4ba</a>
+        <a class="list-group-item list-group-item-action" href="#">v0.5.1.dev1+g8d1cf1813</a>
     </div>
 </div>
       </div>
@@ -117,7 +117,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar"><h4 class="mt-0 mb-0"><a href="../../../index.html">DACBench Documentation</a></h4>
-<div class="mb-3">v0.5.1.dev1+g88e92d4ba</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+<div class="mb-3">v0.5.1.dev1+g8d1cf1813</div><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
@@ -559,9 +559,13 @@
         <span class="k">if</span> <span class="n">initObj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">init_obj</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">initObj</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">init_obj</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"initObj must be in [0, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">], got </span><span class="si">{</span><span class="n">initObj</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span> <span class="nb">int</span><span class="p">(</span><span class="n">initObj</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">initObj</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="n">init_obj</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">init_obj</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">init_obj</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
 
@@ -653,7 +657,6 @@
         <span class="c1"># name of reward function</span>
         <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">reward_choice</span> <span class="ow">in</span> <span class="p">[</span>
             <span class="s2">"imp_div_evals"</span><span class="p">,</span>
-            <span class="s2">"imp_div_evals_new"</span><span class="p">,</span>
             <span class="s2">"imp_minus_evals"</span><span class="p">,</span>
             <span class="s2">"minus_evals"</span><span class="p">,</span>
             <span class="s2">"imp"</span><span class="p">,</span>
@@ -862,7 +865,6 @@
                 <span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_evals</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_choice</span> <span class="o">==</span> <span class="s2">"imp"</span><span class="p">:</span>
                 <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span> <span class="o">-</span> <span class="n">fitness_before_update</span> <span class="o">-</span> <span class="mf">0.5</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_reward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
 
         <span class="c1"># update histories</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">history_fx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">fitness</span><span class="p">)</span>
