@@ -33,9 +33,17 @@ try:
         bench = getattr(benchmarks, b)()
         bench.read_instance_set()
         env_name = b[:-9]
+        # benchmarks that choose their env class from the config (e.g. Theory's
+        # discrete/continuous variants) expose it as `env_class`
+        env_cls = getattr(bench, "env_class", None)
+        entry_point = (
+            f"{env_cls.__module__}:{env_cls.__name__}"
+            if env_cls is not None
+            else f"dacbench.envs:{env_name}Env"
+        )
         register(
             id=f"{env_name}-v0",
-            entry_point=f"dacbench.envs:{env_name}Env",
+            entry_point=entry_point,
             kwargs={"config": bench.config},
         )
 except:  # noqa: E722
