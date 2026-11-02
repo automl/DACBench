@@ -101,11 +101,13 @@ class TestGAEnv(unittest.TestCase):
 
     def test_initial_fitness_matches_init_obj(self):
         """Every non-random instance starts with fitness == initObj."""
-        # the directory also holds the derived policy tables (optimal_policy_*.csv)
+        # the directory also holds the derived policy tables
+        # (optimal_policy_*.csv) and the exact fixed-action cost table
         files = sorted(
             path
             for path in GA_INSTANCE_DIR.glob("*.csv")
             if not path.name.startswith("optimal_policy_")
+            and path.name != "exact_fixed_action_counts.csv"
         )
         assert len(files) == 17
         for path in files:

@@ -6,17 +6,28 @@ the (1+(lambda,lambda)) GA. This module provides three policies that are useful 
 reference points for DAC methods:
 
 ``best_static``
-    Looks up the current fitness bucket ``f(x)`` in a derived reference table
-    and returns the action with the smallest expected number of evaluations in
-    that bucket. Tables ship for 9 of the 18 (problem, n, algorithm)
-    combinations; for the other nine it raises a ``ValueError`` because no
-    validated table exists (see below).
+    Looks up the current fitness bucket ``f(x)`` in a reference table and
+    returns the action with the smallest expected number of evaluations in that
+    bucket. Tables ship for 10 of the 18 (problem, n, algorithm) combinations,
+    six of them **exact** (OneMax with the (1+1) EA and the (1+lambda) EA); for
+    the other eight it raises a ``ValueError`` because no validated table exists
+    (see below).
 ``success_rule``
     The classic one-fifth success rule, applied either to ``r`` (``one_plus_one``)
     or to ``lambda`` (the population-based algorithms); for the (1+lambda) EA
     the lambda-update is an *adaptation* without a published analysis.
 ``random_policy``
     Uniform random action, the trivial baseline.
+
+On top of these three policies the module exposes the optimality-gap API for the
+exact OneMax combinations: :func:`optimal_reference` returns the exact optimal
+evaluation count ``V[start_f]`` and the best fixed action, :func:`gap` turns one
+episode into ``evals / optimal_evals`` (and refuses to do so for a censored or
+non-exact run), and :func:`theory_policy` returns the theory-derived reference
+policy of a combination. The four reference tiers, best first, are: exact
+optimum (six OneMax combinations) > simulation-derived best known
+``mean_evals`` +/- CI (four combinations) > measured best fixed action (all
+combinations) > theory baseline.
 
 Policy API
 ----------
@@ -35,58 +46,79 @@ Derived reference tables (CSV contract)
 
 with ``problem`` in ``{onemax, leadingones}``, ``n`` in ``{50, 100, 200}`` and
 ``algorithm`` in ``{one_plus_one, one_plus_lambda, one_plus_lambda_lambda}``.
-A table ships for 9 of these 18 combinations: OneMax n=50 with the (1+1) EA and
-the (1+lambda) EA, OneMax n=100 with the (1+1) EA and the (1+(lambda,lambda))
-GA, all three OneMax n=200 combinations, LeadingOne n=100 with the (1+1) EA and
-the (1+(lambda,lambda)) GA. A table ships only if the derived policy needs at
-most 1.05 times the evaluations of the best fixed action on **both** paired
-seed sets of the validation (A: seeds 0-11, the selection protocol; B: the
-held-out seeds 1000-1011) and is never significantly worse. The other nine have
-no validated table, because there the derived policy was not demonstrably better
-than the best fixed action (see :data:`UNVALIDATED_COMBINATIONS`);
-:func:`best_static` raises a ``ValueError`` for them, and
-``derive_optimal_policy.py --all`` can still generate them for research. The
-columns are, in this order::
+A table ships for 10 of these 18 combinations: OneMax n=50, 100 and 200 with the
+(1+1) EA and with the (1+lambda) EA (exact), OneMax n=100 and n=200 with the
+(1+(lambda,lambda)) GA, LeadingOne n=100 with the (1+1) EA and the
+(1+(lambda,lambda)) GA (those four simulation-derived). A table ships only if
+the policy it encodes needs at most 1.05 times the evaluations of the best fixed
+action on **both** paired seed sets of the validation (A: seeds 0-11, the
+selection protocol; B: the held-out seeds 1000-1011) and is never significantly
+worse -- which the six exact tables satisfy by construction, because their
+policy *is* the optimum and can never be worse than a constant action. The
+other eight have no validated table, because there the simulation-derived
+policy was not demonstrably better than the best fixed action (see
+:data:`UNVALIDATED_COMBINATIONS`); :func:`best_static` raises a ``ValueError``
+for them, and ``derive_optimal_policy.py --all`` can still generate them for
+research. The columns are, in this order::
 
-    f_x,action,choice,mean_evals,n_seeds,ci_low,ci_high
+    f_x,action,choice,mean_evals,n_seeds,ci_low,ci_high[,exact]
 
 One row per (fitness bucket ``f_x``, portfolio index ``action``), sorted by
 ``f_x`` and then ``action``. ``choice`` is the parameter value (``r`` or
-``lambda``) of that portfolio entry and ``mean_evals`` is the estimated number
-of evaluations needed to reach the optimum when running the bucket's fixed
-action from fitness ``f_x``. ``mean_evals`` may be the literal ``inf``: no
-simulated sample of that action improved in that bucket, so the improvement
-probability of the sample is zero and no finite estimate exists. ``inf`` is a
-statement about the simulated sample, not about the algorithm, and such rows are
-never selected.
+``lambda``) of that portfolio entry and ``mean_evals`` is the expected number of
+evaluations needed to reach the optimum when running the bucket's fixed action
+once and the table's policy from there on. The trailing ``exact`` column is
+optional and only present in the exact tables (see below); ``best_static``
+ignores it. ``mean_evals`` may be the literal ``inf``: in a simulation-derived
+table no simulated sample of that action improved in that bucket, so the
+improvement probability of the sample is zero and no finite estimate exists; in
+an exact table it means that the action provably cannot leave the bucket. Such
+rows are never selected.
 
-The buckets are **simulation-derived**. For every fitness bucket ``f(x)`` and
-every portfolio action, one generation is simulated many times with common
-random numbers (the samples of all actions of a bucket are paired), which
-estimates the expected evaluations per improvement and the distribution of the
-successor bucket. A backward dynamic programme from ``f(x) = n`` (cost 0) then
-computes the expected cost to the optimum,
+Two kinds of tables
+-------------------
+**Exact (``exact = 1``).** For OneMax, ``f(x) = sum_i x_i`` is symmetric, so the
+number of ones is a sufficient statistic: the successor distribution of a
+generation depends on ``f(x)`` and the action only, and it is known in closed
+form (a hypergeometric number of flipped ones). ``exact_optimal_policy.py``
+evaluates it and runs the backward dynamic programme exactly. Its ``mean_evals``
+is therefore the true optimal expected number of evaluations of the bucket
+model -- for these operators, of the algorithm -- and the table has
+``n_seeds = 0``, ``ci_low = ci_high = mean_evals`` and ``exact = 1``. The six
+exact tables are OneMax n in ``{50, 100, 200}`` with the (1+1) EA and the
+(1+lambda) EA (:data:`EXACT_COMBINATIONS`). For the (1+lambda) EA the exact
+optimum happens to be the constant action ``lambda = 1`` in every bucket, so its
+optimality gap is 1 by definition; the (1+1) EA gains 7-10 % over its best fixed
+action (4 distinct actions, a large ``r`` far from the optimum, ``r = 1`` near
+it).
+
+**Simulation-derived.** For the four remaining shipped tables the bucket model
+itself is not exact (LeadingOne's suffix, the crossover of the
+(1+(lambda,lambda)) GA) and the numbers are Monte-Carlo estimates. For every
+fitness bucket ``f(x)`` and every portfolio action, one generation is simulated
+many times with common random numbers (the samples of all actions of a bucket
+are paired), which estimates the expected evaluations per improvement and the
+distribution of the successor bucket. A backward dynamic programme from
+``f(x) = n`` (cost 0) then computes the expected cost to the optimum,
 ``V(b, a) = E[e] / q + E[V(b') | b' > b]`` with ``q = P(b' > b)``, if action
 ``a`` is played in bucket ``b`` and the derived policy afterwards. The CSV
-column ``mean_evals`` holds this ``V(b, a)``. ``best_static`` returns the
-per-bucket ``argmin_a V(b, a)``, i.e. exactly the action the derived dynamic
-programme selects. This follows the methodology of Biedenkapp, Dang, Krejca,
-Hutter & Doerr, "Theory-inspired parameter control benchmarks for dynamic
-algorithm configuration", GECCO 2022, arXiv:2202.03259,
-DOI 10.1145/3512290.3528846, who derive optimal portfolio-based control policies
-for the mutation rate of RLS on LeadingOnes.
+column ``mean_evals`` holds this ``V(b, a)``. In both kinds of table
+``best_static`` returns the per-bucket ``argmin_a V(b, a)``, i.e. exactly the
+action the dynamic programme selects. This follows the methodology of
+Biedenkapp, Dang, Krejca, Hutter & Doerr, "Theory-inspired parameter control
+benchmarks for dynamic algorithm configuration", GECCO 2022,
+arXiv:2202.03259, DOI 10.1145/3512290.3528846, who derive optimal portfolio-based
+control policies for the mutation rate of RLS on LeadingOnes.
 
-Unlike that work, the tables for the GA benchmark are *not* backed by a
-theorem: they depend on the fitness-bucket abstraction (the state is only
-``f(x)``, so bit-level correlations from the history are ignored), and the
-estimates carry Monte-Carlo error (``n_seeds``, ``ci_low``, ``ci_high``). The
-derived policy is optimal *within* this simulation model, not for the true
-process: these are **approximate reference policies, not optima**, and their
-measured advantage over the best fixed action is modest (0.79-1.01 times its
-evaluations where a table ships; OneMax n=100 with the (1+1) EA is at parity on
-the held-out protocol B, 1.007). A row with ``mean_evals = inf`` means that no
-simulated sample of that action improved (``q = 0`` in the sample), not that the
-action can never improve.
+The simulation-derived tables are *not* backed by a theorem: they depend on the
+fitness-bucket abstraction (the state is only ``f(x)``, so bit-level
+correlations from the history are ignored), and the estimates carry Monte-Carlo
+error (``n_seeds``, ``ci_low``, ``ci_high``). For those four combinations the
+derived policy is the argmin of a *simulated* model only: these are
+**approximate reference policies, not optima**, and their measured advantage
+over the best fixed action is modest (0.79-1.01 times its evaluations). The six
+exact tables are optima of the bucket model -- which, unlike the simulation
+derived ones, is not an approximation for OneMax with these operators.
 
 Prior art for the baseline rules
 --------------------------------
@@ -111,6 +143,7 @@ Prior art for the baseline rules
 
 from __future__ import annotations
 
+from math import sqrt
 from pathlib import Path
 
 import numpy as np
@@ -147,22 +180,57 @@ UNVALIDATED_REASON = (
 #: Portfolio of the shipped derived tables (``choice`` column).
 _PORTFOLIO = (1, 2, 4, 8, 16)
 
-#: The nine (problem, n, algorithm) combinations whose derived table ships: the
-#: ones whose policy was at most 1.05 times the best fixed action on *both*
-#: paired seed sets (A and B) and never significantly worse.
-SHIPPED_COMBINATIONS = (
-    ("onemax", 50, "one_plus_one"),
-    ("onemax", 50, "one_plus_lambda"),
-    ("onemax", 100, "one_plus_one"),
+#: The six combinations whose shipped table is **exact** (``exact = 1``): the
+#: table holds the true optimum of the bucket model, which for OneMax with these
+#: operators is the true optimum of the algorithm *within the action portfolio*
+#: (:data:`_PORTFOLIO`).  It is not the global optimum over all mutation
+#: strengths: with ``r = n`` the (1+1) EA complements the string and solves
+#: ``f(x) = 0`` in one evaluation, which the shipped portfolio excludes.  They
+#: are produced by
+#: ``exact_optimal_policy.py``, which refuses every other combination because the
+#: fitness bucket is not a sufficient statistic there (LeadingOne's suffix, the
+#: crossover of the (1+(lambda,lambda)) GA).
+EXACT_COMBINATIONS = tuple(
+    ("onemax", n, algorithm)
+    for n in (50, 100, 200)
+    for algorithm in ("one_plus_one", "one_plus_lambda")
+)
+
+#: Sizes for which reference data (exact or simulation-derived) exists.
+REFERENCE_SIZES = (50, 100, 200)
+
+#: File with the exact cost of every fixed action and of the optimal policy.
+EXACT_FIXED_ACTIONS_FILE = "exact_fixed_action_counts.csv"
+
+#: Row selector of the optimal cost ``V[start_f]`` in the fixed-action table.
+#: Rows with ``action >= 0`` hold ``W_a[start_f]``, the cost of *always*
+#: playing action ``a``.
+EXACT_OPTIMAL_ACTION = -1
+
+#: Columns the fixed-action table must contain.
+_FIXED_COLUMNS = ("n", "algorithm", "start_f", "action", "choice", "expected_evals")
+
+#: Module-level cache of the exact fixed-action data, keyed by resolved directory.
+#: The table is read once per directory; later calls only index numpy arrays.
+_EXACT_REFERENCE_CACHE = {}
+
+#: The four shipped combinations whose table is simulation-derived and therefore
+#: approximate: ``derive_optimal_policy.py`` produces them.
+SIMULATED_COMBINATIONS = (
     ("onemax", 100, "one_plus_lambda_lambda"),
-    ("onemax", 200, "one_plus_one"),
-    ("onemax", 200, "one_plus_lambda"),
     ("onemax", 200, "one_plus_lambda_lambda"),
     ("leadingones", 100, "one_plus_one"),
     ("leadingones", 100, "one_plus_lambda_lambda"),
 )
 
-#: The nine combinations without a validated table. Every entry gives the
+#: The ten (problem, n, algorithm) combinations whose table ships: the six exact
+#: ones plus the four simulation-derived ones.  The simulation-derived ones ship
+#: because their policy was at most 1.05 times the best fixed action on *both*
+#: paired seed sets (A and B) and never significantly worse; the exact tables
+#: satisfy that criterion by construction, because their policy is the optimum.
+SHIPPED_COMBINATIONS = EXACT_COMBINATIONS + SIMULATED_COMBINATIONS
+
+#: The eight combinations without a validated table. Every entry gives the
 #: category, the measured ratios of the derived policy's evaluations to those of
 #: the best fixed action (``A``: seeds 0-11, the selection protocol; ``B``: the
 #: held-out seeds 1000-1011; ``None`` where the ratio was not measured), the best
@@ -172,13 +240,6 @@ UNVALIDATED_COMBINATIONS = {
     ("onemax", 50, "one_plus_lambda_lambda"): {
         "category": FAILED_VALIDATION,
         "ratios": {"A": 1.047, "B": 1.088},
-        "best_choice": 1,
-        "reason": "worse than fixed lambda = 1 on both seed sets (already on the "
-        "selection protocol A, and above the 1.05 tolerance on held-out B)",
-    },
-    ("onemax", 100, "one_plus_lambda"): {
-        "category": FAILED_VALIDATION,
-        "ratios": {"A": 1.041, "B": 1.088},
         "best_choice": 1,
         "reason": "worse than fixed lambda = 1 on both seed sets (already on the "
         "selection protocol A, and above the 1.05 tolerance on held-out B)",
@@ -254,8 +315,9 @@ def is_validated(problem, n, algorithm):
     -------
     bool
         ``True`` if ``best_static`` can load a table for the combination,
-        ``False`` if the combination is one of
-        :data:`UNVALIDATED_COMBINATIONS`.
+        either an exact one (:data:`EXACT_COMBINATIONS`) or a
+        simulation-derived one (:data:`SIMULATED_COMBINATIONS`); ``False`` if
+        the combination is one of :data:`UNVALIDATED_COMBINATIONS`.
 
     """
     return (
@@ -332,12 +394,14 @@ def _policy_path(problem, n, algorithm, policy_path, instance_dir):
 
 
 def load_policy_table(path):
-    """Read and validate a derived reference table.
+    """Read and validate a reference table (exact or simulation-derived).
 
     ``mean_evals`` is coerced to float; the literal ``inf`` (and any value that
-    cannot be parsed as a number) marks an action for which no simulated sample
-    improved, and such a row is therefore never selected. The returned frame is
-    sorted by ``f_x`` and ``action``.
+    cannot be parsed as a number) marks an action that never improved, and such
+    a row is therefore never selected. The optional ``exact`` column of the
+    exact tables (see :data:`EXACT_COMBINATIONS`) is carried through unchanged
+    and not used for the selection. The returned frame is sorted by ``f_x`` and
+    ``action``.
 
     Raises:
     ------
@@ -435,18 +499,500 @@ def _map_choice_to_index(env, choice):
     return int(np.clip(index, 0, len(choices) - 1))
 
 
+def _validate_reference_size(n):
+    """Return ``n`` as an int if reference data exists for that size.
+
+    Parameters
+    ----------
+    n : int
+        Problem size.
+
+    Returns:
+    -------
+    int
+        The validated size.
+
+    Raises:
+    ------
+    ValueError
+        If ``n`` is not an integer or not one of :data:`REFERENCE_SIZES`.
+
+    """
+    if isinstance(n, bool) or not isinstance(n, (int, np.integer)):
+        raise ValueError(
+            f"Error: n must be an integer, got {n!r}; reference data exists for "
+            f"n in {REFERENCE_SIZES}"
+        )
+    size = int(n)
+    if size not in REFERENCE_SIZES:
+        raise ValueError(
+            f"Error: unknown n {size}; reference data exists for n in {REFERENCE_SIZES}"
+        )
+    return size
+
+
+def _validate_algorithm(algorithm):
+    """Return ``algorithm`` if it is one of :data:`ALGORITHMS`.
+
+    Raises:
+    ------
+    ValueError
+        If the algorithm is unknown; the message lists the supported names.
+
+    """
+    if algorithm not in ALGORITHMS:
+        raise ValueError(
+            f"Error: unknown algorithm {algorithm!r}; expected one of {ALGORITHMS}"
+        )
+    return algorithm
+
+
+def _validate_start_f(start_f, n):
+    """Return the start bucket as an integer in ``[0, n]``.
+
+    ``None`` means the hardest start, ``0``.
+
+    Raises:
+    ------
+    ValueError
+        If ``start_f`` is not an integer or outside ``[0, n]``.
+
+    """
+    if start_f is None:
+        return 0
+    if isinstance(start_f, bool) or not isinstance(start_f, (int, np.integer)):
+        raise ValueError(
+            f"Error: start_f must be an integer in [0, {n}], got {start_f!r}"
+        )
+    value = int(start_f)
+    if not 0 <= value <= n:
+        raise ValueError(
+            f"Error: start_f must be an integer in [0, {n}], got {start_f!r}"
+        )
+    return value
+
+
+def _not_exact_reason(problem_stem, algorithm):
+    """Return why the bucket model is not exact for a combination.
+
+    The reasons are structural and do not depend on the size: they name the
+    part of the bitstring that the fitness ``f(x)`` does not determine.
+
+    Parameters
+    ----------
+    problem_stem : str
+        ``onemax`` or ``leadingones``.
+    algorithm : str
+        One of :data:`ALGORITHMS`.
+
+    Returns:
+    -------
+    str
+        A one-sentence explanation of why no exact reference exists.
+
+    """
+    if problem_stem == "leadingones":
+        return (
+            "LeadingOne is not covered by an exact bucket model: the suffix "
+            "after the leading ones is not part of f(x), but it drives mutation "
+            "and crossover, so f(x) is not a sufficient statistic"
+        )
+    return (
+        "the (1+(lambda,lambda)) GA is not covered by an exact bucket model: "
+        "the crossover child's fitness and its evaluation count "
+        "(count_different_inds_only) depend on the arrangement of the bits, not "
+        "only on f(x), so f(x) is not a sufficient statistic"
+    )
+
+
+def _exact_reference_data(instance_dir=None):
+    """Read ``exact_fixed_action_counts.csv`` once and index it by combination.
+
+    The returned mapping is keyed by ``(n, algorithm)`` and holds, for every
+    start bucket ``f = 0..n``, the exact optimal cost ``V[f]``, the exact cost
+    ``W_a[f]`` of always playing every portfolio action, and the portfolio
+    values. The parser checks the documented relation
+    ``V[f] <= min_a W_a[f]``: it is an equality when the optimal policy is a
+    constant action -- in particular for the whole (1+lambda) EA -- and strict
+    when adapting after the first generation helps, as it does for the (1+1) EA
+    on the lower half of the buckets.
+
+    Parameters
+    ----------
+    instance_dir : str | Path | None
+        Directory with the fixed-action table; defaults to
+        :data:`DEFAULT_INSTANCE_DIR`. The resolved directory is the cache key.
+
+    Returns:
+    -------
+    dict
+        ``{(n, algorithm): {"optimal", "fixed", "actions", "choices"}}`` with
+        ``optimal`` of length ``n + 1``, ``fixed`` of shape
+        ``(len(actions), n + 1)`` and ``choices`` aligned with ``actions``.
+
+    Raises:
+    ------
+    FileNotFoundError
+        If the fixed-action table does not exist.
+    ValueError
+        If the table is malformed or its optimal row is inconsistent with the
+        fixed-action rows.
+
+    """
+    directory = Path(instance_dir) if instance_dir is not None else DEFAULT_INSTANCE_DIR
+    key = directory.resolve()
+    if key in _EXACT_REFERENCE_CACHE:
+        return _EXACT_REFERENCE_CACHE[key]
+
+    path = directory / EXACT_FIXED_ACTIONS_FILE
+    if not path.is_file():
+        raise FileNotFoundError(
+            f"Error: exact fixed-action table not found: {path}. Run "
+            "dacbench/instance_sets/ga/exact_optimal_policy.py to generate it."
+        )
+    table = pd.read_csv(path)
+    missing = [column for column in _FIXED_COLUMNS if column not in table.columns]
+    if missing:
+        raise ValueError(
+            f"Error: {path} is missing the column(s) {missing}; expected at "
+            f"least {list(_FIXED_COLUMNS)}"
+        )
+
+    data = {}
+    for (n, algorithm), block in table.groupby(["n", "algorithm"], sort=True):
+        block = block.copy()
+        block["start_f"] = pd.to_numeric(block["start_f"], errors="raise").astype(int)
+        block["action"] = pd.to_numeric(block["action"], errors="raise").astype(int)
+        block["choice"] = pd.to_numeric(block["choice"], errors="raise").astype(float)
+        block["expected_evals"] = pd.to_numeric(
+            block["expected_evals"], errors="raise"
+        ).astype(float)
+
+        optimal = block[block["action"] == EXACT_OPTIMAL_ACTION].sort_values("start_f")
+        fixed = block[block["action"] >= 0]
+        pivot = fixed.pivot_table(
+            index="action",
+            columns="start_f",
+            values="expected_evals",
+            aggfunc="first",
+        ).sort_index()
+        actions = pivot.index.to_numpy(dtype=int)
+        costs = pivot.to_numpy(dtype=float)
+        values = optimal["expected_evals"].to_numpy(dtype=float)
+        starts = optimal["start_f"].to_numpy(dtype=int)
+        if starts.tolist() != list(range(int(n) + 1)):
+            raise ValueError(
+                f"Error: {path} does not hold the optimal cost for every start "
+                f"bucket 0..{int(n)} of n={int(n)}, algorithm {algorithm!r}"
+            )
+        # V[f] <= min_a W_a[f] always: a policy that may switch after the first
+        # generation cannot be worse than always playing one action.  Only the
+        # constant-optimum case (the whole (1+lambda) EA) makes it an equality.
+        tolerance = 1e-9 * np.maximum(1.0, costs.min(axis=0))
+        if np.any(values - costs.min(axis=0) > tolerance):
+            raise ValueError(
+                f"Error: {path} is inconsistent for n={int(n)}, algorithm "
+                f"{algorithm!r}: V[start_f] must not exceed min_a W_a[start_f]"
+            )
+        choice_by_action = fixed.drop_duplicates("action").set_index("action")["choice"]
+        choices = choice_by_action.reindex(actions).to_numpy(dtype=float)
+        data[(int(n), algorithm)] = {
+            "optimal": values,
+            "fixed": costs,
+            "actions": actions,
+            "choices": choices,
+        }
+
+    _EXACT_REFERENCE_CACHE[key] = data
+    return data
+
+
+def optimal_reference(problem, n, algorithm, start_f=None, *, instance_dir=None):
+    """Return the exact optimal evaluation count of a combination, if one exists.
+
+    For the six exact combinations (:data:`EXACT_COMBINATIONS`) the returned
+    numbers are the true optimum of the bucket model, which for OneMax with
+    these mutation-only operators is the true optimum of the algorithm *within
+    the action portfolio*: ``V`` and ``W`` come from the backward dynamic
+    programme of ``exact_optimal_policy.py``, not from sampling. It is not the
+    global optimum over all mutation strengths: with ``r = n`` the (1+1) EA
+    complements the string and solves ``f(x) = 0`` in one evaluation, which the
+    shipped portfolio excludes, so a policy using such actions is outside the
+    reference's action set and its gap is not comparable.
+
+    For every other combination the function returns ``available = False`` and
+    a reason. It never returns an approximate number in ``optimal_evals``: an
+    approximate table is a best-known reference, not an optimum.
+
+    Parameters
+    ----------
+    problem : str
+        ``OneMax`` / ``LeadingOne`` or their file-name stems.
+    n : int
+        Problem size, one of :data:`REFERENCE_SIZES`.
+    algorithm : str
+        One of :data:`ALGORITHMS`.
+    start_f : int | None
+        Number of ones of the initial solution, ``0 <= start_f <= n``.
+        ``None`` (default) means the hardest start, ``0``.
+    instance_dir : str | Path | None
+        Directory with ``exact_fixed_action_counts.csv``; defaults to
+        :data:`DEFAULT_INSTANCE_DIR`.
+
+    Returns:
+    -------
+    dict
+        For an exact combination::
+
+            {"available": True, "exact": True, "optimal_evals": float,
+             "best_fixed_action": int, "best_fixed_choice": int | float,
+             "best_fixed_evals": float, "start_f": int, "source": "exact DP"}
+
+        and otherwise::
+
+            {"available": False, "exact": False, "optimal_evals": None,
+             "reason": str}
+
+        ``optimal_evals`` is ``V[start_f]``, the exact optimal expected number
+        of evaluations to reach the optimum, not counting the initial
+        individual. ``best_fixed_evals`` is the smallest ``W_a[start_f]``, the
+        exact cost of always playing one portfolio action. ``V <= W``, with
+        equality exactly when the optimal policy is a constant action (always
+        for the (1+lambda) EA, and in the upper buckets of the (1+1) EA).
+
+    Raises:
+    ------
+    ValueError
+        If the problem, the size, the algorithm or ``start_f`` is invalid. The
+        message lists the supported values.
+    FileNotFoundError
+        If an exact combination is requested but the fixed-action table is
+        missing.
+
+    """
+    problem_stem = _problem_stem(problem)
+    _validate_algorithm(algorithm)
+    size = _validate_reference_size(n)
+    start = _validate_start_f(start_f, size)
+
+    if (problem_stem, size, algorithm) not in EXACT_COMBINATIONS:
+        return {
+            "available": False,
+            "exact": False,
+            "optimal_evals": None,
+            "reason": _not_exact_reason(problem_stem, algorithm),
+        }
+
+    data = _exact_reference_data(instance_dir)[(size, algorithm)]
+    costs = data["fixed"][:, start]
+    best_index = int(np.argmin(costs))
+    choice = data["choices"][best_index]
+    best_choice = int(choice) if float(choice).is_integer() else float(choice)
+    return {
+        "available": True,
+        "exact": True,
+        "optimal_evals": float(data["optimal"][start]),
+        "best_fixed_action": int(data["actions"][best_index]),
+        "best_fixed_choice": best_choice,
+        "best_fixed_evals": float(costs[best_index]),
+        "start_f": start,
+        "source": "exact DP",
+    }
+
+
+def gap(evals, problem, n, algorithm, start_f, *, solved=True, instance_dir=None):
+    """Return the optimality gap of one episode against the exact reference.
+
+    ``ratio = evals / optimal_evals``. A ratio of 1 means the policy matched
+    the exact optimum for the start bucket; 1.15 means it needed 15 % more
+    evaluations. The reference is per start bucket, so two episodes with
+    different initial fitnesses are compared against their own optimum.
+
+    A **censored** episode (``solved = False``, the evaluation cutoff was hit
+    before the optimum) gets no ratio: its ``evals`` is only a lower bound, and
+    reporting ``evals / optimal_evals`` would present an unsolved run as a small
+    gap. For non-exact combinations there is no reference, so ``ratio`` is
+    ``None`` as well and ``reason`` explains why.
+
+    Parameters
+    ----------
+    evals : int | float
+        Evaluations spent on the search. ``GAEnv.total_evals`` also counts the
+        initial individual (it is 1 after ``reset``); the reference excludes it,
+        so pass ``env.total_evals - 1`` for a comparable number.
+    problem : str
+        ``OneMax`` / ``LeadingOne`` or their file-name stems.
+    n : int
+        Problem size, one of :data:`REFERENCE_SIZES`.
+    algorithm : str
+        One of :data:`ALGORITHMS`.
+    start_f : int
+        Number of ones of the initial solution.
+    solved : bool
+        Whether the episode reached the optimum before the evaluation cutoff.
+    instance_dir : str | Path | None
+        Directory with ``exact_fixed_action_counts.csv``.
+
+    Returns:
+    -------
+    dict
+        ``{"evals": float, "reference_evals": float | None,
+        "ratio": float | None, "exact": bool, "solved": bool,
+        "reason": str | None}``.
+
+    Raises:
+    ------
+    ValueError
+        For an invalid combination or ``start_f`` (see
+        :func:`optimal_reference`).
+
+    """
+    evaluations = float(evals)
+    reference = optimal_reference(
+        problem, n, algorithm, start_f, instance_dir=instance_dir
+    )
+    result = {
+        "evals": evaluations,
+        "reference_evals": reference["optimal_evals"],
+        "ratio": None,
+        "exact": bool(reference["exact"]),
+        "solved": bool(solved),
+        "reason": None,
+    }
+    if not solved:
+        result["reason"] = (
+            "censored: the episode hit the evaluation cutoff before reaching "
+            "the optimum, so evals is only a lower bound and no optimality gap "
+            "is defined"
+        )
+        return result
+    if not reference["available"]:
+        result["reference_evals"] = None
+        result["reason"] = reference["reason"]
+        return result
+    if reference["optimal_evals"] <= 0:
+        result["reason"] = (
+            "start_f = n: the initial solution is already optimal, so no "
+            "evaluation is needed and no gap is defined"
+        )
+        return result
+    result["ratio"] = evaluations / reference["optimal_evals"]
+    return result
+
+
+def theory_policy(problem, algorithm):
+    """Return a theory-derived reference policy for one combination.
+
+    The policy has the ``policy(env, state) -> int`` signature of the other
+    baselines and returns an action **index** in
+    ``[0, len(env.action_choices))``. It is stateless (``policy.reset()`` is a
+    no-op). It reads only documented environment attributes: the current
+    fitness ``env.x.fitness``, the problem size ``env.n`` and the portfolio
+    ``env.action_choices``.
+
+    This is a **theory-derived reference, not an optimum**, with two
+    exceptions where the theory value coincides with the exact dynamic
+    programme (:func:`optimal_reference`): the (1+1) EA and the (1+lambda) EA
+    on OneMax. The four-tier hierarchy is: exact optimum > simulation-derived
+    best known ``mean_evals`` +/- CI > measured best fixed action > this theory
+    baseline.
+
+    The policies:
+
+    - ``one_plus_one`` on OneMax: constant ``r = 1``, i.e. mutation rate
+      ``p = 1/n``. This is the optimal mutation rate for the (1+1) EA on OneMax
+      and linear functions (see Doerr's survey, arXiv:1801.04487, Section 6;
+      Witt, Sudholt), and it is exactly the exact-DP optimum at this start.
+    - ``one_plus_lambda`` on OneMax: constant ``lambda = 1``. The exact DP of
+      ``exact_fixed_action_counts.csv`` proves that this constant action is the
+      optimum in every bucket: a generation with ``lambda`` children costs
+      ``lambda`` times as much and improves ``lambda`` times as often, so
+      parallelism does not buy evaluations on OneMax.
+    - ``one_plus_lambda_lambda`` on OneMax: the fitness-dependent
+      ``lambda = round(sqrt(n / max(1, n - f(x))))`` of Doerr, Doerr & Ebel
+      (TCS 2015), used as the ``theory`` baseline in
+      Chen, Buzdalov, Doerr & Dang (arXiv:2302.12334). The value is mapped to
+      the nearest portfolio value in log space. If it exceeds the largest
+      portfolio value it is clipped to that value: the formula grows like
+      ``sqrt(n)`` near the optimum, which is above the default portfolio at
+      large ``n``.
+    - ``one_plus_one`` on LeadingOne: constant ``r = 2``, the nearest portfolio
+      value to the best known fixed mutation rate ``p ~ 1.59/n`` for the (1+1)
+      EA on LeadingOnes (Boettcher, Doerr & Neumann, PPSN 2010; Doerr's survey).
+      This is a theory-derived constant, not an adaptation.
+    - ``one_plus_lambda`` on LeadingOne: constant ``lambda = 1``, the nearest
+      portfolio value to the same fixed mutation rate (the (1+lambda) EA uses
+      ``p = 1/n``; ``lambda = 1`` is the smallest admissible population).
+    - ``one_plus_lambda_lambda`` on LeadingOne: raises ``ValueError``. There is
+      no published analysis of the (1+(lambda,lambda)) GA on LeadingOnes, and
+      the exact bucket model is not available because the suffix after the
+      leading ones is not part of ``f(x)``.
+
+    Parameters
+    ----------
+    problem : str
+        ``OneMax`` / ``LeadingOne`` or their file-name stems.
+    algorithm : str
+        One of :data:`ALGORITHMS`.
+
+    Returns:
+    -------
+    callable
+        ``policy(env, state) -> int`` with a no-op ``policy.reset()``.
+
+    Raises:
+    ------
+    ValueError
+        If the problem or the algorithm is unknown, or if no theory policy is
+        available for the combination (the (1+(lambda,lambda)) GA on
+        LeadingOne).
+
+    """
+    problem_stem = _problem_stem(problem)
+    _validate_algorithm(algorithm)
+    if problem_stem == "leadingones" and algorithm == "one_plus_lambda_lambda":
+        raise ValueError(
+            "Error: no theory policy for the (1+(lambda,lambda)) GA on "
+            "LeadingOne: there is no published runtime analysis of that "
+            "operator on LeadingOnes, and the exact fitness-bucket model is "
+            "not available because the suffix after the leading ones is not "
+            "part of f(x). Use success_rule or the measured best fixed action."
+        )
+
+    # constant action value, or ``None`` for the fitness-dependent GA rule
+    constant = {
+        ("onemax", "one_plus_one"): 1.0,
+        ("onemax", "one_plus_lambda"): 1.0,
+        ("onemax", "one_plus_lambda_lambda"): None,
+        ("leadingones", "one_plus_one"): 2.0,
+        ("leadingones", "one_plus_lambda"): 1.0,
+    }[(problem_stem, algorithm)]
+
+    def policy(env, state):
+        # API: env.n, env.x.fitness, env.action_choices
+        if constant is not None:
+            return _map_choice_to_index(env, constant)
+        n = int(env.n)
+        fitness = int(env.x.fitness)
+        value = round(sqrt(n / max(1, n - fitness)))
+        return _map_choice_to_index(env, value)
+
+    policy.reset = lambda: None
+    return policy
+
+
 def best_static(
     problem=None, n=None, algorithm=None, policy_path=None, instance_dir=None
 ):
-    """Return the per-bucket greedy policy of a derived reference table.
+    """Return the per-bucket greedy policy of a reference table.
 
     The policy looks up the current fitness ``f(x)`` in the table identified by
     (problem, n, algorithm) and returns the action with the smallest finite
-    ``mean_evals`` (the simulated cost-to-go ``V(f(x), a)``) for that bucket,
-    i.e. the action of the derived dynamic programme. Buckets that are not in
-    the table (gaps, including ``f(x)`` values above the largest bucket and the
-    optimum) are resolved to the nearest bucket; ``inf`` rows are never
-    selected.
+    ``mean_evals`` (the cost-to-go ``V(f(x), a)``, exact for the exact tables and
+    simulated for the others) for that bucket, i.e. the action of the dynamic
+    programme that produced the table. Buckets that are not in the table (gaps,
+    including ``f(x)`` values above the largest bucket and the optimum) are
+    resolved to the nearest bucket; ``inf`` rows are never selected.
 
     Parameters
     ----------
@@ -475,8 +1021,8 @@ def best_static(
     ValueError
         If the combination is one of :data:`UNVALIDATED_COMBINATIONS` and no
         explicit ``policy_path`` is given: no validated reference table
-        ships for it. The derived policy was not at most 1.05 times the best
-        fixed action on both paired seed sets A and B (OneMax), or the
+        ships for it. The simulation-derived policy was not at most 1.05 times
+        the best fixed action on both paired seed sets A and B (OneMax), or the
         fitness-only bucket abstraction is insufficient (LeadingOne: the
         suffix after the leading ones drives mutation and crossover and is not
         part of ``f(x)``). Use ``success_rule`` or the best fixed action

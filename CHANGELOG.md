@@ -16,7 +16,7 @@
   [OneMax-DAC-Extension](https://github.com/taindp98/OneMax-DAC-Extension) by
   Tai Nguyen, Phong Le, André Biedenkapp, Carola Doerr and Nguyen Dang.
 - Documentation page added.
-- Simulation-derived reference policies for 9 of the 18 (problem, n, algorithm)
+- Simulation-derived reference policies for 4 of the 18 (problem, n, algorithm)
   combinations (`optimal_policy_*.csv`), produced by the standalone script
   `dacbench/instance_sets/ga/derive_optimal_policy.py`: per-bucket costs are
   estimated by policy iteration over on-policy state pools (common random
@@ -26,13 +26,35 @@
   ships only if the policy needs at most 1.05x the evaluations of the best fixed
   action on both paired seed sets (12 seeds 0-11, the selection protocol, and 12
   held-out seeds 1000-1011, with a fresh environment per policy) and is never
-  significantly worse; the shipped policies measure 0.79-1.01. The other nine
+  significantly worse; the shipped policies measure 0.79-0.99. The other eight
   combinations are
-  documented as unvalidated: four failed that validation and five are
+  documented as unvalidated: three failed that validation and five are
   structurally unvalidated because the fitness-only buckets miss the LeadingOne
   suffix. They remain fully usable for training and evaluation
   (`derive_optimal_policy.py --all` derives them, `best_static` refuses them and
   names the measured best fixed action instead).
+- **Exact** optimal reference policies for OneMax with the (1+1) EA and the
+  (1+lambda) EA, produced by the standalone script
+  `dacbench/instance_sets/ga/exact_optimal_policy.py`. For these operators the
+  fitness bucket `f(x)` is a sufficient statistic, so the successor
+  distribution of a generation is known in closed form (a hypergeometric number
+  of flipped ones) and the backward dynamic programme yields the true optimum,
+  not an estimate: the six tables `optimal_policy_onemax_{50,100,200}_{one_plus_one,
+  one_plus_lambda}.csv` carry `n_seeds = 0`, `ci_low = ci_high = mean_evals` and
+  an extra `exact = 1` column. The optimum is taken over the shipped action
+  portfolio `[1, 2, 4, 8, 16]`, not over all mutation strengths: with `r = n` the
+  (1+1) EA complements the string and solves `f(x) = 0` in one evaluation, which
+  the portfolio (stopped at 16 for comparability with Theory) excludes. The (1+1)
+  EA gains 7-10 % over its best fixed
+  mutation strength (`r = 16` far from the optimum, `r = 1` close to it); the
+  exact optimum of the (1+lambda) EA is the constant action `lambda = 1` in every
+  bucket, so the advantage previously measured for that operator was
+  Monte-Carlo noise. `exact_fixed_action_counts.csv` holds the exact cost of
+  every fixed action, and `--check` verifies the tables. The script refuses the
+  combinations for which the bucket model is not exact (`one_plus_lambda_lambda`
+  and every LeadingOne combination) with an error that names the reason.
+  `derive_optimal_policy.py` now derives only the combinations that still need
+  simulation and never overwrites an exact table unless `--force` is given.
 - Baseline policies `best_static`, `success_rule` and `random_policy` in
   `dacbench/envs/env_utils/ga_baselines.py`, and
   `examples/run_ga_baselines.py`, which prints a paired comparison (mean number

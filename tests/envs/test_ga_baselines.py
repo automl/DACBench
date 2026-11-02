@@ -7,21 +7,28 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
+import pandas as pd
 import pytest
 from dacbench.benchmarks import GABenchmark
 from dacbench.envs.env_utils import ga_baselines
 from dacbench.envs.env_utils.ga_baselines import (
     ALGORITHMS,
+    EXACT_COMBINATIONS,
+    REFERENCE_SIZES,
     best_static,
     best_static_portfolio,
+    gap,
     load_policy_table,
+    optimal_reference,
     policy_file_name,
     random_policy,
     success_rule,
+    theory_policy,
 )
 from dacbench.envs.theory import LeadingOne, OneMax
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+INSTANCE_DIR = REPO_ROOT / "dacbench" / "instance_sets" / "ga"
 
 # {f_x: [(action, choice, mean_evals), ...]}
 SYNTHETIC_TABLE = {
@@ -474,3 +481,267 @@ class TestExampleScript:
             instances = seen[seed]
             assert len(instances) == 2
             assert len(set(instances)) == 1
+
+
+class TestOptimalReference:
+    """The exact optimality-gap reference of the six exact combinations."""
+
+    def test_exact_numbers_one_plus_one_n50(self):
+        """V[0], the best fixed action and its exact cost of the (1+1) EA."""
+        reference = optimal_reference("OneMax", 50, "one_plus_one", start_f=0)
+        assert reference["available"] is True
+        assert reference["exact"] is True
+        assert reference["source"] == "exact DP"
+        assert reference["start_f"] == 0
+        assert reference["optimal_evals"] == pytest.approx(277.966676273948, rel=1e-9)
+        assert reference["best_fixed_action"] == 0
+        assert reference["best_fixed_choice"] == 1
+        assert reference["best_fixed_evals"] == pytest.approx(
+            308.798959959725, rel=1e-9
+        )
+
+    @pytest.mark.parametrize("n", REFERENCE_SIZES)
+    def test_one_plus_lambda_ratio_is_exactly_one(self, n):
+        """For the (1+lambda) EA the optimum is the constant action lambda = 1."""
+        reference = optimal_reference("onemax", n, "one_plus_lambda", start_f=0)
+        assert reference["best_fixed_choice"] == 1
+        assert reference["optimal_evals"] / reference["best_fixed_evals"] == (
+            pytest.approx(1.0, rel=1e-12)
+        )
+
+    def test_default_start_is_the_hardest_bucket(self):
+        """start_f=None means the hardest start, f = 0."""
+        default = optimal_reference("OneMax", 100, "one_plus_one")
+        explicit = optimal_reference("OneMax", 100, "one_plus_one", start_f=0)
+        assert default == explicit
+
+    @pytest.mark.parametrize(("problem", "n", "algorithm"), EXACT_COMBINATIONS)
+    def test_value_is_the_minimum_policy_column(self, problem, n, algorithm):
+        """V[start_f] equals min_a V(start_f, a), the exact policy-table column.
+
+        The value ``V`` is the minimum of "play ``a`` once, then optimally", not
+        the minimum of "always play ``a``": the latter (``W``) is only an upper
+        bound, with equality when the optimal policy is constant. The test also
+        checks both sides against the shipped fixed-action CSV, so the API and
+        the data cannot drift apart.
+        """
+        table = pd.read_csv(
+            INSTANCE_DIR / f"optimal_policy_{problem}_{n}_{algorithm}.csv"
+        )
+        fixed = pd.read_csv(INSTANCE_DIR / "exact_fixed_action_counts.csv")
+        block = fixed[(fixed["n"] == n) & (fixed["algorithm"] == algorithm)]
+        for start_f in range(n + 1):
+            reference = optimal_reference(problem, n, algorithm, start_f)
+            column = table.loc[table["f_x"] == start_f, "mean_evals"].min()
+            assert reference["optimal_evals"] == pytest.approx(float(column), rel=1e-12)
+            rows = block[(block["start_f"] == start_f) & (block["action"] >= 0)]
+            best_row = rows.loc[rows["expected_evals"].idxmin()]
+            assert reference["best_fixed_action"] == int(best_row["action"])
+            assert reference["best_fixed_choice"] == pytest.approx(
+                float(best_row["choice"])
+            )
+            assert reference["best_fixed_evals"] == pytest.approx(
+                float(best_row["expected_evals"]), rel=1e-12
+            )
+            # adapting after one generation is never worse than a constant
+            assert reference["optimal_evals"] <= (reference["best_fixed_evals"] + 1e-9)
+
+    def test_one_plus_one_value_is_below_best_fixed_at_the_hard_start(self):
+        """The (1+1) EA really adapts at f=0; at f=n-1 the policy is constant.
+
+        This documents the exact relation between the two references: ``V <
+        min_a W_a`` where switching after the first generation helps (the lower
+        buckets), and ``V = min_a W_a`` where the optimal policy is the constant
+        ``r = 1`` (the upper buckets).
+        """
+        hard = optimal_reference("OneMax", 50, "one_plus_one", start_f=0)
+        assert hard["optimal_evals"] < hard["best_fixed_evals"]
+        upper = optimal_reference("OneMax", 50, "one_plus_one", start_f=49)
+        assert upper["optimal_evals"] == pytest.approx(
+            upper["best_fixed_evals"], rel=1e-12
+        )
+
+    @pytest.mark.parametrize(
+        ("problem", "n", "algorithm", "needle"),
+        [
+            ("OneMax", 50, "one_plus_lambda_lambda", "arrangement"),
+            ("OneMax", 50, "one_plus_lambda_lambda", "count_different_inds_only"),
+            ("LeadingOne", 50, "one_plus_one", "suffix"),
+            ("LeadingOne", 200, "one_plus_lambda", "suffix"),
+        ],
+    )
+    def test_non_exact_combinations_have_no_number(self, problem, n, algorithm, needle):
+        """Non-exact combinations return no number, only a true reason."""
+        reference = optimal_reference(problem, n, algorithm, start_f=0)
+        assert reference["available"] is False
+        assert reference["exact"] is False
+        assert reference["optimal_evals"] is None
+        assert needle in reference["reason"]
+
+    def test_non_exact_does_not_need_the_exact_table(self, tmp_path):
+        """A non-exact combination is answered without reading the fixed table."""
+        reference = optimal_reference(
+            "OneMax", 50, "one_plus_lambda_lambda", instance_dir=tmp_path
+        )
+        assert reference["available"] is False
+
+    @pytest.mark.parametrize("start_f", [-1, 51, 1.5, "0", True])
+    def test_invalid_start_f_raises(self, start_f):
+        """start_f must be an integer in [0, n]."""
+        with pytest.raises(ValueError, match="start_f"):
+            optimal_reference("OneMax", 50, "one_plus_one", start_f)
+        with pytest.raises(ValueError, match="start_f"):
+            gap(300, "OneMax", 50, "one_plus_one", start_f)
+
+    def test_unknown_combination_raises_with_available_values(self):
+        """Unknown problem, size or algorithm lists what is supported."""
+        with pytest.raises(ValueError, match="unknown problem"):
+            optimal_reference("Trap", 50, "one_plus_one")
+        with pytest.raises(ValueError, match="unknown algorithm"):
+            optimal_reference("OneMax", 50, "two_plus_two")
+        with pytest.raises(ValueError, match=r"unknown n 75.*\(50, 100, 200\)"):
+            optimal_reference("OneMax", 75, "one_plus_one")
+
+
+class TestGap:
+    """Arithmetic and censoring rules of the optimality gap."""
+
+    def test_arithmetic(self):
+        """The ratio is evals / optimal_evals, with the exact reference exposed."""
+        reference = optimal_reference("OneMax", 50, "one_plus_one", start_f=0)
+        result = gap(
+            2 * reference["optimal_evals"],
+            "OneMax",
+            50,
+            "one_plus_one",
+            0,
+        )
+        assert result["evals"] == pytest.approx(2 * reference["optimal_evals"])
+        assert result["reference_evals"] == reference["optimal_evals"]
+        assert result["ratio"] == pytest.approx(2.0, rel=1e-12)
+        assert result["exact"] is True
+        assert result["solved"] is True
+        assert result["reason"] is None
+
+    def test_censored_run_has_no_gap(self):
+        """An unsolved (cutoff) episode is censored: no ratio, a clear reason."""
+        result = gap(10_000, "OneMax", 50, "one_plus_one", 0, solved=False)
+        assert result["ratio"] is None
+        assert result["reference_evals"] is not None
+        assert result["exact"] is True
+        assert result["solved"] is False
+        assert "cutoff" in result["reason"]
+
+    @pytest.mark.parametrize(
+        ("problem", "n", "algorithm", "needle"),
+        [
+            ("OneMax", 50, "one_plus_lambda_lambda", "arrangement"),
+            ("OneMax", 200, "one_plus_lambda_lambda", "crossover"),
+            ("LeadingOne", 100, "one_plus_lambda_lambda", "suffix"),
+            ("LeadingOne", 200, "one_plus_lambda", "suffix"),
+        ],
+    )
+    def test_non_exact_has_no_ratio(self, problem, n, algorithm, needle):
+        """No exact optimum: no ratio, no number, the reason is passed through."""
+        result = gap(10_000, problem, n, algorithm, 0)
+        assert result["ratio"] is None
+        assert result["reference_evals"] is None
+        assert result["exact"] is False
+        assert result["solved"] is True
+        assert needle in result["reason"]
+
+    def test_optimal_start_has_no_gap(self):
+        """start_f = n is already optimal: zero evaluations cannot be a ratio."""
+        result = gap(0, "OneMax", 50, "one_plus_one", 50)
+        assert result["ratio"] is None
+        assert result["reference_evals"] == 0.0
+        assert "already optimal" in result["reason"]
+
+
+class TestTheoryPolicy:
+    """The theory-derived reference policies."""
+
+    def test_ga_onemax_lambda_formula(self):
+        """The fitness-dependent lambda is mapped to the portfolio."""
+        policy = theory_policy("OneMax", "one_plus_lambda_lambda")
+        env = FakeEnv(n=50, algorithm="one_plus_lambda_lambda")
+        env.x.fitness = 0  # sqrt(50 / 50) = 1 -> lambda = 1
+        assert policy(env, None) == 0
+        env.x.fitness = 38  # sqrt(50 / 12) = 2.04 -> lambda = 2
+        assert policy(env, None) == 1
+        env.x.fitness = 49  # sqrt(50 / 1) = 7.07 -> nearest portfolio 8
+        assert policy(env, None) == 3
+
+    def test_ga_onemax_clips_to_the_largest_action(self):
+        """A formula value above the portfolio is clipped to the largest action."""
+        policy = theory_policy("OneMax", "one_plus_lambda_lambda")
+        env = FakeEnv(
+            n=200,
+            algorithm="one_plus_lambda_lambda",
+            action_choices=[1, 2, 4],
+        )
+        env.x.fitness = 199  # sqrt(200) = 14.14 -> clipped to 4
+        assert policy(env, None) == len(env.action_choices) - 1
+
+    def test_onemax_constants(self):
+        """OneMax (1+1) and (1+lambda) use the exact-DP constant actions."""
+        for algorithm in ["one_plus_one", "one_plus_lambda"]:
+            policy = theory_policy("OneMax", algorithm)
+            env = FakeEnv(n=100, algorithm=algorithm)
+            env.x.fitness = 0
+            assert policy(env, None) == 0  # r = 1 / lambda = 1
+            env.x.fitness = 99  # the constant does not depend on f(x)
+            assert policy(env, None) == 0
+            assert policy.reset() is None
+
+    def test_leadingone_constants(self):
+        """LeadingOne uses the nearest portfolio value to p ~ 1.59/n."""
+        one_plus_one = theory_policy("LeadingOne", "one_plus_one")
+        env = FakeEnv(problem=LeadingOne, n=100, algorithm="one_plus_one")
+        assert one_plus_one(env, None) == 1  # r = 2
+        one_plus_lambda = theory_policy("LeadingOne", "one_plus_lambda")
+        env.algorithm = "one_plus_lambda"
+        assert one_plus_lambda(env, None) == 0  # lambda = 1
+
+    def test_ga_on_leadingone_raises(self):
+        """No published theory and no bucket model for the GA on LeadingOne."""
+        with pytest.raises(ValueError, match="LeadingOne") as excinfo:
+            theory_policy("LeadingOne", "one_plus_lambda_lambda")
+        assert "suffix" in str(excinfo.value)
+        assert "success_rule" in str(excinfo.value)
+
+    def test_unknown_combination_raises(self):
+        """Unknown problem and algorithm are rejected."""
+        with pytest.raises(ValueError, match="unknown problem"):
+            theory_policy("Trap", "one_plus_one")
+        with pytest.raises(ValueError, match="unknown algorithm"):
+            theory_policy("OneMax", "two_plus_two")
+
+    @pytest.mark.parametrize(
+        ("problem", "algorithm"),
+        [
+            ("OneMax", "one_plus_one"),
+            ("OneMax", "one_plus_lambda"),
+            ("OneMax", "one_plus_lambda_lambda"),
+            ("LeadingOne", "one_plus_one"),
+            ("LeadingOne", "one_plus_lambda"),
+        ],
+    )
+    def test_action_is_valid_in_a_real_env(self, problem, algorithm):
+        """Every returned index is a valid action index of a real environment."""
+        env = make_env(
+            problem=problem,
+            algorithm=algorithm,
+            action_choices=PORTFOLIO,
+            instance_set_path=str(
+                INSTANCE_DIR
+                / f"{'onemax' if problem == 'OneMax' else 'leadingones'}_50.csv"
+            ),
+            cutoff=50,
+        )
+        env.reset(seed=0)
+        policy = theory_policy(problem, algorithm)
+        for fitness in (0, 25, 49):
+            env.x.fitness = fitness
+            action = policy(env, None)
+            assert 0 <= action < len(env.action_choices)

@@ -6,13 +6,25 @@ script, see its module docstring).  The tests check the internal consistency of
 the shipped tables, the scope of the derivation, the estimation internals, and
 (cheaply) that the shipped policies have not drifted in full benchmark episodes.
 
-Shipped are the 9 combinations whose derived policy was at most 1.05 times the
-evaluations of the best fixed action on **both** paired seed sets A (seeds 0-11,
-the selection protocol) and B (held-out seeds 1000-1011) and never significantly
-worse: OneMax n=50 with the (1+1) EA and the (1+lambda) EA,
-OneMax n=100 with the (1+1) EA and the (1+(lambda,lambda)) GA, all three OneMax
-n=200 combinations, LeadingOne n=100 with the (1+1) EA and the
-(1+(lambda,lambda)) GA.  The other nine have no validated reference policy (see
+Ten combinations ship, in two groups.
+
+**Exact (six)**: OneMax n in {50, 100, 200} with the (1+1) EA and with the
+(1+lambda) EA.  For OneMax the fitness bucket is a sufficient statistic, so
+these tables hold the *true optimum* of the bucket model and are produced by
+``exact_optimal_policy.py`` (see ``tests/envs/test_ga_exact_policy.py``).  They
+carry an extra trailing ``exact = 1`` column, ``n_seeds = 0`` and
+``ci_low = ci_high = mean_evals``.  Their policy is optimal by construction, so
+the 12-seed full-episode comparisons of the simulated tables do not apply to
+them; the exact comparison is ``V[0] <= W_a[0]`` against the fixed actions.
+
+**Simulation-derived (four)**: OneMax n=100 and n=200 with the
+(1+(lambda,lambda)) GA and LeadingOne n=100 with the (1+1) EA and the
+(1+(lambda,lambda)) GA.  They ship because their derived policy was at most 1.05
+times the evaluations of the best fixed action on **both** paired seed sets A
+(seeds 0-11, the selection protocol) and B (held-out seeds 1000-1011) and never
+significantly worse.
+
+The other eight combinations have no validated reference policy (see
 :data:`dacbench.envs.env_utils.ga_baselines.UNVALIDATED_COMBINATIONS`) and are
 documented in ``docs/source/benchmark_docs/ga.rst``.
 """
@@ -40,6 +52,8 @@ from dacbench.envs.theory import OneMax
 INSTANCE_DIR = Path(__file__).resolve().parents[2] / "dacbench" / "instance_sets" / "ga"
 SCRIPT_PATH = INSTANCE_DIR / "derive_optimal_policy.py"
 
+#: Columns of a simulation-derived table; the exact tables have the same columns
+#: plus a trailing ``exact`` column.
 COLUMNS = ["f_x", "action", "choice", "mean_evals", "n_seeds", "ci_low", "ci_high"]
 PORTFOLIO = [1, 2, 4, 8, 16]
 PROBLEMS = {"onemax": "OneMax", "leadingones": "LeadingOne"}
@@ -53,20 +67,27 @@ ALL_COMBINATIONS = [
     for algorithm in ALGORITHMS
 ]
 
-#: The combinations whose derived table ships (9 of the 18).
-SHIPPED = [
-    ("onemax", 50, "one_plus_one"),
-    ("onemax", 50, "one_plus_lambda"),
-    ("onemax", 100, "one_plus_one"),
+#: The six combinations whose table is exact (``exact = 1``), see
+#: ``exact_optimal_policy.py``.
+EXACT = [
+    ("onemax", n, algorithm)
+    for n in SIZES
+    for algorithm in ["one_plus_one", "one_plus_lambda"]
+]
+
+#: The four shipped combinations whose table is simulation-derived, see
+#: ``derive_optimal_policy.py``.
+SIMULATED = [
     ("onemax", 100, "one_plus_lambda_lambda"),
-    ("onemax", 200, "one_plus_one"),
-    ("onemax", 200, "one_plus_lambda"),
     ("onemax", 200, "one_plus_lambda_lambda"),
     ("leadingones", 100, "one_plus_one"),
     ("leadingones", 100, "one_plus_lambda_lambda"),
 ]
 
-#: The combinations without a validated reference policy (9 of the 18): no CSV
+#: The combinations whose table ships (10 of the 18).
+SHIPPED = EXACT + SIMULATED
+
+#: The combinations without a validated reference policy (8 of the 18): no CSV
 #: ships for them and ``best_static`` raises for them.
 UNSHIPPED = [
     combination for combination in ALL_COMBINATIONS if combination not in SHIPPED
@@ -227,42 +248,55 @@ def derivation():
 
 
 def test_shipped_set_is_exactly_the_validated_combinations():
-    """The directory holds exactly the 9 validated tables, no stale extras."""
+    """The directory holds exactly the 10 shipped tables, no stale extras."""
     shipped = sorted(path.name for path in INSTANCE_DIR.glob("optimal_policy_*.csv"))
     expected = sorted(
         f"optimal_policy_{problem}_{n}_{algorithm}.csv"
         for problem, n, algorithm in SHIPPED
     )
-    assert len(expected) == 9
+    assert len(expected) == 10
     assert shipped == expected
     # the excluded combinations really have no file
     for problem, n, algorithm in UNSHIPPED:
         assert not policy_path(problem, n, algorithm).exists()
+    # exactly the exact combinations carry the ``exact`` marker
+    for problem, n, algorithm in SHIPPED:
+        columns = load_policy(problem, n, algorithm).columns
+        assert ("exact" in columns) is ((problem, n, algorithm) in EXACT)
+    # the fixed-action cost table of the exact derivation is shipped as well
+    fixed = INSTANCE_DIR / "exact_fixed_action_counts.csv"
+    assert fixed.is_file()
 
 
 def test_derivation_scope_matches_the_shipped_set(derivation):
     """The script's default scope and its exclusion list match the shipped files."""
     assert sorted(derivation.SHIPPED_COMBINATIONS) == sorted(SHIPPED)
+    assert sorted(derivation.EXACT_COMBINATIONS) == sorted(EXACT)
     assert sorted(derivation.EXCLUDED_COMBINATIONS) == sorted(UNSHIPPED)
     assert sorted(UNVALIDATED_COMBINATIONS) == sorted(UNSHIPPED)
     # one source of truth: the script re-exports the package's data
     assert derivation.EXCLUDED_COMBINATIONS is UNVALIDATED_COMBINATIONS
+    assert derivation.SHIPPED_COMBINATIONS is ga_baselines.SHIPPED_COMBINATIONS
+    # the default scope of the simulation script is what still needs simulation
+    assert sorted(derivation.SIMULATED_COMBINATIONS) == sorted(SIMULATED)
 
     args = derivation.parse_args([])
     assert args.include_unvalidated is False
+    assert args.force is False
     assert args.sizes == SIZES
     assert args.problems == list(PROBLEMS)
     assert args.rounds == derivation.DEFAULT_ROUNDS > 0
-    # the default selection derives exactly the 9 shipped combinations
+    # the default selection derives exactly the 4 simulated combinations
     default_scope = [
         (problem, n, algorithm)
         for problem in args.problems
         for n in args.sizes
         for algorithm in args.algorithms
-        if (problem, n, algorithm) not in derivation.EXCLUDED_COMBINATIONS
+        if (problem, n, algorithm)
+        in set(derivation.SHIPPED_COMBINATIONS) - set(derivation.EXACT_COMBINATIONS)
     ]
-    assert sorted(default_scope) == sorted(SHIPPED)
-    # --all derives all 18
+    assert sorted(default_scope) == sorted(SIMULATED)
+    # --all selects all 18
     all_scope = [
         (problem, n, algorithm)
         for problem in args.problems
@@ -271,6 +305,7 @@ def test_derivation_scope_matches_the_shipped_set(derivation):
     ]
     assert len(all_scope) == 18
     assert derivation.parse_args(["--all"]).include_unvalidated is True
+    assert derivation.parse_args(["--all", "--force"]).force is True
 
 
 def test_unvalidated_data_is_classified_and_carries_ratios():
@@ -314,10 +349,22 @@ def test_unvalidated_data_is_classified_and_carries_ratios():
 
 @pytest.mark.parametrize(("problem", "n", "algorithm"), SHIPPED)
 def test_shipped_policy_is_consistent(problem, n, algorithm):
-    """The shipped tables are well formed and satisfy the DP's defining property."""
-    table = load_policy(problem, n, algorithm)
+    """The shipped tables are well formed and satisfy the DP's defining property.
 
-    assert list(table.columns) == COLUMNS
+    The exact tables (``exact = 1``) differ from the simulation-derived ones in
+    exactly the metadata: they have an extra ``exact`` column, ``n_seeds = 0``
+    and ``ci_low = ci_high = mean_evals`` on every row, because nothing was
+    sampled.
+    """
+    table = load_policy(problem, n, algorithm)
+    is_exact = (problem, n, algorithm) in EXACT
+
+    assert list(table.columns) == COLUMNS + (["exact"] if is_exact else [])
+    if is_exact:
+        assert (table["exact"] == 1).all()
+        assert (table["n_seeds"] == 0).all()
+        assert np.array_equal(table["ci_low"], table["mean_evals"])
+        assert np.array_equal(table["ci_high"], table["mean_evals"])
     # one row per bucket and action, buckets 0..n (n is the terminal bucket)
     assert len(table) == (n + 1) * len(PORTFOLIO)
     assert sorted(table["f_x"].unique().tolist()) == list(range(n + 1))
@@ -331,11 +378,15 @@ def test_shipped_policy_is_consistent(problem, n, algorithm):
             assert (group["mean_evals"] == 0.0).all()
             assert (group["n_seeds"] == 0).all()
             continue
-        assert (group["n_seeds"] > 0).all()
         finite = np.isfinite(group["mean_evals"])
         assert finite.any(), f"bucket {bucket} has no finite action value"
         assert (group.loc[finite, "mean_evals"] > 0).all(), bucket
         assert (group.loc[finite, "ci_low"] <= group.loc[finite, "ci_high"]).all()
+        if is_exact:
+            # every action improves in every bucket of the exact model
+            assert finite.all(), bucket
+            continue
+        assert (group["n_seeds"] > 0).all()
         # rows without a single simulated improvement are inf in all three
         # numeric columns
         assert np.isinf(group.loc[~finite, "ci_low"]).all()
@@ -362,9 +413,19 @@ def test_shipped_policy_is_consistent(problem, n, algorithm):
     assert values[0] > 1.5 * values[n - 1]
 
 
-@pytest.mark.parametrize(("problem", "n", "algorithm"), SHIPPED)
+@pytest.mark.parametrize(("problem", "n", "algorithm"), SIMULATED)
 def test_shipped_policy_dominates_best_fixed_action(problem, n, algorithm):
-    """Regression/drift test: the shipped policy still beats the best fixed action.
+    """Regression/drift test: the derived policy still beats the best fixed action.
+
+    Only the simulation-derived tables are tested here.  Their documented
+    advantage is a *measured* 0.79-0.99, so a change of the tables, of the
+    operators or of the environment can push them above the tolerance and this
+    test has to catch that.  The exact tables are not tested this way on purpose:
+    they are optimal by construction (``V[0] <= W_a[0]``, 0.900/0.920/0.932 for
+    the (1+1) EA and exactly 1.000 for the (1+lambda) EA), and a 12-episode mean
+    of an exactly neutral comparison is pure noise -- it can land above 1.05
+    without anything being wrong.  Their exact property is checked by
+    ``test_exact_tables_dominate_every_fixed_action`` instead.
 
     This test is **pinned to the documented protocol** and is not a validation:
     it reproduces protocol A of ``docs/source/benchmark_docs/ga.rst`` (12 paired
@@ -388,7 +449,7 @@ def test_shipped_policy_dominates_best_fixed_action(problem, n, algorithm):
     )
 
 
-@pytest.mark.parametrize(("problem", "n", "algorithm"), SHIPPED)
+@pytest.mark.parametrize(("problem", "n", "algorithm"), SIMULATED)
 def test_held_out_drift_check(problem, n, algorithm):
     """Drift check on held-out seeds 3000-3004 (5 episodes, 15% tolerance).
 
@@ -413,6 +474,36 @@ def test_best_static_raises_for_unvalidated_combinations(problem, n, algorithm):
     """Unshipped combinations raise a clear, actionable ValueError."""
     with pytest.raises(ValueError, match="no validated reference table exists"):
         best_static(problem=problem, n=n, algorithm=algorithm)
+
+
+def test_exact_tables_dominate_every_fixed_action():
+    """``mean_evals(f_x, a) <= W_a[f_x]`` and the value is the optimal cost.
+
+    This is the exact replacement for the 12-episode protocol of the simulated
+    tables: it compares the exact cost-to-go of "play ``a`` once, then optimally"
+    with the exact cost of always playing ``a`` (``exact_fixed_action_counts.csv``)
+    and needs no episodes at all.
+    """
+    fixed = pd.read_csv(INSTANCE_DIR / "exact_fixed_action_counts.csv")
+    for problem, n, algorithm in EXACT:
+        table = load_policy(problem, n, algorithm)
+        block = fixed[(fixed["n"] == n) & (fixed["algorithm"] == algorithm)]
+        optimal = block[block["action"] == -1].set_index("start_f")["expected_evals"]
+        for bucket, group in table.groupby("f_x"):
+            bucket = int(bucket)
+            means = group["mean_evals"].to_numpy(dtype=float)
+            for index in range(len(PORTFOLIO)):
+                always = block[
+                    (block["action"] == index) & (block["start_f"] == bucket)
+                ]["expected_evals"].iloc[0]
+                assert means[index] <= always + 1e-9, (n, algorithm, bucket, index)
+            assert means.min() == pytest.approx(optimal.loc[bucket], rel=1e-15)
+        # the (1+1) EA really gains something against its best fixed action
+        if algorithm == "one_plus_one":
+            best_fixed = block[(block["start_f"] == 0) & (block["action"] >= 0)][
+                "expected_evals"
+            ].min()
+            assert optimal.loc[0] / best_fixed < 0.95
 
 
 def test_unvalidated_message_names_the_alternative():
@@ -455,7 +546,18 @@ def test_best_static_accepts_explicit_unvalidated_table(tmp_path):
     assert 0 <= policy(env, None) < len(PORTFOLIO)
 
 
-@pytest.mark.parametrize(("problem", "n", "algorithm"), SHIPPED)
+#: The shipped tables whose policy reacts to the fitness.  The three exact
+#: (1+lambda) tables are missing on purpose: their optimum *is* the constant
+#: action ``lambda = 1`` (see ``test_ga_exact_policy.py``), so requiring a
+#: fitness-dependent choice would be wrong there.
+VARYING = [
+    combination
+    for combination in SHIPPED
+    if combination not in [("onemax", n, "one_plus_lambda") for n in SIZES]
+]
+
+
+@pytest.mark.parametrize(("problem", "n", "algorithm"), VARYING)
 def test_derived_policy_varies_with_fitness(problem, n, algorithm):
     """The derived choice is not constant over the fitness buckets."""
     best = best_action_per_bucket(load_policy(problem, n, algorithm))
@@ -476,9 +578,9 @@ def test_tiny_derivation_is_reproducible(derivation, tmp_path):
                 "--problems",
                 "onemax",
                 "--sizes",
-                "50",
+                "100",
                 "--algorithms",
-                "one_plus_one",
+                "one_plus_lambda_lambda",
                 "--n-seeds",
                 "10",
                 "--rounds",
@@ -489,13 +591,111 @@ def test_tiny_derivation_is_reproducible(derivation, tmp_path):
                 str(out_dir),
             ]
         )
-        path = out_dir / "optimal_policy_onemax_50_one_plus_one.csv"
+        path = out_dir / "optimal_policy_onemax_100_one_plus_lambda_lambda.csv"
         outputs.append(path.read_bytes())
 
     assert outputs[0] == outputs[1]
     table = pd.read_csv(tmp_path / "run0" / path.name)
     assert list(table.columns) == COLUMNS
-    assert len(table) == 51 * len(PORTFOLIO)
+    assert len(table) == 101 * len(PORTFOLIO)
+
+
+def test_derivation_never_overwrites_an_exact_table(derivation, tmp_path):
+    """An exact output file is skipped, and only ``--force`` replaces it."""
+    exact_path = tmp_path / "optimal_policy_onemax_50_one_plus_one.csv"
+    exact_path.write_bytes((INSTANCE_DIR / exact_path.name).read_bytes())
+    before = exact_path.read_bytes()
+    # the combination is exact: skipped with a message, whatever the scope
+    derivation.main(
+        [
+            "--problems",
+            "onemax",
+            "--sizes",
+            "50",
+            "--algorithms",
+            "one_plus_one",
+            "--n-seeds",
+            "5",
+            "--rounds",
+            "0",
+            "--out-dir",
+            str(tmp_path),
+        ]
+    )
+    assert exact_path.read_bytes() == before
+    # --force replaces it with a simulation estimate (no ``exact`` column)
+    derivation.main(
+        [
+            "--problems",
+            "onemax",
+            "--sizes",
+            "50",
+            "--algorithms",
+            "one_plus_one",
+            "--n-seeds",
+            "5",
+            "--rounds",
+            "0",
+            "--out-dir",
+            str(tmp_path),
+            "--force",
+        ]
+    )
+    replaced = pd.read_csv(exact_path)
+    assert "exact" not in replaced.columns
+    assert list(replaced.columns) == COLUMNS
+    # an unvalidated combination whose output file is exact is skipped too
+    unvalidated_path = tmp_path / "optimal_policy_leadingones_50_one_plus_one.csv"
+    unvalidated_path.write_bytes(before)
+    derivation.main(
+        [
+            "--problems",
+            "leadingones",
+            "--sizes",
+            "50",
+            "--algorithms",
+            "one_plus_one",
+            "--n-seeds",
+            "5",
+            "--rounds",
+            "0",
+            "--out-dir",
+            str(tmp_path),
+            "--all",
+        ]
+    )
+    assert unvalidated_path.read_bytes() == before
+
+
+def test_default_scope_is_the_simulated_combinations(derivation, tmp_path, monkeypatch):
+    """A default run derives exactly the four simulation-derived combinations.
+
+    The derivation itself is stubbed out: this test is about the scope (the
+    expensive part is covered by ``test_tiny_derivation_is_reproducible`` and by
+    the shipped files).
+    """
+    derived = []
+
+    def fake_derive(problem, n, algorithm, *args, **kwargs):
+        derived.append((problem, n, algorithm))
+        stats = {
+            "n_inf_rows": 0,
+            "n_distinct_best": 0,
+            "n_samples_total": 0,
+            "best_at": {},
+            "rounds": [],
+            "converged": False,
+            "n_rounds": 0,
+        }
+        return pd.DataFrame(columns=COLUMNS), stats
+
+    monkeypatch.setattr(derivation, "derive_optimal_policy", fake_derive)
+    assert derivation.main(["--out-dir", str(tmp_path)]) == 0
+    assert sorted(derived) == sorted(SIMULATED)
+    assert sorted(path.name for path in tmp_path.glob("*.csv")) == sorted(
+        f"optimal_policy_{problem}_{n}_{algorithm}.csv"
+        for problem, n, algorithm in SIMULATED
+    )
 
 
 def test_derivation_skips_unvalidated_combinations(derivation, tmp_path):

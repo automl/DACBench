@@ -182,20 +182,119 @@ The sets can be regenerated with the ``sample_ga_instances.ipynb`` notebook.
 
 .. _ga_reference_policies:
 
-Reference Policies (simulation-derived)
-----------------------------------------
+Reference Policies (exact for OneMax, simulation-derived elsewhere)
+-------------------------------------------------------------------
 
 Unlike the Theory benchmark (RLS on LeadingOnes, where the optimal policy is known and
-computable), this benchmark has **no theorem-derived optimal policy**: no closed-form
-optimal control policy is known for these GA variants on OneMax and LeadingOnes. What
-ships instead is a **simulation-derived reference policy** (``best_static``, with tables
-for 9 of the 18 combinations) and two baseline rules (``success_rule`` and
-``random_policy``).
+computable), this benchmark has **no closed-form optimal policy** for the
+(1+(λ,λ)) GA or for LeadingOnes. What ships is ``best_static``, with tables for 10 of
+the 18 combinations in two kinds:
 
-The reference policies are **approximate reference policies, not optima**. They solve a
-simulated model of the problem, they carry Monte-Carlo error, and for LeadingOnes the
-model is known to be incomplete. They answer one question: "is a learned policy clearly
-better than the obvious fixed action?".
+- **exact** (6 combinations: OneMax with the (1+1) EA and the (1+λ) EA), computed from
+  the closed-form bucket chain by
+  ``dacbench/instance_sets/ga/exact_optimal_policy.py``. For OneMax with these
+  mutation-only operators ``f(x)`` is a sufficient statistic, so these tables hold the
+  *true optimum over the action portfolio*, not an estimate (see the portfolio caveat
+  in the next subsection);
+- **simulation-derived** (4 combinations), computed by
+  ``dacbench/instance_sets/ga/derive_optimal_policy.py``. They are **approximate
+  reference policies, not optima**: they solve a simulated model of the problem, they
+  carry Monte-Carlo error, and for LeadingOnes the model is known to be incomplete.
+
+Two baseline rules (``success_rule`` and ``random_policy``) ship alongside.
+
+Exact tables: OneMax with the (1+1) EA and the (1+λ) EA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+For ``f(x) = sum_i x_i`` the number of ones is a sufficient statistic. One generation
+of the (1+1) EA draws ``L ~ Bin(n, r/n)`` conditioned on ``L > 0`` and flips ``L``
+distinct uniformly chosen bits; of those, ``A ~ Hypergeometric(n, f, L)`` carry a one,
+so the child has ``f' = f + L - 2A``. For the (1+λ) EA the mutation rate is fixed at
+``1/n``, the λ children are iid and the best of them is accepted (fitness is monotone),
+so the row of a bucket is the λ-th power of the cumulative single-child distribution.
+A backward dynamic programme from ``f(x) = n`` then yields, for every bucket and every
+action, the exact expected number of evaluations of "play this action once, then follow
+the optimal policy", and the exact cost of always playing a fixed action. Nothing is
+sampled — but note the action set: these tables are optimal **over the portfolio
+[1, 2, 4, 8, 16]**, not over all mutation strengths. The difference is not small at the
+easiest start. With ``r = n`` the (1+1) EA flips every bit, i.e. it complements the
+string, so from ``f(x) = 0`` it reaches the optimum in **exactly one evaluation** (the
+same holds for the flip radius of the Theory benchmark). The portfolio stops at 16 for
+comparability with Theory, so a derived policy cannot use that shortcut, and any policy
+that does lies outside the tables' action set, so its ``gap`` is not comparable. In the
+other direction the portfolio does not restrict the (1+λ) EA: allowing every
+``lambda`` up to 20 at n = 50 leaves the optimum at ``lambda = 1`` in every bucket.
+Nothing is sampled: the tables carry ``n_seeds = 0``, ``ci_low = ci_high = mean_evals`` and an
+extra ``exact = 1`` column, and ``exact_fixed_action_counts.csv`` holds the cost of
+every fixed action for every start bucket.
+
+.. list-table:: Exact optimum vs. best fixed action, portfolio [1, 2, 4, 8, 16]. ``V[0]`` and ``W[0]`` are expected evaluations from ``f(x) = 0``, not counting the initial individual.
+   :header-rows: 1
+   :widths: 8 5 9 10 12 16 10
+
+   * - Problem
+     - n
+     - Algorithm
+     - exact V[0]
+     - best fixed action
+     - optimal bucket policy
+     - V[0] / W[0]
+   * - OneMax
+     - 50
+     - (1+1) EA
+     - 277.967
+     - r = 1 (308.799)
+     - r = 16 for f ≤ 27, 8 for 28-30, 4 for 31, 1 for 32-49
+     - 0.900
+   * - OneMax
+     - 100
+     - (1+1) EA
+     - 673.229
+     - r = 1 (732.164)
+     - r = 16 for f ≤ 57, 8 for 58-61, 4 for 62-63, 1 for 64-99
+     - 0.920
+   * - OneMax
+     - 200
+     - (1+1) EA
+     - 1581.847
+     - r = 1 (1697.146)
+     - r = 16 for f ≤ 117, 8 for 118-124, 4 for 125-128, 1 for 129-199
+     - 0.932
+   * - OneMax
+     - 50
+     - (1+λ) EA
+     - 308.799
+     - λ = 1 (308.799)
+     - λ = 1 everywhere
+     - 1.000
+   * - OneMax
+     - 100
+     - (1+λ) EA
+     - 732.164
+     - λ = 1 (732.164)
+     - λ = 1 everywhere
+     - 1.000
+   * - OneMax
+     - 200
+     - (1+λ) EA
+     - 1697.146
+     - λ = 1 (1697.146)
+     - λ = 1 everywhere
+     - 1.000
+
+Two results are worth reading off this table. First, the (1+1) EA gains 7-10 % over the
+best constant mutation strength: it pays to mutate hard (``r = 16``, i.e. ``p = 0.08`` at
+n=200) far from the optimum and to mutate gently (``r = 1``) close to it. Second, the
+(1+λ) EA gains **nothing**: because the mutation rate is fixed at ``1/n``, a generation
+with λ children costs λ times as much and improves λ times as often, and the exact
+optimum is the constant action ``λ = 1`` in every bucket. Any measured advantage of a
+bucket-dependent λ for that operator is Monte-Carlo noise (see the correction below).
+
+The ``(1+(λ,λ))`` GA is out of reach of this model: its mutation phase flips the same
+``l`` bits in all λ mutants and its crossover recombines a mutant with the incumbent, so
+whether an offspring improves depends on the Hamming distance between the parents, which
+``f(x)`` does not determine. The exact script refuses that combination (and every
+LeadingOnes combination, where ``f(x)`` does not determine the suffix) with an error
+that names the reason instead of emitting a table labelled "exact".
 
 Method: policy iteration over on-policy state pools
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -250,11 +349,11 @@ pools**:
    without a single improvement has infinite cost, so a row with very few improvements
    reports an infinite upper bound.
 
-**Convergence.** With the default ``--rounds 3`` none of the nine shipped tables
-reaches a fixed point of the policy iteration: in the last round the policy still
-changes in 2 to 34 of the buckets (2, 2, 6, 8, 10, 17, 19, 24 and 34 for the nine
-combinations). The shipped tables are therefore **snapshots of the last round, not
-converged solutions of the bucket model**. They are reproducible — an identical
+**Convergence.** With the default ``--rounds 3`` none of the four simulation-derived
+shipped tables reaches a fixed point of the policy iteration: in the last round the
+policy still changes in 2 to 34 of the buckets. The simulation-derived shipped tables
+are therefore **snapshots of the last round, not converged solutions of the bucket
+model**. (This does not apply to the six exact tables, which are solved, not iterated.) They are reproducible — an identical
 invocation produces a bit-identical CSV — but they should not be read as "the optimal
 policy of the simulation". A larger ``--rounds`` iterates further and yields a
 different table, which is exactly the kind of change the 1.05 tolerance is there to
@@ -277,14 +376,19 @@ The result is one file per shipped combination,
 ``{onemax, leadingones}``, ``n`` in ``{50, 100, 200}`` and ``algorithm`` in
 ``{one_plus_one, one_plus_lambda, one_plus_lambda_lambda}``, with columns::
 
-    f_x,action,choice,mean_evals,n_seeds,ci_low,ci_high
+    f_x,action,choice,mean_evals,n_seeds,ci_low,ci_high[,exact]
+
+The trailing ``exact`` column is present only in the six exact tables (``exact = 1``,
+``n_seeds = 0``, ``ci_low = ci_high = mean_evals``); ``best_static`` ignores it.
 
 One row per (bucket ``f_x``, portfolio index ``action``), sorted by ``f_x`` and then
 ``action``. ``choice`` is the parameter value (``r`` or λ), ``mean_evals`` the
 simulated cost-to-go ``V(f(x), action)``, ``n_seeds`` the number of simulated
 transitions of that row and ``ci_low``/``ci_high`` the bootstrap interval. The dynamic
-programme is exact for the bucket model, but its inputs are Monte-Carlo estimates: this
-is why the files contain ``n_seeds`` and confidence intervals.
+programme is exact for the bucket model, but for the simulation-derived tables its
+inputs are Monte-Carlo estimates: this is why those files contain ``n_seeds`` and
+confidence intervals. The exact tables have no such columns to report — they are
+computed, not sampled.
 
 Why is the fresh-state round not enough? For OneMax it is exact: the problem is
 symmetric, so states with the same ``f(x)`` are exchangeable and the successor fitness
@@ -298,14 +402,18 @@ the value of the crossover.
 Validation: which of the 18 combinations ship
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Shipping a table is a claim that the table is a useful reference. A combination
-therefore ships only if its derived policy is **at most 1.05 times the evaluations of
-the best fixed portfolio action on both validation protocols A and B, and never
-significantly worse** than it. Both protocols are full-episode comparisons in test mode
-(cutoff ``10 n^2``, the shipped instance ladder, episodes run until the optimum or the
-cutoff) and both are **paired**: every policy runs in a fresh environment and meets the
-same seeds in the same order, so each policy sees exactly the same (seed, instance)
-pairs.
+The six exact combinations ship unconditionally: there is nothing to validate, because
+their policy is the optimum of the model and therefore cannot be worse than a constant
+action. The 1.05 criterion below applies to the simulation-derived tables, where the
+policy is only estimated and a validation run is the only available evidence.
+
+A simulation-derived combination ships only if its derived policy is **at most 1.05
+times the evaluations of the best fixed portfolio action on both validation protocols A
+and B, and never significantly worse** than it. Both protocols are full-episode
+comparisons in test mode (cutoff ``10 n^2``, the shipped instance ladder, episodes run
+until the optimum or the cutoff) and both are **paired**: every policy runs in a fresh
+environment and meets the same seeds in the same order, so each policy sees exactly the
+same (seed, instance) pairs.
 
 - **A**: 12 seeds (0–11) — the selection protocol that chose the shipped tables.
 - **B**: 12 held-out seeds (1000–1011), disjoint from A.
@@ -313,7 +421,7 @@ pairs.
 The selection was made on A; the held-out B was not used to choose anything and is the
 check that actually counts.
 
-.. list-table:: Derived policy vs. best fixed action, ratio of evaluations on the two paired protocols (A: seeds 0–11, B: held-out seeds 1000–1011). A table ships only if the ratio is at most 1.05 on **both** protocols and is never significantly worse; "–" = not measured.
+.. list-table:: Reference policy vs. best fixed action, ratio of evaluations. For the four simulation-derived tables these are the measured ratios on the two paired protocols (A: seeds 0–11, B: held-out seeds 1000–1011); such a table ships only if the ratio is at most 1.05 on **both** protocols and is never significantly worse; "–" = not measured. The six exact rows ship by construction and show the exact ratio ``V[0] / W_a[0]``: the same number appears in both columns because it is computed, not measured on a protocol.
    :header-rows: 1
    :widths: 12 5 20 8 8 17 22
 
@@ -327,17 +435,17 @@ check that actually counts.
    * - OneMax
      - 50
      - (1+1) EA
-     - 0.882
-     - 0.801
+     - 0.900
+     - 0.900
      - r = 1
-     - shipped
+     - shipped (exact)
    * - OneMax
      - 50
      - (1+λ) EA
-     - 0.968
-     - 0.997
-     - λ = 2
-     - shipped
+     - 1.000
+     - 1.000
+     - λ = 1
+     - shipped (exact)
    * - OneMax
      - 50
      - (1+(λ,λ)) GA
@@ -348,17 +456,17 @@ check that actually counts.
    * - OneMax
      - 100
      - (1+1) EA
-     - 0.948
-     - 1.007
+     - 0.920
+     - 0.920
      - r = 1
-     - shipped
+     - shipped (exact)
    * - OneMax
      - 100
      - (1+λ) EA
-     - 1.041
-     - 1.088
+     - 1.000
+     - 1.000
      - λ = 1
-     - excluded: failed validation
+     - shipped (exact)
    * - OneMax
      - 100
      - (1+(λ,λ)) GA
@@ -369,17 +477,17 @@ check that actually counts.
    * - OneMax
      - 200
      - (1+1) EA
-     - 0.923
-     - 0.859
+     - 0.932
+     - 0.932
      - r = 1
-     - shipped
+     - shipped (exact)
    * - OneMax
      - 200
      - (1+λ) EA
-     - 0.847
-     - 0.909
+     - 1.000
+     - 1.000
      - λ = 1
-     - shipped
+     - shipped (exact)
    * - OneMax
      - 200
      - (1+(λ,λ)) GA
@@ -454,11 +562,25 @@ check that actually counts.
 ``best fixed action`` is the portfolio value that achieved the smallest mean number of
 evaluations in protocol A; it is the reference a user should use for a combination
 without a table. Which action is best is itself noisy: on the held-out seeds a different
-portfolio value wins in several combinations (OneMax n=50 (1+λ): λ = 2 on A, λ = 4 on
-B; OneMax n=100 (1+(λ,λ)): λ = 1 on A, λ = 4 on B; OneMax n=200 (1+λ): λ = 1 on A,
-λ = 2 on B), usually by a few percent. The tolerance is
-therefore applied to the ratio, not to the identity of the winner. Nine combinations
-ship, and their ratios lie between 0.79 and 1.01 (0.84–0.99 on A, 0.79–1.01 on B).
+portfolio value wins in several combinations (OneMax n=100 (1+(λ,λ)): λ = 1 on A, λ = 4
+on B; LeadingOne n=100 (1+(λ,λ)): λ = 1 on both), usually by a few percent. The tolerance
+is therefore applied to the ratio, not to the identity of the winner. For the exact
+tables the best fixed action is not a matter of measurement at all: it is
+``argmin_a W_a[0]`` in ``exact_fixed_action_counts.csv``. Ten combinations
+ship: six exact ones (ratios 0.900 / 0.920 / 0.932 for the (1+1) EA and exactly 1.000
+for the (1+λ) EA, see the exact table above) and four simulation-derived ones whose
+ratios lie between 0.79 and 0.99 (0.84–0.99 on A, 0.79–0.99 on B).
+
+**A correction.** The three (1+λ) EA ratios that an earlier version of this page
+reported (0.968/0.997, 1.041/1.088 and 0.847/0.909) are gone. The exact dynamic
+programme proves that the optimal bucket policy for that operator *is* the
+constant action λ = 1 at every bucket and every size, so the ratio is exactly
+1.000. Adaptivity provably cannot help the (1+λ) EA on OneMax: a generation with
+λ children costs λ times as much and improves λ times as often, so the expected
+number of evaluations per improvement does not change. The earlier measured
+"gain" for that operator was 12-episode noise — the same noise that once made
+the combination look "failed" at n=100. The exact derivation exists precisely
+because such a question cannot be settled by sampling a handful of episodes.
 
 **Excluded because the validation failed** — the derivation ran, the derived policy was
 not better than the best fixed action:
@@ -467,7 +589,6 @@ not better than the best fixed action:
   *below* the 1.05 tolerance on the selection protocol and still **worse** than the
   fixed action: the tolerance is an upper bound that has to hold, not a licence to be
   worse. This table ships in no version.
-- OneMax n=100 (1+λ) EA: A 1.041, B 1.088 versus fixed λ = 1 — the same pattern.
 - LeadingOne n=100 (1+λ) EA: A 0.953, B 1.357 versus fixed λ = 2 — fine on the
   selection seeds, clearly worse on the held-out seeds.
 - LeadingOne n=200 (1+1) EA: A 1.016, B 1.062 versus fixed r = 1 — worse on both, and
@@ -502,22 +623,62 @@ Why the LeadingOne combinations fail is structural, not statistical:
   algorithms) is an empirical result of these measurements, not something the bucket
   model predicts.
 
-**The honest conclusion.** The reference policies that ship are better than the best
-fixed action, but only modestly: 0.79–1.01 times its evaluations (the best case is
-OneMax n=100 with the (1+(λ,λ)) GA at 0.791 on held-out seeds; OneMax n=100 with the
-(1+1) EA is at parity there, 1.007, and 0.948 on the selection seeds).
-They are **approximate reference policies, not optima**: a policy that needs 0.85 times
-the evaluations of a constant action is a useful baseline for a DAC method, not a target
-that has to be matched, and the tables are snapshots of a policy iteration that has not
-converged (see above). The derivation is exact for the bucket model of OneMax by
-symmetry, but the bucket model cannot capture the LeadingOne suffix, which is why nine
-of the 18 combinations have no table at all.
+**The honest conclusion.** For the six exact tables the answer is exact: the (1+1) EA
+gains 7–10 % over its best constant mutation strength and the (1+λ) EA gains nothing.
+For the four simulation-derived tables the derived policy is better than the best fixed
+action, but only modestly: 0.79–0.99 times its evaluations (the best case is OneMax
+n=100 with the (1+(λ,λ)) GA at 0.791 on held-out seeds). Those four are **approximate
+reference policies, not optima**: a policy that needs 0.85 times the evaluations of a
+constant action is a useful baseline for a DAC method, not a target that has to be
+matched, and the tables are snapshots of a policy iteration that has not converged (see
+above). The bucket model cannot capture the LeadingOne suffix or the crossover of the
+(1+(λ,λ)) GA, which is why eight of the 18 combinations have no table at all.
+
+Optimality gaps
+~~~~~~~~~~~~~~~
+
+For the six exact combinations the reference is a number, so an episode can be
+scored directly with ``optimal_reference`` and ``gap``::
+
+    from dacbench.envs.env_utils.ga_baselines import gap, optimal_reference
+
+    optimal_reference("OneMax", 50, "one_plus_one", start_f=0)
+    # {'available': True, 'exact': True, 'optimal_evals': 277.9666762739476,
+    #  'best_fixed_action': 0, 'best_fixed_choice': 1,
+    #  'best_fixed_evals': 308.79895995972475, 'start_f': 0,
+    #  'source': 'exact DP'}
+
+    gap(evals=320, problem="OneMax", n=50, algorithm="one_plus_one", start_f=0)
+    # ratio = 320 / 277.966676... = 1.151
+
+``evals`` is the number of evaluations spent on the search: ``GAEnv.total_evals``
+also counts the initial individual (it is 1 right after ``reset``) and the exact
+reference does not, so pass ``env.total_evals - 1``.
+
+A gap of 1.15 means the episode needed 15 % more evaluations than the exact
+expected optimum *for its own start bucket*. A value below 1 is possible for a
+single episode, because the reference is an expectation while the episode is one
+sample; the gap is therefore a per-episode score, and its mean over many paired
+episodes is the quantity to compare.
+
+``optimal_reference`` returns ``available = False`` for every non-exact
+combination and names the reason (the crossover arrangement of the
+(1+(λ,λ)) GA, or the LeadingOne suffix); it never puts an approximate number in
+``optimal_evals``. ``gap`` then reports ``ratio = None`` and the same reason. A
+**censored** episode (``solved = False``, the evaluation cutoff was hit before
+the optimum) also gets ``ratio = None``: its evaluation count is only a lower
+bound, and reporting ``evals / optimal_evals`` would present an unsolved run as
+a small gap.
+
+The reference tiers are never mixed: exact optimum (six OneMax combinations) >
+simulation-derived best known ``mean_evals`` ± CI (four combinations) > measured
+best fixed action (all combinations) > theory baseline (``theory_policy``).
 
 What this means for users:
 
 - All 18 combinations remain fully usable for training and evaluation; the environment
   itself does not depend on the tables.
-- For the nine combinations without a table the reference is the **measured best fixed
+- For the eight combinations without a table the reference is the **measured best fixed
   action** of that combination (see the table above) or ``success_rule``.
   ``best_static`` raises a ``ValueError`` for them that names the category, the measured
   ratios and the best fixed action.
@@ -527,12 +688,17 @@ What this means for users:
 
 Regenerating the tables::
 
+    python dacbench/instance_sets/ga/exact_optimal_policy.py
     python dacbench/instance_sets/ga/derive_optimal_policy.py
 
-This derives exactly the 9 shipped combinations. ``--all`` (or
-``--include-unvalidated``) derives the remaining nine as well; they are written for
-research use and are not shipped. Useful flags are ``--rounds`` (on-policy rounds after
-the fresh-state round, default 3; ``0`` reproduces the fresh-state method),
+The first command writes the six exact tables and ``exact_fixed_action_counts.csv`` in
+well under a second (``--check`` recomputes them and reports whether the files on disk
+are up to date); the second derives exactly the four simulation-derived shipped
+combinations, and never overwrites an exact table unless ``--force`` is given.
+``--all`` (or ``--include-unvalidated``) derives the eight combinations without a
+validated table as well; they are written for research use and are not shipped. Useful
+flags of the simulation script are ``--rounds`` (on-policy rounds after the
+fresh-state round, default 3; ``0`` reproduces the fresh-state method),
 ``--episodes-per-round`` (episodes per round used for the state pools, default 40),
 ``--n-seeds`` (batch size of the simulated transitions), ``--problems``, ``--sizes``,
 ``--algorithms``, ``--portfolio``, ``--seed`` and ``--out-dir``.
@@ -557,6 +723,12 @@ Baseline policies
   probability; this is the self-adjusting (1+(λ,λ)) GA of Doerr & Doerr (GECCO 2015;
   Algorithmica 2018). For the (1+λ) EA the same λ-update is used as an *adaptation*:
   the published analysis covers the (1+(λ,λ)) GA only.
+- ``theory_policy``: a theory-derived reference policy for OneMax and LeadingOne
+  (see the next subsection). It is a baseline, not an optimum, except where it
+  coincides with the exact dynamic programme: constant ``r = 1`` for the (1+1)
+  EA and constant ``λ = 1`` for the (1+λ) EA on OneMax. The four reference tiers
+  are exact optimum > simulation-derived best known ± CI > best fixed action >
+  this theory baseline.
 - ``random_policy``: a uniform random action, the trivial baseline.
 
 The stateful success rule tracks only the previous fitness and resets at the start of
@@ -569,21 +741,41 @@ generator. The comparison table is generated with::
 It evaluates ``best_static``, ``success_rule`` and ``random_policy`` on the OneMax and
 LeadingOnes instance sets for n = 50, 100, 200, all three algorithms and several seeds,
 and prints the mean number of evaluations to the optimum with a 95% confidence
-interval.
+interval. Its ``gap`` column is the mean per-episode ``evals / optimal_evals`` from
+``gap`` for the six exact combinations (censored episodes are left out) and ``n/a``
+elsewhere.
 
 Theory reference policies
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the (1+(λ,λ)) GA on OneMax the literature does provide analytic policies, which may
-not be representable exactly with a discrete action portfolio:
+``theory_policy(problem, algorithm)`` packages the published analytic choices as
+a policy with the same ``policy(env, state) -> int`` signature as the baselines.
+It is stateless and needs no table:
 
-- the fitness-dependent choice λ = √(n / (n − f(x))), known to yield linear expected
-  runtime (Doerr, Doerr & Ebel 2015);
-- the self-adjusting 1/5-th success rule (Doerr & Doerr 2018), which is the rule that
-  ``success_rule`` implements for the λ-based algorithms.
+- OneMax, (1+(λ,λ)) GA: the fitness-dependent choice λ = √(n / (n − f(x))),
+  known to yield linear expected runtime (Doerr, Doerr & Ebel 2015) and used as
+  the ``theory`` baseline in Chen, Buzdalov, Doerr & Dang (arXiv:2302.12334). The value
+  is
+  mapped to the nearest portfolio value in log space and clipped to the largest
+  value where the formula exceeds it.
+- OneMax, (1+1) EA: constant ``r = 1``, i.e. ``p = 1/n``, the optimal mutation
+  rate for OneMax and linear functions (Doerr's survey, arXiv:1801.04487,
+  Section 6; Witt, Sudholt). It equals the exact DP optimum.
+- OneMax, (1+λ) EA: constant ``λ = 1``, which is the exact-DP optimum in every
+  bucket; parallelism does not buy evaluations on OneMax.
+- LeadingOne, (1+1) EA / (1+λ) EA: constant ``r = 2`` / ``λ = 1``, the nearest
+  portfolio values to the best known *fixed* mutation rate ``p ≈ 1.59/n`` for the
+  (1+1) EA on LeadingOnes (Böttcher, Doerr & Neumann, PPSN 2010; Doerr's survey).
+  These are theory-derived constants, not adaptations.
+- LeadingOne, (1+(λ,λ)) GA: there is no published runtime analysis of that
+  operator on LeadingOnes and the exact bucket model is not available (the
+  suffix after the leading ones is not part of ``f(x)``), so ``theory_policy``
+  raises a ``ValueError`` that names the reason.
 
-No analogue is known for the (1+λ) EA or for LeadingOnes; the simulation-derived tables
-above are the reference there.
+These are **theory-derived references, not optima**, except for OneMax with the
+(1+1) EA and the (1+λ) EA, where they coincide with the exact dynamic programme.
+They are the lowest of the four reference tiers: exact optimum >
+simulation-derived best known ± CI > best fixed action > theory baseline.
 
 Attribution
 -----------
@@ -601,6 +793,9 @@ Theory benchmark replaced it. This benchmark brings a GA benchmark back to DACBe
 References:
 
 - B. Doerr, C. Doerr, F. Ebel. *From black-box complexity to designing new genetic algorithms.* Theoretical Computer Science, 2015.
+- B. Doerr. *Probabilistic tools for the analysis of randomized optimization heuristics.* In *Theory of Evolutionary Computation*, Springer, 2020. arXiv:1801.04487.
+- S. Böttcher, B. Doerr, F. Neumann. *Optimal fixed and adaptive mutation rates for the LeadingOnes problem.* PPSN 2010.
+- D. Chen, M. Buzdalov, C. Doerr, N. Dang. *Using automated algorithm configuration for parameter control.* FOGA 2023. arXiv:2302.12334.
 - B. Doerr, C. Doerr. *Optimal parameter choices through self-adjustment: applying the 1/5-th rule in discrete settings.* GECCO 2015. arXiv:1504.03212.
 - B. Doerr, C. Doerr. *Optimal static and self-adjusting parameter choices for the (1+(λ,λ)) genetic algorithm.* Algorithmica, 2018. DOI 10.1007/s00453-017-0354-9.
 - I. Rechenberg. *Evolutionsstrategie: Optimierung technischer Systeme nach Prinzipien der biologischen Evolution.* Frommann-Holzboog, 1973.

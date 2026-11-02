@@ -3,17 +3,18 @@
 The script evaluates three policies on the shipped OneMax and LeadingOne instance
 sets, for n = 50, 100, 200 and all three algorithms of the benchmark:
 
-- ``best_static``: the per-bucket greedy policy of the simulation-derived
-  reference tables (``dacbench/instance_sets/ga/optimal_policy_*.csv``),
+- ``best_static``: the per-bucket greedy policy of the reference tables
+  (``dacbench/instance_sets/ga/optimal_policy_*.csv``) -- exact for OneMax with
+  the (1+1) EA and the (1+λ) EA, simulation-derived for the other four,
 - ``success_rule``: the one-fifth success rule,
 - ``random``: uniform random actions.
 
-``best_static`` raises a ``ValueError`` for the nine combinations that have no
-validated reference table (OneMax n=50 with the (1+(λ,λ)) GA, OneMax n=100 with
-the (1+λ) EA, LeadingOne n=50 with all three algorithms, LeadingOne n=100 with
-the (1+λ) EA and LeadingOne n=200 with all three algorithms); the script skips
-it there and their reference is ``success_rule`` or the measured best fixed
-action.  Every combination remains usable for training and evaluation.
+``best_static`` raises a ``ValueError`` for the eight combinations that have no
+validated reference table (OneMax n=50 with the (1+(λ,λ)) GA, LeadingOne n=50
+with all three algorithms, LeadingOne n=100 with the (1+λ) EA and LeadingOne
+n=200 with all three algorithms); the script skips it there and their reference
+is ``success_rule`` or the measured best fixed action.  Every combination remains
+usable for training and evaluation.
 
 Every episode is driven directly (``env.reset`` / ``env.step``) in a plain loop
 with ``test_env=True``; no logger or runner machinery is involved. The evaluation
@@ -23,7 +24,12 @@ The comparison is **paired**: every policy gets its own fresh environment, so
 episode ``k`` of every policy starts from the same seed and hence from the same
 instance of the ladder. The printed ``ratio`` column divides a policy's mean
 number of evaluations by that of ``best_static`` (where it is available), so the
-table shows the effect of the policy and not of the instance draw.
+table shows the effect of the policy and not of the instance draw. The ``gap``
+column is the mean per-episode optimality gap ``evals / optimal_evals`` from
+``ga_baselines.gap``: it exists only for the six exact OneMax combinations and
+is computed against the exact optimum of each episode's start bucket; censored
+(cutoff) episodes are left out, and every other combination prints ``n/a``
+because no exact optimum exists there.
 
 The default instance sets are the *ladders* (``onemax_{n}.csv``,
 ``leadingones_{n}.csv``, several initial solutions each), not the single-instance
@@ -57,9 +63,11 @@ import numpy as np
 from dacbench.benchmarks import GABenchmark
 from dacbench.envs.env_utils.ga_baselines import (
     ALGORITHMS,
+    EXACT_COMBINATIONS,
     UNVALIDATED_COMBINATIONS,
     best_static,
     best_static_portfolio,
+    gap,
     is_validated,
     random_policy,
     success_rule,
@@ -99,11 +107,15 @@ def run_episode(env, policy, seed):
     """Run one episode with ``policy``; return ``(evaluations, solved)``."""
     policy.reset()
     state, _ = env.reset(seed=seed)
+    start_f = int(env.x.fitness)
     while True:
         action = policy(env, state)
         state, _, terminated, truncated, _ = env.step(action)
         if terminated or truncated:
             break
+    # ``init_obj`` is the fitness after reset, i.e. the start bucket of the
+    # episode; it is needed by the optimality gap, which is per start bucket
+    assert int(env.init_obj) == start_f
     return int(env.total_evals), bool(env.x.is_optimal())
 
 
@@ -144,6 +156,43 @@ def combo_action_choices(problem, n, algorithm):
         return DEFAULT_ACTION_CHOICES, "table missing (run the derive script)"
 
 
+def optimality_gap(problem, n, algorithm, evaluations, solved, starts):
+    """Return the mean per-episode optimality gap, or ``None`` if unavailable.
+
+    The gap of an episode is ``evals / optimal_evals`` from
+    :func:`dacbench.envs.env_utils.ga_baselines.gap`, computed against the
+    exact optimum of *that* episode's start bucket. Censored episodes (cutoff
+    reached) have no ratio and are left out; if every episode was censored, the
+    mean is undefined and ``None`` is returned.
+
+    Returns:
+    -------
+    float | None
+        Mean optimality gap over the solved episodes, ``None`` for a
+        non-exact combination (no exact reference exists).
+
+    """
+    if (INSTANCE_FILE_STEMS[problem], n, algorithm) not in EXACT_COMBINATIONS:
+        return None
+    ratios = []
+    for episode_evals, episode_solved, start_f in zip(
+        evaluations, solved, starts, strict=True
+    ):
+        result = gap(
+            # GAEnv.total_evals counts the initial individual, the exact
+            # reference V[start_f] does not
+            episode_evals - 1,
+            problem,
+            n,
+            algorithm,
+            start_f,
+            solved=episode_solved,
+        )
+        if result["ratio"] is not None:
+            ratios.append(result["ratio"])
+    return float(np.mean(ratios)) if ratios else None
+
+
 def evaluate(problems, sizes, algorithms, seeds, policy_names):
     """Evaluate all policies and return (result rows, skipped combinations).
 
@@ -169,11 +218,13 @@ def evaluate(problems, sizes, algorithms, seeds, policy_names):
                     # instance
                     env = make_env(problem, n, algorithm, action_choices)
                     evals, solved = [], []
+                    starts = []
                     for seed in seeds:
                         policy = make_policy(name, problem, n, algorithm, seed)
                         n_evals, ok = run_episode(env, policy, seed)
                         evals.append(n_evals)
                         solved.append(ok)
+                        starts.append(int(env.init_obj))
                     combo_rows.append(
                         {
                             "problem": problem,
@@ -182,6 +233,9 @@ def evaluate(problems, sizes, algorithms, seeds, policy_names):
                             "policy": name,
                             "mean_evals": float(np.mean(evals)),
                             "ci": confidence_interval(evals),
+                            "gap": optimality_gap(
+                                problem, n, algorithm, evals, solved, starts
+                            ),
                             "solved": f"{sum(solved)}/{len(solved)}",
                         }
                     )
@@ -207,16 +261,17 @@ def print_table(rows):
     """Print the result table."""
     header = (
         f"{'problem':<11}{'n':>4}  {'algorithm':<25}{'policy':<13}"
-        f"{'mean evals':>11}  {'95% CI':>9}  {'ratio':>6}  {'solved':>7}"
+        f"{'mean evals':>11}  {'95% CI':>9}  {'ratio':>6}  {'gap':>7}  {'solved':>7}"
     )
     print(header)
     print("-" * len(header))
     for row in rows:
         ratio = "     -" if not np.isfinite(row["ratio"]) else f"{row['ratio']:6.2f}"
+        gap_text = "    n/a" if row["gap"] is None else f"{row['gap']:7.3f}"
         print(
             f"{row['problem']:<11}{row['n']:>4}  {row['algorithm']:<25}"
             f"{row['policy']:<13}{row['mean_evals']:>11.1f}  "
-            f"{row['ci']:>9.1f}  {ratio}  {row['solved']:>7}"
+            f"{row['ci']:>9.1f}  {ratio}  {gap_text}  {row['solved']:>7}"
         )
 
 
@@ -272,7 +327,14 @@ def main(argv=None):
         f"cutoff = {CUTOFF_FACTOR} n^2, test mode, instance sets "
         f"{sorted(INSTANCE_FILE_STEMS.values())}. Every policy ran in a fresh "
         f"environment, so all policies saw the same (seed, instance) pairs; "
-        f"``ratio`` is relative to ``best_static``."
+        f"``ratio`` is relative to ``best_static``. ``gap`` is the mean "
+        f"``evals / optimal_evals`` over the solved episodes for the six exact "
+        f"OneMax combinations (exact DP, per start bucket) and ``n/a`` "
+        f"elsewhere: the other combinations have no exact optimum, only a "
+        f"best-known reference. A single episode can score below 1 because the "
+        f"reference is an expectation - for these six combinations "
+        f"``best_static`` *is* the exact optimal policy, so its gap approaches "
+        f"1 as the number of seeds grows."
     )
     if skipped:
         print(
@@ -281,7 +343,7 @@ def main(argv=None):
                 f"{problem} n={n} {algorithm} ({reason})"
                 for problem, n, algorithm, reason in skipped
             )
-            + ". ``best_static`` raises a ValueError for the nine combinations "
+            + ". ``best_static`` raises a ValueError for the eight combinations "
             "without a validated table; their reference is `success_rule` or the "
             "measured best fixed action, see docs/source/benchmark_docs/ga.rst."
         )

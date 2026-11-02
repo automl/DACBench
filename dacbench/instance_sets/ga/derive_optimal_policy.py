@@ -6,18 +6,24 @@ data, not code.  Run it from a checkout, e.g.::
 
     python dacbench/instance_sets/ga/derive_optimal_policy.py
 
-With no arguments it regenerates exactly the shipped files
-(``optimal_policy_{problem}_{n}_{algorithm}.csv``): the 9 (problem, n,
-algorithm) combinations that passed the full-episode validation described
-below, for the default scope (OneMax and LeadingOne, n in {50, 100, 200}, all
-three algorithms and the portfolio [1, 2, 4, 8, 16]).  ``--all`` derives the
-remaining nine combinations as well; they are written for research, but they
-are **not** shipped, because no validated reference policy exists for them.  A
-cheap exploratory run looks like::
+With no arguments it regenerates exactly the simulation-derived shipped files
+(``optimal_policy_{problem}_{n}_{algorithm}.csv``) for the default scope:
+OneMax and LeadingOne, n in {50, 100, 200}, all three algorithms, portfolio
+[1, 2, 4, 8, 16].  Six of the ten shipped tables are **not** produced here: for
+OneMax with the (1+1) EA and with the (1+lambda) EA the fitness bucket is a
+sufficient statistic, so ``exact_optimal_policy.py`` computes the *exact*
+optimal table instead (``exact = 1``).  The default scope of this script is
+therefore exactly the four combinations that still need simulation.  It never
+overwrites an exact table: if the output file already carries ``exact = 1`` the
+combination is skipped with a message, and only ``--force`` overrides that.
+``--all`` additionally derives the eight combinations without a validated table;
+they are written for research, but they are **not** shipped, because no
+validated reference policy exists for them.  A cheap exploratory run looks
+like::
 
     python dacbench/instance_sets/ga/derive_optimal_policy.py \
-        --problems onemax --sizes 50 --algorithms one_plus_one --n-seeds 20 \
-        --rounds 1 --episodes-per-round 10
+        --problems onemax --sizes 100 --algorithms one_plus_lambda_lambda \
+        --n-seeds 20 --rounds 1 --episodes-per-round 10
 
 The result is an **approximate reference policy, not an optimum** (see
 the section on the shipped subset at the end of this docstring).  With the
@@ -136,9 +142,9 @@ For a fixed (problem, n, algorithm) the script does:
    a single improvement have infinite cost, so a row whose samples contain very
    few improvements reports an infinite upper bound.
 
-Shipped subset: why nine of the 18 combinations are excluded
-------------------------------------------------------------
-A table is shipped only if the derived policy needs at most 1.05 times the
+Shipped subset: why eight of the 18 combinations are excluded
+--------------------------------------------------------------
+A table is shipped only if the policy it encodes needs at most 1.05 times the
 evaluations of the best fixed portfolio action on **both** paired seed sets of
 the validation and is never significantly worse than it.  An evaluation is a
 full-episode comparison (test mode, cutoff ``10*n*n``, the shipped instance
@@ -152,23 +158,39 @@ sees the same (seed, instance) pairs and the comparison is paired:
 The selection was made on A; B was not used to choose anything and is the
 out-of-sample check of that selection.
 
-Nine combinations pass and only their tables are in this directory: OneMax n=50
-with the (1+1) EA (A/B 0.882/0.801) and the (1+lambda) EA (0.968/0.997),
-OneMax n=100 with the (1+1) EA (0.948/1.007) and the (1+(lambda,lambda)) GA
-(0.837/0.791), OneMax n=200 with the (1+1) EA (0.923/0.859), the (1+lambda) EA
-(0.847/0.909) and the (1+(lambda,lambda)) GA (0.879/0.990), LeadingOne n=100
-with the (1+1) EA (0.935/0.965) and the (1+(lambda,lambda)) GA (0.990/0.963).
-The advantage is modest: the ratios lie between 0.79 and 1.01, and OneMax n=100
-with the (1+1) EA is at parity on held-out seeds (1.007).
+Ten combinations ship, in two groups.
 
-The other nine are excluded, in two categories.
+**Exact (six, not produced by this script).** OneMax n in {50, 100, 200} with
+the (1+1) EA and with the (1+lambda) EA.  For these the fitness bucket is a
+sufficient statistic, so ``exact_optimal_policy.py`` computes the true optimum
+of the bucket model and no simulation, no validation run and no tolerance is
+involved: the policy *is* the optimum, which cannot be worse than a constant
+action.  The exact ratios ``V[0] / W_best[0]`` are 0.900 / 0.920 / 0.932 for the
+(1+1) EA at n = 50 / 100 / 200, and exactly 1.000 for the (1+lambda) EA: its
+optimal bucket policy is the constant action ``lambda = 1``, so there is no
+bucket-dependent gain to be had with a fixed mutation rate of ``1/n``.
+
+**Simulation-derived (four, produced by this script).** OneMax n=100 and n=200
+with the (1+(lambda,lambda)) GA (A/B 0.837/0.791 and 0.879/0.990) and LeadingOne
+n=100 with the (1+1) EA (0.935/0.965) and the (1+(lambda,lambda)) GA
+(0.990/0.963).  The advantage is modest: the ratios lie between 0.79 and 0.99.
+
+**A correction.** The simulated predecessors of the six exact tables reported
+ratios of 0.882/0.801 (OneMax n=50 (1+1)), 0.948/1.007 (n=100 (1+1)),
+0.923/0.859 (n=200 (1+1)), 0.968/0.997 (n=50 (1+lambda)), 1.041/1.088 (n=100
+(1+lambda)) and 0.847/0.909 (n=200 (1+lambda)).  The three (1+lambda) values
+cannot be right: the exact optimum for that operator *is* the fixed action
+``lambda = 1``, so the ratio is 1.000 in expectation, and a 12-episode mean that
+lands at 0.847 is Monte-Carlo noise of the paired comparison, not a gain.  This
+is exactly why the exact derivation exists.
+
+The other eight are excluded, in two categories.
 
 *Failed validation*: the derivation ran and the policy was not better than the
 best fixed action.
 
 * OneMax n=50 (1+(lambda,lambda)) GA: 1.047 / 1.088 (worse than fixed
   lambda = 1 already on A, above the tolerance on B);
-* OneMax n=100 (1+lambda) EA: 1.041 / 1.088 (the same pattern);
 * LeadingOne n=100 (1+lambda) EA: 0.953 / 1.357 (fine on A, clearly worse than
   fixed lambda = 2 on B);
 * LeadingOne n=200 (1+1) EA: 1.016 / 1.062 (worse than fixed r = 1 on both, above
@@ -205,17 +227,20 @@ circularity; the measured ratios above are what remains.  In addition the
 derived tables still recommend ``lambda = 2`` in buckets where ``lambda = 1`` is
 measurably better, for the same reason.
 
-Consequence: the nine excluded combinations have no validated reference policy.
+Consequence: the eight excluded combinations have no validated reference policy.
 Their tables are of course still reproducible with ``--all`` (they are simply
 not shipped), and
 :func:`dacbench.envs.env_utils.ga_baselines.best_static` raises a ``ValueError``
 that names the category, the measured ratios and the best fixed action.  The
-OneMax tables that ship are unaffected by the suffix problem: for OneMax the
-fresh-state round alone is exact in expectation.  All 18 combinations remain
-fully usable for training and evaluation; for the nine without a table the
-reference is the measured best fixed action of that combination.  The shipped
-policies are approximate **reference policies, not optima**: they minimise the
-simulated cost-to-go within the bucket model and carry Monte-Carlo error.
+simulation-derived tables that ship are unaffected by the suffix problem
+insofar as their problem is OneMax or their instance is n=100 LeadingOne; for
+OneMax the fresh-state round alone is exact in expectation.  All 18 combinations
+remain fully usable for training and evaluation; for the eight without a table
+the reference is the measured best fixed action of that combination.  The
+simulation-derived shipped policies are approximate **reference policies, not
+optima**: they minimise the simulated cost-to-go within the bucket model and
+carry Monte-Carlo error.  The six exact tables are the optimum of their bucket
+model.
 
 Output
 ------
@@ -230,6 +255,12 @@ action value (``r`` for ``one_plus_one``, ``lambda`` otherwise), ``mean_evals``
 the expected cost-to-go ``V(b, a)`` under the derived policy, ``n_seeds`` the
 number of simulated transitions of that row, and ``ci_low``/``ci_high`` the 95%
 CI of ``mean_evals``.  Rows are sorted by ``f_x`` and ``action``.
+
+The six exact tables of ``exact_optimal_policy.py`` use the same file names,
+the same column order and the same meaning of ``mean_evals``, plus a trailing
+``exact`` column (``exact = 1``, ``n_seeds = 0``, ``ci_low = ci_high =
+mean_evals``).  This script never writes that column and never overwrites a file
+that has it (see ``--force``).
 
 The terminal bucket ``f(x) = n`` is included so that the table covers the whole
 fitness range of "n, f(x)" observations: no further evaluations are needed
@@ -250,6 +281,8 @@ import pandas as pd
 from dacbench.abstract_benchmark import objdict
 from dacbench.benchmarks import GABenchmark
 from dacbench.envs.env_utils.ga_baselines import (
+    EXACT_COMBINATIONS,
+    SHIPPED_COMBINATIONS,
     UNVALIDATED_COMBINATIONS,
     format_ratios,
 )
@@ -268,20 +301,20 @@ DEFAULT_PORTFOLIO = (1, 2, 4, 8, 16)
 DEFAULT_N_SEEDS = 200
 DEFAULT_SEED = 0
 
-#: (problem, n, algorithm) combinations whose table ships with the package: the
-#: ones whose derived policy is at most 1.05 times the best fixed action on
-#: both paired seed sets A and B and never significantly worse (see the module
-#: docstring).  These are exactly the combinations ``main`` derives by default.
-SHIPPED_COMBINATIONS = (
-    ("onemax", 50, "one_plus_one"),
-    ("onemax", 50, "one_plus_lambda"),
-    ("onemax", 100, "one_plus_one"),
-    ("onemax", 100, "one_plus_lambda_lambda"),
-    ("onemax", 200, "one_plus_one"),
-    ("onemax", 200, "one_plus_lambda"),
-    ("onemax", 200, "one_plus_lambda_lambda"),
-    ("leadingones", 100, "one_plus_one"),
-    ("leadingones", 100, "one_plus_lambda_lambda"),
+#: The (problem, n, algorithm) combinations whose table ships with the package,
+#: and the subset of them with an *exact* table, are re-exported from
+#: :mod:`dacbench.envs.env_utils.ga_baselines` (:data:`SHIPPED_COMBINATIONS`,
+#: :data:`EXACT_COMBINATIONS`) so that this script, ``exact_optimal_policy.py``
+#: and the package cannot drift apart.
+
+#: The default scope of this script: the shipped combinations that still need
+#: simulation, i.e. the shipped ones without an exact table.  ``main`` skips an
+#: exact output file even where it is requested explicitly, unless ``--force``
+#: is given.
+SIMULATED_COMBINATIONS = tuple(
+    combination
+    for combination in SHIPPED_COMBINATIONS
+    if combination not in EXACT_COMBINATIONS
 )
 
 #: Combinations without a validated table.  The data is the single source of
@@ -351,6 +384,34 @@ def output_name(problem, n, algorithm):
 
     """
     return f"optimal_policy_{problem}_{n}_{algorithm}.csv"
+
+
+def _is_exact_table(path):
+    """Return whether a CSV on disk is an exact table (``exact = 1``).
+
+    Exact tables are produced by ``exact_optimal_policy.py``; they carry a
+    trailing ``exact`` column that the simulated tables do not have.  This script
+    must never replace one with a simulation estimate by accident.
+
+    Parameters
+    ----------
+    path : str | Path
+        CSV file to inspect.
+
+    Returns:
+    -------
+    bool
+        ``True`` if the file exists, has an ``exact`` column and at least one
+        row with ``exact = 1``
+
+    """
+    path = Path(path)
+    if not path.is_file():
+        return False
+    if "exact" not in pd.read_csv(path, nrows=1).columns:
+        return False
+    marks = pd.read_csv(path, usecols=["exact"])["exact"]
+    return bool((pd.to_numeric(marks, errors="coerce") == 1).any())
 
 
 def make_generation_env(problem_name, algorithm, portfolio):
@@ -1113,11 +1174,18 @@ def parse_args(argv=None):
         "--include-unvalidated",
         action="store_true",
         dest="include_unvalidated",
-        help="also derive the nine combinations without a validated table "
-        "(OneMax n=50 (1+(lambda,lambda)) GA, OneMax n=100 (1+lambda) EA, "
-        "LeadingOne n=50 with all three algorithms, LeadingOne n=100 (1+lambda) "
-        "EA, LeadingOne n=200 with all three algorithms); they are not shipped "
-        "and best_static refuses them",
+        help="also derive the eight combinations without a validated table "
+        "(OneMax n=50 (1+(lambda,lambda)) GA, LeadingOne n=50 with all three "
+        "algorithms, LeadingOne n=100 (1+lambda) EA, LeadingOne n=200 with all "
+        "three algorithms); they are not shipped and best_static refuses them. "
+        "Exact tables are still skipped unless --force is given",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="overwrite an output file even if it is an exact table "
+        "(exact = 1). Use with care: it replaces the exact optimum by a "
+        "simulation estimate",
     )
     parser.add_argument(
         "--out-dir",
@@ -1145,7 +1213,12 @@ def parse_args(argv=None):
 
 
 def main(argv=None):
-    """Regenerate the optimal policy CSVs.
+    """Regenerate the simulation-derived optimal policy CSVs.
+
+    Combinations whose output file is already an exact table (``exact = 1``) are
+    skipped with a message unless ``--force`` is given, and the default scope is
+    :data:`SIMULATED_COMBINATIONS`, i.e. the shipped combinations that still need
+    simulation.
 
     Parameters
     ----------
@@ -1169,9 +1242,35 @@ def main(argv=None):
     ]
     excluded = [c for c in requested if c in EXCLUDED_COMBINATIONS]
     if args.include_unvalidated:
-        combinations = requested
+        selected = requested
     else:
-        combinations = [c for c in requested if c not in EXCLUDED_COMBINATIONS]
+        selected = [c for c in requested if c in SHIPPED_COMBINATIONS]
+    combinations = []
+    exact_skipped = []
+    exact_on_disk = []
+    for combination in selected:
+        if not args.force and combination in EXACT_COMBINATIONS:
+            exact_skipped.append(output_name(*combination))
+            continue
+        path = args.out_dir / output_name(*combination)
+        if not args.force and _is_exact_table(path):
+            exact_on_disk.append(path.name)
+            continue
+        combinations.append(combination)
+    if exact_skipped:
+        print(
+            f"skipping the {len(exact_skipped)} exact combination(s) of this "
+            "selection: exact_optimal_policy.py computes their tables exactly "
+            f"({', '.join(exact_skipped)}); pass --force to replace an exact "
+            "table by a simulation estimate anyway",
+            flush=True,
+        )
+    if exact_on_disk:
+        print(
+            "skipping files that already carry exact = 1: "
+            f"{', '.join(exact_on_disk)}; pass --force to overwrite them anyway",
+            flush=True,
+        )
 
     print(
         f"deriving optimal policies: problems={args.problems} sizes={args.sizes} "
@@ -1182,11 +1281,20 @@ def main(argv=None):
         flush=True,
     )
     if not combinations:
-        print(
-            "no validated combination selected: the requested combinations "
-            "have no validated table (pass --all to derive them anyway)",
-            flush=True,
-        )
+        if exact_skipped or exact_on_disk:
+            print(
+                "nothing to do: every selected combination already has an "
+                "exact table or its output file is one; pass --force to "
+                "replace one with a simulation estimate",
+                flush=True,
+            )
+        else:
+            print(
+                "no simulated combination selected: the requested combinations "
+                "either have an exact table (see exact_optimal_policy.py) or no "
+                "validated table at all (pass --all to derive the latter anyway)",
+                flush=True,
+            )
     start = time.perf_counter()
     summary = []
     for problem, n, algorithm in combinations:
