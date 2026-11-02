@@ -138,13 +138,13 @@ evaluation budget.
      - −evals / max_evals
    * - ``imp_div_evals``
      - (Δf − 0.5) / evals
-   * - ``imp_div_evals_new``
-     - (Δf − 0.5) / evals (same formula; kept for parity with Theory)
    * - ``imp``
      - Δf − 0.5
 
 ``imp_minus_evals_scaling`` comes from the fork this benchmark is based on. All other
-options are computed as in the Theory benchmark.
+options are computed as in the Theory benchmark, which no longer offers
+``imp_div_evals_new``: that name was accepted but never computed upstream and was removed
+in the same release, so the GA benchmark rejects it too.
 
 Reward offset
 ~~~~~~~~~~~~~

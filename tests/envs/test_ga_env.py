@@ -325,21 +325,25 @@ class TestGAEnv(unittest.TestCase):
             with pytest.raises(ValueError, match="discrete"):
                 bench.get_environment()
 
-    def test_imp_div_evals_new(self):
-        """Regression: 'imp_div_evals_new' is supported and equals imp_div_evals."""
-        rewards = []
-        for choice in ["imp_div_evals", "imp_div_evals_new"]:
-            env = make_env(
+    def test_imp_div_evals_value_and_rejected_alias(self):
+        """'imp_div_evals' is (Δf - 0.5) / evals; 'imp_div_evals_new' is rejected."""
+        env = make_env(
+            algorithm="one_plus_lambda",
+            reward_choice="imp_div_evals",
+            action_choices=[4],
+        )
+        reset_to(env, 1)
+        f_before = env.x.fitness
+        _, reward, _, _, _ = env.step(0)
+        assert reward == pytest.approx((env.x.fitness - f_before - 0.5) / 4)
+        # Theory accepted this name but never computed it; it was removed
+        # upstream, and the GA benchmark rejects it for the same reason
+        with pytest.raises(ValueError, match="reward_choice must be one of"):
+            make_env(
                 algorithm="one_plus_lambda",
-                reward_choice=choice,
+                reward_choice="imp_div_evals_new",
                 action_choices=[4],
             )
-            reset_to(env, 1)
-            f_before = env.x.fitness
-            _, r, _, _, _ = env.step(0)
-            assert r == pytest.approx((env.x.fitness - f_before - 0.5) / 4)
-            rewards.append(r)
-        assert rewards[0] == pytest.approx(rewards[1])
 
     def test_invalid_algorithm_and_obs_name(self):
         """Unknown algorithm or observation variable names are rejected."""

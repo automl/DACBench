@@ -67,7 +67,6 @@ ALGORITHMS = ("one_plus_one", "one_plus_lambda", "one_plus_lambda_lambda")
 
 REWARD_CHOICES = (
     "imp_div_evals",
-    "imp_div_evals_new",
     "imp_minus_evals",
     "minus_evals",
     "imp",
@@ -381,9 +380,8 @@ class GAEnv(AbstractEnv):
     def _get_reward(self, fitness_before_update, n_evals):
         """Compute the reward of a step."""
         imp = self.x.fitness - fitness_before_update
-        if self.reward_choice in ("imp_div_evals", "imp_div_evals_new"):
-            # both upstream variants use the same formula; n_evals >= 1 for all
-            # algorithms, max() only guards the division
+        if self.reward_choice == "imp_div_evals":
+            # n_evals >= 1 for all algorithms, max() only guards the division
             return (imp - 0.5) / max(n_evals, 1)
         if self.reward_choice == "imp_minus_evals":
             return imp - n_evals
