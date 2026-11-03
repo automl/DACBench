@@ -142,105 +142,15 @@ For a fixed (problem, n, algorithm) the script does:
    a single improvement have infinite cost, so a row whose samples contain very
    few improvements reports an infinite upper bound.
 
-Shipped subset: why eight of the 18 combinations are excluded
---------------------------------------------------------------
-A table is shipped only if the policy it encodes needs at most 1.05 times the
-evaluations of the best fixed portfolio action on **both** paired seed sets of
-the validation and is never significantly worse than it.  An evaluation is a
-full-episode comparison (test mode, cutoff ``10*n*n``, the shipped instance
-ladder, full episodes) with a **fresh environment per policy**, so every policy
-sees the same (seed, instance) pairs and the comparison is paired:
-
-* **A**: 12 seeds (0-11), the selection protocol that selected the shipped
-  tables,
-* **B**: 12 held-out seeds (1000-1011), the check that actually counts.
-
-The selection was made on A; B was not used to choose anything and is the
-out-of-sample check of that selection.
-
-Ten combinations ship, in two groups.
-
-**Exact (six, not produced by this script).** OneMax n in {50, 100, 200} with
-the (1+1) EA and with the (1+lambda) EA.  For these the fitness bucket is a
-sufficient statistic, so ``exact_optimal_policy.py`` computes the true optimum
-of the bucket model and no simulation, no validation run and no tolerance is
-involved: the policy *is* the optimum, which cannot be worse than a constant
-action.  The exact ratios ``V[0] / W_best[0]`` are 0.900 / 0.920 / 0.932 for the
-(1+1) EA at n = 50 / 100 / 200, and exactly 1.000 for the (1+lambda) EA: its
-optimal bucket policy is the constant action ``lambda = 1``, so there is no
-bucket-dependent gain to be had with a fixed mutation rate of ``1/n``.
-
-**Simulation-derived (four, produced by this script).** OneMax n=100 and n=200
-with the (1+(lambda,lambda)) GA (A/B 0.837/0.791 and 0.879/0.990) and LeadingOne
-n=100 with the (1+1) EA (0.935/0.965) and the (1+(lambda,lambda)) GA
-(0.990/0.963).  The advantage is modest: the ratios lie between 0.79 and 0.99.
-
-**A correction.** The simulated predecessors of the six exact tables reported
-ratios of 0.882/0.801 (OneMax n=50 (1+1)), 0.948/1.007 (n=100 (1+1)),
-0.923/0.859 (n=200 (1+1)), 0.968/0.997 (n=50 (1+lambda)), 1.041/1.088 (n=100
-(1+lambda)) and 0.847/0.909 (n=200 (1+lambda)).  The three (1+lambda) values
-cannot be right: the exact optimum for that operator *is* the fixed action
-``lambda = 1``, so the ratio is 1.000 in expectation, and a 12-episode mean that
-lands at 0.847 is Monte-Carlo noise of the paired comparison, not a gain.  This
-is exactly why the exact derivation exists.
-
-The other eight are excluded, in two categories.
-
-*Failed validation*: the derivation ran and the policy was not better than the
-best fixed action.
-
-* OneMax n=50 (1+(lambda,lambda)) GA: 1.047 / 1.088 (worse than fixed
-  lambda = 1 already on A, above the tolerance on B);
-* LeadingOne n=100 (1+lambda) EA: 0.953 / 1.357 (fine on A, clearly worse than
-  fixed lambda = 2 on B);
-* LeadingOne n=200 (1+1) EA: 1.016 / 1.062 (worse than fixed r = 1 on both, above
-  the tolerance on B).
-
-*Structurally unvalidated*: the fitness-only bucket model cannot represent the
-problem, so no validation run can change the verdict.  Only the A ratio was
-measured for most of them; B is given where it was available.
-
-* LeadingOne n=50 (1+1) EA 1.095, (1+lambda) EA 1.136, (1+(lambda,lambda)) GA
-  1.083;
-* LeadingOne n=200 (1+lambda) EA 1.073;
-* LeadingOne n=200 (1+(lambda,lambda)) GA 1.269 / 1.316 (the paired 95% CI of
-  the difference excludes 0: the clearest failure).
-
-OneMax n=50 with the (1+(lambda,lambda)) GA is *worse* than the fixed action on
-both protocols (a ratio above 1), so it ships in no version, even though its A
-ratio 1.047 is below the 1.05 tolerance: the tolerance is an upper bound that has
-to hold on every evaluation, not a licence to be worse.
-
-Why the LeadingOne combinations fail is structural, not statistical.  For
-OneMax, ``f(x) = sum_i x_i`` is symmetric: two states with the same ``f(x)`` are
-exchangeable, so the fitness bucket is a sufficient statistic and the bucket
-table is exact for the bucket model whatever the history.  LeadingOne is *not*
-symmetric: ``f(x) = b`` fixes the prefix ``0..b-1`` and leaves the suffix
-``b+1..n-1`` free, and that suffix is what determines whether a mutation or the
-crossover of the ``(1+(lambda,lambda))`` GA finds the next leading one.  The
-policy iteration tries to capture the suffix through on-policy state pools, but
-those pools are drawn from the trajectory of the *current* policy: buckets that
-the current policy reaches late are polled with states that a better policy
-would never produce, so the ordering of the actions in exactly those buckets
-stays wrong.  The H-step lookahead of the policy iteration does not remove this
-circularity; the measured ratios above are what remains.  In addition the
-derived tables still recommend ``lambda = 2`` in buckets where ``lambda = 1`` is
-measurably better, for the same reason.
-
-Consequence: the eight excluded combinations have no validated reference policy.
-Their tables are of course still reproducible with ``--all`` (they are simply
-not shipped), and
-:func:`dacbench.envs.env_utils.ga_baselines.best_static` raises a ``ValueError``
-that names the category, the measured ratios and the best fixed action.  The
-simulation-derived tables that ship are unaffected by the suffix problem
-insofar as their problem is OneMax or their instance is n=100 LeadingOne; for
-OneMax the fresh-state round alone is exact in expectation.  All 18 combinations
-remain fully usable for training and evaluation; for the eight without a table
-the reference is the measured best fixed action of that combination.  The
-simulation-derived shipped policies are approximate **reference policies, not
-optima**: they minimise the simulated cost-to-go within the bucket model and
-carry Monte-Carlo error.  The six exact tables are the optimum of their bucket
-model.
+Shipped subset
+--------------
+A table ships only if its policy needs at most 1.05 times the evaluations of the
+best fixed portfolio action on **both** paired seed protocols (A: seeds 0-11,
+the selection protocol; B: held-out seeds 1000-1011, the out-of-sample check)
+and is never significantly worse there.  The eight excluded combinations, their
+category and their measured ratios are in
+:data:`dacbench.envs.env_utils.ga_baselines.UNVALIDATED_COMBINATIONS`;
+``docs/source/benchmark_docs/ga.rst`` holds the measurements and the reasoning.
 
 Output
 ------
@@ -285,6 +195,8 @@ from dacbench.envs.env_utils.ga_baselines import (
     SHIPPED_COMBINATIONS,
     UNVALIDATED_COMBINATIONS,
     format_ratios,
+    is_exact_table,
+    policy_file_name,
 )
 from dacbench.envs.ga import ALGORITHMS, GAEnv
 from dacbench.envs.theory import LeadingOne, OneMax
@@ -365,79 +277,26 @@ _PROBLEM_TAGS = {slug: i for i, slug in enumerate(PROBLEMS)}
 _ALGORITHM_TAGS = {alg: i for i, alg in enumerate(ALGORITHMS)}
 
 
+# ``output_name`` and ``_is_exact_table`` keep their historical names here and
+# delegate to ``ga_baselines``, which owns the naming scheme and the exact marker.
 def output_name(problem, n, algorithm):
-    """Return the CSV file name for one (problem, n, algorithm) combination.
-
-    Parameters
-    ----------
-    problem : str
-        problem slug, ``onemax`` or ``leadingones``
-    n : int
-        problem size
-    algorithm : str
-        algorithm name
-
-    Returns:
-    -------
-    str
-        file name of the optimal policy table
-
-    """
-    return f"optimal_policy_{problem}_{n}_{algorithm}.csv"
+    """Return the CSV file name for one (problem, n, algorithm) combination."""
+    return policy_file_name(problem, n, algorithm)
 
 
-def _is_exact_table(path):
-    """Return whether a CSV on disk is an exact table (``exact = 1``).
-
-    Exact tables are produced by ``exact_optimal_policy.py``; they carry a
-    trailing ``exact`` column that the simulated tables do not have.  This script
-    must never replace one with a simulation estimate by accident.
-
-    Parameters
-    ----------
-    path : str | Path
-        CSV file to inspect.
-
-    Returns:
-    -------
-    bool
-        ``True`` if the file exists, has an ``exact`` column and at least one
-        row with ``exact = 1``
-
-    """
-    path = Path(path)
-    if not path.is_file():
-        return False
-    if "exact" not in pd.read_csv(path, nrows=1).columns:
-        return False
-    marks = pd.read_csv(path, usecols=["exact"])["exact"]
-    return bool((pd.to_numeric(marks, errors="coerce") == 1).any())
+_is_exact_table = is_exact_table
 
 
-def make_generation_env(problem_name, algorithm, portfolio):
+def make_generation_env(problem_name, algorithm, portfolio, n=None):
     """Build a GAEnv that is used as a one-generation simulator.
 
     The env is never reset and no episode is run: the state and the random
     generator are assigned per simulated transition, so that ``_generation`` can
     be called directly.  This reuses the env's operator composition (including
     elitist acceptance and practice-aware evaluation counting) instead of
-    re-implementing it.
-
-    Parameters
-    ----------
-    problem_name : str
-        ``OneMax`` or ``LeadingOne``
-    algorithm : str
-        one of ``ALGORITHMS``
-    portfolio : sequence of int
-        action values (``r`` or ``lambda``)
-
-    Returns:
-    -------
-    GAEnv
-        env in training mode, ready to be used by
-        :func:`solve_bucket`
-
+    re-implementing it.  ``n`` is the problem size the operators work on; the
+    placeholder instance of the config is never read, and ``n`` may be omitted
+    only by callers that set ``env.n`` themselves.
     """
     config = objdict(
         {
@@ -461,7 +320,10 @@ def make_generation_env(problem_name, algorithm, portfolio):
             "action_space": gym.spaces.Discrete(len(portfolio)),
         }
     )
-    return GAEnv(config, test_env=False)
+    env = GAEnv(config, test_env=False)
+    if n is not None:
+        env.n = n
+    return env
 
 
 def make_episode_env(problem, n, algorithm, portfolio):
@@ -472,23 +334,6 @@ def make_episode_env(problem, n, algorithm, portfolio):
     evaluation budget ``EPISODE_CUTOFF_FACTOR * n**2``.  Consecutive
     ``reset`` calls progress through the ladder round-robin, so different
     episodes see different initial solutions.
-
-    Parameters
-    ----------
-    problem : str
-        problem slug, ``onemax`` or ``leadingones``
-    n : int
-        problem size
-    algorithm : str
-        one of ``ALGORITHMS``
-    portfolio : sequence of int
-        action values (``r`` or ``lambda``)
-
-    Returns:
-    -------
-    GAEnv
-        test-mode environment
-
     """
     config = {
         "problem": PROBLEMS[problem][0],
@@ -503,24 +348,8 @@ def make_episode_env(problem, n, algorithm, portfolio):
 def _estimate_bucket_means(evals, succ, bucket, values):
     """Estimate ``V(b, a) = E[e] / q + E[V(b') | b' > b]`` for all actions.
 
-    Parameters
-    ----------
-    evals : list of list of float
-        evaluations of the simulated generations, per action
-    succ : list of list of int
-        successor buckets, per action
-    bucket : int
-        bucket the transitions start from
-    values : numpy.ndarray
-        cost-to-go of all buckets, indexed by fitness (``values[n] == 0``);
-        buckets ``> bucket`` must already be filled in
-
-    Returns:
-    -------
-    numpy.ndarray, numpy.ndarray
-        ``V(b, a)`` (``inf`` for actions without a single improvement) and the
-        number of observed improvements, both per action
-
+    Returns ``V(b, a)`` (``inf`` for actions without a single improvement) and
+    the number of observed improvements, both per action.
     """
     n_actions = len(evals)
     means = np.full(n_actions, np.inf)
@@ -548,28 +377,6 @@ def bootstrap_cost(evals, succ, bucket, values, rng, n_boot=N_BOOTSTRAP):
     Resamples the simulated transitions with replacement and recomputes
     ``E[e] / q + E[V(b') | b' > b]`` for each resample.  Resamples without a
     single improvement have infinite cost.
-
-    Parameters
-    ----------
-    evals : numpy.ndarray
-        evaluations of the simulated generations, length ``N``
-    succ : numpy.ndarray
-        successor buckets, length ``N``
-    bucket : int
-        bucket the transitions start from
-    values : numpy.ndarray
-        cost-to-go of all buckets, indexed by fitness (``values[n] == 0``)
-    rng : numpy.random.Generator
-        RNG for the resampling
-    n_boot : int
-        number of bootstrap resamples
-
-    Returns:
-    -------
-    numpy.ndarray
-        bootstrap distribution of the cost-to-go, ``inf`` where a resample
-        observed no improvement
-
     """
     n_samples = evals.size
     idx = rng.integers(0, n_samples, size=(n_boot, n_samples))
@@ -590,19 +397,8 @@ def bootstrap_cost(evals, succ, bucket, values, rng, n_boot=N_BOOTSTRAP):
 def summarize_bootstrap(costs, level=CI_LEVEL):
     """Return percentile (low, high) bounds of a bootstrap distribution.
 
-    Parameters
-    ----------
-    costs : numpy.ndarray
-        bootstrap distribution, may contain ``inf``
-    level : float
-        confidence level
-
-    Returns:
-    -------
-    float, float
-        lower and upper bound; both are ``inf`` if every resample was
-        infeasible, the upper bound is ``inf`` if any resample was infeasible
-
+    Both bounds are ``inf`` if every resample was infeasible, the upper bound is
+    ``inf`` if any resample was infeasible.
     """
     finite = costs[np.isfinite(costs)]
     if finite.size == 0:
@@ -640,46 +436,11 @@ def solve_bucket(
     than that action), so the rows of the CSV may have different ``n_seeds``.
     Buckets close to the optimum need the most samples: there, a single
     generation improves with a tiny probability, and every extra improvement
-    reduces the statistical error of ``V(b, a)``.
-
-    Parameters
-    ----------
-    env : GAEnv
-        simulator created by :func:`make_generation_env`
-    problem_cls : type
-        ``OneMax`` or ``LeadingOne``
-    n : int
-        problem size
-    bucket : int
-        fitness ``f(x)`` the transitions start from, ``0 <= bucket < n``
-    portfolio : sequence of int
-        action values
-    values : numpy.ndarray
-        cost-to-go of all buckets ``> bucket``
-    n_seeds : int
-        batch size of simulated transitions
-    seed : int
-        base RNG seed
-    tags : tuple of int
-        identifiers of the (problem, n, algorithm) combination, mixed into
-        the RNG seeds
-    max_samples : int
-        maximum number of samples per action
-    state_pool : sequence | None
-        on-policy states with ``f(x) == bucket``; when given, states are drawn
-        from this pool with replacement instead of being generated fresh
-    min_improvements : int
-        number of improvements after which an action stops being sampled
-    hopeless_factor : float
-        an action whose point estimate is this much larger than the best point
-        estimate of the bucket stops being sampled
-
-    Returns:
-    -------
-    numpy.ndarray, numpy.ndarray, numpy.ndarray, dict
-        ``V(b, a)`` per action, 95% CI bounds per action, number of samples per
-        action, and a dict with the number of samples and improvements
-
+    reduces the statistical error of ``V(b, a)``.  ``values`` holds the cost-to-go
+    of all buckets ``> bucket``; ``state_pool`` holds on-policy states with
+    ``f(x) == bucket``, which are drawn with replacement instead of generating
+    fresh ones.  Returns ``V(b, a)``, the 95% CI bounds and the number of samples
+    per action, plus a dict with the sample and improvement counts.
     """
     n_actions = len(portfolio)
     evals = [[] for _ in range(n_actions)]
@@ -784,36 +545,10 @@ def collect_policy_state_pools(
     change the state, so recording them would only weight states by their
     waiting time and bias the estimates towards the states the policy is stuck
     in.  Per bucket at most ``POOL_CAP`` entry states are kept with
-    deterministic reservoir sampling.
-
-    Parameters
-    ----------
-    problem : str
-        problem slug, ``onemax`` or ``leadingones``
-    n : int
-        problem size
-    algorithm : str
-        one of ``ALGORITHMS``
-    portfolio : sequence of int
-        action values
-    policy : dict
-        action index per fitness bucket (``pi`` of the previous round)
-    episodes : int
-        number of episodes
-    seed : int
-        base RNG seed
-    tags : tuple of int
-        identifiers of the (problem, n, algorithm) combination, mixed into
-        the RNG seeds
-
-    Returns:
-    -------
-    list of list
-        per bucket (``0..n-1``) a pool of states with that fitness
-    list of int
-        per bucket the number of episodes that entered the bucket (before
-        reservoir sampling)
-
+    deterministic reservoir sampling.  ``policy`` maps a fitness bucket to the
+    action index of the previous round.  Returns the pools (one per bucket
+    ``0..n-1``) and the number of episodes that entered each bucket, before
+    reservoir sampling.
     """
     env = make_episode_env(problem, n, algorithm, portfolio)
     pools = [[] for _ in range(n)]
@@ -861,36 +596,10 @@ def run_policy_pass(
 
     Runs the backward DP over the buckets.  Every bucket uses its on-policy
     state pool when it has at least ``MIN_POOL_STATES`` states and fresh states
-    otherwise.
-
-    Parameters
-    ----------
-    env : GAEnv
-        one-generation simulator from :func:`make_generation_env`
-    problem_cls : type
-        ``OneMax`` or ``LeadingOne``
-    n : int
-        problem size
-    algorithm : str
-        one of ``ALGORITHMS`` (selects the sample cap)
-    portfolio : sequence of int
-        action values
-    n_seeds : int
-        batch size of simulated transitions
-    seed : int
-        base RNG seed
-    tags : tuple of int
-        identifiers of the (problem, n, algorithm) combination
-    pools : list of list | None
-        on-policy state pools per bucket; ``None`` for the fresh-state round 0
-
-    Returns:
-    -------
-    numpy.ndarray, dict, list of dict, dict
-        cost-to-go ``V`` per bucket (``V[n] = 0``), the greedy policy
-        ``{bucket: action index}``, the CSV rows of this pass, and statistics
-        (fallback buckets, total samples)
-
+    otherwise; ``pools`` is ``None`` for the fresh-state round 0.  Returns the
+    cost-to-go ``V`` per bucket (``V[n] = 0``), the greedy policy
+    ``{bucket: action index}``, the CSV rows of this pass and statistics
+    (fallback buckets, total samples).
     """
     max_samples = MAX_SAMPLES_FACTOR[algorithm] * n_seeds
     values = np.full(n + 1, np.inf)
@@ -981,40 +690,14 @@ def derive_optimal_policy(
     """Derive the optimal policy table for one (problem, n, algorithm).
 
     Runs the fresh-state round 0 and up to ``rounds`` on-policy policy
-    improvement rounds (see the module docstring).
-
-    Parameters
-    ----------
-    problem : str
-        problem slug, ``onemax`` or ``leadingones``
-    n : int
-        problem size
-    algorithm : str
-        algorithm name
-    portfolio : sequence of int
-        action values (``r`` or ``lambda``)
-    n_seeds : int
-        batch size of simulated transitions
-    seed : int
-        base RNG seed
-    rounds : int
-        number of on-policy rounds after the fresh-state round 0
-    episodes_per_round : int
-        number of episodes per policy round used to build the state pools
-
-    Returns:
-    -------
-    pandas.DataFrame
-        one row per (bucket, action) with the columns ``COLUMNS``
-    dict
-        per-combination statistics (``inf`` rows, best actions, convergence
-        status, per-round policy changes, fallback buckets, samples)
-
+    improvement rounds (see the module docstring).  Returns the table (one row
+    per (bucket, action) with the columns ``COLUMNS``) and per-combination
+    statistics (``inf`` rows, best actions, convergence, per-round changes,
+    fallback buckets, samples).
     """
     problem_name, problem_cls = PROBLEMS[problem]
     size_tag = DEFAULT_SIZES.index(n) if n in DEFAULT_SIZES else 1000 + n
-    env = make_generation_env(problem_name, algorithm, portfolio)
-    env.n = n
+    env = make_generation_env(problem_name, algorithm, portfolio, n)
 
     best_actions = None
     rows = None
@@ -1094,19 +777,7 @@ def derive_optimal_policy(
 
 
 def parse_args(argv=None):
-    """Parse command line arguments.
-
-    Parameters
-    ----------
-    argv : list of str | None
-        arguments to parse, defaults to ``sys.argv[1:]``
-
-    Returns:
-    -------
-    argparse.Namespace
-        parsed arguments
-
-    """
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(
         description=(
             "Derive simulation-based reference policies for the DACBench GA "
@@ -1219,17 +890,6 @@ def main(argv=None):
     skipped with a message unless ``--force`` is given, and the default scope is
     :data:`SIMULATED_COMBINATIONS`, i.e. the shipped combinations that still need
     simulation.
-
-    Parameters
-    ----------
-    argv : list of str | None
-        command line arguments, defaults to ``sys.argv[1:]``
-
-    Returns:
-    -------
-    int
-        process exit code (0 on success)
-
     """
     args = parse_args(argv)
     args.out_dir.mkdir(parents=True, exist_ok=True)

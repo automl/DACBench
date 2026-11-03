@@ -300,26 +300,7 @@ def format_ratios(ratios):
 
 
 def is_validated(problem, n, algorithm):
-    """Return whether a validated reference table ships for a combination.
-
-    Parameters
-    ----------
-    problem : str
-        Problem name (``OneMax`` / ``LeadingOne``) or file-name stem.
-    n : int
-        Problem size.
-    algorithm : str
-        One of :data:`ALGORITHMS`.
-
-    Returns:
-    -------
-    bool
-        ``True`` if ``best_static`` can load a table for the combination,
-        either an exact one (:data:`EXACT_COMBINATIONS`) or a
-        simulation-derived one (:data:`SIMULATED_COMBINATIONS`); ``False`` if
-        the combination is one of :data:`UNVALIDATED_COMBINATIONS`.
-
-    """
+    """Return whether a validated reference table ships for a combination."""
     return (
         _problem_stem(problem),
         int(n),
@@ -375,15 +356,29 @@ def policy_file_name(problem, n, algorithm):
     return f"optimal_policy_{_problem_stem(problem)}_{int(n)}_{algorithm}.csv"
 
 
+def is_exact_table(path):
+    """Return whether a CSV on disk is an exact table (``exact = 1``).
+
+    Exact tables carry a trailing ``exact`` column that the simulation-derived
+    tables do not have; ``derive_optimal_policy.py`` uses this to never replace
+    one with a simulation estimate by accident.
+    """
+    path = Path(path)
+    if not path.is_file():
+        return False
+    if "exact" not in pd.read_csv(path, nrows=1).columns:
+        return False
+    marks = pd.read_csv(path, usecols=["exact"])["exact"]
+    return bool((pd.to_numeric(marks, errors="coerce") == 1).any())
+
+
 def _policy_path(problem, n, algorithm, policy_path, instance_dir):
     """Return the path of the derived table for one (problem, n, algorithm).
 
     Raises:
     ------
     ValueError
-        If the combination has no validated table (see
-        :data:`UNVALIDATED_COMBINATIONS`) and no explicit path is given.
-
+        If the combination has no validated table and no explicit path is given.
     """
     if policy_path is not None:
         return Path(policy_path)
@@ -454,12 +449,6 @@ def _best_row(lookup, buckets, f_x):
     least one finite ``mean_evals`` is used. Within that bucket the row with the
     smallest ``mean_evals`` wins, ties are resolved towards the smaller action
     index.
-
-    Raises:
-    ------
-    ValueError
-        If no bucket has a finite ``mean_evals`` at all.
-
     """
     order = np.argsort(np.abs(buckets - float(f_x)), kind="stable")
     for pos in order:
@@ -477,21 +466,22 @@ def _best_row(lookup, buckets, f_x):
     )
 
 
-def _map_choice_to_index(env, choice):
+def _map_choice_to_index(env, choice, choices=None):
     """Map a portfolio value to the matching action index of ``env``.
 
-    If the value is in ``env.action_choices`` its index is returned; otherwise
-    the nearest value in log space is used (portfolio values are powers of two,
-    so log space is the natural metric). Environments without an
-    ``action_choices`` list (continuous action space, only ``one_plus_one``)
-    receive the raw value truncated to an integer.
+    If the value is listed, its index is returned; otherwise the nearest value in
+    log space is used (portfolio values are powers of two, so log space is the
+    natural metric).  ``choices`` defaults to ``env.action_choices``; an
+    environment without that list (continuous action space, only
+    ``one_plus_one``) receives the raw value rounded to an integer.
     """
-    action_choices = getattr(env, "action_choices", None)
-    if action_choices is None:
+    if choices is None:
+        choices = getattr(env, "action_choices", None)
+    if choices is None:
         # continuous action space (only ``one_plus_one``): the table values are
         # integers, so the raw value is the action
         return round(float(choice))
-    choices = np.asarray(action_choices, dtype=float)
+    choices = np.asarray(choices, dtype=float)
     match = np.flatnonzero(np.isclose(choices, choice))
     if match.size:
         return int(match[0])
@@ -502,24 +492,7 @@ def _map_choice_to_index(env, choice):
 
 
 def _validate_reference_size(n):
-    """Return ``n`` as an int if reference data exists for that size.
-
-    Parameters
-    ----------
-    n : int
-        Problem size.
-
-    Returns:
-    -------
-    int
-        The validated size.
-
-    Raises:
-    ------
-    ValueError
-        If ``n`` is not an integer or not one of :data:`REFERENCE_SIZES`.
-
-    """
+    """Return ``n`` as an int if reference data exists for that size."""
     if isinstance(n, bool) or not isinstance(n, int | np.integer):
         raise ValueError(
             f"Error: n must be an integer, got {n!r}; reference data exists for "
@@ -534,14 +507,7 @@ def _validate_reference_size(n):
 
 
 def _validate_algorithm(algorithm):
-    """Return ``algorithm`` if it is one of :data:`ALGORITHMS`.
-
-    Raises:
-    ------
-    ValueError
-        If the algorithm is unknown; the message lists the supported names.
-
-    """
+    """Return ``algorithm`` if it is one of :data:`ALGORITHMS`."""
     if algorithm not in ALGORITHMS:
         raise ValueError(
             f"Error: unknown algorithm {algorithm!r}; expected one of {ALGORITHMS}"
@@ -550,16 +516,7 @@ def _validate_algorithm(algorithm):
 
 
 def _validate_start_f(start_f, n):
-    """Return the start bucket as an integer in ``[0, n]``.
-
-    ``None`` means the hardest start, ``0``.
-
-    Raises:
-    ------
-    ValueError
-        If ``start_f`` is not an integer or outside ``[0, n]``.
-
-    """
+    """Return the start bucket as an integer in ``[0, n]`` (``None`` means 0)."""
     if start_f is None:
         return 0
     if isinstance(start_f, bool) or not isinstance(start_f, int | np.integer):
@@ -579,19 +536,6 @@ def _not_exact_reason(problem_stem, algorithm):
 
     The reasons are structural and do not depend on the size: they name the
     part of the bitstring that the fitness ``f(x)`` does not determine.
-
-    Parameters
-    ----------
-    problem_stem : str
-        ``onemax`` or ``leadingones``.
-    algorithm : str
-        One of :data:`ALGORITHMS`.
-
-    Returns:
-    -------
-    str
-        A one-sentence explanation of why no exact reference exists.
-
     """
     if problem_stem == "leadingones":
         return (
@@ -617,29 +561,8 @@ def _exact_reference_data(instance_dir=None):
     ``V[f] <= min_a W_a[f]``: it is an equality when the optimal policy is a
     constant action -- in particular for the whole (1+lambda) EA -- and strict
     when adapting after the first generation helps, as it does for the (1+1) EA
-    on the lower half of the buckets.
-
-    Parameters
-    ----------
-    instance_dir : str | Path | None
-        Directory with the fixed-action table; defaults to
-        :data:`DEFAULT_INSTANCE_DIR`. The resolved directory is the cache key.
-
-    Returns:
-    -------
-    dict
-        ``{(n, algorithm): {"optimal", "fixed", "actions", "choices"}}`` with
-        ``optimal`` of length ``n + 1``, ``fixed`` of shape
-        ``(len(actions), n + 1)`` and ``choices`` aligned with ``actions``.
-
-    Raises:
-    ------
-    FileNotFoundError
-        If the fixed-action table does not exist.
-    ValueError
-        If the table is malformed or its optimal row is inconsistent with the
-        fixed-action rows.
-
+    on the lower half of the buckets.  ``instance_dir`` defaults to
+    :data:`DEFAULT_INSTANCE_DIR`; the resolved directory is the cache key.
     """
     directory = Path(instance_dir) if instance_dir is not None else DEFAULT_INSTANCE_DIR
     key = directory.resolve()
@@ -1219,10 +1142,7 @@ def success_rule(algorithm, action_choices=None, initial_value=1, factor=1.5):
             return round(value)
         value = float(np.clip(value, choices.min(), choices.max()))
         state_["value"] = value
-        with np.errstate(divide="ignore"):
-            log_choices = np.log(choices)
-        index = int(np.argmin(np.abs(log_choices - np.log(value))))
-        return int(np.clip(index, 0, len(choices) - 1))
+        return _map_choice_to_index(env, value, choices)
 
     policy.reset = reset
     return policy

@@ -107,15 +107,11 @@ def run_episode(env, policy, seed):
     """Run one episode with ``policy``; return ``(evaluations, solved)``."""
     policy.reset()
     state, _ = env.reset(seed=seed)
-    start_f = int(env.x.fitness)
     while True:
         action = policy(env, state)
         state, _, terminated, truncated, _ = env.step(action)
         if terminated or truncated:
             break
-    # ``init_obj`` is the fitness after reset, i.e. the start bucket of the
-    # episode; it is needed by the optimality gap, which is per start bucket
-    assert int(env.init_obj) == start_f
     return int(env.total_evals), bool(env.x.is_optimal())
 
 
@@ -137,16 +133,7 @@ def make_policy(name, problem, n, algorithm, seed):
 
 
 def combo_action_choices(problem, n, algorithm):
-    """Return the portfolio of a combination and why ``best_static`` may be skipped.
-
-    Returns:
-    -------
-    list of int
-        portfolio the environment is configured with
-    str | None
-        reason to skip ``best_static``, ``None`` if it is available
-
-    """
+    """Return the portfolio of a combination and the reason to skip ``best_static``."""
     if not is_validated(problem, n, algorithm):
         entry = UNVALIDATED_COMBINATIONS[(INSTANCE_FILE_STEMS[problem], n, algorithm)]
         return DEFAULT_ACTION_CHOICES, f"no validated table ({entry['category']})"
@@ -157,20 +144,10 @@ def combo_action_choices(problem, n, algorithm):
 
 
 def optimality_gap(problem, n, algorithm, evaluations, solved, starts):
-    """Return the mean per-episode optimality gap, or ``None`` if unavailable.
+    """Return the mean gap ``evals / optimal_evals`` of the solved episodes.
 
-    The gap of an episode is ``evals / optimal_evals`` from
-    :func:`dacbench.envs.env_utils.ga_baselines.gap`, computed against the
-    exact optimum of *that* episode's start bucket. Censored episodes (cutoff
-    reached) have no ratio and are left out; if every episode was censored, the
-    mean is undefined and ``None`` is returned.
-
-    Returns:
-    -------
-    float | None
-        Mean optimality gap over the solved episodes, ``None`` for a
-        non-exact combination (no exact reference exists).
-
+    ``None`` without an exact reference or when every episode was censored (see
+    :func:`dacbench.envs.env_utils.ga_baselines.gap`).
     """
     if (INSTANCE_FILE_STEMS[problem], n, algorithm) not in EXACT_COMBINATIONS:
         return None

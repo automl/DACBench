@@ -166,16 +166,7 @@ class GAEnv(AbstractEnv):
     """
 
     def __init__(self, config, test_env=False) -> None:
-        """Initialize GAEnv.
-
-        Parameters
-        ----------
-        config : objdict
-            Environment configuration
-        test_env : bool
-            whether to use test mode
-
-        """
+        """Initialize GAEnv from ``config``, optionally in test mode."""
         super().__init__(config)
         self.logger = logging.getLogger(self.__str__())
 
@@ -255,14 +246,7 @@ class GAEnv(AbstractEnv):
 
     @staticmethod
     def get_obs_domain_from_name(var_name):
-        """Get default lower and upperbound of a observation variable based on its name.
-
-        The observation space will then be created
-
-        Returns:
-        --------
-        Two values, e.g., 0, np.inf
-        """
+        """Get the default (lower, upper) bounds of one observation variable."""
         if var_name in OBS_DOMAINS:
             return OBS_DOMAINS[var_name]
         if "_{t-" in var_name:
@@ -329,10 +313,8 @@ class GAEnv(AbstractEnv):
     def _get_action_value(self, action):
         """Map an action to its value (r or lambda).
 
-        Returns:
-        --------
-        value, valid: the action value (None if the index is invalid in a training
-        env) and whether the action was valid
+        Returns the value (``None`` if the index is invalid in a training env)
+        and whether the action was valid.
         """
         if isinstance(action, list | tuple | np.ndarray):
             action = np.asarray(action).reshape(-1)
@@ -489,12 +471,5 @@ class GAEnv(AbstractEnv):
         return self.get_state(), reward, terminated, truncated, returned_info
 
     def close(self) -> bool:
-        """Close Env.
-
-        No additional cleanup necessary
-
-        Returns:
-        --------
-        bool: Closing confirmation
-        """
+        """Close Env (no additional cleanup necessary)."""
         return True

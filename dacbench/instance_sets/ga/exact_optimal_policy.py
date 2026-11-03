@@ -232,21 +232,7 @@ class NotExactError(ValueError):
 
 
 def _not_exact_reason(problem, algorithm):
-    """Return why the bucket model is not exact, or ``None`` if it is exact.
-
-    Parameters
-    ----------
-    problem : str
-        Problem slug, ``onemax`` or ``leadingones``.
-    algorithm : str
-        One of ``ALGORITHMS``.
-
-    Returns:
-    -------
-    str | None
-        The reason for refusing the combination, ``None`` for an exact one.
-
-    """
+    """Return why the bucket model is not exact, or ``None`` if it is exact."""
     if problem not in PROBLEMS:
         raise ValueError(f"Error: unknown problem {problem!r}; expected {PROBLEMS}")
     if algorithm not in ALGORITHMS:
@@ -301,42 +287,12 @@ def require_exact(problem, algorithm):
 
 
 def output_name(problem, n, algorithm):
-    """Return the CSV file name of the exact policy table of one combination.
-
-    Parameters
-    ----------
-    problem : str
-        Problem slug, ``onemax`` or ``leadingones``.
-    n : int
-        Problem size.
-    algorithm : str
-        Algorithm name.
-
-    Returns:
-    -------
-    str
-        File name of the exact policy table (the same scheme as the
-        simulation-based tables, so that ``best_static`` finds it unchanged).
-
-    """
+    """Return the CSV file name of the exact policy table of one combination."""
     return f"optimal_policy_{problem}_{int(n)}_{algorithm}.csv"
 
 
 def log_factorials(n):
-    """Return ``log(k!)`` for ``k = 0..n`` as an array.
-
-    Parameters
-    ----------
-    n : int
-        Largest factorial argument.
-
-    Returns:
-    -------
-    numpy.ndarray
-        Array of length ``n + 1`` with ``log(k!)``; used to build binomial and
-        hypergeometric log-probabilities without overflow.
-
-    """
+    """Return ``log(k!)`` for ``k = 0..n`` as an array (builds log-probabilities)."""
     return np.array([lgamma(k + 1.0) for k in range(n + 1)], dtype=float)
 
 
@@ -348,21 +304,6 @@ def flip_count_distribution(n, p, log_fact):
     below :data:`BINOMIAL_TRUNCATION` are set to zero; the remaining entries are
     divided by ``1 - (1 - p)**n`` and therefore sum to one only up to the
     truncated mass, which is why the transition rows are renormalised later.
-
-    Parameters
-    ----------
-    n : int
-        Number of bits.
-    p : float
-        Mutation rate, ``0 < p <= 1``.
-    log_fact : numpy.ndarray
-        ``log(k!)`` for ``k = 0..n``, see :func:`log_factorials`.
-
-    Returns:
-    -------
-    numpy.ndarray
-        Array of length ``n`` with ``P(L = l)`` for ``l = 1..n``.
-
     """
     if p >= 1.0:
         # every bit is flipped: L = n with probability 1
@@ -387,23 +328,9 @@ def hypergeometric_matrix(n, f, log_fact):
     """Return ``P(A = a | f, l)`` for every flip count ``l`` and one count ``a``.
 
     ``A`` is the number of ones among ``l`` distinct uniformly chosen bits of a
-    string with ``f`` ones (hypergeometric distribution).
-
-    Parameters
-    ----------
-    n : int
-        Number of bits.
-    f : int
-        Number of ones of the parent, ``0 <= f < n``.
-    log_fact : numpy.ndarray
-        ``log(k!)`` for ``k = 0..n``, see :func:`log_factorials`.
-
-    Returns:
-    -------
-    numpy.ndarray
-        Array of shape ``(n, f + 1)``; entry ``[l - 1, a]`` is
-        ``C(f, a) * C(n - f, l - a) / C(n, l)`` (zero where impossible).
-
+    string with ``f`` ones (hypergeometric distribution).  Entry ``[l - 1, a]``
+    of the returned ``(n, f + 1)`` array is ``C(f, a) * C(n - f, l - a) /
+    C(n, l)`` (zero where impossible).
     """
     ones = np.arange(1, n + 1)[:, None]
     a = np.arange(f + 1)[None, :]
@@ -430,22 +357,7 @@ def single_child_rows(n, p, log_fact):
     ``T[f, g] = P(max(f, f') = g)`` for one child with mutation rate ``p``,
     i.e. the elitist generation of the ``one_plus_one`` EA.  Every row is
     renormalised to sum to one, which redistributes the truncated binomial tail
-    (see :func:`flip_count_distribution`).
-
-    Parameters
-    ----------
-    n : int
-        Number of bits.
-    p : float
-        Mutation rate, ``0 < p <= 1``.
-    log_fact : numpy.ndarray
-        ``log(k!)`` for ``k = 0..n``, see :func:`log_factorials`.
-
-    Returns:
-    -------
-    numpy.ndarray
-        Array of shape ``(n + 1, n + 1)``; row ``n`` is the terminal self-loop.
-
+    (see :func:`flip_count_distribution`); row ``n`` is the terminal self-loop.
     """
     flip_pmf = flip_count_distribution(n, p, log_fact)
     ones = np.arange(1, n + 1)[:, None]
@@ -519,28 +431,7 @@ def transition_matrices(n, algorithm, portfolio):
 
 
 def evaluations_per_generation(n, algorithm, portfolio):
-    """Return the exact number of evaluations of one generation per action.
-
-    ``one_plus_one`` uses exactly one evaluation per generation and
-    ``one_plus_lambda`` exactly ``lambda`` (``mutate_independent`` evaluates every
-    child, including the ones that are worse than the parent).
-
-    Parameters
-    ----------
-    n : int
-        Number of bits (unused; kept for symmetry with the other functions).
-    algorithm : str
-        ``one_plus_one`` or ``one_plus_lambda``.
-    portfolio : sequence of int
-        Action values.
-
-    Returns:
-    -------
-    numpy.ndarray
-        Array of length ``len(portfolio)`` with the cost ``c_a`` of one
-        generation.
-
-    """
+    """Return the exact cost ``c_a`` of one generation per action (1 or ``lambda``)."""
     del n
     if algorithm == "one_plus_one":
         return np.ones(len(portfolio))
@@ -725,24 +616,7 @@ def fixed_action_table_rows(n, algorithm, portfolio, solution=None):
 
 
 def is_exact_table(path):
-    """Return whether a CSV on disk is an exact table (``exact = 1``).
-
-    ``main`` uses this to report when it replaces a simulation-derived table by
-    an exact one; a table without an ``exact`` column is simulation-derived and
-    returns ``False``.
-
-    Parameters
-    ----------
-    path : str | Path
-        CSV file to inspect.
-
-    Returns:
-    -------
-    bool
-        ``True`` if the file exists, has an ``exact`` column and at least one
-        row with ``exact = 1``.
-
-    """
+    """Return whether a CSV on disk is an exact table (``exact = 1``)."""
     path = Path(path)
     if not path.is_file():
         return False
@@ -767,19 +641,7 @@ def _combination_list(problems, sizes, algorithms):
 
 
 def parse_args(argv=None):
-    """Parse command line arguments.
-
-    Parameters
-    ----------
-    argv : list of str | None
-        Arguments to parse, defaults to ``sys.argv[1:]``.
-
-    Returns:
-    -------
-    argparse.Namespace
-        Parsed arguments.
-
-    """
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(
         description=(
             "Compute the exact optimal bucket policies for the DACBench GA "
@@ -869,12 +731,6 @@ def _same_table(current, expected):
     exactly and in the same order; float columns are compared with
     :data:`CHECK_RTOL`, because a different platform may sum the dynamic
     programme in a different order and differ in the last bits.
-
-    Returns:
-    -------
-    bool
-        ``True`` if the tables agree.
-
     """
     if current is None:
         return False
@@ -908,21 +764,11 @@ def _same_table(current, expected):
 
 
 def main(argv=None):
-    """Regenerate the exact policy tables and the fixed-action cost table.
-
-    Parameters
-    ----------
-    argv : list of str | None
-        Command line arguments, defaults to ``sys.argv[1:]``.
-
-    Returns:
-    -------
-    int
-        Process exit code: 0 on success, 1 if ``--check`` found a stale file.
-
-    """
+    """Regenerate the exact tables; ``--check`` only reports stale files."""
     args = parse_args(argv)
     combinations = _combination_list(args.problems, args.sizes, args.algorithms)
+    if not args.check:
+        args.output_dir.mkdir(parents=True, exist_ok=True)
 
     print(
         f"exact bucket DP: problems={args.problems} sizes={args.sizes} "
@@ -951,7 +797,6 @@ def main(argv=None):
             if not up_to_date:
                 stale.append(path.name)
         else:
-            args.output_dir.mkdir(parents=True, exist_ok=True)
             if path.is_file() and not is_exact_table(path):
                 print(
                     f"note: {path.name} is a simulation-derived table "
