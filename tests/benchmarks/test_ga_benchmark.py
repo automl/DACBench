@@ -32,6 +32,17 @@ class TestGABenchmark(unittest.TestCase):
         env.reset()
         assert env.max_evals == int(0.8 * env.n * env.n)
 
+    def test_defaults_are_isolated(self):
+        """Mutating one benchmark's config does not leak into the defaults."""
+        first = GABenchmark()
+        first.config.action_choices.append(32)
+        first.config.benchmark_info["state_description"] = "corrupted"
+        second = GABenchmark()
+        assert second.config.action_choices == GA_DEFAULTS["action_choices"]
+        assert second.config.benchmark_info["state_description"] == (
+            GA_DEFAULTS["benchmark_info"]["state_description"]
+        )
+
     def test_read_instance_sets(self):
         """Every shipped instance set can be read."""
         # the directory also holds the derived policy tables

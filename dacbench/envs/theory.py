@@ -376,7 +376,8 @@ class OneMax(BinaryProblem):
             super().__init__(n=n, rng=rng)
         else:
             k = int(initObj)
-            assert 0 <= k <= n, f"initObj must be in [0, {n}], got {k}"
+            if not 0 <= k <= n:
+                raise ValueError(f"initObj must be in [0, {n}], got {k}")
             self.data = np.zeros(n, dtype=bool)
             self.data[rng.choice(n, size=k, replace=False)] = True
             self.n = n

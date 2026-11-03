@@ -26,7 +26,17 @@ import numpy as np
 import pandas as pd
 
 from dacbench.abstract_benchmark import AbstractBenchmark, objdict
-from dacbench.envs.ga import GAEnv
+from dacbench.envs.ga import (
+    HISTORY_LENGTH,
+    HISTORY_NAMES,
+    OBS_DOMAINS,
+    GAEnv,
+)
+
+#: Observation variables and their history variants, derived from ``envs/ga.py``
+#: so that the benchmark info cannot drift from the environment.
+_OBS_VARIABLES = ", ".join(OBS_DOMAINS)
+_HISTORY_VARIABLES = ", ".join(f"{name}_{{t-k}}" for name in HISTORY_NAMES)
 
 INFO = {
     "identifier": "GA",
@@ -39,9 +49,9 @@ INFO = {
         "(see reward_choice)"
     ),
     "state_description": (
-        "Specified by observation_description (default: n, f(x)); available: n, "
-        "f(x), delta_f(x), f(x)/n, r, lambda, r_{t-k}, lambda_{t-k}, f(x)_{t-k} "
-        "for k in 0..4"
+        "Specified by observation_description (default: n, f(x)); available: "
+        f"{_OBS_VARIABLES}, {_HISTORY_VARIABLES} "
+        f"for k in 0..{HISTORY_LENGTH - 1}"
     ),
 }
 
@@ -73,15 +83,17 @@ GA_DEFAULTS = objdict(
 class GABenchmark(AbstractBenchmark):
     """Benchmark for (1+1) EA, (1+lambda) EA and (1+(lambda,lambda)) GA."""
 
-    def __init__(self, config=None):
-        """Initialize a GA benchmark.
-
-        Parameters
-        ----------
-        config : dict
-            options overriding the ones in GA_DEFAULTS
-
+    @staticmethod
+    def _isolate_defaults(config):
+        """Copy the mutable defaults so that per-instance mutations do not leak
+        into the module-level ``INFO`` dict and ``GA_DEFAULTS``.  Idempotent:
+        safe to call multiple times.
         """
+        config["benchmark_info"] = objdict(config["benchmark_info"])
+        config["action_choices"] = list(config["action_choices"])
+
+    def __init__(self, config=None):
+        """Initialize a GA benchmark with ``GA_DEFAULTS`` overridden by ``config``."""
         super().__init__()
 
         self.config = objdict(GA_DEFAULTS.copy())
@@ -89,6 +101,8 @@ class GABenchmark(AbstractBenchmark):
         if config:
             for key, val in config.items():
                 self.config[key] = val
+
+        self._isolate_defaults(self.config)
 
         self.read_instance_set()
 
@@ -145,12 +159,7 @@ class GABenchmark(AbstractBenchmark):
     def create_observation_space_from_description(
         self, obs_description, env_class=GAEnv
     ):
-        """Create a gym observation space (Box only) based on a string containing
-        observation variable names, e.g. "n, f(x), lambda, lambda_{t-1}".
-
-        Return:
-            A gym.spaces.Box observation space.
-        """
+        """Create a Box observation space from a comma-separated variable list."""
         obs_var_names = [s.strip() for s in obs_description.split(",")]
         low = []
         high = []

@@ -69,6 +69,13 @@
   by always taking the first one instead of choosing uniformly at random
   (`crossover` still keeps x' unless a child is strictly better). `TheoryEnv`
   does not call either method, so its behaviour is unchanged.
+- `GABenchmark` now copies its mutable defaults (`benchmark_info`,
+  `action_choices`) instead of sharing them with the module-level `GA_DEFAULTS`,
+  so mutating one benchmark's config no longer leaks into every benchmark
+  created afterwards in the same process.
+- `OneMax(initObj=...)` raises `ValueError` for an out-of-range initial count
+  instead of using an `assert`, which disappears under `python -O`.
+
 # 0.5.7
 
 ### Bug Fixes
