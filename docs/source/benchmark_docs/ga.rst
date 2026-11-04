@@ -195,6 +195,84 @@ of one-bits, placed at random positions. For LeadingOnes, it is the number of le
 
 The sets can be regenerated with the ``sample_ga_instances.ipynb`` notebook.
 
+Baselines
+---------
+
+``dacbench/envs/env_utils/ga_baselines.py`` provides three table-free callables with the
+``policy(env, state) -> int`` signature used by
+:class:`~dacbench.agents.generic_agent.GenericAgent`:
+
+- ``theory_policy(problem, algorithm)``: the theory-derived parameter choice of the
+  combination. It is stateless. Where a published analysis exists the value is the
+  published one; where none exists it is the smallest admissible value, which makes it a
+  baseline rather than an optimum.
+
+  - OneMax, (1+(λ,λ)) GA: the fitness-dependent
+    λ = round(√(n / max(1, n − f(x)))), known to yield linear expected runtime (Doerr,
+    Doerr & Ebel 2015) and used as the ``theory`` baseline in Chen, Buzdalov, Doerr & Dang
+    (arXiv:2302.12334). The value is mapped to the nearest portfolio value in log space
+    and clipped to the largest value when the formula exceeds it.
+  - OneMax, (1+1) EA: constant ``r = 1``, i.e. p = 1/n, the optimal mutation rate for
+    OneMax and linear functions (Doerr 2020, arXiv:1801.06733).
+  - OneMax, (1+λ) EA: constant λ = 1. A generation with λ children costs λ times as much
+    and improves λ times as often, so parallelism does not buy evaluations on OneMax.
+    This is a heuristic: no published analysis covers that operator.
+  - LeadingOne, (1+1) EA: constant ``r = 1``. The best published *fixed* rate is
+    p ≈ 1.59/n (Böttcher, Doerr & Neumann, PPSN 2010; Doerr 2019, arXiv:1801.04487), i.e. a
+    nominal r = 1.59, and the portfolio offers r = 1 or r = 2. The environment conditions
+    on flipping at least one bit, which raises the expected number of flipped bits from r
+    to r / (1 − e^(−r)): 1.58 at r = 1 and 2.31 at r = 2. r = 1 therefore matches the
+    published rate, and paired full-episode runs on the shipped ladders agree (730 instead
+    of 1116 evaluations at n = 50, 3026 instead of 4092 at n = 100, 20 seeds each).
+  - LeadingOne, (1+λ) EA: constant λ = 1. No published analysis covers that operator, and
+    its mutation rate is fixed at p = 1/n, so λ = 1 (that is, the (1+1) EA) is the
+    smallest admissible population. Measured, a constant λ = 2 is slightly cheaper on the
+    ladders (653 vs 730 evaluations at n = 50).
+  - LeadingOne, (1+(λ,λ)) GA: raises a ``ValueError``, because there is no published
+    runtime analysis of that operator on LeadingOnes.
+
+- ``success_rule(algorithm)``: the one-fifth success rule. For ``one_plus_one`` the
+  mutation strength follows r ← r·F after an improvement and r ← r·F^(−1/4) otherwise
+  (Rechenberg 1973; multiplicative form of Kern et al. 2004, Eq. 3; the factor F = 1.5
+  and the exponent are the ones of Auger, GECCO'09, Table 1). For the λ-based
+  algorithms λ is updated in the opposite direction, λ ← λ/F on an improvement and
+  λ ← λ·F^(1/4) otherwise, because a larger population increases the per-iteration
+  success probability; this is the self-adjusting (1+(λ,λ)) GA of Doerr & Doerr
+  (GECCO 2015; Algorithmica 2018). For the (1+λ) EA the same λ-update is used as an
+  *adaptation*: the published analysis covers the (1+(λ,λ)) GA only, so no guarantee is
+  claimed for that operator either. It is a classical baseline, not a recommendation: the
+  λ-analysis is for OneMax, and on the LeadingOne configurations the λ-based rule is well
+  behind the best fixed action.
+- ``random_policy``: a uniform random action, the trivial baseline; on a continuous action
+  space it samples r uniformly from [1, n].
+
+The stateful success rule tracks only the previous fitness and resets at the start of an
+episode (``env.c_step == 0`` or a drop of the fitness); ``theory_policy`` is stateless and
+``random_policy`` keeps only its own random generator.
+
+**No reference policy tables ship with this benchmark.** Unlike the Theory benchmark (RLS
+on LeadingOnes, where the optimal flip radius is known in closed form and computed by
+``TheoryOptimalAgent``), there is no published runtime analysis of the (1+(λ,λ)) GA on
+LeadingOnes, and no finite-horizon optimal policy is shipped for any combination. A
+learned policy is therefore compared against the **best fixed action measured in the
+run**, as the cited prior work does (Biedenkapp, Dang, Krejca, Hutter & Doerr, GECCO 2022,
+arXiv:2202.03259).
+
+The comparison table is generated with::
+
+    python examples/run_ga_baselines.py
+    python examples/run_ga_baselines.py --quick
+
+It plays every portfolio value as a constant policy, reports the cheapest one as
+``best_fixed``, and evaluates ``theory_policy``, ``success_rule`` and ``random_policy``
+against it on the OneMax and LeadingOnes instance sets for n = 50, 100, 200, all three
+algorithms and several seeds. It prints the mean number of evaluations to the optimum with
+a 95 % confidence interval, the solved rate and the ratio to ``best_fixed``. Every policy --
+and every constant action behind ``best_fixed`` -- runs in a fresh environment, so all of
+them see the same (seed, instance) pairs. Because ``best_fixed`` is chosen on the same
+seeds it is read on, its own ratio of 1.00 is optimistic; the other rows are unaffected by
+that bias.
+
 Attribution
 -----------
 
