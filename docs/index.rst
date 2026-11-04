@@ -22,6 +22,7 @@ Welcome to DACBench's documentation!
  source/benchmark_docs/luby
  source/benchmark_docs/toy_sgd
  source/benchmark_docs/theory
+ source/benchmark_docs/ga
  source/benchmark_docs/cma
  source/benchmark_docs/sgd
  source/benchmark_docs/dacbo

@@ -7,6 +7,7 @@ from dacbench.envs.function_approximation import (
     FunctionApproximationEnv,
     FunctionApproximationInstance,
 )
+from dacbench.envs.ga import GAEnv
 from dacbench.envs.luby import LubyEnv, LubyInstance, luby_gen
 from dacbench.envs.theory import TheoryEnv
 from dacbench.envs.toysgd import ToySGDEnv, ToySGDInstance
@@ -14,6 +15,7 @@ from dacbench.envs.toysgd import ToySGDEnv, ToySGDInstance
 __all__ = [
     "FunctionApproximationEnv",
     "FunctionApproximationInstance",
+    "GAEnv",
     "LubyEnv",
     "LubyInstance",
     "TheoryEnv",

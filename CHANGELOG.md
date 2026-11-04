@@ -1,3 +1,53 @@
+# 0.6.0
+
+### New Benchmark: GA (OneMax / LeadingOnes)
+- `GABenchmark` / `GAEnv` control the mutation strength or offspring population
+  size of simple evolutionary algorithms on `OneMax` and `LeadingOne`.
+  Registers as `"GA-v0"`. No extra dependencies.
+- Three algorithms: (1+1) EA_{>0} (action: mutation strength), (1+λ) EA and
+  (1+(λ,λ)) GA (action: λ). The (1+(λ,λ)) GA counts evaluations in a
+  practice-aware way.
+- Discrete action portfolio by default; continuous actions are supported for
+  the (1+1) EA. Observations and rewards are configured like in the Theory
+  benchmark, plus a new `imp_minus_evals_scaling` reward.
+- Instance sets in `dacbench/instance_sets/ga/` for OneMax (n = 20 to 2000) and
+  LeadingOnes (n = 50, 100, 200).
+- Adapted from the MIT-licensed `OLLGATheoryEnv` in
+  [OneMax-DAC-Extension](https://github.com/taindp98/OneMax-DAC-Extension) by
+  Tai Nguyen, Phong Le, André Biedenkapp, Carola Doerr and Nguyen Dang.
+- Documentation page added.
+- Three table-free baseline policies in
+  `dacbench/envs/env_utils/ga_baselines.py`: `theory_policy`, the theory-derived
+  parameter choice of a combination (constant `r = 1` / `lambda = 1` for the (1+1)
+  EA and the (1+lambda) EA on OneMax, the fitness-dependent
+  `lambda = round(sqrt(n / max(1, n - f(x))))` of Doerr, Doerr & Ebel (TCS 2015)
+  for the (1+(lambda,lambda)) GA on OneMax, and `r = 1` / `lambda = 1` for
+  LeadingOne, where `r = 1` matches the published fixed rate `p ~ 1.59/n` once the
+  environment's conditioning on at least one flipped bit is accounted for),
+  `success_rule`, the one-fifth success rule of Rechenberg (1973) / Kern et al.
+  (2004) for the mutation strength and of Doerr & Doerr (GECCO'15,
+  Algorithmica'18) for `lambda`, and `random_policy`. No reference-policy tables
+  ship: `examples/run_ga_baselines.py` measures the best fixed action of every
+  configuration in the run and compares the three policies against it (mean
+  number of evaluations to the optimum with 95% confidence intervals, solved rate
+  and ratio), which is the comparison the cited prior work makes (Biedenkapp et
+  al., GECCO'22).
+
+### Bug Fixes
+- `BinaryProblem.initialise_with_fixed_number_of_bits` compared the array with
+  `is False` (always the scalar `False`), so the call raised a `ValueError`
+  whenever bits had to be added.
+- `BinaryProblem.mutate` / `crossover` broke ties among equal-fitness children
+  by always taking the first one instead of choosing uniformly at random
+  (`crossover` still keeps x' unless a child is strictly better). `TheoryEnv`
+  does not call either method, so its behaviour is unchanged.
+- `GABenchmark` now copies its mutable defaults (`benchmark_info`,
+  `action_choices`, `reward_range`) instead of sharing them with the module-level
+  `GA_DEFAULTS`, so mutating one benchmark's config no longer leaks into every
+  benchmark created afterwards in the same process.
+- The new `OneMax` individual validates `initObj`: a count outside `[0, n]`
+  raises `ValueError` (an `assert` would disappear under `python -O`).
+
 # 0.5.7
 
 ### Bug Fixes

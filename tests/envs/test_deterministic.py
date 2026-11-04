@@ -84,6 +84,25 @@ class TestDeterministic(unittest.TestCase):
         with patch("dacbench.envs.sgd.random_torchvision_loader", side_effect=tiny_sgd_loader):
             self.run_deterministic_test("SGDBenchmark", instance_update_func="no_progression")
 
+    def test_ga_benchmark(self):
+        """GA: same seed gives identical steps and info."""
+        for algorithm in ["one_plus_one", "one_plus_lambda", "one_plus_lambda_lambda"]:
+            results = []
+            for _ in range(2):
+                config = {"algorithm": algorithm, "seed": 42}
+                env = benchmarks.GABenchmark(config=config).get_environment()
+                trajectory = [env.reset()[0]]
+                for action in [2, 3]:
+                    state, reward, terminated, truncated, info = env.step(action)
+                    trajectory.append((state, reward, terminated, truncated, info))
+                results.append(trajectory)
+            assert_state_space_equal(results[0][0], results[1][0])
+            for step1, step2 in zip(results[0][1:], results[1][1:], strict=True):
+                assert_state_space_equal(step1[0], step2[0])
+                assert step1[1:4] == step2[1:4]
+                assert step1[4].keys() == step2[4].keys()
+                assert step1[4] == step2[4]
+
     def test_OneLLBenchmark(self):
         ...
         # todo
