@@ -22,6 +22,9 @@ They are both based on artificial functions and real algorithms:
   Controlling the learning rate in gradient descent.
 - :doc:`Theory benchmark <benchmark_docs/theory>` with ground truth:
   RLS algorithm on the LeadingOnes problem.
+- :doc:`GA benchmark <benchmark_docs/ga>`:
+  Controlling mutation strength or population size of the (1+1) EA, (1+λ) EA and
+  (1+(λ,λ)) GA on OneMax and LeadingOnes.
 
 
 Beyond these smaller scale problems we know a lot about, DACBench also contains less

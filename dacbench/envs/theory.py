@@ -25,16 +25,35 @@ class BinaryProblem:
         self.fitness = self.eval()
 
     def initialise_with_fixed_number_of_bits(self, k, rng=None):
-        """Init with given number of bits."""
+        """Raise the number of set bits to k.
+
+        If fewer than k bits are set, randomly chosen unset bits are set to True
+        until exactly k bits are set, and the fitness is re-evaluated. Bits are
+        never cleared: with more than k bits already set the call is a no-op,
+        so this raises the value to k rather than setting it.
+
+        Parameters
+        ----------
+        k : int
+            target number of set bits, in ``[0, n]``
+        rng : np.random.Generator
+            random number generator
+
+        Raises:
+        ------
+        ValueError
+            If k is outside ``[0, n]``.
+
+        """
+        if not 0 <= int(k) <= self.n:
+            raise ValueError(f"k must be in [0, {self.n}], got {k}")
         if rng is None:
             rng = np.random.default_rng()
         nbits = self.data.sum()
         if nbits < k:
-            ids = rng.choice(
-                np.where(self.data is False)[0], size=k - nbits, replace=False
-            )
+            ids = rng.choice(np.where(~self.data)[0], size=k - nbits, replace=False)
             self.data[ids] = True
-            self.eval()
+            self.fitness = self.eval()
 
     def is_optimal(self):
         """Get is_optimal flag."""
@@ -125,6 +144,10 @@ class BinaryProblem:
 
         Generate n_childs children by flipping exactly l bits
 
+        Ties among children with the best fitness are broken uniformly at random
+        using rng (reservoir sampling: the k-th tied child replaces the current
+        choice with probability 1/k).
+
         Returns:
         -------
             the best child (maximum fitness), its fitness and number of evaluations used
@@ -143,12 +166,18 @@ class BinaryProblem:
 
         best_obj = -1
         best_locs = None
+        n_ties = 0
         for _i in range(n_childs):
             locs = rng.choice(self.n, size=length, replace=False)
             obj = self.get_fitness_after_flipping(locs)
             if obj > best_obj:
                 best_locs = locs
                 best_obj = obj
+                n_ties = 1
+            elif obj == best_obj:
+                n_ties += 1
+                if rng.random() < 1.0 / n_ties:
+                    best_locs = locs
 
         best_child = self.flip(best_locs)
 
@@ -188,6 +217,11 @@ class BinaryProblem:
         Crossover operator: for each bit, taking value from x with probability p
         and from self with probability 1-p
 
+        If include_xprime is True, xprime is the incumbent: a crossover child only
+        replaces it if its fitness is strictly better than xprime's. Ties among
+        crossover children with the best fitness (that beat the incumbent) are
+        broken uniformly at random using rng (reservoir sampling).
+
         Parameters
         ----------
         xprime
@@ -215,6 +249,7 @@ class BinaryProblem:
 
         best_obj = xprime.fitness if include_xprime else -1
         best_locs = None
+        n_ties = 0
 
         n_evals = 0
         ls = rng.binomial(self.n, p, size=n_childs)
@@ -233,6 +268,11 @@ class BinaryProblem:
             if obj > best_obj:
                 best_obj = obj
                 best_locs = locs_xprime
+                n_ties = 1
+            elif obj == best_obj and best_locs is not None:
+                n_ties += 1
+                if rng.random() < 1.0 / n_ties:
+                    best_locs = locs_xprime
 
         child = self.combine(xprime, best_locs) if best_locs is not None else xprime
 
@@ -301,6 +341,96 @@ class LeadingOne(BinaryProblem):
         child = self.combine(xprime, locs_xprime)
         child.eval()
         return child.fitness
+
+
+# Portions of the OneMax class below are adapted from
+# https://github.com/taindp98/OneMax-DAC-Extension (dacbench/envs/theory.py), by
+# Tai Nguyen, Phong Le, André Biedenkapp, Carola Doerr and Nguyen Dang; see
+# arXiv:2502.20265, arXiv:2505.12982 and arXiv:2606.10129.
+#
+# The upstream notice is reproduced verbatim below, as the MIT terms require. Its
+# holder is the literal placeholder "xxx" -- that is what the upstream LICENSE
+# contains.
+#
+# The MIT License (MIT)
+# Copyright (c) 2025, xxx
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+# software and associated documentation files (the "Software"), to deal in the Software
+# without restriction, including without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to the following
+# conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies
+# or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+# CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+# OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+# Modified 2026 for automl/DACBench (Apache-2.0).
+class OneMax(BinaryProblem):
+    """An individual for the OneMax problem.
+
+    The aim is to maximise the number of 1 bits in the string, i.e.
+    f(x) = sum_i x_i. The unique optimum is the all-ones string with f = n.
+    """
+
+    def __init__(self, n, rng=None, initObj=None):  # noqa: N803
+        """Make individual.
+
+        Parameters
+        ----------
+        n : int
+            problem size
+        rng : np.random.Generator
+            random number generator
+        initObj : int | None
+            if None, a uniformly random bitstring is created; otherwise exactly
+            int(initObj) bits (in [0, n]) at uniformly random positions are set
+            to True, so that the initial fitness equals int(initObj)
+
+        """
+        if rng is None:
+            rng = np.random.default_rng()
+        if initObj is None:
+            super().__init__(n=n, rng=rng)
+        else:
+            k = int(initObj)
+            if not 0 <= k <= n:
+                raise ValueError(f"initObj must be in [0, {n}], got {k}")
+            self.data = np.zeros(n, dtype=bool)
+            self.data[rng.choice(n, size=k, replace=False)] = True
+            self.n = n
+            self.fitness = self.eval()
+
+    def eval(self):
+        """Evaluate fitness."""
+        self.fitness = int(self.data.sum())
+        return self.fitness
+
+    def is_optimal(self):
+        """Return is_optimal flag."""
+        return bool(self.data.all())
+
+    def get_optimal(self):
+        """Return optimum."""
+        return self.n
+
+    def get_fitness_after_flipping(self, locs):
+        """Return fitness after flipping the bits at locs, in O(len(locs)).
+
+        f(x_new) = f(x) + len(locs) - 2 * (number of ones among the flipped bits)
+        """
+        return int(self.fitness + len(locs) - 2 * self.data[locs].sum())
+
+    def get_fitness_after_crossover(self, xprime, locs_x, locs_xprime):
+        """Return fitness after crossover (without creating the child)."""
+        return int(self.data[locs_x].sum() + xprime.data[locs_xprime].sum())
 
 
 MAX_INT = 1e8
